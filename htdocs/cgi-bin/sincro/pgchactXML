@@ -1,0 +1,12 @@
+#!/bin/bash 
+# by pepper 28/03/2007
+# Retorna la Sincroguía del programa actual para 1 canal
+
+source ../www-setup
+
+echo Content-type: text/xml
+echo ""
+echo "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>"
+echo "<M740><SINCROGUIA>"
+. ./chactXML $EPG_PATH/IO_$QUERY_STRING.db
+echo "</SINCROGUIA></M740>"

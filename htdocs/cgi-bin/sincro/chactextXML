@@ -1,0 +1,70 @@
+#!/bin/bash 
+# by pepper 13/04/2007
+# Retorna el XML con el programa actual de 1 canal a partir del fichero de texto de caché
+# Este script es llamado por otros, y no debería invocarse directamente
+
+if [ $# != 3 ] ; then
+	numChannel=0
+else
+	numChannel=$3
+fi
+
+if [ -f $2 ];
+then
+    CHANNEL_ID=`echo $1 | cut -d"_" -f2 | cut -d"." -f1`
+    now=`date +%s`
+    mapping=`grep ${CHANNEL_ID} /var/etc/eps_mapping.txt | head -1`
+    chName=`echo "$mapping" | cut -d":" -f 1`
+    lines=`cat /var/etc/services.txt | grep "$chName" | wc -l`
+    if [ $lines -eq 0 ]; then
+        mapping=`grep ${CHANNEL_ID} /var/etc/eps_mapping.txt | tail -1`
+        idsec=`echo "$mapping" | cut -d"," -f 2`
+        if [ "$idsec" = "$CHANNEL_ID" ]; then
+            chName=`echo "$mapping" | cut -d":" -f 1`
+        fi
+    fi
+    cid=`cat /var/etc/services.txt | cut -b 87-145 | grep "$CHANNEL_ID " | cut -b 55-60 | head -1`
+    echo "<CHANNEL cid=\"$cid\" id=\"${CHANNEL_ID}\" name=\"$chName\" file=\"$1\" numChannel=\"$numChannel\">"
+    found=0
+    lineant=""
+    while read line
+    do
+        if [ ${#line} -gt 50 ]; then
+            if [ $found -eq 0 ]; then
+            	dateIni=`echo $line | cut -d"_" -f1`
+                if [ $dateIni -gt $now ]; then
+                    actual=1
+                    if [ "$lineant" = "" ]; then
+                        lineant=$line
+                    fi
+                    dateIni=`echo $lineant | cut -d"_" -f1`
+                	pid=`echo $lineant | cut -d"_" -f2`
+                	pidcid=`echo $lineant | cut -d"_" -f3`
+                	dateFormatIni=`echo $lineant | cut -d"_" -f4`
+                	dateFormatFin=`echo $line | cut -d"_" -f4`
+                	longs=`echo $lineant | cut -d"_" -f5`
+                	titulo=`echo $lineant | cut -d"_" -f6`
+                	subtitulo=`echo $lineant | cut -d"_" -f7`
+                	imagen=`echo $lineant | cut -d"_" -f8`
+                else
+                    lineant=$line
+                    actual=0
+                fi
+                
+                # Si estamos en el programa actual, lo leemos y lo enviamos en XML
+                if [ $actual -eq 1 ]; then
+                    echo "<PROGRAM id=\"${pid}\" pid=\"${pidcid}\" chid=\"${CHANNEL_ID}\">"
+                    echo "<TITLE>$titulo</TITLE><SUBTITLE>$subtitulo</SUBTITLE><IMAGE>$imagen</IMAGE><LONG>$longs</LONG>"
+                    #awk "BEGIN {print \"<DATE>\" strftime( \"%d.%m.%y %H:%M, %a\" , $dateIni) \"</DATE>\" }"
+                    echo "<DATE>$dateFormatIni</DATE><DATE_FIN>$dateFormatFin</DATE_FIN>"
+                    echo "<DATE_UTC>$dateIni</DATE_UTC></PROGRAM></CHANNEL>"
+                    found=1
+                    return
+                fi
+            fi
+        fi
+    done < $2
+    echo "</CHANNEL>"
+else
+    echo "<ERROR>File $2 not found</ERROR>"
+fi

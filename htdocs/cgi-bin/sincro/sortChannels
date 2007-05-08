@@ -1,0 +1,22 @@
+#!/bin/sh
+# by pepper
+# Mejorado por jotabe, 25/04/2007
+# Modificado por phosy para no leer los IDs de services.txt puesto que ya no vienen ahí, 04/05/2007
+# script que genera la lista de canales con la misma ordenacion que en user_services.txt
+
+source ../www-setup
+SORT_CHANNELS=$Cache/sort_channels.txt
+rm -f $SORT_CHANNELS
+touch $SORT_CHANNELS
+while read line
+do
+    id=`echo $line | cut -d":" -f2`
+    if [ "$id" != "" ]; then
+        exists=`cat /var/etc/services.txt | cut -b140-145 | grep $id | wc -l`
+        if [ $exists -eq 1 ]; then
+            name="`grep $id /var/etc/services.txt | cut -b0-20 | awk 'gsub(/[ \t]+$/, "", $0)'`"
+            extension="`grep -i -H "$name" /var/etc/eps_mapping.txt |grep -i :"$name": |cut -d"," -f 2`"
+            [ ${#extension} -ne 0 ] && echo "$EPG_PATH/IO_$extension.db" >> $SORT_CHANNELS
+        fi
+    fi
+done < /var/etc/user_services.txt

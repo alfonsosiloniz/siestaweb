@@ -1,0 +1,43 @@
+#!/bin/bash 
+# Martin Ostermann, 2005-08-21
+source ../www-setup
+if [ $# != 0 ] ; then
+	Recordings=$1
+else
+	Recordings=/$QUERY_STRING
+fi
+if [ $# = 2 ] ; then
+	Title=$2
+else
+	Title="Aufnahmen"
+fi
+
+. theme header "$Title" = MartinO 300
+
+n=1
+
+echo "<table><tr><th><h5>#</h5></th><th><h5>Titulo</h5></th><th><h5>Fecha, Hora, Duración</h5></th></tr>"
+
+for Cridfile in $Recordings/*.crid ; do
+	Cachefile=${Cache}/`basename $Cridfile .crid`.ref
+	if [ $Cridfile -nt $Cachefile ] ; then
+		declare -a Crid0
+		Crid0=( `hexdump -n 50 -e '11/4 "%d \n" 1/2 "%d \n" 1/4 "%d \n" ' $Cridfile ` )
+		c1=${Crid0[12]}
+		Begin=${Crid0[4]}
+		End=${Crid0[5]}
+		echo -n "<td> <a href=\"title?$Cridfile\">" ` hexdump -v -s 50 -n $c1 -e "/1 \"&#%d;\"" $Cridfile | sed -e 's/^&#5;//'` "</a> </td><td>" >$Cachefile
+		awk "BEGIN {print strftime( \" %d.%m. %H:%M\" , $Begin) \"-\" strftime( \"%H:%M\" , $End) \" : \" ($End-$Begin)/60 \"min </td>\" }" >>$Cachefile
+	fi
+	echo "<tr><td>${n}:</td>"
+	cat <$Cachefile
+
+	n=$((n+1))	
+done
+
+cat << ---EOF---
+</table>
+---EOF---
+
+. theme footer
+

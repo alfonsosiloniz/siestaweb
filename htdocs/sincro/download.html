@@ -1,0 +1,86 @@
+<html>
+<title>M750T - Descargar Grabación</title>
+<link href="/sincro/img/m740.ico" rel="shortcut icon"></link>
+<link href="/sincro/css/estilos.css" rel="stylesheet" type="text/css"></link>
+<script language="JavaScript" src="/sincro/js/html_params.js"></script>
+<script language="JavaScript" src="/sincro/js/navigator.js"></script>
+<script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
+<script>
+function init() {
+    index=document.location.href.indexOf("://");
+    host=document.location.href.substring(index+3);
+    index=host.indexOf("/");
+    host=host.substring(0, index);
+    document.forms[0].host.value=host;
+    document.forms[0].cridfile.value=getparam("crid", document.location.href);
+}
+function enviar() {
+    document.forms[0].submit();
+}
+</script>
+<body bgcolor="#FFFFFF" onload="init();">
+<form name="formulario" action="/cgi-bin/crid/download" method="get">
+<div align="center"><p><font class="titPag">M750T EPG</font></p></div>
+<div align="center"><font class="subTitPag">Descargar Grabación</font></div>
+<p>
+    <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
+    <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
+    <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a></div>
+</p>
+<table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
+<tr>
+	<td class="txtNormal">Host: </td>
+	<td class="txtNormal"><input type="text" name="host" size="50" maxlength="100" class="cajaplana"></td>
+</tr>
+<tr>
+	<td class="txtNormal">FTP port:</td>
+	<td class="txtNormal"><input type="text" name="port" value="21" size="5" maxlength="5" class="cajaplana"></td>
+</tr>
+<tr>
+	<td class="txtNormal">Cridfile: </td>
+	<td class="txtNormal"><input type="text" name="cridfile" size="70" maxlength="200" class="cajaplana"></td>
+</tr>
+<tr>
+	<td class="txtNormal">FTP User:</td>
+	<td class="txtNormal"><input type="text" name="user" value="root" size="10" maxlength="25" class="cajaplana"></td>
+</tr>
+<tr>
+	<td class="txtNormal">FTP Password:</td>
+	<td class="txtNormal"><input type="text" name="pwd" value="root" size="10" maxlength="25" class="cajaplana"></td>
+</tr>
+<tr>
+	<td class="txtNormal">Directorio descarga:</td>
+	<td class="txtNormal"><input type="text" name="dir" value="C:\" size="70" maxlength="200" class="cajaplana"></td>
+</tr>
+<tr>
+	<td class="txtNormal" height="20" colspan="2">&nbsp;</td>
+</tr>
+<tr>
+	<td class="txtNormal" align="center" colspan="2"><a href="javascript:enviar();"><img src="/sincro/img/aceptar1.gif" alt="Descargar Grabación" width="28" height="25" border="0" /></a></td>
+</tr>
+<tr>
+	<td class="txtNormal" height="30" colspan="2">&nbsp;</td>
+</tr>
+<tr>
+	<td class="txtNormal" height="10" colspan="2">
+	    <font class="titTabla">Atención:</font><br/>
+	    Al clicar sobre el botón <img src="/sincro/img/aceptar1.gif" alt="Descargar Grabación" width="28" height="25" border="0" />, verá una ventana como ésta:<br/><br/>
+	    <img src="/sincro/img/descarga_cmd.jpg" alt="Descargar Grabación" width="455" height="266" border="0" /><br/><br/>
+	    Clicando sobre el botón "Ejecutar", descargará el fichero "descargar_grabacion.cmd" en un directorio temporal y comenzará la descarga de todos los 
+	    ficheros correspondientes a la grabación seleccionada.<br/>
+	    Según los tests realizados por usuarios del foro todoPVR.com, la forma óptima de descarga de los ficheros desde el gigaset, es mediante la utilidad
+	    <a href="http://www.gnu.org/software/wget/"><b>wget</b></a>.<br/>Es por eso que la descarga se realiza mediante esta utilidad. Si no la tienes instalada, descárgatela y ponla en
+	    un directorio de tu ordenador que esté en el PATH de ejecución (por ejemplo, en el directorio c:\windows).<br/><br/>
+	    <a href="http://isidorocr.googlepages.com/wget.zip">Download Versión wget para Windows.</a>
+	</td>
+</tr>
+</table>
+<p>
+    <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
+    <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
+    <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a><br/><br/>
+    <a href="/autores.html">Autores</a></div>
+</p>
+</form>
+</body>
+</html>

@@ -1,0 +1,39 @@
+#!/bin/bash
+# display static html body file
+
+function splitInputData () { 
+	PostData="$1&"
+	while [ "$PostData" != "" ]; do
+		Pair="${PostData%%&*}"
+		Key="${Pair%%=*}"
+		Value="${Pair#*=}"
+		#echo Key=$Key Value=$Value
+		Value="`echo $Value | post2iso`"
+		case $Key in # that must be easier, but how..?!
+			Title ) Title="$Value" ;;
+			Heading ) Heading="$Value" ;;
+			Author ) Author="$Value" ;;
+			Expire ) Expire="$Value" ;;
+			Date ) Date="$Value" ;;
+			Query ) Query="$Value" ;;
+		esac
+		PostData="${PostData#${Pair}&}"
+	done
+}
+
+. ./www-setup
+splitInputData "$QUERY_STRING"
+QUERY_STRING=$Query
+
+if [ "${PATH_INFO:0:8}" = "/cgi-bin" ] ; then
+	Cmd="."
+else
+	Cmd="cat"
+fi
+
+. theme header "$Title" "$Heading" "$Author" "$Expire"
+
+$Cmd $SERVER_ROOT$PATH_INFO
+# todo: need to insert file modificatoin date date
+. theme footer " - "
+

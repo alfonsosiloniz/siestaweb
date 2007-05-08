@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>M750T EPG - Login</title>
+<link href="sincro/img/m740.ico" rel="shortcut icon">
+<link href="sincro/css/estilos.css" rel="stylesheet" type="text/css"></link>
+  <script language="JavaScript" src="/sincro/js/navigator.js"></script>
+  <script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
+<script>
+function teclaPulsada(eventoPulsaTecla){
+  tecla = (document.layers) ? eventoPulsaTecla.which : window.event.keyCode
+  if (tecla == 13) {
+    enviar();
+  }
+}
+document.onkeydown = teclaPulsada
+if (document.layers){	
+  document.captureEvents(Event.KEYDOWN);
+}
+
+function init() {
+   document.forms.form.uid.focus();
+}
+function enviar() {
+  f=document.forms['form'];
+  //document.location.href="/cgi-bin/testloguin?"+f.uid.value+"-"+f.pwd.value;
+  if (f.uid.value.length == 0 || f.pwd.value.length == 0) {
+    alert("Debe introducir usuario y password");
+    return;
+  }
+  if (is_ie)
+    mostrarMensajeProceso();
+  f.submit();
+}
+</script>
+</head>
+
+<body bgcolor="white" onload="init()">
+<form action="/cgi-bin/testloguin" method="get" name="form" id="form">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" class="Grid">
+<tr>
+	<td colspan="3"><img src="sincro/img/pixel.gif" width="1" height="50" border="0"></td>
+</tr>
+<tr>
+	<td colspan="3" align="center"><H1><FONT class="titPag"><b>M750T EPG<br><br></font></H1></td>
+</tr>
+<tr>
+	<td width="20%" class="Grid"><img src="sincro/img/pixel.gif" width="1" height="1" border="0"></td>
+   <td width="60%" align="center">
+      <table width="320" border="0" cellspacing="0" cellpadding="0" align="center" bgcolor="#ffb310" class="Grid">
+      <tr><td colspan="3"><img src="sincro/img/pixel.gif" width="1" height="2" border="0"></td></tr>
+      <tr>
+      	<td><img src="sincro/img/pixel.gif" width="6" height="20" border="0"></td>
+      	<td valign="bottom" class="NPastilla">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" class="Grid">
+            <tr>
+            	<td width="80%" align="left" valign="bottom" class="NPastilla">Introduzca sus datos de acceso</td>
+            	<td width="20%" align="right">
+                  <img src="sincro/img/pixel.gif" width="24" height="24" border="0">
+               </td>
+            </tr>
+            </table>
+         </td>
+      	<td><img src="sincro/img/pixel.gif" width="6" height="1" border="0"></td>
+      </tr>
+      <tr>
+      	<td colspan="3"><img src="sincro/img/pixel.gif" width="1" height="3" border="0"></td>
+      </tr>
+      <tr>
+      	<td><img src="sincro/img/pixel.gif" width="6" height="1" border="0"></td>
+      	<td class="Grid">
+            <table width="100%" border="2" cellspacing="0" cellpadding="0" align="center" bordercolor="#000000" bgcolor="#F7B610" class="Grid" style="border-color: black; border-style: groove;">
+            <tr>
+            	<td width="100%">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" bgcolor="#F7EF9C" class="Grid">
+                  <tr>
+                  	<td colspan="2"><img src="sincro/img/pixel.gif" width="1" height="3" border="0"></td>
+                  </tr>
+                  <tr>
+                  	<td class="TitColGrid">&nbsp;Usuario</td>
+                  	<td class="TitColGrid"><input type="text" class="cajaPlana" height="13" size="20" name="uid" value="" maxlength="20"></td>
+                  </tr>
+                  <tr>
+                  	<td colspan="2"><img src="sincro/img/pixel.gif" width="1" height="3" border="0"></td>
+                  </tr>
+                  <tr>
+                  	<td class="TitColGrid">&nbsp;Contrase&ntilde;a</td>
+                  	<td class="TitColGrid"><input type="Password" class="cajaPlana" height="13" size="20" name="pwd" value="" maxlength="20" onblur="javascript:boto.focus()"></td>
+                  </tr>
+                  <tr>
+                  	<td colspan="2" class="Grid"><img src="sincro/img/pixel.gif" width="1" height="8" border="0"></td>
+                  </tr>
+                  <tr>
+                  	<td colspan="2" class="Grid"><img src="sincro/img/pixel.gif" width="1" height="8" border="0"></td>
+                  </tr>
+                  <tr bgcolor="#ffe19f">
+                  	<td height="30" colspan="2" align="center" valign="middle" class="Grid"><input name="boto" type="button" onclick="enviar()" value="Entrar"></td>
+                  </tr>
+                  </table>
+               </td>
+            </tr>
+            </table>
+         </td>
+      	<td><img src="sincro/img/pixel.gif" width="6" height="1" border="0"></td>
+      </tr>
+      <tr>
+      	<td colspan="3"><img src="sincro/img/pixel.gif" width="1" height="6" border="0"></td>
+      </tr>
+      </table>
+   </td>
+	<td width="20%" class="Grid"><img src="sincro/img/pixel.gif" width="1" height="1" border="0"></td>
+</tr>
+<tr>
+   <td colspan="3"><img src="sincro/img/pixel.gif" width="1" height="1" border="0"></td></tr>
+</table>
+<br>
+</form>
+</body>
+</html>

@@ -1,0 +1,53 @@
+#!/bin/sh
+#source ../www-setup  #already called before
+n=1
+cat << ---EOT---
+<h3>Quicktimer</h3>
+<FORM ACTION="$DIR_NAME/quicktimer.post?numeric" METHOD="post">
+<select name="station" size="1">
+---EOT---
+
+Cachefile=$Cache/stations.html
+if [ $Cachefile -ot /var/etc/services.txt ] && \
+	[ $Cachefile -ot /var/etc/user_services.txt ]; then
+
+	n=1
+	cat /var/etc/services.txt | while read line; do 
+		Name="${line:0:15}" 
+		Position=`grep -n ${line:141-146} /var/etc/user_services.txt`
+		echo "${Position%%:*}:$Name"
+	done | sort -n | sed -e "s/[^:]*://" | while read line ; do 
+		echo "<option value=\"$n\">"
+		echo "$line" |iso2html | sed -e 's/^&#5;//' 
+		echo "</option>" 
+		n=$((n+1))
+	done >> $Cachefile
+fi
+cat $Cachefile
+
+Cachefile="$Cache/dates-`date +%Y-%m-%d.html`"
+if [ ! -f $Cachefile  ] ; then
+	rm -f $Cache/dates-????-??-??.html # remove old-file
+	( 
+	echo "</select>"
+	echo '<select name="date" size="1">'
+	n=0
+	today=`date +%s`
+	while [ $n != 22 ] ; do 
+		offset=$(( n*60*60*24 ))
+		day=`awk "BEGIN { print strftime ( \"%d.%m. %a\", $((today+offset)) ) }"`
+		echo "<option value=${day:0:6}>$day</option>"
+		n=$((n+1))
+	done
+	echo "</select>"
+	) >>$Cachefile
+fi
+cat $Cachefile
+
+	
+cat << ---EOT---
+<input type="text" name="time" value="20:15-21:45" size=15>
+<INPUT type="Submit" VALUE="Programar">
+</FORM>
+---EOT---
+

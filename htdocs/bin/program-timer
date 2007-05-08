@@ -1,0 +1,136 @@
+#!/bin/bash
+
+# get FW Version 
+. /sbin/lemmi-version set-var
+
+# 
+# program-timer	Martin Ostermann
+#
+
+# Change Log
+true <<end-of-changelog
+
+* 2005-08-23: 
+	inital version
+
+end-of-changelog
+
+# default settings, partially override by command line options possible
+M740AV=localhost 
+lircd=8765
+DEBUG=0
+nStation=-1
+
+shortest=350000
+short=850000
+long=1200000
+longest=1800000
+
+function debug () {
+        if [ $DEBUG != 0 ] ; then
+                echo $*
+        fi
+        }
+
+function usage () {
+	echo "Usage: $0 [-d] [-t title] [-s shortDesc] [-l longDesc] [-m hostname] [-n] station date time"
+	exit
+	}	
+
+# handle command line options -- overrid defaults
+while getopts "dnm:h:t:s:l:" opt ; do
+	case $opt in
+	  d ) DEBUG=1 ;;
+	  n) nStation=0 ;; # numeric selection of station
+	  m ) M740AV="$OPTARG" ;;
+	  t | s | l ) 
+		echo "Error: Options t,s and l not implemented yet!" >/dev/stderr
+		exit ;;
+	  t) Title="$OPTARG" ;;
+	  s) ShortDesc="$OPTARG" ;;
+	  l) LongDesc="$OPTARG" ;;
+	  h ) usage ;;
+	esac
+done
+
+if [ $# = $(( OPTIND + 2)) ] ; then
+	shift $(( OPTIND - 1 ))
+else
+	echo "Wrong argument count!"
+	usage
+fi	
+
+Station="$1"
+Date="$2"
+Time="$3"
+
+function sim () {
+	(for c in $*; do 
+		echo "sim 1 00 $c program-timer"
+		usleep $shortest 
+		case $c in
+		 OK | YELLOW ) #additional delay needed, see below
+			usleep $short ;;
+		 TV | YELLOW | GREEN ) 
+			usleep $longest ;;
+		esac
+	done) >/dev/tcp/$M740AV/$lircd
+	}
+
+send_digits () {
+	sim `echo $1 | sed -e 's/\(.\)/\1 /g'`
+	sim OK
+	}
+
+get_station_info () {
+   if [ "$nStation" = "-1" ]; then
+	StationInfo="`cat /var/etc/services.txt | ( 
+		while read line ; do
+			echo \`grep -n ${line:141:146} /var/etc/user_services.txt\`${line:0:20}
+		done ) | sort -n | grep -i -n \"$1\" | head -n 1`"
+   else
+	StationInfo="${Station}:"
+	usleep $longest
+   fi
+   }
+
+
+select_station () {
+	#use global var $StationInfo	
+	debug "Select $StationInfo"
+	n=${StationInfo%%:*}
+	n=$(($n-1))
+	sim OK
+	while [ $n != 0 ] ; do
+		sim CURSOR_DOWN
+		n=$(($n-1))
+	done
+	sim OK
+	}
+
+# main() script start here
+
+sim TV YELLOW
+if [[ "$FIRMWARE_VERSION" > "2.02" ]]
+then
+    sim GREEN
+    sim CURSOR_DOWN
+    sim OK
+fi
+
+# get_station_info takes about udelay $longest - we need this delay, but not twice
+get_station_info "$Station"
+if [ "$StationInfo" = "" ] ; then
+	echo "unknown Station"
+	sim TV
+	exit
+fi
+sim GREEN 
+select_station
+send_digits `echo $Date | sed -r -e 's/[[:space:]]//g' \
+		-e 's/(^|[.])([0-9])([.]|$)/0\2/g' -e 's/[.]//g'`
+send_digits `echo $Time | sed -r -e 's/[[:space:]]//g' -e 's/bis/-/' \
+		-e 's/(^|[:-])([0-9])([:-]|$)/0\2/g' -e 's/[:-]//g'`
+sim YELLOW
+#sim TV
+

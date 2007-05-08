@@ -1,0 +1,27 @@
+#!/bin/sh
+# by pepper 28/03/2007
+# Retorna la Sincroguía en XML de 1 canal
+
+# Ejecutamos el script con baja prioridad
+renice 20 $$ > /dev/null
+
+if [ $# != 2 ] ; then
+	numChannel=0
+else
+	numChannel=$2
+fi
+
+source ../www-setup
+CHANNEL_ID=`echo $1 | cut -d"_" -f2 | cut -d"." -f1`
+CACHE_FILE=${Cache}/sincrochannelXML.cache.$CHANNEL_ID
+
+echo -n "" > ${CACHE_FILE}
+#echo "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>" > ${CACHE_FILE}
+#echo "<?xml-stylesheet type=\"text/xsl\" href=\"/sincro/sincro.xsl\"?>" >> ${CACHE_FILE}
+#echo "<M740><SINCROGUIA miniatures=\"$MOSTRAR_MINI_IMG\">" >> ${CACHE_FILE}
+if [ -f $1 ]; then
+    . ./channelXML $1 ${CACHE_FILE}.temp $numChannel >> ${CACHE_FILE} 2>> $Cache/sincro.cache.err
+fi
+sort ${CACHE_FILE}.temp > ${CACHE_FILE}.text
+rm -f ${CACHE_FILE}.temp
+#echo "</SINCROGUIA></M740>" >> ${CACHE_FILE}

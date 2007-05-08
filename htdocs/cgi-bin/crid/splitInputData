@@ -1,0 +1,16 @@
+function splitInputData () { 
+	PostData="$1&"
+	while [ "$PostData" != "" ]; do
+		Pair="${PostData%%&*}"
+		Key="${Pair%%=*}"
+		Value="${Pair#*=}"
+		#echo Key=$Key Value=$Value
+		Value="`echo $Value | post2iso`"
+		case $Key in # that must be easier, but how..?!
+			Title ) Title="$Value" ;;
+			EPGshort ) EPGshort="$Value" ;;
+			EPGlong ) EPGlong="$Value" ;;
+		esac
+		PostData="${PostData#${Pair}&}"
+	done
+}

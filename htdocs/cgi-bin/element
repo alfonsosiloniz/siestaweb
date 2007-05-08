@@ -1,0 +1,4 @@
+#!/bin/bash
+. ./www-setup
+# need rework!
+. theme element $PATH_INFO $QUERY_STRING

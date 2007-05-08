@@ -1,0 +1,29 @@
+#!/bin/sh
+# by pepper, 17/04/2007
+# El formato del archivo es usuario:password
+
+CREDENTIALS=/var/etc/www-settings.txt
+
+user=`cat ${CREDENTIALS} | grep USUARIO | cut -d"=" -f2 | cut -d":" -f1`
+pwd=`cat ${CREDENTIALS} | grep USUARIO | cut -d"=" -f2 | cut -d":" -f2`
+
+#userlogin=`echo $QUERY_STRING | cut -d"-" -f1`
+userlogin=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2`
+#pwdlogin=`echo $QUERY_STRING | cut -d"-" -f2`
+pwdlogin=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2`
+
+echo Content-type: text/html
+echo ""
+if [ "$user" = "$userlogin" -a "$pwd" = "$pwdlogin" ]; then
+    echo "`date` Login OK: $userlogin / $pwdlogin" >> /tmp/login.log
+    echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">"
+    echo "<html><head><title>Login OK</title>"
+    echo "<script>document.location.href=\"/cgi-bin/sincro/pgmactualXML\";</script>"
+    echo "</head><body></body></html>"
+else
+    echo "`date` Login NOK: $userlogin / $pwdlogin" >> /tmp/login.log
+    echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">"
+    echo "<html><head><title>Login incorrect</title>"
+    echo "<script>alert(\"Usuario/password incorrecto\"); document.location.href=\"/index.html\";</script>"
+    echo "</head><body></body></html>"
+fi
