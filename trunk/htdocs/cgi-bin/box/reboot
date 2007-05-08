@@ -1,0 +1,41 @@
+#!/bin/sh
+# by pepper, 08/05/2007
+# Script que realiza un reboot del sistema
+
+# matamos los posibles procesos de generación de la caché
+pkill -9 run-http.sh 2> /dev/null
+pkill -9 pgmactualXML.cache 2> /dev/null
+pkill -9 sincroXML.cache 2> /dev/null
+pkill -9 sincrochannelXML.cache 2> /dev/null
+pkill -9 chactextXML 2> /dev/null
+sleep 2
+
+STICK_MOUNT=/var/media/SWAP
+STICK_DIR=${STICK_MOUNT}/swapfiles
+FLAGSWAP=${STICK_DIR}/flag
+SWAPFILE=${STICK_DIR}/file
+
+# desmontamos manualmente la swap, puesto que el halt -r no lo hace
+SWP_SIZE=(`grep ^SwapTotal /proc/meminfo`)
+if [ ${SWP_SIZE[1]} != 0 ]; then
+    if [ -f $FLAGSWAP ]; then
+        swapoff ${SWAPFILE}
+        umount ${STICK_MOUNT} 2> /dev/null
+    else
+        USB_DISK=/var/media/USB-HDD
+        USB_DIR=${USB_DISK}/.swap
+        FLAGSWAP=${USB_DIR}/.flag
+        SWAPFILE=${USB_DIR}/.file
+        if [ -f $FLAGSWAP ]; then
+            swapoff ${SWAPFILE} 2> /dev/null
+        fi
+    fi
+fi
+
+# Reboot del sistema
+halt -r & >> /tmp/reboot.log 2> /dev/null
+
+echo Content-type: text/xml
+echo ""
+echo "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>"
+echo "<M750><RESULT>OK</RESULT></M750>"

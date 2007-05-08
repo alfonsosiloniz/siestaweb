@@ -1,0 +1,93 @@
+#!/bin/sh
+source def-lemmi.inc
+
+html_begin "ext2/ext3 Check"
+
+if ! fdisk -l | grep -q ^/dev/sda; then
+    echo '<span class="warn">Keine USB-Platte gefunden!</span>'
+    html_end $0
+    exit
+fi
+
+if ! fdisk -l | grep -q ^/dev/sda1; then
+    echo '<span class="warn">USB-Platte ist anders als erwartet partioniert!</span>'
+    echo '<pre>'
+    fdisk -l
+    echo '</pre>'
+    html_end $0
+    exit
+fi
+
+part_info=(`fdisk -l | grep ^/dev/sda1`)
+if [[ ${part_info[4]} != "83" ]]; then
+    echo '<span class="warn">Die erste Partition der USB-Platte hat nicht den Typ '83'!</span>'
+    echo '<pre>'
+    fdisk -l
+    echo '</pre>'
+    html_end $0
+    exit
+fi
+
+GiB=$(( ${part_info[3]} / 1024 / 1024 ))
+GB=$((  ${part_info[3]} / 1000 / 1000 ))
+echo "<span class="info">USB-Platte mit Linux-Partition ($GB GB = $GiB GiB) gefunden.</span><p>"
+
+if grep -q '^/dev/sda1 ' < /proc/mounts; then
+    cat <<- ---EOT---
+	<span class="warn">Die Linux-Partition ist noch angemeldet!</span>
+	<pre>
+	`df /dev/sda1`
+
+	`grep '^/dev/sda1 ' < /proc/mounts`
+	</pre>
+
+	Zum Überprüfen der Linux-Partition muß diese über das Menü abgemeldet werden.
+	---EOT---
+
+    html_end $0
+    exit
+fi
+
+if ps xa | grep -q 'e2[f]sck'; then
+    echo '<span class="warn">Das programm e2fsck läuft bereits!</span>'
+    echo '<pre>'
+    ps xa |grep 'e2[f]sck'
+    echo '</pre>'
+    html_end $0
+    exit
+fi
+
+if [[ "$QUERY_STRING" != "execute" ]]; then
+    cat <<- ---EOT---
+	Das Überprüfen der Linux-Partition kann einige Minuten (im Normalfall) bis Stunden dauern.
+	Die tatsächliche Zeit hängt von vielen Faktoren ab.
+	Während der Überprüfung sollte die Box nicht ausgeshcaltet werden.
+	Auch darf die Festplatte nicht angemeldet werden.
+
+	<form method="post" action="$SCRIPT_NAME?execute">
+	    <input type="submit" name="submit" value="Partition überprüfen!">
+	</form>
+	---EOT---
+    html_end $0
+    exit
+fi
+
+cat <<- ---EOT---
+	<div class="debug">
+	Die Partition wird jetzt überprüft:
+	<ul>
+	<li>Die Box <b>nicht</b> ausschalten!
+	<li>Die Festplatte <b>nicht</b> anmelden!
+	<li>Dieses Fenster geöffnet lassen!
+	</ul>
+	</div>
+
+	<pre>
+	`e2fsck -vp /dev/sda1 2>&1`
+	</pre>
+
+	<span class="info">Die Festplatte kann jetzt wieder angemeldet werden.</span>
+	---EOT---
+
+html_end $0
+

@@ -1,0 +1,15 @@
+#!/bin/sh
+# by pepper, 08/05/2007
+# Script que realiza la recarga del fichero /var/etc/root.crontab
+
+CRONTAB_FILE=/var/etc/root.crontab
+
+if [ -f $CRONTAB_FILE ]; then
+    #Recarga del fichero
+    crontab $CRONTAB_FILE 2> /dev/null
+fi
+
+echo Content-type: text/xml
+echo ""
+echo "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>"
+echo "<M750><RESULT>OK</RESULT></M750>"

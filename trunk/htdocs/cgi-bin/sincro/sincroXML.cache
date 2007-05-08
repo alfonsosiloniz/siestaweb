@@ -1,0 +1,53 @@
+#!/bin/sh 
+# by pepper 03/04/2007
+# Script que genera los XML de todos los canales, guardandolos en el directorio de Cache.
+# Admite como parametro una lista de canales a actualizar, en el siguiente formato: TV3:TV1:...:
+# Notar que siempre hay que acabarla con ":"
+# Si no se pasa parametro, se actualizan todos los canales
+
+# Ejecutamos el script con baja prioridad
+renice 20 $$ > /dev/null
+
+source ../www-setup
+SORT_CHANNELS=$Cache/sort_channels.txt
+
+# Generamos el fichero sort_channels.txt con la misma ordenación del gigaset
+if [ ! -f $SORT_CHANNELS ]; then
+    ./sortChannels
+fi
+
+echo "`date` Iniciando generacion XML de sincroguia [host: `hostname`]" > $Cache/sincro.cache.log
+echo -n "" > $Cache/sincro.cache.err
+numParams=$#
+params=$1
+
+if [ -f $SORT_CHANNELS ]; then
+    ListaCanales=`cat $SORT_CHANNELS`
+else
+    ListaCanales=$EPG_PATH/*.db
+fi
+
+i=1
+for Sincrofile in $ListaCanales ; do
+    cp $Sincrofile /tmp/`basename $Sincrofile` >> $Cache/sincro.cache.log 2>> $Cache/sincro.cache.err
+    if [ $? = 0 -a -f /tmp/`basename $Sincrofile` ] ; then
+        CHANNEL_ID=`echo "$Sincrofile" | cut -d"_" -f2 | cut -d"." -f1`
+        found=1
+        if [ $numParams -eq 1 ]; then
+            found=`echo $params | grep "$CHANNEL_ID:" | wc -l`
+        fi
+        #echo "found: $found, ID: $CHANNEL_ID"
+        if [ $found -eq 1 ]; then
+            if [ -f $Sincrofile ]; then
+                echo -n "`date` Generando Sincro de Canal $CHANNEL_ID" >> $Cache/sincro.cache.log 2>> $Cache/sincro.cache.err
+                CACHE_FILE=${Cache}/sincrochannelXML.cache.$CHANNEL_ID
+                touch ${CACHE_FILE}.generating
+                ./sincrochannelXML.cache /tmp/`basename $Sincrofile` $i >> $Cache/sincro.cache.log 2>> $Cache/sincro.cache.err
+                rm -f ${CACHE_FILE}.generating
+            fi
+        fi
+    fi
+    i=$((i+1))
+    rm -f /tmp/`basename $Sincrofile`
+done
+echo "`date` Generacion de los XML de sincroguia finalizada [host: `hostname`]" >> $Cache/sincro.cache.log

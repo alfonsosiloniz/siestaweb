@@ -1,0 +1,214 @@
+#!/bin/sh
+# Lemmi, 2005-09-03 -> GPL
+
+source def-lemmi.inc
+
+html_begin "Test Script"
+cat <<- ---EOT---
+	Dieses Script zeigt allerlei Informationen an, die der Web-Server beim Aufruf übergibt.
+	<a href="#info">Weitere Informationen</a> stehen am Ende nach den Kontrollausgaben.
+
+	<a name="content"><h2>Inhalt</h2></a>
+	<ul>
+	---EOT---
+
+	num=0
+	[[ ${#QUERY_STRING} != 0 ]] && num=$(($num+1)) && echo " <li><a href=\"#query\">$num. QUERY_STRING</a>"
+	[[ "$REQUEST_METHOD" == "POST" ]] && num=$(($num+1)) && echo " <li><a href=\"#post\">$num. POST Daten</a>"
+
+	num=$(($num+3))
+cat <<- ---EOT---
+	 <li><a href="#env">$(($num-2)). Umgebungsvariablen</a>
+	 <li><a href="#var">$(($num-1)). bash Variablen</a>
+	 <li><a href="#info">$num. Weitere Informationen</a>
+	 <ul>
+	  <li><a href="#info-path">$num.1 Erweiterter Pfad</a>
+	  <li><a href="#info-query">$num.2 Query-String</a>
+	  <li><a href="#info-form">$num.3 Formulare</a>
+	  <li><a href="#info-upload">$num.4 Hochladen von Dateien</a>
+	  <li><a href="#info-edit">$num.5 Texte Editieren</a>
+	 </ul>
+	</ul>
+	---EOT---
+
+#-----------------------------
+
+num=0
+
+if [[ ${#QUERY_STRING} != 0 ]]; then
+
+    num=$(($num+1))
+    cat <<- ---EOT---
+	<a name="query"><h2>$num. QUERY_STRING</h2></a>
+
+	In der Variable <tt>'QUERY_STRING'</tt> werden die Parameter der URI übertragen.
+	Dieses sind alle Zeichen nach dem Fragezeichen.
+	<pre>`echo "QUERY_STRING: $QUERY_STRING"|sed 's/&/\&amp;/g;s/</\&lt;/g'`</pre>
+	<p>
+	Zur Auswerung kann das Programm 'scan-query-param' verwendet werden.
+	<p>
+	Der Aufruf: <tt>eval \`scan-query-string "\$QUERY_STRING"\`</tt>
+	<p>
+	Für dieses Script ergibt die Analyse folgendes:
+	<pre>`scan-query-string "$QUERY_STRING"|sed 's/&/\&amp;/g;s/</\&lt;/g'`</pre>
+	---EOT---
+fi
+
+#-----------------------------
+
+if [[ "$REQUEST_METHOD" == "POST" ]]; then
+
+    #cat > cat.out
+    read query_line
+
+    num=$(($num+1))
+    cat <<- ---EOT---
+	<a name="post"><h2>$num. POST Daten</h2></a>
+
+	Als Übermittlungsmethode (Variable <tt>\$REQUEST_METHOD</tt>) wurde POST verwendet.
+	Dieses bedeutet, dass zusätzliche Informationen an das Script gesendet wurden.
+	Dieses zusätzlichen Informationen müssen von der Standareingabe gelesen werden.
+	Die Variable <tt>\$CONTENT_LENGTH</tt> enthält die Anzahl der Zeichen.
+	<p>
+	---EOT---
+
+    if [[ "$CONTENT_LENGTH" -gt 10000 ]]; then
+	cat <<- ---EOT---
+		Bei diesen Script-Aufruf wurden $CONTENT_LENGTH Bytes gesendet,
+		wobei nur die ersten 10.000 Bytes angezeigt werden:
+		<pre>`(echo "$query_line"; head -c 10000)|sed 's/&/\&amp;/g;s/</\&lt;/g'`</pre>
+		---EOT---
+    else
+	cat <<- ---EOT---
+		Bei diesen Script-Aufruf wurden $CONTENT_LENGTH Bytes gesendet:
+		<pre>`(echo "$query_line"; head -c 10000)|sed 's/&/\&amp;/g;s/</\&lt;/g'`</pre>
+		---EOT---
+    fi
+else
+    query_line="$QUERY_STRING"
+fi
+
+#-----------------------------
+
+num=$(($num+3))
+cat <<- ---EOT---
+	<a name="env"><h2>$(($num-2)). Umgebungsvariablen</h2></a>
+
+	Die folgenden Umgebungsvariablen werden von http-Server gesetzt.
+	<pre>`env|sed 's/&/\&amp;/g;s/</\&lt;/g'`</pre>
+
+	<a name="var"><h2>$(($num-1)). bash Variablen</h2></a>
+
+	Die folgenden Lokalen Variablen sind im bash-Script definiert.
+	Dieses sind u.a. alle Umgebungsvariablen.
+	<pre>`set|sed 's/&/\&amp;/g;s/</\&lt;/g'`</pre>
+	Außerdem enthält die Variable <tt>'\$0'</tt> den vollen Pfad des Scriptes.
+	<pre>`echo "$0"|sed 's/&/\&amp;/g;s/</\&lt;/g'`</pre>
+
+	---EOT---
+
+#-----------------------------
+
+eval `scan-query-string "$query_line"`
+eins=`echo "$p_eins" | sed 's/&/\&amp;/g;s/>/\&gt;/g;s/"/\&quot;/g'`
+zwei=`echo "$p_zwei" | sed 's/&/\&amp;/g;s/>/\&gt;/g;s/"/\&quot;/g'`
+text=`echo "${p_text:-Dieser Text kann editiert werden.}" | sed 's/&/\&amp;/g;s/</\&gt;/g'`
+
+cat <<- ---EOT---
+	<a name="info"><h2>$num. Weitere Informationen</h2></a>
+
+	Im folgenden werden ein paar Möglichkeiten zur Verwendung von Paramtern beschrieben.
+	Für ein weiteres Studium ist auch der <a href="./show/$0">Quelltext dieses Scriptes</a> interessant.
+
+	<a name="info-path"><h3>$num.1 Erweiterter Pfad</h3></a>
+
+	Die Umgebungsvariable <tt>'SCRIPT_NAME'</tt> zeigt den Pfad zum Script an.
+	Es ist allerdings auch möglich, weitere (virtuelle) Unterverzeichnisse anzugeben.
+	Trotz des verlängerten Pfades wird das angegeben cgi-Script aufgerufen.
+	Der zusätzliche Pfad wird in der Umgebungsvariable <tt>'PATH_INFO'</tt> gespeichert.
+	<p>
+	<pre>`(echo "SCRIPT_NAME: $SCRIPT_NAME"; echo "PATH_INFO: $PATH_INFO") \
+		|sed 's/&/\&amp;/g;s/</\&lt;/g';`</pre>
+	<ul>
+	 <li><a href="$SCRIPT_NAME#info-path">ohne Pfad</a>
+	 <li>Pfad: <a href="$SCRIPT_NAME/Hallo/Lemmi#info-path"><tt>/Hallo/Lemmi</tt></a>
+	</ul>
+
+	<a name="info-query"><h3>$num.2 Query-String</h3></a>
+
+	Zusätzlich oder Anstatt des erweiterter Pfades können in der URI
+	nach einem Fragezeichen auch weitere Parameter angegeben werden.
+	Diese Parameter werden in Umgebungsvariable <tt>'QUERY_STRING'</tt> abgelegt.
+	(<a href="#query">siehe oben</a>)
+	<p>
+	<pre>`echo "QUERY_STRING: $QUERY_STRING"|sed 's/&/\&amp;/g;s/</\&lt;/g'`</pre>
+	<ul>
+	 <li><a href="$SCRIPT_NAME#info-path">ohne Parameter</a>
+	 <li>Parameter: <a href="$SCRIPT_NAME?Hallo+Lemmi#info-path"><tt>Hallo+Lemmi</tt></a>
+	</ul>
+
+	
+	<a name="info-form"><h3>$num.3 Formulare</h3></a>
+
+	Ein Formular kann seine Daten in der URI (Methode GET) oder
+	als POST-Daten (Methode POST) an das cgi-Script übermitteln:
+	<p>
+	<div>
+	  <form method="get" action="$SCRIPT_NAME#query">
+	    eins: <input type="input" size="8" name="eins" value="$eins">
+	    zwei: <input type="input" size="8" name="zwei" value="$zwei">
+	    <input type="submit" name="submit" value="Methode GET">
+	  </form>
+	</div>
+
+	<div>
+	  <form method="post" action="$SCRIPT_NAME#post">
+	    eins: <input type="input" size="8" name="eins" value="$eins">
+	    zwei: <input type="input" size="8" name="zwei" value="$zwei">
+	    <input type="submit" name="submit" value="Methode POST">
+	  </form>
+	</div>
+
+	<a name="info-upload"><h3>$num.4 Hochladen von Dateien</h3></a>
+
+	Mit einem Formular können auch Dateien hochgeladen werden.
+	Hierbei muß immer die Methode POST verwendet werden.
+	<p>
+	<div>
+	  <form enctype="multipart/form-data" method="post" action="$SCRIPT_NAME#post">
+	    eins: <input type="input" size="8" name="eins" value="$eins">
+	    zwei: <input type="input" size="8" name="zwei" value="$zwei">
+	    <br>
+	    <input type="file" size="48" name="file">
+	    <input type="submit" name="submit" value="Daten hochladen!">
+	  </form>
+	</div>
+
+	<a name="info-edit"><h3>$num.5 Texte Editieren</h3></a>
+
+	Über den Browser können auch Texte editiert werden.
+	Wegen der Länge der Daten bietet sich die Methode POST an. 
+
+	<p>	
+	<div>
+	<form method="post" action="$SCRIPT_NAME#info-edit">
+	<textarea wrap="virtual" name="text" rows=10 cols=50 maxlength=1000>
+	`/bin/echo -e "$text"`
+	</textarea>
+	<br>
+	<input type="Submit" value="Speichern">
+	<input type="Reset" value="Wiederherstellen">
+	</form>
+	</div>
+
+	---EOT---
+
+# "multipart/form-data"
+# "application/x-www-form-urlencoded"
+# "text/plain"
+
+#-----------------------------
+
+html_end "$0"
+exit
+

@@ -1,0 +1,69 @@
+#!/bin/sh
+source ../www-setup
+
+echo Content-type: text/html
+echo ""
+
+message=""
+if [ "$QUERY_STRING" = "save" ] ; then
+	sed -e 's/text=//' -e 's/%0D//g' | post2iso > ${PATH_INFO}
+	echo "`date` ${PATH_INFO} guardado" >> /tmp/edit.log
+	message="Fichero ${PATH_INFO} guardado correctamente"
+fi
+if [ -f "$PATH_INFO" ]; then
+	TEXT=`iso2html < "$PATH_INFO"`
+else
+	TEXT=""
+fi
+echo "`date` ${PATH_INFO} leído" >> /tmp/edit.log
+
+cat << ---EOT---
+<html>
+<title>M750T - Editar ${PATH_INFO}</title>
+<meta http-equiv="refresh" content="600" />
+<link href="/sincro/img/m740.ico" rel="shortcut icon"></link>
+<link href="/sincro/css/estilos.css" rel="stylesheet" type="text/css"></link>
+<script language="JavaScript" src="/sincro/js/ajax.js"></script>
+<script language="JavaScript" src="/sincro/js/navigator.js"></script>
+<script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
+<script language="JavaScript">
+function init() {
+    if ("$message" != "") {
+        alert("$message");
+    }
+}
+</script>
+<body bgcolor="#FFFFFF" onload="init();">
+<FORM ACTION="${SCRIPT_NAME}${PATH_INFO}?edit" METHOD="post">
+  <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
+  <div align="center"><font class="subTitPag">Editar ${PATH_INFO}</font></div>
+  <p>
+      <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
+      <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
+      <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a></div>
+  </p>
+  <table width="850" border="0" cellspacing="0" cellpadding="2" align="center"  class="borderTabla2">
+  <tr>
+    <td class="fila titTabla"  bgcolor="#ffb310" align="center">Editar ${PATH_INFO}</td>
+  </tr>
+  <tr>
+    <td class="txtNormal" align="center"><TEXTAREA wrap="virtual" name="text" rows=25 cols=100 MAXLENGTH=16000 style="background-color:#e8e8ff">$TEXT</TEXTAREA><BR></td>
+  </tr>
+  <tr>
+    <td class="txtNormal" align="left" height=20></td>
+  </tr>
+  <tr>
+    <td class="fila" align="center"><INPUT type="Submit" VALUE="Guardar">&nbsp;<INPUT type="Reset" VALUE="Deshacer Cambios"></td>
+  </tr>
+  </table><br/>
+  <p>
+      <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
+      <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
+      <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a><br/><br/>
+      <a href="/autores.html">Autores</a> | <a href="/cgi-bin/sincro/verlog">Ver Log</a> | <a href="/cgi-bin/box/estado">Ver Estado</a></div>
+  </p>
+ </form>
+</body>
+</html>
+
+---EOT---

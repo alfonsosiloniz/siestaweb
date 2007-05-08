@@ -1,0 +1,12 @@
+#!/bin/bash
+# by pepper
+
+source ../www-setup
+
+echo Content-type: text/xml
+echo ""
+echo "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>"
+echo "<M740>"
+numchannels=`ls -l $EPG_PATH/ | grep .db | wc -l`
+echo "<NUM_CHANNELS>$numchannels</NUM_CHANNELS>"
+echo "</M740>"

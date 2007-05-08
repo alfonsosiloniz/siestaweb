@@ -1,0 +1,35 @@
+#!/bin/bash
+# by pepper, 02/05/2007
+# Script que genera un fichero de comandos con las instrucciones necesarias para descargar a la máquina local
+# una grabación completa, utilizando la utilidad wget.
+
+host=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2`
+port=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2`
+Cridfile=`echo $QUERY_STRING | cut -d"&" -f3 | cut -d"=" -f2 | sed -e 's/%2F/\//g'`
+user=`echo $QUERY_STRING | cut -d"&" -f4 | cut -d"=" -f2`
+pwd=`echo $QUERY_STRING | cut -d"&" -f5 | cut -d"=" -f2`
+dir=`echo $QUERY_STRING | cut -d"&" -f6 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g'`
+
+declare -a Crid0
+declare -a Crid1
+
+Crid0=( `hexdump -n 50 -e '11/4 "%d \n" 1/2 "%d \n" 1/4 "%d \n" ' $Cridfile ` )
+c1=${Crid0[12]}
+s1=$(( 50 + $c1 ))
+n1=8
+Title=`hexdump -v -s $(($s1-$c1)) -n $c1 -e "/1 \"&#%d;\"" $Cridfile | sed -e 's/&#5;//g' -e 's/&#138;/<br\/>/g' `
+
+Crid1=( `hexdump -s $s1 -n $n1 -e "2/4 \"%d \n\" " $Cridfile ` )
+c2=${Crid1[1]}
+s2=$(( $s1+$n1+$c2 ))
+
+fmpg=`hexdump -v -n $c2 -s $(($s1+$n1)) -e '"%c"' $Cridfile | sed -e 's/&/&amp;/g'`
+recordingDir=`dirname $Cridfile`
+
+echo "$host, $port, $Cridfile, ${fmpg}*, $user, $pwd, Titolo: $Title" >> /tmp/download.log
+
+echo "Content-type: application/octet-stream"
+echo "Content-Disposition: attachment; filename=descargar_grabacion.cmd"
+echo ""
+echo "wget --passive-ftp -P "$dir" ftp://$user:$pwd@$host:$port$Cridfile"
+echo "wget --passive-ftp -P "$dir" ftp://$user:$pwd@$host:$port$recordingDir/$fmpg*"

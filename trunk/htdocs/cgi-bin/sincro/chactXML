@@ -1,0 +1,91 @@
+#!/bin/bash 
+# by pepper 28/03/2007
+# Retorna el XML con el programa actual de 1 canal
+# Este script es llamado por otros, y no debería invocarse directamente
+# Este script ha sido sustituido por chactextXML, que en lugar de leer el fichero .db que está desordenado temporalmente
+# lee del fichero .text de la caché, que previamente ha sido ordenado.
+
+if [ $# != 2 ] ; then
+	numChannel=0
+else
+	numChannel=$2
+fi
+
+if [ -f $1 ];
+then
+    CHANNEL_ID=`echo $1 | cut -d"_" -f2 | cut -d"." -f1`
+    totalBytes=`hexdump -v -n 4 -e '"%d"' $1`
+    now=`date +%s`
+    n=4
+    mapping=`grep ${CHANNEL_ID} /var/etc/eps_mapping.txt | head -1`
+    chName=`echo "$mapping" | cut -d":" -f 1`
+    lines=`cat /var/etc/services.txt | grep "$chName" | wc -l`
+    if [ $lines -eq 0 ]; then
+        mapping=`grep ${CHANNEL_ID} /var/etc/eps_mapping.txt | tail -1`
+        idsec=`echo "$mapping" | cut -d"," -f 2`
+        if [ "$idsec" = "$CHANNEL_ID" ]; then
+            chName=`echo "$mapping" | cut -d":" -f 1`
+        fi
+    fi
+    cid=`cat /var/etc/services.txt | cut -b 87-145 | grep "$CHANNEL_ID " | cut -b 55-60 | head -1`
+    echo "<CHANNEL cid=\"$cid\" id=\"${CHANNEL_ID}\" name=\"$chName\" file=\"$1\" numChannel=\"$numChannel\">"
+    found=0
+    while [ $totalBytes -gt $n -a $found -eq 0 ]; do
+        # Acabo de ver que los registros no están ordenados temporalmetne, y para saber cual es el programa actual
+        # antes habría que ordenarlos, pero eso es demasiado complejo, así que devuelveo el primer registro
+        # que temporalmente es superior a la hora actual
+
+        # Leemos el tambaño total del programa, para luego poder saltarlo
+        bytesPgm=`hexdump -v -n 4 -s $n -e '"%d"' $1`
+        # Leemos la fecha actual y la fecha del siguiente programa, para comprobar si este registro es del programa actual
+        skipToDate=$((n+16))
+        dateIni=`hexdump -v -n 4 -s $skipToDate -e '1/4 "%d"' $1`
+        #skipToNextDate=$((n+bytesPgm+20))
+        #nextDate=`hexdump -v -n 4 -s $skipToNextDate -e '1/4 "%d"' $1`
+        #if [ $dateIni -le $now -a $nextDate -gt $now ]; then
+        if [ $dateIni -gt $now ]; then
+            actual=1
+        else
+            actual=0
+        fi
+        
+        # Si estamos en el programa actual, lo leemos y lo enviamos en XML
+        if [ $actual -eq 1 ]; then
+            declare -a Sincro
+            Sincro=( `hexdump -v -n 25 -s $n -e '1/4 "%d \n" 1/4 "%d \n" 1/4 "%X" "\n" 1/4 "%X" "\n" 1/4 "%d \n" 1/4 "%d \n" 1/1 "%d \n"' $1` )
+            n=$((n+25))
+            bytesPgm=${Sincro[0]}
+            pid=${Sincro[1]}
+            pidcid1=`printf "%08X" 0x${Sincro[2]}`
+            pidcid2=`printf "%08X" 0x${Sincro[3]}`
+            pidcid=${pidcid1}${pidcid2}
+            dateIni=${Sincro[4]}
+            #longs=${Sincro[5]}
+            bytesTitulo=${Sincro[6]}
+            titulo=`hexdump -v -n $bytesTitulo -s $n -e '"%c"' $1`
+            #titulo=`hexdump -v -n $bytesTitulo -s $n -e "/1 \"&#%d;\"" $1 | sed -e 's/^&#5;//' `
+            n=$((n+$bytesTitulo))
+            bytesSubtitulo=`hexdump -v -n 2 -s $n -e '1/2 "%d"' $1`
+            n=$((n+2))
+            subtitulo=`hexdump -v -n $bytesSubtitulo -s $n -e '"%c"' $1`
+            #subtitulo=`hexdump -v -n $bytesSubtitulo -s $n -e "/1 \"&#%d;\"" $1 | sed -e 's/^&#5;//' `
+            n=$((n+$bytesSubtitulo))
+            bytesImagen=`hexdump -v -n 1 -s $n -e '1/1 "%d"' $1`
+            n=$((n+1))
+            imagen=`hexdump -v -n $bytesImagen -s $n -e '"%c"' $1`
+            #imagen=`hexdump -v -n $bytesImagen -s $n -e "/1 \"&#%d;\"" $1 | sed -e 's/^&#5;//' `
+            n=$((n+$bytesImagen))
+            
+            echo "<PROGRAM id=\"${pid}\" pid=\"${pidcid}\" chid=\"${CHANNEL_ID}\">"
+            echo "<TITLE>$titulo</TITLE><SUBTITLE>$subtitulo</SUBTITLE><IMAGE>$imagen</IMAGE>"
+            awk "BEGIN {print \"<DATE>\" strftime( \"%d.%m.%y %H:%M, %a\" , $dateIni) \"</DATE>\" }"
+            echo "<DATE_UTC>$dateIni</DATE_UTC>"
+            echo "</PROGRAM>"
+            found=1
+        fi
+        n=$((n + bytesPgm + 4))
+    done
+    echo "</CHANNEL>"
+else
+    echo "<ERROR>File $1 not found</ERROR>"
+fi

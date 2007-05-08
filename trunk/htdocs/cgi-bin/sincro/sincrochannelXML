@@ -1,0 +1,42 @@
+#!/bin/bash 
+# by pepper 28/03/2007
+# Retorna la Sincroguía en XML de 1 canal
+
+source ../www-setup
+
+channelId=`echo $QUERY_STRING | cut -d"-" -f1`
+pgmActual=`echo $QUERY_STRING | cut -d"-" -f2`
+
+CACHE_FILE=${Cache}/sincrochannelXML.cache.$channelId
+
+# Comprobamos si el directorio de imagenes de la sincro de la carpeta de grabaciones esta accesible
+if [ -d $SERVER_ROOT/sincro/epg/ ]; then
+    DIR_IMG_SINCRO_ACCESIBLE=si
+else
+    DIR_IMG_SINCRO_ACCESIBLE=no
+fi
+
+echo Content-type: text/xml
+echo ""
+echo "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>"
+echo "<?xml-stylesheet type=\"text/xsl\" href=\"/sincro/sincro.xsl\"?>"
+echo "<M740><SINCROGUIA actual=\"$pgmActual\" miniatures=\"$MOSTRAR_MINI_IMG\" getImgInet=\"$OBTENER_IMG_INET\" localSincroImgAcc=\"$DIR_IMG_SINCRO_ACCESIBLE\">"
+
+if [ -f ${CACHE_FILE} ]; then
+    # Si el XML se esta genrando hay que esperar a que finalice
+    if [ -f ${CACHE_FILE}.generating ]; then
+        i=0
+        # Esperamos hasta que no exista el fichero con un maximo de 5 minutos
+        while [ -f ${CACHE_FILE}.generating -a $i -lt 300 ]; do
+            sleep 1
+            i=$((i+1))
+        done
+    fi
+    #echo Content-type: text/xml
+    #echo ""
+    cat < ${CACHE_FILE}
+else
+    . ./channelXML $EPG_PATH/IO_$channelId.db
+fi
+
+echo "</SINCROGUIA></M740>"

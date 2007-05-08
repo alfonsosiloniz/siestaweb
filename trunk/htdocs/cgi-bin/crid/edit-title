@@ -1,0 +1,126 @@
+#!/bin/bash 
+# Martin Ostermann, 2005-08-25
+source ../www-setup
+Cridfile="$PATH_INFO"
+Basename=`basename $Cridfile .crid`
+#Cachefile=${Cache}/${Basename}.html
+
+function splitInputData () { 
+	PostData="$1&"
+	while [ "$PostData" != "" ]; do
+		Pair="${PostData%%&*}"
+		Key="${Pair%%=*}"
+		Value="${Pair#*=}"
+		#echo Key=$Key Value=$Value
+		Value="`echo $Value | post2iso`"
+		case $Key in # that must be easier, but how..?!
+			Title ) Title="$Value" ;;
+			EPGshort ) EPGshort="$Value" ;;
+			EPGlong ) EPGlong="$Value" ;;
+		esac
+		PostData="${PostData#${Pair}&}"
+	done
+}
+
+
+declare -a Crid0
+declare -a Crid1
+declare -a Crid2
+declare -a Crid3
+
+Crid0=( `hexdump -n 50 -e '11/4 "%d \n" 1/2 "%d \n" 1/4 "%d \n" ' $Cridfile ` )
+c1=${Crid0[12]}
+s1=$(( 50 + $c1 ))
+n1=8
+RecordingState=${Crid0[3]}
+Begin=${Crid0[4]}
+End=${Crid0[5]}
+RecordingFlag=${Crid0[9]}
+
+if [ "$QUERY_STRING" = "save" ] ; then
+	splitInputData "`cat`"
+	crided -T "$Title" -S "$EPGshort" -L "$EPGlong" "$PATH_INFO"	
+else	
+	#Title=`dd bs=1 skip=$(($s1-$c1)) count=$c1 2>/dev/null <$Cridfile`
+	Title=`hexdump -v -s $(($s1-$c1)) -n $c1 -e "/1 \"&#%d;\"" $Cridfile | sed -e 's/^&#5;//'`
+	
+	Crid1=( `hexdump -s $s1 -n $n1 -e "2/4 \"%d \n\" " $Cridfile ` )
+	c2=${Crid1[1]}
+	s2=$(( $s1+$n1+$c2 ))
+	
+	c3=$c2
+	s3=$s2
+	
+	f=${Crid1[0]}
+	while [ $f != 0 ] ; do
+		n2=24
+		Crid2=( `hexdump -s $s2 -n $n2 -e "6/4 \"%d \n\" " $Cridfile `)
+		c3=${Crid2[5]}
+		s3=$(( $s2+$n2+$c3 ))
+		s2=$s3
+		c2=$c3
+		f=$(($f-1))
+	done
+	
+	if true ; then
+		n3=4
+		Crid3=( `hexdump -s $s3 -n $n3 -e "1/4 \"%d \n\" " $Cridfile `)
+		c4=${Crid3[0]}
+		s4=$(( $s3+$n3+$c4 ))
+		n4=4
+	
+		#echo c1=$c1  c2=$c2  c3=$c3  c4=$c4
+		#Crid4=( `hexdump -s $s4 -n $n4 -e "1/4 \"%d \n\" " $Cridfile` )
+	
+		if [ $c3 != 0 ]; then
+			#EPGshort=`dd bs=1 skip=$(($s3-$c3)) count=$c3 2>/dev/null <$Cridfile`
+			EPGshort=`hexdump -v -s $(($s3-$c3)) -n $c3 -e "/1 \"&#%d;\"" $Cridfile | sed -e 's/^&#5;//'`
+		fi
+		if [ $c4 != 0 ]; then
+			#EPGlong=`dd bs=1 skip=$(($s4-$c4)) count=$c4 2>/dev/null <$Cridfile`
+			EPGlong=`hexdump -v -s $(($s4-$c4)) -n $c4 -e "/1 \"&#%d;\"" $Cridfile | sed -e 's/&#5;//' -e 's/&#138;/\&#10;/g'`
+		fi
+	fi
+fi	
+
+SenderInfo=`grep ${Basename: -5}$ /var/etc/services.txt`
+SenderName=`echo ${SenderInfo:0:20} | iso2html | sed -e 's/^&#5;//'`
+
+. theme header "Titel bearbeiten" = MartinO 300
+
+
+if [ $RecordingState != 3 ] ; then
+	cat<<-EOF
+	<p>
+	<FONT COLOR="#FF0000" size="+2"> <b><center>
+	Wichtige Warnung: Vor dem Ver&auml;ndern von Timern 
+	unbedingt <a href="/cgi-bin/display/static/crid/info-timer-modification.body?Title=Bearbeitung%20von%20Timern&Heading=Probleme%20beim%20Bearbeiten%20von%20Timern">
+	 diese Nachricht</a> lesen! </center></b></FONT>
+	<p>
+	EOF
+fi
+
+cat <<-EOF
+
+`awk "BEGIN {print \"${SenderName} -  \" strftime( \"%d.%m. %H:%M\" , $Begin) \"-\" strftime( \"%H:%M\" , $End) \" : \" ($End-$Begin)/60 \"min\" }"` <p>
+
+<FORM ACTION="${SCRIPT_NAME}${PATH_INFO}?save" METHOD="post">
+	<table><tr>
+		<td>Titel:</td>
+		<td><input type="text" name="Title" value="$Title" size="35"></td>
+	</tr><tr>
+		<td>Untertitel:</td>
+		<td><input type="text" name="EPGshort" value="$EPGshort" size="35"></td>
+	</tr><tr>
+		<td colspan=2> Beschreibung:<br>
+		<TEXTAREA wrap="virtual" name="EPGlong" rows=15 cols=65 MAXLENGTH=800>
+		$EPGlong</TEXTAREA><BR>
+		<INPUT type="Submit" VALUE="Beschreibungen Speichern">
+		<INPUT type="Reset" VALUE="Wiederherstellen">
+		</td>
+	</tr></table>
+</FORM>
+EOF
+
+. theme footer 
+

@@ -1,0 +1,32 @@
+# 
+if [ "$SCRIPT_NAME" != "" ] ; then
+	DIR_NAME=`dirname $SCRIPT_NAME`
+fi
+SERVER_ROOT=${PWD%$DIR_NAME}
+PATH=$PATH:${SERVER_ROOT}/bin
+WWW_SETTINGS=/var/etc/www-settings.txt
+EPG_PATH=/data/EPG
+USUARIO=root:root
+MOSTRAR_MINI_IMG=si
+OBTENER_IMG_INET=si
+
+# settings eligible for redefinition in www-settings.txt:
+THEME_PATH=/themes/css
+Cache=/var/cache
+export TZ=`cat /etc/TZ_jra`
+if [ -f $WWW_SETTINGS ] ; then
+	source $WWW_SETTINGS
+else # write defaults
+	cat <<-EOT >$WWW_SETTINGS
+	Cache=$Cache
+	THEME_PATH=$THEME_PATH
+	EPG_PATH=$EPG_PATH
+	USUARIO=$USUARIO
+	MOSTRAR_MINI_IMG=$MOSTRAR_MINI_IMG
+	OBTENER_IMG_INET=$OBTENER_IMG_INET
+	EOT
+fi
+
+mkdir -p $Cache
+THEME_DIR=${SERVER_ROOT}${THEME_PATH}
+#export DIR_NAME SERVER_ROOT THEME_DIR THEME_PATH Cache

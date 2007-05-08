@@ -1,0 +1,98 @@
+#!/bin/bash 
+# by pepper 23/04/2007
+# Mejorado por jotabe para realizar la lectura por bloques en memoria y acelerar el proceso
+# Retorna el XML con el detalle de un programa
+
+# Ejecutamos el script con baja prioridad
+renice 20 $$ > /dev/null
+
+pid=`echo $QUERY_STRING | cut -d"-" -f1`
+img=`echo $QUERY_STRING | cut -d"-" -f2`
+long=`echo $QUERY_STRING | cut -d"-" -f3`
+channel=`echo $QUERY_STRING | cut -d"-" -f4`
+utc=`echo $QUERY_STRING | cut -d"-" -f5`
+#pid=`echo $1 | cut -d"-" -f1`
+#img=`echo $1 | cut -d"-" -f2`
+#long=`echo $1 | cut -d"-" -f3`
+#channel=`echo $1 | cut -d"-" -f4`
+DiaSemana=([1]="Lun" [2]="Mar" [3]="Mie" [4]="Jue" [5]="Vie" [6]="Sab" [7]="Dom")
+
+source ../www-setup
+
+if [ "$img" != "" ]; then
+    if [ -f ${SERVER_ROOT}/sincro/epg/$img ]; then
+        urlimg="/sincro/epg/$img"
+    else
+        if [ "$OBTENER_IMG_INET" = "si" ]; then
+            urlimg="http://www.inout.tv/fotos/$img"
+        else
+            urlimg="/sincro/img/epg_long_img.png"
+        fi
+    fi
+else
+    urlimg="/sincro/img/epg_long_img.png"
+fi
+EPG_LONG_FILE=$EPG_PATH/EPGLong_$channel.txt.bz2
+EPG_LONG_FILE_UNZIP=/tmp/EPGLong_$channel.txt
+bzcat $EPG_LONG_FILE > $EPG_LONG_FILE_UNZIP
+
+#n=$long
+#byte=`hexdump -v -n 1 -s $n -e '"%d"' $EPG_LONG_FILE_UNZIP`
+#while [ ! $byte -eq 0 ]; do
+#    n=$((n+1))
+#    byte=`hexdump -v -n 1 -s $n -e '"%d"' $EPG_LONG_FILE_UNZIP`
+#done
+#bytesRead=$(($n-$long))
+
+pos=0
+BF=""
+lonBF=0
+end=0
+#lonFile=`wc -c $EPG_LONG_FILE_UNZIP | cut -b1-7`
+lonFile=(`wc -c $EPG_LONG_FILE_UNZIP`)
+
+while [ $end -eq 0 ] ; do
+    # Cargar bloque de datos
+    if [ $pos -ge $lonBF ] ; then
+        # Comprobar final de fichero
+        if [ $((long+pos/2)) -ge $lonFile ] ; then
+            end=$((pos/2))
+            continue
+        fi
+        BF=$BF`hexdump -v -n 128 -s $((long+pos/2)) -e '1/1 "%02X"' $EPG_LONG_FILE_UNZIP`
+        lonBF=${#BF}
+    fi
+
+    # Comprobar final de string
+    if [ "${BF:$pos:2}" = "00" ] ; then
+        end=$((pos/2))
+        continue
+    fi
+
+    # Avanzar posicion y comprobar limite
+    pos=$((pos+2))
+    [ $pos -ge 4096 ] && end=2048
+done
+bytesRead=$end
+
+text=`hexdump -v -n $bytesRead -s $long -e '"%c"' $EPG_LONG_FILE_UNZIP | sed -e 's/&/&amp;/g'`
+
+inRA=`grep $pid /data/RA_FILE | wc -l`
+if [ $inRA -gt 0 ]; then
+    pendiente=1
+else
+    pendiente=0
+fi
+
+rm -f $EPG_LONG_FILE_UNZIP
+#dateFormat=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M - %a\" , $utc) }"`
+ds=`awk "BEGIN {print strftime( \"%u\" , $utc) }"`
+dateFormat=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M\" , $utc) }"`
+dateFormat="$dateFormat, ${DiaSemana[ds]}"
+echo Content-type: text/xml
+echo ""
+echo "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>"
+echo "<?xml-stylesheet type=\"text/xsl\" href=\"/sincro/sincrodetail.xsl\"?>"
+echo "<M750><PGMDETAIL>"
+echo "<TEXT>$text</TEXT><IMG>$urlimg</IMG><LONG>$long</LONG><PIDCID>$pid</PIDCID><CHANNEL_ID>$channel</CHANNEL_ID><DATE>$dateFormat</DATE><PROGRAMMED>$pendiente</PROGRAMMED>"
+echo "</PGMDETAIL></M750>"

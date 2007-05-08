@@ -1,0 +1,21 @@
+#!/bin/bash
+# by pepper
+# Script que programa una grabacion y retorna el resultado en XML
+echo "`date` Peticion de cancelación de grabacion pendiente entrante: $QUERY_STRING" >> /tmp/record.log
+
+echo Content-type: text/xml
+echo ""
+wcpre=`cat /data/RA_FILE | wc -l`
+echo "CANCEL $QUERY_STRING" > /dev/tcp/localhost/2010
+sleep 3
+wcpost=`cat /data/RA_FILE | wc -l`
+
+echo "<M750>"
+if [ $wcpre -gt $wcpost ]; then
+   echo "<RESULT>1</RESULT>"
+   echo "`date` Resultado: OK" >> /tmp/record.log
+else
+   echo "<RESULT>0</RESULT>"
+   echo "`date` Resultado: NOK" >> /tmp/record.log
+fi
+echo "</M750>"

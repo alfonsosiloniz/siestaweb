@@ -1,0 +1,17 @@
+#!/bin/bash 
+# by pepper 28/03/2007
+# Retorna la sincroguia completa.
+# Debido a su complejidad, este script no deberia llamarse nunca
+
+source ../www-setup
+
+echo Content-type: text/xml
+echo ""
+echo "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>"
+echo "<M740><SINCROGUIA>"
+
+for Sincrofile in $EPG_PATH/*.db ; do
+    . ./channelXML $Sincrofile
+done
+
+echo "</SINCROGUIA></M740>"
