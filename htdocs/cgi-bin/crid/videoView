@@ -37,4 +37,4 @@ for mpg in $recordingDir/$fmpg*.mpg
 do
     echo "echo ftp://$user:$pwd@$host:$port$mpg >> $plsfile"
 done
-echo "\"$mplayer\" -cache 2048 -quiet -slave -playlist $plsfile"
+echo "\"$mplayer\" -cache 2048 -quiet -noaspect -aspect 1.25 -playlist $plsfile"
