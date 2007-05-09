@@ -284,6 +284,7 @@ else
 	*.tar)		$action t---	application/x-tar	"tar tcf" ;;
 	*.tiff|*.tif)	$action ---s	image/tiff		;;
 	*.txt)		$action -ev-	text/plain		cat ;;
+	*.sh)		$action -ev-	text/plain		cat ;;
 	*.cfg)		$action -ev-	text/plain		cat ;;
 	*.wav)		$action ----	audio/x-wav		;;
 	*.wsw)		$action ----	application/x-wsw	;;
