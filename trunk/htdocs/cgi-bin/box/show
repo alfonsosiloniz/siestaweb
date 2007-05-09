@@ -99,6 +99,11 @@ function print_top()
 function print_bottom()
 {
     echo "  </table>"
+    echo "  <table width=\"98%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">"
+    echo "  <tr>"
+    echo "    <td class=\"txtNormal\" align=\"right\">Explorador basado en código de <a href=\"http://www.open7x0.org/wiki/Benutzer:Lemmi\">Lemmi</a> bajo licencia <a href=\"http://www.gnu.de/gpl-ger.html\">GPL</a></td>"
+    echo "  </tr>"
+    echo "  </table>"
     echo "  <p>"
     echo "      <div align=\"center\" class=\"txtNormal\"><a href=\"javascript:history.back()\">Atrás</a> | <a href=\"/cgi-bin/sincro/pgmactualXML\">Inicio</a> | "
     echo "      <a href=\"/cgi-bin/crid/timerXML\">Grabaciones Pendientes</a> | <a href=\"/cgi-bin/crid/videoXML\">Grabaciones Realizadas</a> | "
