@@ -78,7 +78,7 @@ function print_top()
     if [[ "$PATH_INFO" != "$realpath" ]]; then
     
     	echo " &nbsp; (symbolic link in path)<br>"
-    	echo "[<a class=\"titChannel\" href=\"ftp://`hostname -f`$realpath\">FTP</a>] &nbsp;"
+    	#echo "[<a class=\"titChannel\" href=\"ftp://`hostname -f`$realpath\">FTP</a>] &nbsp;"
     
     	tmpfile=`basename "$realpath"`
     	tmppath=`dirname "$realpath"`
