@@ -43,7 +43,7 @@
     <div align="center" class="txtNormal">Espacio en disco: <xsl:value-of select="M750/SPACE"/><br/><br/></div> 
     <table width="98%" border="0" cellspacing="0" cellpadding="2" align="center" class="borderTabla2">
     <tr bgcolor="#ffb310">
-      <th class="fila" align="center">E   D</th>
+      <th class="fila" align="center">E   D   V</th>
       <th class="fila" align="left"><a href="/cgi-bin/crid/videoXML?serie" title="Ordenar por Series">Título</a></th>
       <th class="fila" align="left">Inicio</th>
       <th class="fila" align="left">Final</th>
@@ -60,6 +60,10 @@
 	    <xsl:text> </xsl:text>
 	    <xsl:element name="a"><xsl:attribute name="href">/sincro/download.html?crid=<xsl:value-of select="CRID_FILE"/></xsl:attribute>
 	    <img src="/sincro/img/icon-save.gif" alt="Descargar Grabación" width="16" height="16" border="0" />
+	    </xsl:element>
+	    <xsl:text> </xsl:text>
+	    <xsl:element name="a"><xsl:attribute name="href">/sincro/visualizar.html?crid=<xsl:value-of select="CRID_FILE"/></xsl:attribute>
+	    <img src="/sincro/img/muangelo.gif" alt="Visualizar Grabación" width="18" height="18" border="0" />
 	    </xsl:element>
       </td>
       <td class="fila">
