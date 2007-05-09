@@ -14,8 +14,8 @@ function print_actions()
     [[ $action != view && ${flags/*v*/ok} == "ok" ]] \
 	&& echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?view\">VIEW</a>]"
 
-    [[ $action != hexdump ]] \
-	&& echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?hexdump\">HEXDUMP</a>]"
+    #[[ $action != hexdump ]] \
+	#&& echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?hexdump\">HEXDUMP</a>]"
 
     if [[ $action != edit && ${flags/*e*/ok} == "ok" ]]; then
 	info=(`ls -l "$PATH_INFO"`)
