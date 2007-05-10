@@ -10,6 +10,7 @@ user=`echo $QUERY_STRING | cut -d"&" -f4 | cut -d"=" -f2`
 pwd=`echo $QUERY_STRING | cut -d"&" -f5 | cut -d"=" -f2`
 mplayer=`echo $QUERY_STRING | cut -d"&" -f6 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g' | sed -e 's/+/ /g'`
 tmpdir=`echo $QUERY_STRING | cut -d"&" -f7 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g'`
+aspect=`echo $QUERY_STRING | cut -d"&" -f8 | cut -d"=" -f2`
 
 declare -a Crid0
 declare -a Crid1
@@ -27,6 +28,8 @@ s2=$(( $s1+$n1+$c2 ))
 fmpg=`hexdump -v -n $c2 -s $(($s1+$n1)) -e '"%c"' $Cridfile | sed -e 's/&/&amp;/g'`
 recordingDir=`dirname $Cridfile`
 
+echo "$host, $port, $Cridfile, ${fmpg}*, $user, $pwd, $aspect, Titulo: $Title" >> /tmp/view_video.log
+
 plsfile=$tmpdir/mplayer_temp_`date +%s`.pls
 
 echo "Content-type: application/octet-stream"
@@ -37,4 +40,4 @@ for mpg in $recordingDir/$fmpg*.mpg
 do
     echo "echo ftp://$user:$pwd@$host:$port$mpg >> $plsfile"
 done
-echo "\"$mplayer\" -cache 2048 -quiet -noaspect -aspect 1.25 -playlist $plsfile"
+echo "\"$mplayer\" -cache 2048 -quiet -noaspect -aspect $aspect -playlist $plsfile"
