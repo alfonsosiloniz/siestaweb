@@ -1,0 +1,37 @@
+#!/bin/bash
+# by pepper, 02/05/2007
+# Script que genera un fichero de comandos con las instrucciones necesarias para visualizar una grabación en el PC local
+# mediante MPlayer
+
+host=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2`
+port=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2`
+user=`echo $QUERY_STRING | cut -d"&" -f3 | cut -d"=" -f2`
+pwd=`echo $QUERY_STRING | cut -d"&" -f4 | cut -d"=" -f2`
+mplayer=`echo $QUERY_STRING | cut -d"&" -f5 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g' | sed -e 's/+/ /g'`
+tmpdir=`echo $QUERY_STRING | cut -d"&" -f6 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g'`
+aspect=`echo $QUERY_STRING | cut -d"&" -f7 | cut -d"=" -f2`
+
+fmpg=`./getfmpgts`
+if [ "$fmpg" != "" ]; then
+    plsfile=$tmpdir/mplayer_temp_`date +%s`.pls
+    
+    echo "Content-type: application/octet-stream"
+    echo "Content-Disposition: attachment; filename=verTS.cmd"
+    echo ""
+    echo "@echo off > $plsfile"
+    i=0
+    while [ $i -lt 30 ]
+    do
+        if [ $i -lt 10 ]; then
+            echo "echo ftp://$user:$pwd@$host:$port${fmpg}.00$i.mpg >> $plsfile"
+        else
+            echo "echo ftp://$user:$pwd@$host:$port${fmpg}.0$i.mpg >> $plsfile"
+        fi
+        i=$((i+1))
+    done    
+    echo "\"$mplayer\" -cache 2048 -quiet -noaspect -aspect $aspect -playlist $plsfile"
+else
+    echo "Content-type: text/plain"
+    echo ""
+    echo "ERROR: No se ha encontrado fichero de TimeShift"
+fi
