@@ -1,0 +1,19 @@
+#!/bin/bash
+# by pepper, 10/05/2007
+# Script para la visualización de la TV en directo (necesita matar el wavebox)
+
+host=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2`
+port=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2`
+localPC=`echo $QUERY_STRING | cut -d"&" -f3 | cut -d"=" -f2`
+dvbstream=`echo $QUERY_STRING | cut -d"&" -f4 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%2F/\//g' | sed -e 's/+/ /g'`
+mplayer=`echo $QUERY_STRING | cut -d"&" -f5 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g' | sed -e 's/+/ /g'`
+aspect=`echo $QUERY_STRING | cut -d"&" -f6 | cut -d"=" -f2`
+freq=`echo $QUERY_STRING | cut -d"&" -f7 | cut -d"=" -f2`
+p1=`echo $QUERY_STRING | cut -d"&" -f8 | cut -d"=" -f2`
+p2=`echo $QUERY_STRING | cut -d"&" -f9 | cut -d"=" -f2`
+p3=`echo $QUERY_STRING | cut -d"&" -f10 | cut -d"=" -f2`
+
+echo "Content-type: application/octet-stream"
+echo "Content-Disposition: attachment; filename=M750_TVLive.cmd"
+echo ""
+echo "\"$mplayer\" -framedrop -cache 2048 -aspect $aspect -quiet -slave rtp://$host:$port"
