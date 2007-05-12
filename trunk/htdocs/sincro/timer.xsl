@@ -43,7 +43,9 @@
        <p> 
         <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
         <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-        <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/data">Editor / Explorador de Archivos</a></div> 
+        <a href="/index.html">Salir</a><br/><br/>
+        <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> |
+        <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV+10</a></div> 
     </p> 
     <div align="center" class="txtNormal">Espacio en disco: <xsl:value-of select="M750/SPACE"/><br/><br/></div> 
     <table width="98%" border="0" cellspacing="0" cellpadding="2" align="center" class="borderTabla2">
@@ -78,7 +80,9 @@
     <p>
         <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
         <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-        <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/data">Editor / Explorador de Archivos</a></div>
+        <a href="/index.html">Salir</a><br/><br/>
+        <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> |
+        <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV+10</a></div>
     </p>
   </body>
   </html>
