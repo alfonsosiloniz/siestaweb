@@ -10,7 +10,6 @@ user=`echo $QUERY_STRING | cut -d"&" -f4 | cut -d"=" -f2`
 pwd=`echo $QUERY_STRING | cut -d"&" -f5 | cut -d"=" -f2`
 mplayer=`echo $QUERY_STRING | cut -d"&" -f6 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g' | sed -e 's/+/ /g'`
 tmpdir=`echo $QUERY_STRING | cut -d"&" -f7 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g'`
-aspect=`echo $QUERY_STRING | cut -d"&" -f8 | cut -d"=" -f2`
 
 declare -a Crid0
 declare -a Crid1
@@ -40,4 +39,4 @@ for mpg in $recordingDir/$fmpg*.mpg
 do
     echo "echo ftp://$user:$pwd@$host:$port$mpg >> $plsfile"
 done
-echo "\"$mplayer\" -cache 2048 -quiet -noaspect -aspect $aspect -playlist $plsfile"
+echo "\"$mplayer\" -cache 2048 -quiet -autosync 30 -framedrop -noaspect -ni -playlist $plsfile"
