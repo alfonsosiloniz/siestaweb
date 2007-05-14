@@ -17,6 +17,16 @@ function init() {
 function enviar() {
     document.forms[0].submit();
 }
+function cambioSO() {
+	if (document.forms[0].so.value==0) {
+	 	document.forms[0].mplayer.value="\/usr\/bin\/mplayer";
+		document.forms[0].temp.value="\/tmp";
+	}
+	else {
+	 	document.forms[0].mplayer.value="C:\\Archivos de programa\\mplayer\\mplayer.exe";
+	 	document.forms[0].temp.value="C:\\Temp";
+ 	}
+}
 </script>
 <body bgcolor="#FFFFFF" onload="init();">
 <form name="formulario" action="/cgi-bin/crid/videoView" method="get">
@@ -65,6 +75,16 @@ function enviar() {
 	        <option value="1.25">1.25</option>
 	    </select>
 	</td>
+</tr>
+<tr>
+    <td class="txtNormal">Sistema operativo:</td>
+    <td class="txtNormal">
+    <select size="1" name="so" onchange="javascript:cambioSO();">
+        <option value="1" selected>Windows</option>
+        <option value="0">Linux/Unix</option>
+    </select>
+    <b><font color="#ff0000">Seleccione esto lo primero</font></b>
+    </td>
 </tr>
 <tr>
 	<td class="txtNormal" height="20" colspan="2">&nbsp;</td>
