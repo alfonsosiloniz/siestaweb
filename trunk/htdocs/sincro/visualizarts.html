@@ -15,6 +15,16 @@ function init() {
 function enviar() {
     document.forms[0].submit();
 }
+function cambioSO() {
+	if (document.forms[0].so.value==0) {
+	 	document.forms[0].mplayer.value="\/usr\/bin\/mplayer";
+		document.forms[0].temp.value="\/tmp";
+	}
+	else {
+	 	document.forms[0].mplayer.value="C:\\Archivos de programa\\mplayer\\mplayer.exe";
+	 	document.forms[0].temp.value="C:\\Temp";
+ 	}
+}
 </script>
 <body bgcolor="#FFFFFF" onload="init();">
 <form name="formulario" action="/cgi-bin/crid/tsView" method="get">
@@ -23,9 +33,20 @@ function enviar() {
 <p>
     <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
     <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-    <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a></div>
+    <a href="/index.html">Salir</a><br/><br/>
+    <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> |
+        <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a></div>
 </p>
 <table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
+<tr>
+	<td class="txtInfo" colspan="2">Mediante esta opción podrás ver la TV en directo, utilizando la grabación del TimeShift
+	    que realiza el gigaset. Obviamente necesitas tener el TimeShift activado para utilizarlo.<br>
+	    El único problema es que esto obliga a ver la TV con 10 minutos de retraso. Esto es debido a que el gigaset graba ficheros
+	    mpg de 10 minutos de duración, y hasta que no finaliza el primero, no podemos abrirlo para su reproducción.<br>
+	    Si comienzas la reproducción antes de esos 10 minutos, lo único que notarás es que pasados unos segundos, la reproducción se cortará.<br>
+	    La ventaja de este método es que no necesita matar los procesos del gigaset, y por tanto no se necesita reiniar después de la finalización de la reproducción.<br><br>
+	</td>
+</tr>
 <tr>
 	<td class="txtNormal">Host: </td>
 	<td class="txtNormal"><input type="text" name="host" size="50" maxlength="100" class="cajaplana"></td>
@@ -54,10 +75,21 @@ function enviar() {
 	<td class="txtNormal">Relación de Aspecto:</td>
 	<td class="txtNormal">
 	    <select size="1" name="aspect">
-	        <option value="1.25" selected>4:3</option>
+	        <option value="1.33" selected>4:3</option>
 	        <option value="1.7777">16:9</option>
+	        <option value="1.25">1.25</option>
 	    </select>
 	</td>
+</tr>
+<tr>
+    <td class="txtNormal">Sistema operativo:</td>
+    <td class="txtNormal">
+    <select size="1" name="so" onchange="javascript:cambioSO();">
+        <option value="1" selected>Windows</option>
+        <option value="0">Linux/Unix</option>
+    </select>
+    <b><font color="#ff0000">Seleccione esto lo primero</font></b>
+    </td>
 </tr>
 <tr>
 	<td class="txtNormal" height="20" colspan="2">&nbsp;</td>
@@ -1175,7 +1207,9 @@ function enviar() {
 <p>
     <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
     <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-    <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a><br/><br/>
+    <a href="/index.html">Salir</a><br/><br/>
+    <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> |
+        <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a><br/><br/>
     <a href="/autores.html">Autores</a></div>
 </p>
 </form>
