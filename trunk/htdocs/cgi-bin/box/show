@@ -285,6 +285,7 @@ else
 	*.tiff|*.tif)	$action ---s	image/tiff		;;
 	*.txt)		$action -ev-	text/plain		cat ;;
 	*.crontab)		$action -ev-	text/plain		cat ;;
+	*.conf)		$action -ev-	text/plain		cat ;;
 	*.sh)		$action -ev-	text/plain		cat ;;
 	*.cfg)		$action -ev-	text/plain		cat ;;
 	*.wav)		$action ----	audio/x-wav		;;
