@@ -1,0 +1,10 @@
+#!/bin/bash
+# by pepper, 10/05/2007
+# Script para matar el servidor de streaming
+
+pkill -HUP dvbstream 2> /dev/null
+
+echo Content-type: text/xml
+echo ""
+echo "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>"
+echo "<M750><RESULT>1</RESULT></M750>"
