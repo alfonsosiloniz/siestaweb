@@ -109,8 +109,9 @@ function print_top()
         	<td class="txtNormal">Relación de Aspecto:</td>
         	<td class="txtNormal">
         	    <select size="1" name="aspect">
-        	        <option value="1.25" selected>4:3</option>
+        	        <option value="1.3333" selected>4:3</option>
         	        <option value="1.7777">16:9</option>
+        	        <option value="1.25">1.25</option>
         	    </select>
         	</td>
         </tr>
