@@ -12,9 +12,6 @@ function getXML() {
             var xmldoc = http_request.responseXML;
            	eval(funcio_parse_XML)(xmldoc);
         } 
-        else {
-            alert('Error al realizar la peticion al servidor');
-        }
     }
 }
 

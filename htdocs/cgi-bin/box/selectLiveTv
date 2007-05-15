@@ -2,6 +2,8 @@
 
 function print_top()
 {
+    echo Content-type: text/html
+    echo ""
 	cat <<- ---EOT---
         <html>
         <title>M750T - Ver LiveTV</title>
@@ -28,14 +30,20 @@ function print_top()
                 f.ip.focus();
                 return;
             }
-            f.freq.value=frq;
-            f.p1.value=p1;
-            f.p2.value=p2;
-            f.p3.value=p3;
-            f.action="/cgi-bin/box/startdvbstream";
-            if (is_ie)
-              mostrarMensajeProceso();
-            makeRequest(f.action + "?" + getFormParameters(f), "mostrarXMLRespuesta");
+            //if (is_ie)
+            //  mostrarMensajeProceso();
+            url="/cgi-bin/box/startdvbstream?host=" + f.host.value;
+            url+="&port=" + f.port.value;
+            url+="&ip=" + f.ip.value;
+            url+="&dvbstream=" + f.dvbstream.value;
+            url+="&mplayer=" + f.mplayer.value;
+            url+="&aspect=" + f.aspect.value;
+            url+="&freq=" + frq;
+            url+="&p1=" + p1;
+            url+="&p2=" + p2;
+            url+="&p3=" + p3;
+            makeRequest(url+"&date="+new Date().getTime(), "mostrarXMLRespuesta");
+            alert("Se ha enviado la petición.\nEjecuta M750_TVLive.cmd y si no se inicia la reproducción comprueba que los datosintroducidos eran correctos");
         }
         function download() {
             f=document.forms[0];
@@ -48,15 +56,21 @@ function print_top()
             alert("Se ha mandado la petición de Reboot.\nEn unos segundos el sistema se reiniciará");
           }
         }
+        function stopServer() {
+          if (confirm("¿Confirma el Stop del Servidor de Streaming?")) {
+            makeRequest("/cgi-bin/box/stopdvbstream?" + new Date().getTime(), "noReply");
+            alert("Se ha mandado la petición de Stop del servidor de Streaming.\nYa puedes cambiar de canal");
+          }
+        }
         function noReply(xmldoc) {}
         function mostrarXMLRespuesta(xmldoc) {
-          if (is_ie)
+          /*if (is_ie)
             eliminarMensajeProceso();
           result = xmldoc.getElementsByTagName("RESULT");
           if (result[0].firstChild.data == "1")
             alert("Servidor DVBStream arrancado correctamente");
           else
-            alert("Se ha producido un error arrancando el servidor DVBStream.\nRevisa los datos del path y vuelve a probar.");
+            alert("Se ha producido un error arrancando el servidor DVBStream.\nRevisa los datos del path y vuelve a probar.");*/
         }
         </script>
         <body bgcolor="#FFFFFF" onload="init();">
@@ -66,7 +80,9 @@ function print_top()
         <p>
             <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
             <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-            <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a></div>
+            <a href="/index.html">Salir</a><br/><br/>
+            <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> |
+            <a href="/sincro/visualizarts.html">Ver LiveTV+10</a></div>
         </p>
         <table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
         <tr>
@@ -125,7 +141,9 @@ function print_bottom()
         <p>
             <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
             <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-            <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a><br/><br/>
+            <a href="/index.html">Salir</a><br/><br/>
+            <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> |
+            <a href="/sincro/visualizarts.html">Ver LiveTV+10</a><br/><br/>
             <a href="/autores.html">Autores</a></div>
         </p>
         <input type="hidden" name="freq" value="">
@@ -165,7 +183,7 @@ fi
 cat < $CACHE_FILE
 
 echo "              </select></td>"
-echo "              <td class=\"txtNormal\" valign=\"top\"><font class="titChannel">Paso 3</font>: <br><br>Matar wavebox y ejecución del <b>dvbstream</b>:<br><br><input type=\"button\" value=\"Iniciar dvbstream\" onclick=\"startStream();\" class=\"cajaPlana\">"
+echo "              <td class=\"txtNormal\" valign=\"top\"><font class="titChannel">Paso 3</font>: <br><br>Matar wavebox y ejecución del <b>dvbstream</b>:<br><br><input type=\"button\" value=\"1. Stop dvbstream\" onclick=\"stopServer();\" class=\"cajaPlana\"><br><input type=\"button\" value=\"2. Start dvbstream\" onclick=\"startStream();\" class=\"cajaPlana\">"
 echo "              <td class=\"txtNormal\" valign=\"top\"><font class="titChannel">Paso 4</font>: <br><br>Ejecuta en el PC el fichero <b>M750_TVLive.cmd</b>."
 echo "          </tr>"
 echo "        </table></td>"
