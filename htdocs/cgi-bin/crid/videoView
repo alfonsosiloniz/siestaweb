@@ -12,6 +12,7 @@ mplayer=`echo $QUERY_STRING | cut -d"&" -f6 | cut -d"=" -f2 | sed -e 's/%20/ /g'
 tmpdir=`echo $QUERY_STRING | cut -d"&" -f7 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g' | sed -e 's/%2F/\//g'`
 aspect=`echo $QUERY_STRING | cut -d"&" -f8 | cut -d"=" -f2`
 so=`echo $QUERY_STRING | cut -d"&" -f9 | cut -d"=" -f2`
+encurso=`echo $QUERY_STRING | cut -d"&" -f10 | cut -d"=" -f2`
 
 mplayerOptions="-cache 2048 -quiet -noaspect -aspect $aspect -autosync 30 -framedrop -ni"
 
@@ -43,19 +44,45 @@ if [ $so -eq 0 ] ; then
     echo "#!/bin/sh"
     echo "rm -f $plsfile"
     echo "touch $plsfile"
-    for mpg in $recordingDir/$fmpg*.mpg
-    do
-        echo "echo \"ftp://$user:$pwd@$host:$port$mpg\" >> $plsfile"
-    done
+    if [ "$encurso" = "NO" ]; then
+        for mpg in $recordingDir/$fmpg*.mpg
+        do
+            echo "echo \"ftp://$user:$pwd@$host:$port$mpg\" >> $plsfile"
+        done
+    else
+        i=0
+        while [ $i -lt 40 ]
+        do
+            if [ $i -lt 10 ]; then
+                echo "echo \"ftp://$user:$pwd@$host:$port${recordingDir}/${fmpg}.00$i.mpg\" >> $plsfile"
+            else
+                echo "echo \"ftp://$user:$pwd@$host:$port${recordingDir}/${fmpg}.0$i.mpg\" >> $plsfile"
+            fi
+            i=$((i+1))
+        done
+    fi
     echo "$mplayer $mplayerOptions -playlist $plsfile"
 else
 	#echo Windows
     echo "Content-Disposition: attachment; filename=visualizar_grabacion.cmd"
     echo ""
     echo "@echo off > $plsfile"
-    for mpg in $recordingDir/$fmpg*.mpg
-    do
-        echo "echo ftp://$user:$pwd@$host:$port$mpg >> $plsfile"
-    done
+    if [ "$encurso" = "NO" ]; then
+        for mpg in $recordingDir/$fmpg*.mpg
+        do
+            echo "echo ftp://$user:$pwd@$host:$port$mpg >> $plsfile"
+        done
+    else
+        i=0
+        while [ $i -lt 40 ]
+        do
+            if [ $i -lt 10 ]; then
+                echo "echo ftp://$user:$pwd@$host:$port${recordingDir}/${fmpg}.00$i.mpg >> $plsfile"
+            else
+                echo "echo ftp://$user:$pwd@$host:$port${recordingDir}/${fmpg}.0$i.mpg >> $plsfile"
+            fi
+            i=$((i+1))
+        done
+    fi
     echo "\"$mplayer\" $mplayerOptions -playlist $plsfile"
 fi
