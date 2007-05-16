@@ -37,9 +37,9 @@ function cambioSO() {
     <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
     <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a></div>
 </p>
-<table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
+<table width="98%" border="0" cellspacing="2" cellpadding="0" align="center">
 <tr>
-	<td class="txtNormal">Host: </td>
+	<td class="txtNormal" width="150">Host: </td>
 	<td class="txtNormal"><input type="text" name="host" size="50" maxlength="100" class="cajaplana"></td>
 </tr>
 <tr>
@@ -79,11 +79,30 @@ function cambioSO() {
 <tr>
     <td class="txtNormal">Sistema operativo:</td>
     <td class="txtNormal">
-    <select size="1" name="so" onchange="javascript:cambioSO();">
-        <option value="1" selected>Windows</option>
-        <option value="0">Linux/Unix</option>
-    </select>
-    <b><font color="#ff0000">Seleccione esto lo primero</font></b>
+        <select size="1" name="so" onchange="javascript:cambioSO();">
+            <option value="1" selected>Windows</option>
+            <option value="0">Linux/Unix</option>
+        </select>
+    </td>
+</tr>
+<tr>
+    <td class="txtNormal" valign="top">Grabación en curso:</td>
+    <td class="txtNormal">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+        <tr>
+            <td class="txtNormal"  valign="top">
+                <select size="1" name="encurso">
+                    <option value="NO" selected>No</option>
+                    <option value="SI">Sí</option>
+                </select>
+            </td>
+            <td width="4">&nbsp;<td>
+            <td class="txtInfo" valign="top">
+                Si la grabación está en curso, seleccione Sí. Podrá comenzar a verla una vez transcurridos los primeros 10 minutos de grabación.
+                (Si todavía no han transcurrido los primeros 10 minutos, la reproducción puede sufrir cortes inesperados y deberá reiniciar la reproducción.)
+            </td>
+        </tr>
+        </table>
     </td>
 </tr>
 <tr>
