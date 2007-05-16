@@ -13,6 +13,9 @@ function init() {
     host=host.substring(0, index);
     document.forms[0].host.value=host;
     document.forms[0].cridfile.value=getparam("crid", document.location.href);
+    encurso=getparam("recording", document.location.href);
+    if (encurso=="yes")
+        document.forms[0].encurso.selectedIndex=1;
 }
 function enviar() {
     document.forms[0].submit();

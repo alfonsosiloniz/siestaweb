@@ -23,8 +23,10 @@ if [ -d $video_dir ]; then
   disk_spaceGb=$((disk_spaceMb/1024))
   echo "<SPACE>$disk_spaceMb Mb ($disk_spaceGb Gb ~ $((disk_spaceGb/2)) horas)</SPACE>" 
 fi 
-echo "<${Title}>"
+
 DiaSemana=([1]="Lun" [2]="Mar" [3]="Mie" [4]="Jue" [5]="Vie" [6]="Sab" [7]="Dom")
+
+echo "<${Title} now=\"`date +%s`\">"
 if [ -d $Recordings ]; then
     for Cridfile in $Recordings/*.crid ; do
     	Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
@@ -46,7 +48,7 @@ if [ -d $Recordings ]; then
             ds=`awk "BEGIN {print strftime( \"%u\" , $End) }"`
             dateFormatFin=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M\" , $End) }"`
             dateFormatFin="$dateFormatFin, ${DiaSemana[ds]}"
-            awk "BEGIN {print \"<INIT_TIME>$dateFormatIni</INIT_TIME><END_TIME>$dateFormatFin</END_TIME><DURATION>\" ($End-$Begin)/60 \"</DURATION><UTC_TIME>$Begin</UTC_TIME>\" }" >> $Cachefile
+            awk "BEGIN {print \"<INIT_TIME>$dateFormatIni</INIT_TIME><END_TIME>$dateFormatFin</END_TIME><DURATION>\" ($End-$Begin)/60 \"</DURATION><UTC_TIME>$Begin</UTC_TIME><UTC_END_TIME>$End</UTC_END_TIME>\" }" >> $Cachefile
             echo "<SERIE_ID>$serieId</SERIE_ID><PIDCID>${pidcid}</PIDCID>" >> $Cachefile
             echo "</RECORD>" >> $Cachefile
     	fi

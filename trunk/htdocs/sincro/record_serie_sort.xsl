@@ -7,6 +7,7 @@
   <title>M750T - Grabaciones Realizadas</title>
   <link href="/sincro/css/estilos.css" rel="stylesheet" type="text/css"></link>
   <script language="JavaScript" src="/sincro/js/ajax.js"></script>
+  <script language="JavaScript" src="/sincro/js/blink.js"></script>
   <script language="JavaScript" src="/sincro/js/navigator.js"></script>
   <script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
   <script>
@@ -54,24 +55,38 @@
     <xsl:for-each select="M750/RECORDINGS/RECORD">
     <xsl:sort select="SERIE_ID" order="descending" />
     <tr>
-      <td class="fila" valign="middle">
-        <xsl:element name="a">
-	    <xsl:attribute name="href">javascript:deleteRec("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
-	    <img src="/sincro/img/red_ball.jpg" alt="Eliminar Grabación" width="18" height="18" border="0" />
-	    </xsl:element>
-	    <xsl:text> </xsl:text>
-	    <xsl:element name="a"><xsl:attribute name="href">/sincro/download.html?crid=<xsl:value-of select="CRID_FILE"/></xsl:attribute>
-	    <img src="/sincro/img/icon-save.gif" alt="Descargar Grabación" width="16" height="16" border="0" />
-	    </xsl:element>
-	    <xsl:text> </xsl:text>
-	    <xsl:element name="a"><xsl:attribute name="href">/sincro/visualizar.html?crid=<xsl:value-of select="CRID_FILE"/></xsl:attribute>
-	    <img src="/sincro/img/muangelo.gif" alt="Visualizar Grabación" width="18" height="18" border="0" />
-	    </xsl:element>
+    <td class="fila" align="right" width="65">
+        <xsl:choose>
+        <xsl:when test="UTC_TIME &gt; /M750/RECORDINGS/@now or UTC_END_TIME &lt; /M750/RECORDINGS/@now">
+            <xsl:element name="a">
+    	    <xsl:attribute name="href">javascript:deleteRec("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
+    	    <img src="/sincro/img/red_ball.jpg" alt="Eliminar Grabación" width="18" height="18" border="0" />
+    	    </xsl:element>
+    	    <xsl:text> </xsl:text>
+    	    <xsl:element name="a"><xsl:attribute name="href">/sincro/download.html?crid=<xsl:value-of select="CRID_FILE"/></xsl:attribute>
+    	    <img src="/sincro/img/icon-save.gif" alt="Descargar Grabación" width="16" height="16" border="0" />
+    	    </xsl:element>
+    	    <xsl:text> </xsl:text>
+    	    <xsl:element name="a"><xsl:attribute name="href">/sincro/visualizar.html?crid=<xsl:value-of select="CRID_FILE"/>&#x26;recording=no</xsl:attribute>
+	        <img src="/sincro/img/muangelo.gif" alt="Visualizar Grabación" width="18" height="18" border="0" />
+	        </xsl:element>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:element name="a"><xsl:attribute name="href">/sincro/visualizar.html?crid=<xsl:value-of select="CRID_FILE"/>&#x26;recording=yes</xsl:attribute>
+	        <img src="/sincro/img/muangelo.gif" alt="Visualizar Grabación" width="18" height="18" border="0" />
+	        </xsl:element>
+        </xsl:otherwise>
+        </xsl:choose>
       </td>
       <td class="fila">
         <xsl:element name="a">
 	    <xsl:attribute name="href">/cgi-bin/crid/titleXML?<xsl:value-of select="CRID_FILE"/></xsl:attribute>
 	    <xsl:value-of select="TITLE"/></xsl:element>
+	    <xsl:choose>
+	    <xsl:when test="UTC_TIME &lt; /M750/RECORDINGS/@now and UTC_END_TIME &gt; /M750/RECORDINGS/@now">
+            <blink><font class="txtInfo">(en curso)</font></blink>
+        </xsl:when>
+        </xsl:choose>
       </td>
       <td class="fila"><xsl:value-of select="INIT_TIME"/></td>
       <td class="fila"><xsl:value-of select="END_TIME"/></td>
