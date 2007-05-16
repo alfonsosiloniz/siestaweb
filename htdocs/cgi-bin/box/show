@@ -14,8 +14,8 @@ function print_actions()
     [[ $action != view && ${flags/*v*/ok} == "ok" ]] \
 	&& echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?view\">VIEW</a>]"
 
-    #[[ $action != hexdump ]] \
-	#&& echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?hexdump\">HEXDUMP</a>]"
+    [[ $action != hexdump ]] \
+	&& echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?hexdump\">HEXDUMP</a>]"
 
     if [[ $action != edit && ${flags/*e*/ok} == "ok" ]]; then
 	info=(`ls -l "$PATH_INFO"`)
@@ -146,7 +146,7 @@ function hexdump()
     echo "    <td class=\"fila\">"
     print_actions
     echo -n "<pre>"
-    head -c 1000000 "$PATH_INFO" | hexdump | sed 's/&/\&amp;/g;s/</\&lt;/g'
+    head -c 1000000 "$PATH_INFO" | hexdump16 | sed 's/&/\&amp;/g;s/</\&lt;/g'
     echo "</pre>"
     print_actions
     echo "</td></tr>"
@@ -285,7 +285,6 @@ else
 	*.tiff|*.tif)	$action ---s	image/tiff		;;
 	*.txt)		$action -ev-	text/plain		cat ;;
 	*.crontab)		$action -ev-	text/plain		cat ;;
-	*.conf)		$action -ev-	text/plain		cat ;;
 	*.sh)		$action -ev-	text/plain		cat ;;
 	*.cfg)		$action -ev-	text/plain		cat ;;
 	*.wav)		$action ----	audio/x-wav		;;
