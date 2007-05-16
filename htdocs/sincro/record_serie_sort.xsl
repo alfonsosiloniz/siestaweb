@@ -57,7 +57,7 @@
     <tr>
     <td class="fila" align="right" width="65">
         <xsl:choose>
-        <xsl:when test="UTC_TIME &gt; /M750/RECORDINGS/@now or UTC_END_TIME &lt; /M750/RECORDINGS/@now">
+        <xsl:when test="UTC_END_TIME &lt; /M750/RECORDINGS/@now">
             <xsl:element name="a">
     	    <xsl:attribute name="href">javascript:deleteRec("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
     	    <img src="/sincro/img/red_ball.jpg" alt="Eliminar Grabación" width="18" height="18" border="0" />
@@ -83,7 +83,7 @@
 	    <xsl:attribute name="href">/cgi-bin/crid/titleXML?<xsl:value-of select="CRID_FILE"/></xsl:attribute>
 	    <xsl:value-of select="TITLE"/></xsl:element>
 	    <xsl:choose>
-	    <xsl:when test="UTC_TIME &lt; /M750/RECORDINGS/@now and UTC_END_TIME &gt; /M750/RECORDINGS/@now">
+	    <xsl:when test="UTC_END_TIME &gt; /M750/RECORDINGS/@now">
             <blink><font class="txtInfo">(en curso)</font></blink>
         </xsl:when>
         </xsl:choose>
