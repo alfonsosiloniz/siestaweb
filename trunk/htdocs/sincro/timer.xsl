@@ -82,7 +82,8 @@
         <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
         <a href="/index.html">Salir</a><br/><br/>
         <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> |
-        <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV+10</a></div>
+        <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV+10</a><br/><br/>
+        <a href="/cgi-bin/sincro/verlog">Ver Log</a> | <a href="/cgi-bin/box/estado">Ver Estado</a></div>
     </p>
   </body>
   </html>
