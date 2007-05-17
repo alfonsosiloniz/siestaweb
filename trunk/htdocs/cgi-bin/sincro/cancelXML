@@ -3,6 +3,9 @@
 # Script que programa una grabacion y retorna el resultado en XML
 echo "`date` Peticion de cancelación de grabacion pendiente entrante: $QUERY_STRING" >> /tmp/record.log
 
+# Configurar entorno
+source ../www-setup
+
 echo Content-type: text/xml
 echo ""
 wcpre=`cat /data/RA_FILE | wc -l`
@@ -12,10 +15,11 @@ wcpost=`cat /data/RA_FILE | wc -l`
 
 echo "<M750>"
 if [ $wcpre -gt $wcpost ]; then
-   echo "<RESULT>1</RESULT>"
-   echo "`date` Resultado: OK" >> /tmp/record.log
+    rm -f $Cache/*${QUERY_STRING}.refXML 2> /dev/null
+    echo "<RESULT>1</RESULT>"
+    echo "`date` Resultado: OK" >> /tmp/record.log
 else
-   echo "<RESULT>0</RESULT>"
-   echo "`date` Resultado: NOK" >> /tmp/record.log
+    echo "<RESULT>0</RESULT>"
+    echo "`date` Resultado: NOK" >> /tmp/record.log
 fi
 echo "</M750>"
