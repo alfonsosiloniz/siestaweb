@@ -32,15 +32,29 @@ if [ -d $Recordings ]; then
     	Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
     	if [ $Cridfile -nt $Cachefile ] ; then
     		declare -a Crid0
+    		declare -a Crid1
+
     		#Crid0=( `hexdump -n 50 -e '11/4 "%d \n" 1/2 "%d \n" 1/4 "%d \n" ' $Cridfile ` )
     		Crid0=( `hexdump -n 50 -e '1/4 "%d \n" 1/4 "%X" "\n" 1/4 "%X" "\n" 8/4 "%d \n" 1/2 "%d \n" 1/4 "%d \n" ' $Cridfile ` )
             pidcid1=`printf "%08X" 0x${Crid0[1]}`
             pidcid2=`printf "%08X" 0x${Crid0[2]}`
             pidcid=${pidcid1}${pidcid2}
     		c1=${Crid0[12]}
+    		n1=8
+            s1=$(( 50 + $c1 ))
     		Begin=${Crid0[4]}
     		End=${Crid0[5]}
     		serieId=${Crid0[10]}
+            if [ "$Title" = "RECORDINGS" ]; then
+                Crid1=( `hexdump -s $s1 -n $n1 -e "2/4 \"%d \n\" " $Cridfile ` )
+                c2=${Crid1[1]}
+                s2=$(( $s1+$n1+$c2 ))
+                fmpg=`hexdump -v -n $c2 -s $(($s1+$n1)) -e '"%c"' $Cridfile | sed -e 's/&/&amp;/g'`
+                du=(`du -chs $Recordings/${fmpg}* | tail -1`)
+            else
+                fmpg=""
+                du=0
+            fi
     		echo -n "<RECORD><CRID_FILE>$Cridfile</CRID_FILE><TITLE>"` hexdump -v -s 50 -n $c1 -e "/1 \"&#%d;\"" $Cridfile | sed -e 's/^&#5;//'` "</TITLE>" >$Cachefile
     		ds=`awk "BEGIN {print strftime( \"%u\" , $Begin) }"`
             dateFormatIni=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M\" , $Begin) }"`
@@ -49,7 +63,7 @@ if [ -d $Recordings ]; then
             dateFormatFin=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M\" , $End) }"`
             dateFormatFin="$dateFormatFin, ${DiaSemana[ds]}"
             awk "BEGIN {print \"<INIT_TIME>$dateFormatIni</INIT_TIME><END_TIME>$dateFormatFin</END_TIME><DURATION>\" ($End-$Begin)/60 \"</DURATION><UTC_TIME>$Begin</UTC_TIME><UTC_END_TIME>$End</UTC_END_TIME>\" }" >> $Cachefile
-            echo "<SERIE_ID>$serieId</SERIE_ID><PIDCID>${pidcid}</PIDCID>" >> $Cachefile
+            echo "<SERIE_ID>$serieId</SERIE_ID><PIDCID>${pidcid}</PIDCID><FMPG>$fmpg</FMPG><SPACE>$du</SPACE>" >> $Cachefile
             echo "</RECORD>" >> $Cachefile
     	fi
     	cat <$Cachefile
