@@ -51,6 +51,7 @@
       <th class="fila" align="left"><a href="/cgi-bin/crid/videoXML?time" title="Ordenar por Fecha">Inicio</a></th>
       <th class="fila" align="left">Final</th>
       <th class="fila" align="left">Duración (min)</th>
+      <th class="fila" align="left">Tamaño</th>
     </tr>
     <xsl:for-each select="M750/RECORDINGS/RECORD">
     <xsl:sort select="SERIE_ID" order="descending" />
@@ -91,6 +92,7 @@
       <td class="fila"><xsl:value-of select="INIT_TIME"/></td>
       <td class="fila"><xsl:value-of select="END_TIME"/></td>
       <td class="fila"><xsl:value-of select="DURATION"/></td>
+      <td class="fila"><xsl:value-of select="SPACE"/></td>
     </tr>
     </xsl:for-each>
     </table>
