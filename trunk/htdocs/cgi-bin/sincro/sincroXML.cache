@@ -44,7 +44,6 @@ for Sincrofile in $ListaCanales ; do
 		if [ $numParams -eq 1 ]; then
 			found=`echo $params | grep "$CHANNEL_ID:" | wc -l`
 		fi
-		#echo "found: $found, ID: $CHANNEL_ID"
 		if [ $found -eq 1 ]; then
 			if [ -f $Sincrofile ]; then
 				echo -n "`date` Generando Sincro de Canal $CHANNEL_ID" >> $Cache/sincro.cache.log 2>> $Cache/sincro.cache.err
@@ -56,12 +55,12 @@ for Sincrofile in $ListaCanales ; do
 		fi
 	fi
 	i=$((i+1))
-rm -f /tmp/`basename $Sincrofile`
+    rm -f /tmp/`basename $Sincrofile`
 done
 echo "`date` Generacion de los XML de sincroguia finalizada [host: `hostname`]" >> $Cache/sincro.cache.log
 
 # Descarga de imagenes de sincroguia
-[ "Z$DESCARGA_IMG" = "Zsi" ] && run-httpd.sh /cgi-bin/sincro/getsincroimg
+[ "Z$DESCARGA_IMG" = "Zsi" -a $numParams -eq 0 ] && run-httpd.sh /cgi-bin/sincro/getsincroimg
 
 # Eliminar marca de generacion de cache XML
 rm -f ${Cache}/sincrochannelXML.cache.generating
