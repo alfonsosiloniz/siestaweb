@@ -5,28 +5,33 @@ fi
 SERVER_ROOT=${PWD%$DIR_NAME}
 PATH=$PATH:${SERVER_ROOT}/bin
 WWW_SETTINGS=/var/etc/www-settings.txt
+
+# Parametros configurables
+Cache=/var/cache
 EPG_PATH=/data/EPG
 USUARIO=root:root
 MOSTRAR_MINI_IMG=si
 OBTENER_IMG_INET=si
+DESCARGA_IMG=si
 
-# settings eligible for redefinition in www-settings.txt:
-THEME_PATH=/themes/css
-Cache=/var/cache
+# Configurar hora local
 export TZ=`cat /etc/TZ_jra`
+
+# Lectura parametros
 if [ -f $WWW_SETTINGS ] ; then
 	source $WWW_SETTINGS
-else # write defaults
+else
+	# Valores por defecto
 	cat <<-EOT >$WWW_SETTINGS
 	Cache=$Cache
-	THEME_PATH=$THEME_PATH
 	EPG_PATH=$EPG_PATH
 	USUARIO=$USUARIO
 	MOSTRAR_MINI_IMG=$MOSTRAR_MINI_IMG
 	OBTENER_IMG_INET=$OBTENER_IMG_INET
+	DESCARGA_IMG=$DESCARGA_IMG
 	EOT
 fi
 
 mkdir -p $Cache
-THEME_DIR=${SERVER_ROOT}${THEME_PATH}
+#THEME_DIR=${SERVER_ROOT}${THEME_PATH}
 #export DIR_NAME SERVER_ROOT THEME_DIR THEME_PATH Cache

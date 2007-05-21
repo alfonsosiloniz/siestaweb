@@ -60,5 +60,8 @@ rm -f /tmp/`basename $Sincrofile`
 done
 echo "`date` Generacion de los XML de sincroguia finalizada [host: `hostname`]" >> $Cache/sincro.cache.log
 
+# Descarga de imagenes de sincroguia
+[ "Z$DESCARGA_IMG" = "Zsi" ] && run-httpd.sh /cgi-bin/sincro/getsincroimg
+
 # Eliminar marca de generacion de cache XML
 rm -f ${Cache}/sincrochannelXML.cache.generating
