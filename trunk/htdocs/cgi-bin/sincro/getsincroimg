@@ -18,40 +18,44 @@ echo "`date` Iniciando la descarga de imágenes de la sincroguía" > /tmp/getsincr
 get_modo_video
 echo "`date` El M750 está $ModoVideo, y así lo dejaremos al acabar la descarga" >> /tmp/getsincroimg.log
 
-if [ "$ModoVideo" = "OFF" ]; then
-    /data/scripts/irsim.sh POWER
-    echo "`date` Encendiendo el gigaset..." >> /tmp/getsincroimg.log
-    sleep 10
-fi
-
 source ../www-setup
 
 echo "`date` Resolviendo la IP del servidor www.inout.tv" >> /tmp/getsincroimg.log
 ipInOut=`ping -c 1 www.inout.tv | head -1 | cut -d"(" -f2 | cut -d")" -f1`
-echo "`date` Servidor www.inout.tv, IP=[$ipInOut]" >> /tmp/getsincroimg.log
-URL_INOUT=http://$ipInOut/fotos
-RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
-if [ -d $RecordingFolder/EPG/ ]; then
-    echo "`date` Borramos las imagenes antiguas... [rm -f $RecordingFolder/EPG/*.jpg]" >> /tmp/getsincroimg.log
-    rm -f $RecordingFolder/EPG/*.jpg
-    
-    for textfile in $Cache/*.text
-    do
-        while read line
+found=`echo $ipInOut | grep "Unknown host" | wc -l`
+if [ $found -eq 0 ]; then
+    echo "`date` Servidor www.inout.tv, IP=[$ipInOut]" >> /tmp/getsincroimg.log
+    if [ "$ModoVideo" = "OFF" ]; then
+        /data/scripts/irsim.sh POWER
+        echo "`date` Encendiendo el gigaset..." >> /tmp/getsincroimg.log
+        sleep 20
+    fi
+    URL_INOUT=http://$ipInOut/fotos
+    RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
+    if [ -d $RecordingFolder/EPG/ ]; then
+        echo "`date` Borramos las imagenes antiguas... [rm -f $RecordingFolder/EPG/*.jpg]" >> /tmp/getsincroimg.log
+        rm -f $RecordingFolder/EPG/*.jpg
+        
+        for textfile in $Cache/*.text
         do
-            img=`echo $line | cut -d"_" -f8`
-            if [ "$img" != "" ]; then
-                echo "wget -P $RecordingFolder/EPG $URL_INOUT/$img" >> /tmp/getsincroimg.log
-                wget -q -P $RecordingFolder/EPG $URL_INOUT/$img >> /tmp/getsincroimg.log 2> /tmp/getsincroimg.err
-            fi
-        done < $textfile
-    done
-    
-    echo "`date` Finalizada la descarga de imágenes de la sincroguía" >> /tmp/getsincroimg.log
+            while read line
+            do
+                img=`echo $line | cut -d"_" -f8`
+                if [ "$img" != "" ]; then
+                    echo "wget -P $RecordingFolder/EPG $URL_INOUT/$img" >> /tmp/getsincroimg.log
+                    wget -q -P $RecordingFolder/EPG $URL_INOUT/$img >> /tmp/getsincroimg.log 2> /tmp/getsincroimg.err
+                fi
+            done < $textfile
+        done
+        
+        echo "`date` Finalizada la descarga de imágenes de la sincroguía" >> /tmp/getsincroimg.log
+    else
+        echo "`date` El directorio de las imagenes no está disponible... Abortamos el proceso" >> /tmp/getsincroimg.log
+    fi
+    if [ "$ModoVideo" = "OFF" ]; then
+        /data/scripts/irsim.sh POWER
+        echo "`date` Apagando el gigaset..." >> /tmp/getsincroimg.log
+    fi
 else
-    echo "`date` El directorio de las imagenes no está disponible... Abortamos el proceso" >> /tmp/getsincroimg.log
-fi
-if [ "$ModoVideo" = "OFF" ]; then
-    /data/scripts/irsim.sh POWER
-    echo "`date` Apagando el gigaset..." >> /tmp/getsincroimg.log
+    echo "`date` No se ha podido resolver la IP del servidor www.inout.tv... Abortamos el proceso." >> /tmp/getsincroimg.log
 fi
