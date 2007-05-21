@@ -25,7 +25,7 @@ source ../www-setup
 
 echo "`date` Resolviendo la IP del servidor www.inout.tv" >> /tmp/getsincroimg.log
 ipInOut=`ping -c 1 www.inout.tv | head -1 | cut -d"(" -f2 | cut -d")" -f1`
-found=`echo $ipInOut | grep "Unknown host" | wc -l`
+found=`echo "$ipInOut" | grep "Unknown host" | wc -l`
 if [ $found -eq 0 ]; then
     echo "`date` Servidor www.inout.tv, IP=[$ipInOut]" >> /tmp/getsincroimg.log
     if [ "$ModoVideo" = "OFF" ]; then
