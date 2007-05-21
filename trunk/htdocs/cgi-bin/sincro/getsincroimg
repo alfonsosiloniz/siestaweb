@@ -12,6 +12,9 @@ function get_modo_video () {
     fi
 }
 
+# Ejecutamos el script con baja prioridad
+renice 20 $$ > /dev/null
+
 echo "`date` Iniciando la descarga de imágenes de la sincroguía" > /tmp/getsincroimg.log
 
 # Nos guardamos el estado inicial del giga por si está apagado, apagarlo al final
@@ -49,6 +52,7 @@ if [ $found -eq 0 ]; then
         done
         
         echo "`date` Finalizada la descarga de imágenes de la sincroguía" >> /tmp/getsincroimg.log
+        echo "`date` Descargadas `ll $RecordingFolder/EPG/*.jpg | wc -l` imágenes." >> /tmp/getsincroimg.log
     else
         echo "`date` El directorio de las imagenes no está disponible... Abortamos el proceso" >> /tmp/getsincroimg.log
     fi
