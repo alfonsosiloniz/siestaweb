@@ -41,7 +41,7 @@
         <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | 
         <a href="/index.html">Salir</a><br/><br/>
         <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> |
-        <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV+10</a></div>
+        <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV+10</a> | <a href="/ssh/sshconn.html">SSH/Telnet</a></div>
     </p> 
     <div align="center" class="txtNormal">Espacio en disco: <xsl:value-of select="M750/SPACE"/><br/><br/></div>
     <table width="98%" border="0" cellspacing="0" cellpadding="2" align="center" class="borderTabla2">
@@ -101,7 +101,7 @@
         <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | 
         <a href="/index.html">Salir</a><br/><br/>
         <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> |
-        <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV+10</a><br/><br/>
+        <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV+10</a> | <a href="/ssh/sshconn.html">SSH/Telnet</a><br/><br/>
         <a href="/cgi-bin/sincro/verlog">Ver Log</a> | <a href="/cgi-bin/box/estado">Ver Estado</a></div>
     </p>
   </body>
