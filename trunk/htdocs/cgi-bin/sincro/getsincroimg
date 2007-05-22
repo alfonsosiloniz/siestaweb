@@ -41,16 +41,18 @@ if [ $found -eq 0 ]; then
         
         for textfile in $Cache/*.text
         do
+            # Ordenamos el fichero de imagenes para eliminar imágenes repetidas, que hay muchisimas
+            cat $textfile | cut -d"_" -f8 > /tmp/images_tmp.txt
+            sort -u /tmp/images_tmp.txt > /tmp/images.txt
             while read line
             do
-                img=`echo $line | cut -d"_" -f8`
-                if [ "$img" != "" ]; then
-                    echo "wget -P $RecordingFolder/EPG $URL_INOUT/$img" >> /tmp/getsincroimg.log
-                    wget -q -P $RecordingFolder/EPG $URL_INOUT/$img >> /tmp/getsincroimg.log 2> /tmp/getsincroimg.err
+                if [ "$line" != "" ]; then
+                    echo "wget -P $RecordingFolder/EPG $URL_INOUT/$line" >> /tmp/getsincroimg.log
+                    wget -q -P $RecordingFolder/EPG $URL_INOUT/$line >> /tmp/getsincroimg.log 2> /tmp/getsincroimg.err
                 fi
-            done < $textfile
+            done < /tmp/images.txt
         done
-        
+        rm -f /tmp/images_tmp.txt /tmp/images.txt
         echo "`date` Finalizada la descarga de imágenes de la sincroguía" >> /tmp/getsincroimg.log
         echo "`date` Descargadas `ls -l $RecordingFolder/EPG/*.jpg | wc -l` imágenes." >> /tmp/getsincroimg.log
     else
