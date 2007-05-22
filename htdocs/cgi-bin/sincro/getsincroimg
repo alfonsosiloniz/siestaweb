@@ -19,7 +19,7 @@ echo "`date` Iniciando la descarga de imágenes de la sincroguía" > /tmp/getsincr
 
 # Nos guardamos el estado inicial del giga por si está apagado, apagarlo al final
 get_modo_video
-echo "`date` El M750 está $ModoVideo, y así lo dejaremos al acabar la descarga" >> /tmp/getsincroimg.log
+echo "`date` El M750 está <b>${ModoVideo}</b>, y así lo dejaremos al acabar la descarga" >> /tmp/getsincroimg.log
 
 source ../www-setup
 
@@ -27,7 +27,7 @@ echo "`date` Resolviendo la IP del servidor www.inout.tv" >> /tmp/getsincroimg.l
 ipInOut=`ping -c 1 www.inout.tv | head -1 | cut -d"(" -f2 | cut -d")" -f1`
 found=`echo "$ipInOut" | grep "Unknown host" | wc -l`
 if [ $found -eq 0 ]; then
-    echo "`date` Servidor www.inout.tv, IP=[$ipInOut]" >> /tmp/getsincroimg.log
+    echo "`date` Servidor www.inout.tv, <b>IP=[$ipInOut]</b>" >> /tmp/getsincroimg.log
     if [ "$ModoVideo" = "OFF" ]; then
         /data/scripts/irsim.sh POWER
         echo "`date` Encendiendo el gigaset..." >> /tmp/getsincroimg.log
@@ -41,6 +41,8 @@ if [ $found -eq 0 ]; then
         
         for textfile in $Cache/*.text
         do
+            channel=`echo $textfile | cut -d"." -f 3`
+            echo "`date` Iniciando lectura de fichero <b>[Canal=$channel]</b>" >> /tmp/getsincroimg.log
             # Ordenamos el fichero de imagenes para eliminar imágenes repetidas, que hay muchisimas
             cat $textfile | cut -d"_" -f8 > /tmp/images_tmp.txt
             sort -u /tmp/images_tmp.txt > /tmp/images.txt
