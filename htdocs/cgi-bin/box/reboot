@@ -2,12 +2,30 @@
 # by pepper, 08/05/2007
 # Script que realiza un reboot del sistema
 
+function get_modo_video () {
+    # Buscar nº de modulos que estan usando el modulo video
+    M_V=(`lsmod | grep ^video`)
+    if [ ${M_V[2]} = 0 ] ; then
+        ModoVideo="Apagado"
+    else
+        ModoVideo="Encendido"
+    fi
+}
+
+get_modo_video
+
+if [ "$ModoVideo" = "Encendido" ]; then
+    # Si esta encendido, hacemos un apagado rápido, para desmontar el HD
+    /data/scripts/irsim.sh POWER
+    sleep 10
+fi
+
 # matamos los posibles procesos de generación de la caché
-pkill -9 run-http.sh 2> /dev/null
-pkill -9 pgmactualXML.cache 2> /dev/null
-pkill -9 sincroXML.cache 2> /dev/null
-pkill -9 sincrochannelXML.cache 2> /dev/null
-pkill -9 chactextXML 2> /dev/null
+pkill -9 run-http.sh
+pkill -9 pgmactualXML.cache
+pkill -9 sincroXML.cache
+pkill -9 sincrochannelXML.cache
+pkill -9 chactextXML
 sleep 2
 
 STICK_MOUNT=/var/media/SWAP
@@ -20,20 +38,21 @@ SWP_SIZE=(`grep ^SwapTotal /proc/meminfo`)
 if [ ${SWP_SIZE[1]} != 0 ]; then
     if [ -f $FLAGSWAP ]; then
         swapoff ${SWAPFILE}
-        umount ${STICK_MOUNT} 2> /dev/null
+        umount ${STICK_MOUNT}
     else
         USB_DISK=/var/media/USB-HDD
         USB_DIR=${USB_DISK}/.swap
         FLAGSWAP=${USB_DIR}/.flag
         SWAPFILE=${USB_DIR}/.file
         if [ -f $FLAGSWAP ]; then
-            swapoff ${SWAPFILE} 2> /dev/null
+            swapoff ${SWAPFILE}
         fi
     fi
 fi
 
 # Reboot del sistema
-halt -r & >> /tmp/reboot.log 2> /dev/null
+#halt -r
+picctl set-reboot 10 60
 
 echo Content-type: text/xml
 echo ""
