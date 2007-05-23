@@ -57,7 +57,7 @@ if [ $found -eq 0 ]; then
             sort -u /tmp/images_tmp.txt > /tmp/images.txt
             while read line ; do
                 if [ "$line" != "" ]; then
-                    if [ ! -f $RecordingFolder/EPG/$line ]; then
+                    if [ ! -s $RecordingFolder/EPG/$line ]; then
                         echo "wget -P $RecordingFolder/EPG $URL_INOUT/$line" >> $LOG
                         wget -q -P $RecordingFolder/EPG $URL_INOUT/$line >> $LOG 2>> $ERR
                     else
