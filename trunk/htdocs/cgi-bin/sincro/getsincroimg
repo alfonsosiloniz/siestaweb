@@ -15,55 +15,67 @@ function get_modo_video () {
 # Ejecutamos el script con baja prioridad
 renice 20 $$ > /dev/null
 
-echo "`date` Iniciando la descarga de imágenes de la sincroguía" > /tmp/getsincroimg.log
+# Configurar entorno
+source ../www-setup
+LOG=/tmp/getsincroimg.log
+ERR=/tmp/getsincroimg.err
+
+# Log del proceso
+echo "`date` Iniciando la descarga de imágenes de la sincroguía" > $LOG
+echo -n "" > $ERR
 
 # Nos guardamos el estado inicial del giga por si está apagado, apagarlo al final
 get_modo_video
-echo "`date` El M750 está <b>${ModoVideo}</b>, y así lo dejaremos al acabar la descarga" >> /tmp/getsincroimg.log
+echo "`date` El M750 está <b>${ModoVideo}</b>, y así lo dejaremos al acabar la descarga" >> $LOG
 
-source ../www-setup
-
-echo "`date` Resolviendo la IP del servidor www.inout.tv" >> /tmp/getsincroimg.log
-ipInOut=`ping -c 1 www.inout.tv | head -1 | cut -d"(" -f2 | cut -d")" -f1`
-found=`echo "$ipInOut" | grep "Unknown host" | wc -l`
+# Resolver direccion ip
+found=1
+echo "`date` Resolviendo la IP del servidor www.inout.tv" >> $LOG
+pingInOut=`ping -c 1 www.inout.tv`
+if [ $? -eq 0 ]; then
+	ipInOut=`echo $pingInOut | head -1 | cut -d"(" -f2 | cut -d")" -f1`
+	found=`echo "$ipInOut" | grep "Unknown host" | wc -l`
+fi
 if [ $found -eq 0 ]; then
-    echo "`date` Servidor www.inout.tv, <b>IP=[$ipInOut]</b>" >> /tmp/getsincroimg.log
+    echo "`date` Servidor www.inout.tv, <b>IP=[$ipInOut]</b>" >> $LOG
     if [ "$ModoVideo" = "OFF" ]; then
         /data/scripts/irsim.sh POWER
-        echo "`date` Encendiendo el gigaset..." >> /tmp/getsincroimg.log
+        echo "`date` Encendiendo el gigaset..." >> $LOG
         sleep 20
     fi
     URL_INOUT=http://$ipInOut/fotos
     RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
     if [ -d $RecordingFolder/EPG/ ]; then
-        echo "`date` Borramos las imagenes antiguas... [rm -f $RecordingFolder/EPG/*.jpg]" >> /tmp/getsincroimg.log
-        rm -f $RecordingFolder/EPG/*.jpg
+        #echo "`date` Borramos las imagenes antiguas... [rm -f $RecordingFolder/EPG/*.jpg]" >> $LOG
+        #rm -f $RecordingFolder/EPG/*.jpg
         
-        for textfile in $Cache/*.text
-        do
+        for textfile in $Cache/*.text ; do
             channel=`echo $textfile | cut -d"." -f 3`
-            echo "`date` Iniciando lectura de fichero <b>[Canal=$channel]</b>" >> /tmp/getsincroimg.log
+            echo "`date` Iniciando lectura de fichero <b>[Canal=$channel]</b>" >> $LOG
             # Ordenamos el fichero de imagenes para eliminar imágenes repetidas, que hay muchisimas
             cat $textfile | cut -d"_" -f8 > /tmp/images_tmp.txt
             sort -u /tmp/images_tmp.txt > /tmp/images.txt
-            while read line
-            do
+            while read line ; do
                 if [ "$line" != "" ]; then
-                    echo "wget -P $RecordingFolder/EPG $URL_INOUT/$line" >> /tmp/getsincroimg.log
-                    wget -q -P $RecordingFolder/EPG $URL_INOUT/$line >> /tmp/getsincroimg.log 2> /tmp/getsincroimg.err
+                    if [ ! -f $RecordingFolder/EPG/$line ]; then
+                        echo "wget -P $RecordingFolder/EPG $URL_INOUT/$line" >> $LOG
+                        wget -q -P $RecordingFolder/EPG $URL_INOUT/$line >> $LOG 2>> $ERR
+                    else
+                        echo "La imagen $RecordingFolder/EPG/$line ya existe en el disco. No la descargamos." >> $LOG
+                    fi
                 fi
             done < /tmp/images.txt
         done
         rm -f /tmp/images_tmp.txt /tmp/images.txt
-        echo "`date` Finalizada la descarga de imágenes de la sincroguía" >> /tmp/getsincroimg.log
-        echo "`date` Descargadas `ls -l $RecordingFolder/EPG/*.jpg | wc -l` imágenes." >> /tmp/getsincroimg.log
+        echo "`date` Finalizada la descarga de imágenes de la sincroguía" >> $LOG
+        echo "`date` Descargadas `ls -l $RecordingFolder/EPG/*.jpg | wc -l` imágenes." >> $LOG
     else
-        echo "`date` El directorio de las imagenes no está disponible... Abortamos el proceso" >> /tmp/getsincroimg.log
+        echo "`date` El directorio de las imagenes no está disponible... Abortamos el proceso" >> $LOG
     fi
     if [ "$ModoVideo" = "OFF" ]; then
         /data/scripts/irsim.sh POWER
-        echo "`date` Apagando el gigaset..." >> /tmp/getsincroimg.log
+        echo "`date` Apagando el gigaset..." >> $LOG
     fi
 else
-    echo "`date` No se ha podido resolver la IP del servidor www.inout.tv... Abortamos el proceso." >> /tmp/getsincroimg.log
+    echo "`date` No se ha podido resolver la IP del servidor www.inout.tv... Abortamos el proceso." >> $LOG
 fi
