@@ -58,12 +58,12 @@ then
         longs=${Sincro[5]}
         bytesTitulo=${Sincro[6]}
         n=$((n+25))
-        titulo=`hexdump -v -n $bytesTitulo -s $n -e '"%c"' $1 | sed -e 's/&/&amp;/g'`
+        titulo=`hexdump -v -n $bytesTitulo -s $n -e '"%c"' $1 | sed -e 's/&/&amp;/g' | sed -e 's/_/-/g'`
         #titulo=`hexdump -v -n $bytesTitulo -s $n -e "/1 \"&#%d;\"" $1 | sed -e 's/^&#5;//' `
         n=$((n+$bytesTitulo))
         bytesSubtitulo=`hexdump -v -n 2 -s $n -e '1/2 "%d"' $1`
         n=$((n+2))
-        subtitulo=`hexdump -v -n $bytesSubtitulo -s $n -e '"%c"' $1 | sed -e 's/&/&amp;/g'`
+        subtitulo=`hexdump -v -n $bytesSubtitulo -s $n -e '"%c"' $1 | sed -e 's/&/&amp;/g' | sed -e 's/_/-/g'`
         #subtitulo=`hexdump -v -n $bytesSubtitulo -s $n -e "/1 \"&#%d;\"" $1 | sed -e 's/^&#5;//' `
         n=$((n+$bytesSubtitulo))
         bytesImagen=`hexdump -v -n 1 -s $n -e '1/1 "%d"' $1`
