@@ -1,0 +1,8 @@
+#!/bin/bash 
+# Script que lanza la generación de la caché en background
+
+./pgmactualXML.cache &
+
+echo Content-type: text/xml
+echo ""
+echo "<RESULT>1</RESULT>"
