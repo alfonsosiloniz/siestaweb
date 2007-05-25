@@ -1,5 +1,5 @@
 <html>
-<title>M750T - Ver LiveTV+10 (TimeShift)</title>
+<title>M750T - Ver LiveTV-TS (TimeShift)</title>
 <link href="/sincro/img/m740.ico" rel="shortcut icon"></link>
 <link href="/sincro/css/estilos.css" rel="stylesheet" type="text/css"></link>
 <script language="JavaScript" src="/sincro/js/navigator.js"></script>
@@ -29,7 +29,7 @@ function cambioSO() {
 <body bgcolor="#FFFFFF" onload="init();">
 <form name="formulario" action="/cgi-bin/crid/tsView" method="get">
 <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
-<div align="center"><font class="subTitPag">Ver LiveTV+10 (TimeShift)</font></div>
+<div align="center"><font class="subTitPag">Ver LiveTV-TS (TimeShift)</font></div>
 <p>
     <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
     <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
@@ -41,10 +41,9 @@ function cambioSO() {
 <tr>
 	<td class="txtInfo" colspan="2">Mediante esta opción podrás ver la TV en directo, utilizando la grabación del TimeShift
 	    que realiza el gigaset. Obviamente necesitas tener el TimeShift activado para utilizarlo.<br>
-	    El único problema es que esto obliga a ver la TV con 10 minutos de retraso. Esto es debido a que el gigaset graba ficheros
-	    mpg de 10 minutos de duración, y hasta que no finaliza el primero, no podemos abrirlo para su reproducción.<br>
-	    Si comienzas la reproducción antes de esos 10 minutos, lo único que notarás es que pasados unos segundos, la reproducción se cortará.<br>
-	    La ventaja de este método es que no necesita matar los procesos del gigaset, y por tanto no se necesita reiniar después de la finalización de la reproducción.<br><br>
+	    La ventaja de este método es que no necesita matar los procesos del gigaset, y por tanto no se necesita reiniar después de la finalización de la reproducción.<br>
+	    Consejo: no intentes ir al último minuto del vídeo para ver la TV lo más en directo posible, ya que puede que llegues al final del buffer y se corte la reproducción. Cuando avances
+	    ten cuidado de que la barra de progreso de mplayer no llegue al final.<br><br>
 	</td>
 </tr>
 <tr>
@@ -81,7 +80,7 @@ function cambioSO() {
 	    </select>
 	</td>
 </tr>
-<tr>
+<!--<tr>
     <td class="txtNormal">Sistema operativo:</td>
     <td class="txtNormal">
     <select size="1" name="so" onchange="javascript:cambioSO();">
@@ -90,22 +89,31 @@ function cambioSO() {
     </select>
     <b><font color="#ff0000">Seleccione esto lo primero</font></b>
     </td>
-</tr>
+</tr>-->
 <tr>
 	<td class="txtNormal" height="20" colspan="2">&nbsp;</td>
 </tr>
 <tr>
-	<td class="txtNormal" align="center" colspan="2"><a href="javascript:enviar();"><img src="/sincro/img/aceptar1.gif" alt="Visualizar Grabación" width="28" height="25" border="0" /></a></td>
+	<td class="txtNormal" align="center" colspan="2"><a href="javascript:enviar();"><img src="/sincro/img/aceptar1.gif" alt="Visualizar LiveTV (TS)" width="28" height="25" border="0" /></a></td>
 </tr>
 <tr>
 	<td class="txtNormal" height="30" colspan="2">&nbsp;</td>
 </tr>
 <tr>
+	<td class="txtNormal" colspan="2">
+	    Para el funcionamiento de esta opción, necesitas tener instalado el reproductor <a href="http://www.mplayerhq.hu/">MPlayer</a>, la aplicación <a href="http://isidorocr.googlepages.com/wget.zip">wget</a> y este <a href="http://isidorocr.googlepages.com/utilities.zip">pack de utilidades</a>.<br>
+	    El pack de utilidades está compuesto por varios ejecutables, que al igual que wget, deben están en un directorio que esté en el path (tal que c:\windows).
+	</td>
+</tr>
+<tr>
+	<td class="txtNormal" height="10" colspan="2">&nbsp;</td>
+</tr>
+<tr>
 	<td class="txtNormal" height="10" colspan="2">
 	    <font class="titTabla">Atención:</font><br/>
-	    Al clicar sobre el botón <img src="/sincro/img/aceptar1.gif" alt="Visualizar Grabación" width="28" height="25" border="0" />, verá una ventana como ésta:<br/><br/>
+	    Al clicar sobre el botón <img src="/sincro/img/aceptar1.gif" alt="Visualizar LiveTV" width="28" height="25" border="0" />, verá una ventana como ésta:<br/><br/>
 	    <img src="/sincro/img/visualizar_cmd.jpg" alt="Visualizar Grabación" width="455" height="266" border="0" /><br/><br/>
-	    Clicando sobre el botón "Ejecutar", descargará el fichero "visualizar_grabacion.cmd" en un directorio temporal y éste generará la lista de reproducción llamando a su vez al reproductor <a href="http://www.mplayerhq.hu/">MPlayer</a>.
+	    Clicando sobre el botón "Ejecutar", descargará el fichero "verts.cmd" en un directorio temporal y éste generará la lista de reproducción llamando a su vez al reproductor <a href="http://www.mplayerhq.hu/">MPlayer</a>.
 	</td>
 </tr>
 </table><br/>
