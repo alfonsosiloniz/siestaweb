@@ -3,13 +3,13 @@
 # Script que realiza la descarga de todas las imagenes de la sincro a la carpeta de grabaciones
 
 function get_modo_video () {
-    # Buscar nº de modulos que estan usando el modulo video
-    M_V=(`lsmod | grep ^video`)
-    if [ ${M_V[2]} = 0 ] ; then
-        ModoVideo="OFF"
-    else
-        ModoVideo="ON"
-    fi
+	# Buscar nº de modulos que estan usando el modulo video
+	M_V=(`lsmod | grep ^video`)
+	if [ ${M_V[2]} = 0 ] ; then
+		ModoVideo="OFF"
+	else
+		ModoVideo="ON"
+	fi
 }
 
 # Ejecutamos el script con baja prioridad
@@ -37,45 +37,45 @@ if [ $? -eq 0 ]; then
 	found=`echo "$ipInOut" | grep "Unknown host" | wc -l`
 fi
 if [ $found -eq 0 ]; then
-    echo "`date` Servidor www.inout.tv, <b>IP=[$ipInOut]</b>" >> $LOG
-    if [ "$ModoVideo" = "OFF" ]; then
-        /data/scripts/irsim.sh POWER
-        echo "`date` Encendiendo el gigaset..." >> $LOG
-        sleep 20
-    fi
-    URL_INOUT=http://$ipInOut/fotos
-    RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
-    if [ -d $RecordingFolder/EPG/ ]; then
-        #echo "`date` Borramos las imagenes antiguas... [rm -f $RecordingFolder/EPG/*.jpg]" >> $LOG
-        #rm -f $RecordingFolder/EPG/*.jpg
-        
-        for textfile in $Cache/*.text ; do
-            channel=`echo $textfile | cut -d"." -f 3`
-            echo "`date` Iniciando lectura de fichero <b>[Canal=$channel]</b>" >> $LOG
-            # Ordenamos el fichero de imagenes para eliminar imágenes repetidas, que hay muchisimas
-            cat $textfile | cut -d"_" -f8 > /tmp/images_tmp.txt
-            sort -u /tmp/images_tmp.txt > /tmp/images.txt
-            while read line ; do
-                if [ "$line" != "" ]; then
-                    if [ ! -s $RecordingFolder/EPG/$line ]; then
-                        echo "wget -P $RecordingFolder/EPG $URL_INOUT/$line" >> $LOG
-                        wget -q -P $RecordingFolder/EPG $URL_INOUT/$line >> $LOG 2>> $ERR
-                    else
-                        echo "La imagen $RecordingFolder/EPG/$line ya existe en el disco. No la descargamos." >> $LOG
-                    fi
-                fi
-            done < /tmp/images.txt
-        done
-        rm -f /tmp/images_tmp.txt /tmp/images.txt
-        echo "`date` Finalizada la descarga de imágenes de la sincroguía" >> $LOG
-        echo "`date` Descargadas `ls -l $RecordingFolder/EPG/*.jpg | wc -l` imágenes." >> $LOG
-    else
-        echo "`date` El directorio de las imagenes no está disponible... Abortamos el proceso" >> $LOG
-    fi
-    if [ "$ModoVideo" = "OFF" ]; then
-        /data/scripts/irsim.sh POWER
-        echo "`date` Apagando el gigaset..." >> $LOG
-    fi
+	echo "`date` Servidor www.inout.tv, <b>IP=[$ipInOut]</b>" >> $LOG
+	if [ "$ModoVideo" = "OFF" ]; then
+		/data/scripts/irsim.sh POWER
+		echo "`date` Encendiendo el gigaset..." >> $LOG
+		sleep 20
+	fi
+	URL_INOUT=http://$ipInOut/fotos
+	RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
+	if [ -d $RecordingFolder/EPG/ ]; then
+		#echo "`date` Borramos las imagenes antiguas... [rm -f $RecordingFolder/EPG/*.jpg]" >> $LOG
+		#rm -f $RecordingFolder/EPG/*.jpg
+		
+		for textfile in $Cache/*.text ; do
+			channel=`echo $textfile | cut -d"." -f 3`
+			echo "`date` Iniciando lectura de fichero <b>[Canal=$channel]</b>" >> $LOG
+			# Ordenamos el fichero de imagenes para eliminar imágenes repetidas, que hay muchisimas
+			cat $textfile | cut -d"_" -f8- > /tmp/images_tmp.txt
+			sort -u /tmp/images_tmp.txt > /tmp/images.txt
+			while read line ; do
+				if [ "$line" != "" ]; then
+					if [ ! -s $RecordingFolder/EPG/$line ]; then
+						echo "wget -P $RecordingFolder/EPG $URL_INOUT/$line" >> $LOG
+						wget -q -P $RecordingFolder/EPG $URL_INOUT/$line >> $LOG 2>> $ERR
+					else
+						echo "La imagen $RecordingFolder/EPG/$line ya existe en el disco. No la descargamos." >> $LOG
+					fi
+				fi
+			done < /tmp/images.txt
+		done
+		rm -f /tmp/images_tmp.txt /tmp/images.txt
+		echo "`date` Finalizada la descarga de imágenes de la sincroguía" >> $LOG
+		echo "`date` Descargadas `ls -l $RecordingFolder/EPG/*.jpg | wc -l` imágenes." >> $LOG
+	else
+		echo "`date` El directorio de las imagenes no está disponible... Abortamos el proceso" >> $LOG
+	fi
+	if [ "$ModoVideo" = "OFF" ]; then
+		/data/scripts/irsim.sh POWER
+		echo "`date` Apagando el gigaset..." >> $LOG
+	fi
 else
-    echo "`date` No se ha podido resolver la IP del servidor www.inout.tv... Abortamos el proceso." >> $LOG
+	echo "`date` No se ha podido resolver la IP del servidor www.inout.tv... Abortamos el proceso." >> $LOG
 fi
