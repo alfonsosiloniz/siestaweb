@@ -37,6 +37,7 @@ echo SET OPCIONES_MPLAYER="$mplayerOptions"
 echo SET CADENA_FTP="ftp://%USUARIO%:%PASS%@%HOST%:%FTP_PORT%"
 echo "echo @echo off > .\start_mplayer.cmd"
 echo "echo echo Llenando el buffer de MPlayer con wget. Espera unos segundos .... >> .\start_mplayer.cmd"
+# Damos tiempo a wget para que descargue el fichero antes de comenzar con la reproduccion
 echo "echo sleep 15 >> .\start_mplayer.cmd"
 ultmpg=`./getmpgts`
 i=`echo $ultmpg | cut -d"." -f3`
@@ -55,21 +56,29 @@ echo "echo \"%MPLAYER%\" %OPCIONES_MPLAYER% -playlist $plsfile >> .\start_mplaye
 echo "echo del /f /q $tmpdir\*.mpg >> .\start_mplayer.cmd"
 echo "echo del /f /q $tmpdir\*.pls >> .\start_mplayer.cmd"
 echo "echo exit >> .\start_mplayer.cmd"
+# Lanzamos el reproductor en background, mientras continua la descarga del fichero (wget) en foreground
 echo "start /b .\start_mplayer.cmd"
 echo ":bucle"
+# Obtenemos el fichero del timeshift
 echo "wget -q -O - %BASE_URL%/cgi-bin/crid/getmpgts?$DIR_MPG > %TEMP%\ultmpg"
 echo "SET /P FICHERO=<%TEMP%\ultmpg"
 echo "SET NOMBRE_COMPLETO=%CADENA_FTP%$DIR_MPG/%FICHERO%"
 echo "goto inicio"
 echo ":recargar"
+# Damos tiempo para que el gigaset genere fichero mpg antes de continuar descargando
 echo "sleep 8"
 echo ":inicio"
+# Descarga contínua del fichero de timeshift
 echo "wget --continue --passive-ftp -P $tmpdir %NOMBRE_COMPLETO%"
+# Una vez descargado, comprobamos los tamaños para ver si esta completo ya el mpg
 echo "wget -q -O - http://$host/cgi-bin/crid/getfilesize?$DIR_MPG/%FICHERO% > $tmpdir/filesize.tmp"
+# Por si el mpg no esta completo damos 1 segundo para que el gigaset siga escribiendo y asi los tamaños no cuadren
 echo "sleep 1"
 echo "SET /P FILE_SIZE_GIGA=<$tmpdir\filesize.tmp"
+# Calculamos el tamaño del fichero descargado
 echo "wc -c $tmpdir\%FICHERO% | cut -d c -f 1 > $tmpdir\filesize2.tmp"
 echo "SET /P FILE_SIZE_PC=<$tmpdir\filesize2.tmp"
+# Comprobamos los tamaños de ambos ficheros
 echo "wget -q -O - http://$host/cgi-bin/crid/checkfilesizes?%FILE_SIZE_GIGA%-%FILE_SIZE_PC% > $tmpdir/checksize.tmp"
 echo "SET /P CHECK_SIZE=<$tmpdir\checksize.tmp"
 echo "if \"%CHECK_SIZE%\" == \"NO\" goto recargar"
