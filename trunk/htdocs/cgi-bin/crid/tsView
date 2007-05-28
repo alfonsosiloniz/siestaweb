@@ -3,7 +3,7 @@
 # Script que genera un fichero de comandos con las instrucciones necesarias para visualizar una grabación en el PC local
 # mediante MPlayer
 
-host=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2`
+host=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2 | sed -e 's/%3A/:/g'`
 port=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2`
 user=`echo $QUERY_STRING | cut -d"&" -f3 | cut -d"=" -f2`
 pwd=`echo $QUERY_STRING | cut -d"&" -f4 | cut -d"=" -f2`
@@ -11,6 +11,9 @@ mplayer=`echo $QUERY_STRING | cut -d"&" -f5 | cut -d"=" -f2 | sed -e 's/%20/ /g'
 tmpdir=`echo $QUERY_STRING | cut -d"&" -f6 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\\\/g' | sed -e 's/%2F/\//g'`
 aspect=`echo $QUERY_STRING | cut -d"&" -f7 | cut -d"=" -f2`
 #so=`echo $QUERY_STRING | cut -d"&" -f8 | cut -d"=" -f2`
+
+#Por si el host viene con puerto, lo quitamos para el ftp y lo dejamos para el http
+ftphost=`echo $host | cut -d":" -f1`
 
 mplayerOptions="-cache 4096 -quiet -noaspect -aspect $aspect -autosync 30 -framedrop"
 
@@ -29,12 +32,13 @@ echo "echo Iniciando..."
 echo SET USUARIO="$user"
 echo SET PASS="$pwd"
 echo SET HOST="$host"
+echo SET FTP_HOST="$ftphost"
 echo SET FTP_PORT="$port"
 echo SET BASE_URL="http://%HOST%"
 echo SET TEMP="$tmpdir"
 echo SET MPLAYER="$mplayer"
 echo SET OPCIONES_MPLAYER="$mplayerOptions"
-echo SET CADENA_FTP="ftp://%USUARIO%:%PASS%@%HOST%:%FTP_PORT%"
+echo SET CADENA_FTP="ftp://%USUARIO%:%PASS%@%FTP_HOST%:%FTP_PORT%"
 echo "echo @echo off > .\start_mplayer.cmd"
 echo "echo echo Llenando el buffer de MPlayer con wget. Espera unos segundos .... >> .\start_mplayer.cmd"
 # Damos tiempo a wget para que descargue el fichero antes de comenzar con la reproduccion
