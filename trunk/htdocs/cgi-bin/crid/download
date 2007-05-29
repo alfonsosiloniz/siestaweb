@@ -29,7 +29,7 @@ s2=$(( $s1+$n1+$c2 ))
 fmpg=`hexdump -v -n $c2 -s $(($s1+$n1)) -e '"%c"' $Cridfile | sed -e 's/&/&amp;/g'`
 recordingDir=`dirname $Cridfile`
 
-echo "$ftphost, $port, $Cridfile, ${fmpg}*, $user, $pwd, Titolo: $Title" >> /tmp/download.log
+echo "$ftphost, $port, $Cridfile, ${fmpg}*, $user, $pwd, Titulo: $Title" >> /tmp/download.log
 
 echo "Content-type: application/octet-stream"
 echo "Content-Disposition: attachment; filename=descargar_grabacion.cmd"
