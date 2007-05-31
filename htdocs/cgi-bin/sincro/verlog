@@ -87,6 +87,14 @@ if [ -f /tmp/download.log ]; then
     echo "    <td class=\"fila\" align=\"left\"><pre>`cat /tmp/download.log`</pre></td>"
     echo "  </tr>"
 fi
+if [ -f /tmp/delete_recording.log ]; then
+    echo "  <tr>"
+    echo "    <td class=\"fila titTabla\"  bgcolor=\"#ffb310\" align=\"center\">Borrado de grabaciones realizadas</td>"
+    echo "  </tr>"
+    echo "  <tr>"
+    echo "    <td class=\"fila\" align=\"left\"><pre>`cat /tmp/delete_recording.log`</pre></td>"
+    echo "  </tr>"
+fi
 if [ -f /tmp/getsincroimg.log ]; then
     echo "  <tr>"
     echo "    <td class=\"fila titTabla\"  bgcolor=\"#ffb310\" align=\"center\">Descargas de imágenes de Sincroguía</td>"
