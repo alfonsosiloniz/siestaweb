@@ -4,9 +4,11 @@
 <title>M750T EPG - Login</title>
 <link href="sincro/img/m740.ico" rel="shortcut icon">
 <link href="sincro/css/estilos.css" rel="stylesheet" type="text/css"></link>
-  <script language="JavaScript" src="/sincro/js/navigator.js"></script>
-  <script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
+<script language="JavaScript" src="/sincro/js/navigator.js"></script>
+<script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
+<script language="JavaScript" src="/sincro/js/cookies.js"></script>
 <script>
+deleteCookie("LOGGED");
 function teclaPulsada(eventoPulsaTecla){
   tecla = (document.layers) ? eventoPulsaTecla.which : window.event.keyCode
   if (tecla == 13) {
