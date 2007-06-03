@@ -64,3 +64,4 @@ echo "`date` Generacion de los XML de sincroguia finalizada [host: `hostname`]" 
 
 # Eliminar marca de generacion de cache XML
 rm -f ${Cache}/sincrochannelXML.cache.generating
+rm -f ${Cache}/pgmactual.cache.generating
