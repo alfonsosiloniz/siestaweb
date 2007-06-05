@@ -12,6 +12,8 @@ function get_modo_video () {
     fi
 }
 
+source ../www-setup
+
 get_modo_video
 
 if [ "$ModoVideo" = "Encendido" ]; then
@@ -31,6 +33,9 @@ pkill -9 inout_wdg
 sleep 1
 pkill -9 wavebox; pkill -9 play_backend; pkill -9 record_backend; pkill -9 mount
 sleep 1
+
+# Borramos los posibles ficherso de marca de generacion de cache en proceso
+rm -f ${Cache}/*.generating
 
 # Quitar marca de disco usb
 umount /var/media/USB-HDD > /dev/null 2> /dev/null
@@ -71,8 +76,3 @@ echo Content-type: text/xml
 echo ""
 echo "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>"
 echo "<M750><RESULT>OK</RESULT></M750>"
-
-
-
-
-
