@@ -47,7 +47,10 @@
         <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> |
         <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV-TS</a> | <a href="/ssh/sshconn.html">SSH</a></div> 
     </p> 
-    <div align="center" class="txtNormal">Espacio en disco: <xsl:value-of select="M750/SPACE"/><br/><br/></div> 
+    <div align="center" class="txtNormal">
+        Espacio en disco: <xsl:value-of select="M750/SPACE"/><br/><br/>
+        <a href="/cgi-bin/crid/viewRAFile">Ver RA_FILE (grabaciones pendientes)</a> | <a href="/cgi-bin/crid/viewSMFile">Ver SM_FILE (programaciones de series)</a><br/><br/>
+    </div>
     <table width="98%" border="0" cellspacing="0" cellpadding="2" align="center" class="borderTabla2">
     <tr bgcolor="#ffb310">
       <th class="fila" align="center" width="20">C</th>
@@ -78,7 +81,9 @@
     </xsl:for-each>
     </table>
     <p>
-        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
+        <div align="center" class="txtNormal">
+        <a href="/cgi-bin/crid/viewRAFile">Ver RA_FILE (grabaciones pendientes)</a> | <a href="/cgi-bin/crid/viewSMFile">Ver SM_FILE (programaciones de series)</a><br/><br/>
+        <a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
         <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
         <a href="/index.html">Salir</a><br/><br/>
         <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> |

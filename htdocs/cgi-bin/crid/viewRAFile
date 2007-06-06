@@ -1,0 +1,170 @@
+#!/bin/bash 
+# by pepper, 6/6/2007 (C) grupo SIESTA
+
+echo Content-type: text/html
+echo ""
+
+cat <<- ---EOT---
+<html>
+<title>M750T - Explorador /data/RA_FILE</title>
+<meta http-equiv="refresh" content="600" />
+<link href="/sincro/img/m740.ico" rel="shortcut icon"></link>
+<link href="/sincro/css/estilos.css" rel="stylesheet" type="text/css"></link>
+<script language="JavaScript" src="/sincro/js/ajax.js"></script>
+<script language="JavaScript" src="/sincro/js/navigator.js"></script>
+<script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
+<script language="JavaScript" src="/sincro/js/fechasOp.js"></script>
+<body bgcolor="#FFFFFF">
+  <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
+  <div align="center"><font class="subTitPag">Explorador de archivos: /data/RA_FILE</font></div>
+  <p>
+      <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
+      <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
+      <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV-TS</a> | <a href="/ssh/sshconn.html">SSH</a></div>
+  </p>
+  <table width="98%" border="0" cellspacing="0" cellpadding="2" align="center"  class="borderTabla2">
+  <tr>
+    <td class="fila titTabla"  bgcolor="#ffb310">
+<a class="titChannel" href="/cgi-bin/box/show/">&nbsp;/</a> <font class="titChannel"><a href="/cgi-bin/box/show//data">data</a> / RA_FILE</font>
+  </td></tr>
+  <tr>
+    <td class="fila">
+<p>
+[<a class="txtNormal" href="/cgi-bin/box/show/data/RA_FILE?hexdump">HEXDUMP</a>]
+[<a class="txtNormal" href="/cgi-bin/box/show/data/RA_FILE?edit">EDIT</a>]
+[<a class="txtNormal" href="/cgi-bin/box/show/data/RA_FILE?send">DOWNLOAD</a>]
+<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#FFEEE6">
+<tr class="titChannel">
+    <td width="20%">Fecha/Hora Inicio</td>
+    <td width="20%">Fecha/Hora Fin</td>
+    <td width="20%" align="center">Guarda Inicial (min)</td>
+    <td width="20%" align="center">Guarda Final (min)</td>
+    <td width="10%" align="center">Prioridad</td>
+    <td width="10%" align="center">Id Rec.</td>
+</tr>
+<tr><td colspan=6 class=titTabla height="4"></td></tr>
+<tr><td colspan=6 class=titTabla height="1" bgcolor="black"></td></tr>
+---EOT---
+
+n=1
+sint=1
+declare -a record
+while read line
+do
+    if [ "$line" != "" ]; then
+        # Saltamos la primera linea
+        if [ $n -gt 1 ]; then
+            #La linea 2 contiene el numero de grabaciones del sintonizador 1
+            if [ $n -eq 2 ]; then
+                nRecs=$line
+                readedRecs=-1
+                echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+                echo "<tr><td colspan=\"6\" class=\"titTabla\">Sintonizador $sint</td></tr>"
+                echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+            else
+                # Si ya hemos leido todas las grabaciones
+                if [ $readedRecs -gt $nRecs ]; then
+                    nRecs=$line
+                    readedRecs=-1
+                    sint=$((sint+1))
+                    if [ $sint -lt 3 ]; then
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"1\" bgcolor=\"black\"></td></tr>"
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\">Sintonizador $sint</td></tr>"
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+                    else
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"1\" bgcolor=\"black\"></td></tr>"
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+                        echo "<tr><td colspan=\"6\" class=\"titChannel\">Detalle Grabaciones</td></tr>"
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+                        echo "</table>"
+                        echo "<table width=\"100%\" border=\"1\" bordercolor=\"#000000\" cellpadding=\"2\" cellspacing=\"0\" bgcolor=\"#FFEEE6\">"
+                        echo "<tr class=\"titTabla\">"
+                        echo "    <td align=\"center\">Id Rec.</td>"
+                        echo "    <td align=\"center\">X</td>"
+                        echo "    <td align=\"center\">Id Programa</td>"
+                        echo "    <td align=\"center\">SeriesID</td>"
+                        echo "    <td align=\"center\">Pri.</td>"
+                        echo "    <td align=\"center\">Inicio</td>"
+                        echo "    <td align=\"center\">Final</td>"
+                        echo "    <td align=\"center\">Guarda Ini</td>"
+                        echo "    <td align=\"center\">Guarda Fin</td>"
+                        echo "    <td align=\"center\">X</td>"
+                        echo "    <td align=\"center\">X</td>"
+                        echo "    <td align=\"center\">X</td>"
+                        echo "    <td align=\"center\">X</td>"
+                        echo "    <td align=\"center\">X</td>"
+                        echo "    <td align=\"center\">X</td>"
+                        echo "    <td align=\"center\">X</td>"
+                        echo "    <td align=\"center\">X</td>"
+                        echo "    <td align=\"center\">Sint.</td>"
+                        echo "</tr>"
+                    fi
+                else
+                    if [ $readedRecs -lt $nRecs ]; then
+                        # Si la linea es del sintonizador 1 o 2
+                        if [ $sint -lt 3 ]; then
+                            record=( `echo $line` )
+                            dateFormatIni=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M\" , ${record[0]}) }"`
+                            dateFormatFin=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M\" , ${record[1]}) }"`
+                            gIni=${record[2]}
+                            gFin=${record[3]}
+                            echo "<tr class=\"txtNormal\"><td>$dateFormatIni</td><td>$dateFormatFin</td><td align=\"center\">$((gIni/60))</td><td align=\"center\">$((gFin/60))</td><td align=\"center\">${record[4]}</td><td align=\"center\">${record[5]}</td></tr>"
+                        else
+                            record=( `echo $line` )
+                            dateFormatIni=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M\" , ${record[5]}) }"`
+                            dateFormatFin=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M\" , ${record[6]}) }"`
+                            gIni=${record[7]}
+                            gFin=${record[8]}
+                            echo "<tr class=\"txtNormal\"><td nowrap align=\"center\">${record[0]}</td>"
+                            echo "<td nowrap align=\"center\">${record[1]}</td>"
+                            echo "<td nowrap align=\"center\">${record[2]}</td>"
+                            echo "<td nowrap align=\"center\">${record[3]}</td>"
+                            echo "<td nowrap align=\"center\">${record[4]}</td>"
+                            echo "<td nowrap align=\"center\">$dateFormatIni</td>"
+                            echo "<td nowrap align=\"center\">$dateFormatFin</td>"
+                            echo "<td nowrap align=\"center\">$((gIni/60))</td>"
+                            echo "<td nowrap align=\"center\">$((gFin/60))</td>"
+                            echo "<td nowrap align=\"center\">${record[9]}</td>"
+                            echo "<td nowrap align=\"center\">${record[10]}</td>"
+                            echo "<td nowrap align=\"center\">${record[11]}</td>"
+                            echo "<td nowrap align=\"center\">${record[12]}</td>"
+                            echo "<td nowrap align=\"center\">${record[13]}</td>"
+                            echo "<td nowrap align=\"center\">${record[14]}</td>"
+                            echo "<td nowrap align=\"center\">${record[15]}</td>"
+                            echo "<td nowrap align=\"center\">${record[16]}</td>"
+                        echo "<td nowrap align=\"center\">${record[17]}</td></tr>"
+                        fi
+                    fi
+                fi
+            fi
+        fi
+    fi
+    n=$((n+1))
+    readedRecs=$((readedRecs+1))
+done < /data/RA_FILE
+
+cat <<- ---EOT---
+</table>
+<p>
+[<a class="txtNormal" href="/cgi-bin/box/show/data/RA_FILE?hexdump">HEXDUMP</a>]
+[<a class="txtNormal" href="/cgi-bin/box/show/data/RA_FILE?edit">EDIT</a>]
+[<a class="txtNormal" href="/cgi-bin/box/show/data/RA_FILE?send">DOWNLOAD</a>]
+  </table>
+  <table width="98%" border="0" cellspacing="0" cellpadding="2" align="center">
+  <tr>
+    <td class="txtNormal" align="right">Explorador basado en código de <a href="http://www.open7x0.org/wiki/Benutzer:Lemmi">Lemmi</a> bajo licencia <a href="http://www.gnu.de/gpl-ger.html">GPL</a></td>
+  </tr>
+  </table>
+  <p>
+      <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
+      <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
+      <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV-TS</a> | <a href="/ssh/sshconn.html">SSH</a><br/><br/>
+      <a href="/autores.html">Autores</a> | <a href="/cgi-bin/sincro/verlog">Ver Log</a> | <a href="/cgi-bin/box/estado">Ver Estado</a></div>
+  </p>
+</body>
+</html>
+---EOT---

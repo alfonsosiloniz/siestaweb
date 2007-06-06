@@ -53,7 +53,7 @@ function print_top()
     echo "  <p>"
     echo "      <div align=\"center\" class=\"txtNormal\"><a href=\"javascript:history.back()\">Atrás</a> | <a href=\"/cgi-bin/sincro/pgmactualXML\">Inicio</a> | "
     echo "      <a href=\"/cgi-bin/crid/timerXML\">Grabaciones Pendientes</a> | <a href=\"/cgi-bin/crid/videoXML\">Grabaciones Realizadas</a> | "
-    echo "      <a href=\"/index.html\">Salir</a><br/><br/><a href=\"/osd/osd2tcp.html\">Control OSD</a> | <a href=\"/cgi-bin/box/selectLiveTv\">Ver LiveTV</a> | <a href=\"/sincro/visualizarts.html\">Ver LiveTV+-TS</a> | <a href=\"/ssh/sshconn.html\">SSH</a></div>"
+    echo "      <a href=\"/index.html\">Salir</a><br/><br/><a href=\"/osd/osd2tcp.html\">Control OSD</a> | <a href=\"/cgi-bin/box/selectLiveTv\">Ver LiveTV</a> | <a href=\"/sincro/visualizarts.html\">Ver LiveTV-TS</a> | <a href=\"/ssh/sshconn.html\">SSH</a></div>"
     echo "  </p>"
     echo "  <table width=\"98%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\"  class=\"borderTabla2\">"
     echo "  <tr>"
