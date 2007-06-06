@@ -3,7 +3,7 @@
 
 source ../www-setup
 
-echo "Content-type: text/html"
+echo Content-type: text/html
 echo ""
 echo "<html>"
 echo "<title>M750T - Logs del sistema</title>"
@@ -101,6 +101,14 @@ if [ -f /tmp/getsincroimg.log ]; then
     echo "  </tr>"
     echo "  <tr>"
     echo "    <td class=\"fila\" align=\"left\"><pre>`cat /tmp/getsincroimg.log`</pre></td>"
+    echo "  </tr>"
+fi
+if [ -f /data/START_RECORDER_LOG ]; then
+    echo "  <tr>"
+    echo "    <td class=\"fila titTabla\"  bgcolor=\"#ffb310\" align=\"center\">Log del grabador</td>"
+    echo "  </tr>"
+    echo "  <tr>"
+    echo "    <td class=\"fila\" align=\"left\"><pre>`./viewRecorderLog`</pre></td>"
     echo "  </tr>"
 fi
 echo "  </table><br/>"
