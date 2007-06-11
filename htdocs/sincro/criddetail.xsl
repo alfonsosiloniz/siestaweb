@@ -37,7 +37,7 @@
       <td class="txtNormal" align="left" valign="top">
         <p class="titChannel"><xsl:value-of select='/M750/RECORD_DETAIL/TITLE' /></p>
         <p class="titTabla"><xsl:value-of select='/M750/RECORD_DETAIL/EPG_SHORT' /></p>
-        <p><textarea cols="120" class="cajaPlana" rows="20" name="texto"><xsl:value-of select='/M750/RECORD_DETAIL/EPG_LONG' /></textarea></p>
+        <p><textarea onfocus="blur()" cols="120" class="cajaPlana" rows="20" name="texto"><xsl:value-of select='/M750/RECORD_DETAIL/EPG_LONG' /></textarea></p>
         <input class="txtNormal" type="button" value="Editar" onclick="editar()" /><br/>
       </td>
     </tr>
