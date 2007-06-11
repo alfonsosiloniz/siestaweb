@@ -3,10 +3,18 @@
 
 <xsl:template match="/">
   <html>
+  <head>
   <title>M750T - Detalle de grabación</title>
   <link href="/sincro/img/m740.ico" rel="shortcut icon"></link>
   <link href="/sincro/css/estilos.css" rel="stylesheet" type="text/css"></link>
+  <script>
+    function editar() {
+        document.location.href="/cgi-bin/crid/edittitleXML?<xsl:value-of select="/M750/RECORD_DETAIL/CRIDFILE" />";
+    }
+  </script>
+  </head>
   <body>
+  <form name="formulario" method="post">
     <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
     <div align="center"><font class="subTitPag">Detalle de Grabación</font></div>
     <p>
@@ -30,6 +38,7 @@
         <p class="titChannel"><xsl:value-of select='/M750/RECORD_DETAIL/TITLE' /></p>
         <p class="titTabla"><xsl:value-of select='/M750/RECORD_DETAIL/EPG_SHORT' /></p>
         <p><textarea cols="120" class="cajaPlana" rows="20" name="texto"><xsl:value-of select='/M750/RECORD_DETAIL/EPG_LONG' /></textarea></p>
+        <input class="txtNormal" type="button" value="Editar" onclick="editar()" /><br/>
       </td>
     </tr>
     </table>
@@ -40,6 +49,7 @@
         <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
         <a href="/index.html">Salir</a></div>
     </p>
+  </form>
   </body>
   </html>
 </xsl:template>

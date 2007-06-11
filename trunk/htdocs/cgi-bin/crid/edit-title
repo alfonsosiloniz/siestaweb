@@ -1,5 +1,7 @@
 #!/bin/bash 
 # Martin Ostermann, 2005-08-25
+# Modified by pepper to work in the LCK-SIESTA firmware
+
 source ../www-setup
 Cridfile="$PATH_INFO"
 Basename=`basename $Cridfile .crid`
@@ -39,6 +41,7 @@ RecordingFlag=${Crid0[9]}
 
 if [ "$QUERY_STRING" = "save" ] ; then
 	splitInputData "`cat`"
+	echo "crided -T $Title -S $EPGshort -L $EPGlong $PATH_INFO" >> /tmp/kk.tmp
 	crided -T "$Title" -S "$EPGshort" -L "$EPGlong" "$PATH_INFO"	
 else	
 	#Title=`dd bs=1 skip=$(($s1-$c1)) count=$c1 2>/dev/null <$Cridfile`
@@ -86,41 +89,4 @@ fi
 SenderInfo=`grep ${Basename: -5}$ /var/etc/services.txt`
 SenderName=`echo ${SenderInfo:0:20} | iso2html | sed -e 's/^&#5;//'`
 
-. theme header "Titel bearbeiten" = MartinO 300
-
-
-if [ $RecordingState != 3 ] ; then
-	cat<<-EOF
-	<p>
-	<FONT COLOR="#FF0000" size="+2"> <b><center>
-	Wichtige Warnung: Vor dem Ver&auml;ndern von Timern 
-	unbedingt <a href="/cgi-bin/display/static/crid/info-timer-modification.body?Title=Bearbeitung%20von%20Timern&Heading=Probleme%20beim%20Bearbeiten%20von%20Timern">
-	 diese Nachricht</a> lesen! </center></b></FONT>
-	<p>
-	EOF
-fi
-
-cat <<-EOF
-
-`awk "BEGIN {print \"${SenderName} -  \" strftime( \"%d.%m. %H:%M\" , $Begin) \"-\" strftime( \"%H:%M\" , $End) \" : \" ($End-$Begin)/60 \"min\" }"` <p>
-
-<FORM ACTION="${SCRIPT_NAME}${PATH_INFO}?save" METHOD="post">
-	<table><tr>
-		<td>Titel:</td>
-		<td><input type="text" name="Title" value="$Title" size="35"></td>
-	</tr><tr>
-		<td>Untertitel:</td>
-		<td><input type="text" name="EPGshort" value="$EPGshort" size="35"></td>
-	</tr><tr>
-		<td colspan=2> Beschreibung:<br>
-		<TEXTAREA wrap="virtual" name="EPGlong" rows=15 cols=65 MAXLENGTH=800>
-		$EPGlong</TEXTAREA><BR>
-		<INPUT type="Submit" VALUE="Beschreibungen Speichern">
-		<INPUT type="Reset" VALUE="Wiederherstellen">
-		</td>
-	</tr></table>
-</FORM>
-EOF
-
-. theme footer 
-
+./titleXML $Cridfile
