@@ -57,7 +57,7 @@ if [ ${PART_MOUNTED} -eq 0 ]; then
     fi
     echo "`date` Chequeo del disco finalizado" >> $LOG
 else
-    echo "`date` No se ha podido desmontar la particion. Abortamos el proceso de chequeo."
+    echo "`date` No se ha podido desmontar la particion. Abortamos el proceso de chequeo." >> $LOG
 fi
 if [ "$ModoVideo" = "ON" ]; then
     /data/scripts/irsim.sh POWER
