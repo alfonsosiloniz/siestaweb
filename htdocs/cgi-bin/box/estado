@@ -57,6 +57,14 @@ echo "    alert(\"Se ha mandado la petición de actualización de la caché del pro
 echo "    document.location.href=\"/cgi-bin/sincro/verlog\";"
 echo "  }"
 echo "}"
+echo "function check(partition, fstype) {"
+echo "  if (confirm(\"El chequeo del disco implica realizar un apagado del gigaset para desmontar la unidad.\n¿Confirma el chequeo de \"+partition+\"?\")) {"
+echo "    makeRequest(\"/cgi-bin/box/checkDisk?\"+ partition + \"-\" + fstype + \"-\" + new Date().getTime(), \"mostrarXMLRespuesta\");"
+echo "    alert(\"Se ha mandado la petición de chequeo de la unidad.\nSigue el proceso en la página de log de la aplicación.\");"
+echo "    document.location.href=\"/cgi-bin/sincro/verlog\";"
+echo "  }"
+echo ""
+echo "}"
 echo "function mostrarXMLRespuesta() {}"
 echo "</script>"
 echo "<body bgcolor=\"#FFFFFF\">"
@@ -78,13 +86,30 @@ echo "  <tr>"
 echo "    <td class=\"fila titTabla\"  bgcolor=\"#ffb310\" align=\"center\">Espacio en disco</td>"
 echo "  </tr>"
 echo "  <tr>"
-echo "    <td class=\"fila\" align=\"left\"><pre>`df 2> /dev/null`</pre></td>"
+echo "    <td class=\"fila\" align=\"left\"><pre>`df`</pre></td>"
 echo "  </tr>"
 echo "  <tr>"
 echo "    <td class=\"fila titTabla\"  bgcolor=\"#ffb310\" align=\"center\">Puntos de montaje</td>"
 echo "  </tr>"
 echo "  <tr>"
-echo "    <td class=\"fila\" align=\"left\"><pre>`cat /proc/mounts`</pre></td>"
+echo "    <td class=\"fila\">"
+echo "  <table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">"
+cat /proc/mounts > /tmp/mounts.tmp
+declare -a devs
+while read line
+do
+    echo "  <tr>"
+    isdev=`echo $line | grep "/dev/sd" | wc -l`
+    if [ $isdev -gt 0 ]; then
+        devs=(`echo $line`)
+        link="<input type=\"button\" value=\"check ${devs[0]}\" class=\"cajaPlana\" onclick=\"check('${devs[0]}','${devs[2]}')\">"
+        echo "    <td width=\"150\">${link}</td><td align=\"left\"><font style=\"font-family:courier new;; font-size:12px\">$line</font></td>"
+    else
+        echo "    <td>&nbsp;</td><td align=\"left\"><font style=\"font-family:courier new; font-size:12px\">$line</font></td>"
+    fi
+    echo "  </tr>"
+done < /tmp/mounts.tmp
+echo "      </table></td>"
 echo "  </tr>"
 echo "  <tr>"
 echo "    <td class=\"fila titTabla\"  bgcolor=\"#ffb310\" align=\"center\">Uso de memoria</td>"
