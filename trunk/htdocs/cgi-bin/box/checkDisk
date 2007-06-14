@@ -1,5 +1,5 @@
 #!/bin/bash
-# (c) Grupo SIESTA, 24-05-2007
+# (c) Grupo SIESTA, by pepper, 14/07/2007
 
 function get_modo_video () {
     # Buscar nº de modulos que estan usando el modulo video
