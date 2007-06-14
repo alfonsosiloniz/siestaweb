@@ -94,19 +94,30 @@ echo "  </tr>"
 echo "  <tr>"
 echo "    <td class=\"fila\">"
 echo "  <table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">"
+echo "  <tr>"
+echo "    <th align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">&nbsp;</font></th>"
+echo "    <th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Dispositivo</font></th>"
+echo "    <th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Directorio montaje</font></th>"
+echo "    <th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Tipo File System</font></th>"
+echo "    <th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Opciones Montaje</font></th>"
+echo "  </tr>"
 cat /proc/mounts > /tmp/mounts.tmp
 declare -a devs
 while read line
 do
     echo "  <tr>"
     isdev=`echo $line | grep "/dev/sd" | wc -l`
+    devs=(`echo $line`)
     if [ $isdev -gt 0 ]; then
-        devs=(`echo $line`)
         link="<input type=\"button\" style=\"width: 130px;\" value=\"check ${devs[0]}\" class=\"txtInfo\" onclick=\"check('${devs[0]}','${devs[2]}')\">"
-        echo "    <td width=\"150\">${link}</td><td align=\"left\"><font style=\"font-family:courier new;; font-size:12px\">$line</font></td>"
+        echo "    <td width=\"150\">${link}</td>"
     else
-        echo "    <td>&nbsp;</td><td align=\"left\"><font style=\"font-family:courier new; font-size:12px\">$line</font></td>"
+        echo "    <td>&nbsp;</td>"
     fi
+    echo "    <td align=\"left\"><font style=\"font-family:courier new; font-size:12px\">${devs[0]}</font></td>"
+    echo "    <td align=\"left\"><font style=\"font-family:courier new; font-size:12px\">${devs[1]}</font></td>"
+    echo "    <td align=\"left\"><font style=\"font-family:courier new; font-size:12px\">${devs[2]}</font></td>"
+    echo "    <td align=\"left\"><font style=\"font-family:courier new; font-size:12px\">${devs[3]}</font></td>"
     echo "  </tr>"
 done < /tmp/mounts.tmp
 echo "      </table></td>"
