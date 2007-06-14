@@ -49,12 +49,14 @@ echo "  </tr>"
 echo "  <tr>"
 echo "    <td class=\"fila\" align=\"left\"><pre>`cat /var/log/run-http.log`</pre></td>"
 echo "  </tr>"
+if [ -f /var/log/swap.log ]; then
 echo "  <tr>"
 echo "    <td class=\"fila titTabla\"  bgcolor=\"#ffb310\" align=\"center\">Swap</td>"
 echo "  </tr>"
 echo "  <tr>"
 echo "    <td class=\"fila\" align=\"left\"><pre>`cat /var/log/swap.log`</pre></td>"
 echo "  </tr>"
+fi
 if [ -f /tmp/record.log ]; then
     echo "  <tr>"
     echo "    <td class=\"fila titTabla\"  bgcolor=\"#ffb310\" align=\"center\">Grabaciones programadas/canceladas desde la aplicación</td>"
@@ -93,6 +95,14 @@ if [ -f /tmp/delete_recording.log ]; then
     echo "  </tr>"
     echo "  <tr>"
     echo "    <td class=\"fila\" align=\"left\"><pre>`cat /tmp/delete_recording.log`</pre></td>"
+    echo "  </tr>"
+fi
+if [ -f /tmp/checkdisk.log ]; then
+    echo "  <tr>"
+    echo "    <td class=\"fila titTabla\"  bgcolor=\"#ffb310\" align=\"center\">Chequeo de particiones del disco</td>"
+    echo "  </tr>"
+    echo "  <tr>"
+    echo "    <td class=\"fila\" align=\"left\"><pre>`cat /tmp/checkdisk.log`</pre></td>"
     echo "  </tr>"
 fi
 if [ -f /tmp/getsincroimg.log ]; then
