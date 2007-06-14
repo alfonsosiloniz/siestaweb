@@ -41,7 +41,7 @@ while [ ${PART_MOUNTED} -gt 0 -a $cont -lt 10 ]
 do
 	echo "`date` Particion $1 montada. La particion debe estar desmontada para poder ejecutar la comprobacion. Esperamos otros 5 segundos..." >> $LOG
 	#Si el gigaset no ha desmontado automaticamente la unidad con el apagado rapido, la intentamos desmontar nosotros.
-	umount $partition >> $LOG 2> $ERR
+	umount $partition >> $LOG 2>> $ERR
 	sleep 5
 	cont=$((cont+1))
 	PART_MOUNTED=`grep $partition /proc/mounts | wc -l`
@@ -50,10 +50,10 @@ done
 if [ ${PART_MOUNTED} -eq 0 ]; then
     if [ "${fstype}" = "ext2" -o "${fstype}" = "ext3" ] ; then
         echo "`date` Iniciando chequeo del disco: e2fsck -p -v $partition" >> $LOG
-        e2fsck -p -v $partition >> $LOG 2> $ERR
+        e2fsck -p -v $partition >> $LOG 2>> $ERR
     else
         echo "`date` Iniciando chequeo del disco: dosfsck -a -v -w $partition" >> $LOG
-    	dosfsck -a -v -w $partition >> $LOG 2> $ERR
+    	dosfsck -a -v -w $partition >> $LOG 2>> $ERR
     fi
     echo "`date` Chequeo del disco finalizado" >> $LOG
 else
