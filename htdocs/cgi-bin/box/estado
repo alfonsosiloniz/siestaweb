@@ -97,8 +97,8 @@ echo "  <table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" a
 echo "  <tr>"
 echo "    <th align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">&nbsp;</font></th>"
 echo "    <th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Dispositivo</font></th>"
-echo "    <th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Directorio montaje</font></th>"
-echo "    <th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Tipo File System</font></th>"
+echo "    <th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Punto de montaje</font></th>"
+echo "    <th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">File System Type</font></th>"
 echo "    <th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Opciones Montaje</font></th>"
 echo "  </tr>"
 cat /proc/mounts > /tmp/mounts.tmp
@@ -115,7 +115,7 @@ do
     fi
     echo "    <td width=\"150\">${link}</td>"
     echo "    <td align=\"left\"><font style=\"font-family:courier new; font-size:12px\">${devs[0]}</font></td>"
-    echo "    <td align=\"left\"><font style=\"font-family:courier new; font-size:12px\">${devs[1]}</font></td>"
+    echo "    <td align=\"left\"><font style=\"font-family:courier new; font-size:12px\"><a href=\"/cgi-bin/box/show${devs[1]}\" title=\"Explorar ${devs[1]}\">${devs[1]}</a></font></td>"
     echo "    <td align=\"left\"><font style=\"font-family:courier new; font-size:12px\">${devs[2]}</font></td>"
     echo "    <td align=\"left\"><font style=\"font-family:courier new; font-size:12px\">${devs[3]}</font></td>"
     echo "  </tr>"
