@@ -7,31 +7,41 @@ var vueltas = 0;
 
 function moveDiv(divName, divTop, divLeft)
 {
-	if(document.all[divName]!= null){
-	   if(document.all[divName].style!= null){	
-	document.all[divName].style.top=divTop+"px";
-	document.all[divName].style.left=divLeft+"px";			
-	   }
-	}
+    if (document.all) {
+        if (document.all[divName]!= null){
+            if (document.all[divName].style!= null){ 
+                document.all[divName].style.top=divTop+"px";
+                document.all[divName].style.left=divLeft+"px";          
+           }
+        }
+    }
+    else {
+        if (document.getElementById(divName)!= null){
+            if (document.getElementById(divName).style!= null){ 
+                document.getElementById(divName).style.top=divTop+"px";
+                document.getElementById(divName).style.left=divLeft+"px";          
+           }
+        }
+    }
 }
 
 function moveDivs()
-{	
-	d="mensajeproceso";	
-	t = parseInt(document.body.scrollTop)+parseInt(document.body.clientHeight);//-parseInt(document.all[d].style.height);
-	t = t-(parseInt(document.body.clientHeight)/2)-15;
-	l = (parseInt(document.body.clientWidth)/2)-70;
-	
-	moveDiv(d,t,l);
+{   
+    d="mensajeproceso"; 
+    t = parseInt(document.body.scrollTop)+parseInt(document.body.clientHeight);
+    t = t-(parseInt(document.body.clientHeight)/2)-15;
+    l = (parseInt(document.body.clientWidth)/2)-70;
+    
+    moveDiv(d,t,l);
     moveTapa();
 }
 function moveTapa()
-{	
-	d="divTapa";	
-	t = parseInt(document.body.scrollTop);
-	l = 0;
+{   
+    d="divTapa";    
+    t = parseInt(document.body.scrollTop);
+    l = 0;
 
-	moveDiv(d,t,l);
+    moveDiv(d,t,l);
 }
 
 function capaTrans(){
@@ -47,19 +57,19 @@ function capaTrans(){
   document.body.appendChild(mensajeTapa);
 }
 
-function desactivarEnviar(imgEnviar,linkEnviar,imgBotonInactivo){ 	
+function desactivarEnviar(imgEnviar,linkEnviar,imgBotonInactivo){   
   imgEnviar.setAttribute("src",imgBotonInactivo.src);
   linkEnviar.removeAttribute("href");  
 }
 
-function activarEnviar(imgEnviar,linkEnviar,imgBotonActivo){  		
+function activarEnviar(imgEnviar,linkEnviar,imgBotonActivo){        
   imgEnviar.setAttribute("src",imgBotonActivo.src);
   linkEnviar.setAttribute("href","javascript:enviar()");
 }
 
 function mostrarMensajeProceso(){  
   if (msgprocesando){
-  	return false;
+    return false;
   }
 
   msgprocesando = true;
@@ -93,11 +103,11 @@ function mostrarMensajeProceso(){
 }
 
 function cambiarTextoMensajeProceso(){
-	var car = "";
+    var car = "";
 
   switch (cont) {
     case 0:
-      car = ".";	 
+      car = ".";     
       break;
     case 1:
       car = "..";
@@ -113,14 +123,14 @@ function cambiarTextoMensajeProceso(){
   cont ++;
   if (cont == 4){
     cont = 0;
-  }	
+  } 
 }
 
 //funcion desconocida pero no la borramos
 function eliminarMensajeProceso(){
   window.clearInterval(codInterval);
    if(document.getElementById("mensajeproceso")!=null){
-	   document.body.removeChild(document.getElementById("mensajeproceso"));
+       document.body.removeChild(document.getElementById("mensajeproceso"));
   }
    
    if(document.getElementById("divTapa")!=null){
@@ -136,15 +146,15 @@ function checkURL(){
   vueltas ++;
   url_2 = getURL();
   if(url_1==url_2 && vueltas < 20){
-	
-	window.setTimeout("checkURL()",100);  
+    
+    window.setTimeout("checkURL()",100);  
   }
   else{
-	vueltas = 0;
-	msgprocesando=false;  
+    vueltas = 0;
+    msgprocesando=false;  
   }
 }
 
 function getURL(){
-	return document.location.href;
+    return document.location.href;
 }

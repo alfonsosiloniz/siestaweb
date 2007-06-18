@@ -11,6 +11,8 @@ function get_modo_video () {
     fi
 }
 
+STICK_PARTITION=(`df | grep SWAP`)
+
 echo "Content-type: text/html"
 echo ""
 echo "<html>"
@@ -86,7 +88,7 @@ echo "  <tr>"
 echo "    <td class=\"fila titTabla\"  bgcolor=\"#ffb310\" align=\"center\">Espacio en disco</td>"
 echo "  </tr>"
 echo "  <tr>"
-echo "    <td class=\"fila\" align=\"left\"><pre>`df`</pre></td>"
+echo "    <td class=\"fila\" align=\"left\"><pre>`df 2> /dev/null`</pre></td>"
 echo "  </tr>"
 echo "  <tr>"
 echo "    <td class=\"fila titTabla\"  bgcolor=\"#ffb310\" align=\"center\">Puntos de montaje</td>"
@@ -108,7 +110,7 @@ do
     echo "  <tr>"
     isdev=`echo $line | grep "/dev/sd" | wc -l`
     devs=(`echo $line`)
-    if [ $isdev -gt 0 ]; then
+    if [ $isdev -gt 0 -a "$STICK_PARTITION" != "${devs[0]}" ]; then
         link="<input type=\"button\" style=\"width: 130px;\" value=\"check ${devs[0]}\" class=\"txtInfo\" onclick=\"check('${devs[0]}','${devs[2]}')\">"
     else
         link=""
@@ -151,6 +153,29 @@ echo "    <td class=\"fila titTabla\"  bgcolor=\"#ffb310\" align=\"center\">Proc
 echo "  </tr>"
 echo "  <tr>"
 echo "    <td class=\"fila\" align=\"left\"><pre>`ps -axfw`</pre></td>"
+echo "  </tr>"
+echo "  <tr>"
+echo "    <td class=\"fila titTabla\"  bgcolor=\"#ffb310\" align=\"center\">Actualización de la Sincroguía</td>"
+echo "  </tr>"
+echo "  <tr>"
+echo "    <td class=\"fila\" align=\"left\">"
+echo "      <table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">"
+echo "      <tr>"
+echo "          <th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Fecha/Hora</font></th>"
+echo "          <th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">ID Canal</font></th>"
+echo "      </tr>"
+declare -a status
+while read line
+do
+    status=(`echo $line`)
+    dateFormat=`awk "BEGIN {print strftime( \"%d/%m/%Y %H:%M\" , ${status[0]}) }"`
+    echo "      <tr>"
+    echo "          <td width="200" style=\"font-family:courier new; font-size:12px;\">$dateFormat</td>"
+    echo "          <td style=\"font-family:courier new; font-size:12px;\">${status[1]}</td>"
+    echo "      </tr>"
+done < /data/EPG_Status.txt
+echo "      </table>"
+echo "    </td>"
 echo "  </tr>"
 echo "  <tr>"
 echo "  </table><br/>"
