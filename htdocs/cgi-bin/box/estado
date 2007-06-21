@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # by pepper 07/05/2007
 
 function get_modo_video () {
@@ -11,7 +11,7 @@ function get_modo_video () {
     fi
 }
 
-STICK_PARTITION=(`df | grep SWAP`)
+STICK_PARTITION=(`df 2> /dev/null | grep SWAP`)
 
 echo "Content-type: text/html"
 echo ""
@@ -174,18 +174,27 @@ echo "  </tr>"
 echo "  <tr>"
 echo "    <td class=\"fila\" align=\"left\">"
 echo "      <table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">"
+status=(`grep LastEPG_Upload /var/etc/settings.txt`)
+dateFormat=`awk "BEGIN {print strftime( \"%d/%m/%Y %H:%M\" , ${status[1]}) }"`
 echo "      <tr>"
-echo "          <th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Fecha/Hora</font></th>"
-echo "          <th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">ID Canal</font></th>"
+echo "          <td width=200><font style=\"font-family:courier new; font-size:12px; text-decoration: underline; font-weight: bold;\">Última actualización: </font></td>"
+echo "          <td><font style=\"font-family:courier new; font-size:12px; font-weight: bold;\">$dateFormat UTC</font></td>"
+echo "      </tr>"
+echo "      <tr>"
+echo "          <td colspan=\"2\">&nbsp;</td>"
+echo "      </tr>"
+echo "      <tr>"
+echo "          <td align=\"left\" style=\"font-family:courier new; font-size:12px; text-decoration: underline; font-weight: bold;\">ID Canal</td>"
+echo "          <td align=\"left\" style=\"font-family:courier new; font-size:12px; text-decoration: underline; font-weight: bold;\">Fecha/Hora</td>"
 echo "      </tr>"
 declare -a status
 while read line
 do
     status=(`echo $line`)
-    dateFormat=`awk "BEGIN {print strftime( \"%d/%m/%Y %H:%M\" , ${status[0]}) }"`
+    dateFormat=`awk "BEGIN {print strftime( \"%d/%m/%Y %H:%M \" , ${status[0]}) }"`
     echo "      <tr>"
-    echo "          <td width="200" style=\"font-family:courier new; font-size:12px;\">$dateFormat</td>"
     echo "          <td style=\"font-family:courier new; font-size:12px;\">${status[1]}</td>"
+    echo "          <td style=\"font-family:courier new; font-size:12px;\">$dateFormat UTC</td>"
     echo "      </tr>"
 done < /data/EPG_Status.txt
 echo "      </table>"
