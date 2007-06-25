@@ -12,8 +12,8 @@
   <script>
   function cancel(id) {
     if (confirm("¿Está seguro de querer cancelar la grabación seleccionada?")) {
-      if (is_ie)
-        mostrarMensajeProceso();
+      //if (is_ie)
+      mostrarMensajeProceso();
       makeRequest("/cgi-bin/sincro/cancelXML?" + parseInt(id, 16), "procesarXMLRespuesta");
     }
   }
@@ -26,8 +26,8 @@
       document.location.reload();
     }
     else {
-      if (is_ie)
-        eliminarMensajeProceso();
+      //if (is_ie)
+      eliminarMensajeProceso();
       alert("Cancelación NO aceptada por el M750");
     }
   }
