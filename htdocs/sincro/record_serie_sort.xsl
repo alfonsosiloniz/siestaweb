@@ -13,8 +13,8 @@
   <script>
   function deleteRec(crid) {
     if (confirm("¿Está seguro de querer eliminar definitivamente la grabación seleccionada?")) {
-      if (is_ie)
-        mostrarMensajeProceso();
+      //if (is_ie)
+      mostrarMensajeProceso();
       makeRequest("/cgi-bin/crid/deleteRecording?" + crid, "procesarXMLRespuesta");
     }
   }
@@ -27,8 +27,8 @@
       document.location.reload();
     }
     else {
-      if (is_ie)
-        eliminarMensajeProceso();
+      //if (is_ie)
+      eliminarMensajeProceso();
       alert("Borrado de Grabación NO aceptado por el M750");
     }
   }

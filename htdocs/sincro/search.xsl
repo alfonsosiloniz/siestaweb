@@ -16,14 +16,14 @@
     if (serie == 1)
         enserie="en serie ";
     if (confirm("¿Está seguro de querer grabar " + enserie + "el programa \"" + titulo + "\"?")) {
-      if (is_ie)
-        mostrarMensajeProceso();
+      //if (is_ie)
+      mostrarMensajeProceso();
       makeRequest("/cgi-bin/sincro/recordXML?" + parseInt(id, 16) + "-" + serie + "-" + new Date().getTime(), "mostrarXMLRespuesta");
     }
   }
   function mostrarXMLRespuesta(xmldoc) {
-    if (is_ie)
-      eliminarMensajeProceso();
+    //if (is_ie)
+    eliminarMensajeProceso();
     result = xmldoc.getElementsByTagName("RESULT");
     if (result[0].firstChild.data == "1")
       alert("Programación aceptada por el M750");
@@ -35,14 +35,14 @@
   }
   function noReply() {}
   function buscar() {
-    if (is_ie)
-      mostrarMensajeProceso();
+    //if (is_ie)
+    mostrarMensajeProceso();
     document.location.href="/cgi-bin/sincro/searchXML?" + document.forms['formulario'].querystr.value;
   }
   function buscarFH() {
     f=document.forms['formulario'];
-    if (is_ie)
-      mostrarMensajeProceso();
+    //if (is_ie)
+    mostrarMensajeProceso();
     document.location.href="/cgi-bin/sincro/searchXML?" + f.fecha.value + " " + f.hora.value;
   }
   function initFechas(fecha) {

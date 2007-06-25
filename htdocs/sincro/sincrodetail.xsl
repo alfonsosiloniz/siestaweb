@@ -12,15 +12,15 @@
   <script type="text/javascript">
   function record(id, serie) {
     if (confirm("¿Está seguro de querer grabar el programa?")) {
-      if (is_ie)
-        mostrarMensajeProceso();
+      //if (is_ie)
+      mostrarMensajeProceso();
       makeRequest("/cgi-bin/sincro/recordXML?" + id + "-" + serie + "-" + new Date().getTime(), "mostrarXMLRespuesta");
     }
   }
   function cancel(id) {
     if (confirm("¿Está seguro de querer cancelar la grabación?")) {
-      if (is_ie)
-        mostrarMensajeProceso();
+      //if (is_ie)
+      mostrarMensajeProceso();
       makeRequest("/cgi-bin/sincro/cancelXML?" + id, "procesarXMLRespuesta");
     }
   }
@@ -29,8 +29,8 @@
     window.open("http://www.inout.tv/SincroGuia/ficha.php?id="+pid);
   }
   function mostrarXMLRespuesta(xmldoc) {
-    if (is_ie)
-      eliminarMensajeProceso();
+    //if (is_ie)
+    eliminarMensajeProceso();
     result = xmldoc.getElementsByTagName("RESULT");
     if (result[0].firstChild.data == "1")
       alert("Programación aceptada por el M750");
