@@ -1,14 +1,17 @@
-.borderTabla{
-	border-bottom: thin solid black 1px;
-	border-right-width : thin;
-	border-right : thin solid Black 1px;
-	border-left : thin solid Black 1px;
+.borderTabla {
+	border-right : solid Black 1px;
+	border-left : solid Black 1px;
+	border-bottom:1px solid black;
 }
 
 .borderTabla2{
 	border-right : solid Black 1px;
 	border-left : solid Black 1px;
 	border-top: solid Black 1px;
+}
+
+.borderFila {
+    border-top: solid Black 1px;
 }
 
 .fila {
@@ -57,6 +60,18 @@
 .txtNormal {
 	font-family : Verdana;
 	font-size : 12px;
+	font-style : normal;
+}
+
+.txtPeq {
+	font-family : Verdana;
+	font-size : 10px;
+	font-style : normal;
+}
+
+.txtMuyPeq {
+	font-family : Verdana;
+	font-size : 8px;
 	font-style : normal;
 }
 

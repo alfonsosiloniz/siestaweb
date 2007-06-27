@@ -11,6 +11,7 @@ renice 20 $$ > /dev/null
 # Configurar entorno
 source ../www-setup
 SORT_CHANNELS=$Cache/sort_channels.txt
+horaUTCinicial=`date +%s`
 
 # Comprobar marca de generacion de cache XML
 [ -f ${Cache}/sincrochannelXML.cache.generating ] && exit -1
@@ -19,7 +20,7 @@ SORT_CHANNELS=$Cache/sort_channels.txt
 touch ${Cache}/sincrochannelXML.cache.generating
 
 # Log del proceso
-echo "`date` Iniciando generacion XML de sincroguia [host: `hostname`]" > $Cache/sincro.cache.log
+echo "`date` Iniciando generacion XML de sincroguia [host: `hostname`],[horaUTCinicial: $horaUTCinicial]" > $Cache/sincro.cache.log
 echo -n "" > $Cache/sincro.cache.err
 
 # Obtener parametros
@@ -43,13 +44,15 @@ for Sincrofile in $ListaCanales ; do
 		found=1
 		if [ $numParams -eq 1 ]; then
 			found=`echo $params | grep "$CHANNEL_ID:" | wc -l`
+			# Si solo se actualizan algunos canales, no actualizamos la parrilla, puesto que se pintaría mal
+			horaUTCinicial="-1"
 		fi
 		if [ $found -eq 1 ]; then
 			if [ -f $Sincrofile ]; then
 				echo -n "`date` Generando Sincro de Canal $CHANNEL_ID" >> $Cache/sincro.cache.log 2>> $Cache/sincro.cache.err
 				CACHE_FILE=${Cache}/sincrochannelXML.cache.$CHANNEL_ID
 				touch ${CACHE_FILE}.generating
-				./sincrochannelXML.cache /tmp/`basename $Sincrofile` $i >> $Cache/sincro.cache.log 2>> $Cache/sincro.cache.err
+				./sincrochannelXML.cache /tmp/`basename $Sincrofile` $i $horaUTCinicial >> $Cache/sincro.cache.log 2>> $Cache/sincro.cache.err
 				rm -f ${CACHE_FILE}.generating
 			fi
 		fi

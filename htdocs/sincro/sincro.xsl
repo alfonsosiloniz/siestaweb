@@ -71,7 +71,7 @@
     <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
     <div align="center"><a href="http://www.inout.tv/SincroGuia"><img src="/sincro/img/sincro.gif" border="0"/></a><font class="subTitPag">proporcionada por InOut TV</font></div>
     <p>
-        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
+        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | <a href="/cgi-bin/sincro/parrilla">Parrilla</a> | 
         <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
         <a href="/index.html">Salir</a><br/><br/>
         <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> |
@@ -244,7 +244,7 @@
     </table><br/>
     </xsl:for-each>
     <p>
-        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
+        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | <a href="/cgi-bin/sincro/parrilla">Parrilla</a> | 
         <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
         <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> |
         <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV-TS</a> | <a href="/ssh/sshconn.html">SSH</a><br/><br/>
