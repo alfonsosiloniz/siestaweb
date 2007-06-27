@@ -91,9 +91,9 @@ if [ $horaUTCinicial -ge 0 ]; then
                                 urlimg="/sincro/img/epg_long_img.png"
                             fi
                         fi
-                        echo -n "<a href=\"javascript:detail('$pidcidAnt', '$imagenAnt', '$longsAnt', '$CHANNEL_ID', '$dateIniAnt');\" title=\"$dateFormatAnt - $tituloAnt\"><img src="$urlimg" width=77 height=52 border=0 alt=\"$dateFormatAnt - $tituloAnt\"></a><br>" >> ${cacheHTMLFile}
+                        echo -n "<a href=\"javascript:detail('$pidcidAnt', '$imagenAnt', '$longsAnt', '$CHANNEL_ID', '$dateIniAnt');\" title=\"$CHANNEL_ID - $dateFormatAnt - $tituloAnt\"><img src="$urlimg" width=77 height=52 border=0 alt=\"$CHANNEL_ID - $dateFormatAnt - $tituloAnt\"></a><br>" >> ${cacheHTMLFile}
                     fi
-                    echo "<a href=\"javascript:detail('$pidcidAnt', '$imagenAnt', '$longsAnt', '$CHANNEL_ID', '$dateIniAnt');\" title=\"$dateFormatAnt - $tituloAnt\">$tituloAnt</a></td></tr>" >> ${cacheHTMLFile}
+                    echo "<a href=\"javascript:detail('$pidcidAnt', '$imagenAnt', '$longsAnt', '$CHANNEL_ID', '$dateIniAnt');\" title=\"$CHANNEL_ID - $dateFormatAnt - $tituloAnt\">$tituloAnt</a></td></tr>" >> ${cacheHTMLFile}
                 fi
             fi
         fi
