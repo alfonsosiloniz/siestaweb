@@ -73,8 +73,8 @@ if [ $horaUTCinicial -ge 0 ]; then
                     fi
                     
                     if [ $duration -gt 2200 ]; then
-                        echo -n "<a href='javascript:record(\"$pidcidAnt\", 0, \"$tituloAnt\")'><img src="/sincro/img/red_ball.jpg" alt="Grabar" width="18" height="18" border="0"></a>&nbsp;" >> ${cacheHTMLFile}
-                        echo -n "<a href='javascript:record(\"$pidcidAnt\", 1, \"$tituloAnt\")'><img src="/sincro/img/blue_ball.jpg" alt="Grabar en Serie" width="18" height="18" border="0"></a><br>" >> ${cacheHTMLFile}
+                        echo -n "<a href='javascript:record(\"$pidcidAnt\", 0, \"$tituloAnt\")'><img src="/sincro/img/red_ball.gif" alt="Grabar" width="18" height="18" border="0"></a>&nbsp;" >> ${cacheHTMLFile}
+                        echo -n "<a href='javascript:record(\"$pidcidAnt\", 1, \"$tituloAnt\")'><img src="/sincro/img/blue_ball.gif" alt="Grabar en Serie" width="18" height="18" border="0"></a><br>" >> ${cacheHTMLFile}
                     fi
                     
                     if [ $duration -ge 1500 ]; then
