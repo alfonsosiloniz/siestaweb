@@ -35,23 +35,23 @@ if [ -f ${CACHE_FILE} ]; then
     #echo Content-type: text/xml
     #echo ""
     cat < ${CACHE_FILE}
-else
-    from=1
-    to=1000
-    if [ -n "$QUERY_STRING" ]; then
-        from=`echo $QUERY_STRING | cut -d"-" -f 1`
-        to=`echo $QUERY_STRING | cut -d"-" -f 2`
-    fi
-    
-    i=1
-    for Sincrofile in $EPG_PATH/*.db ; do
-        if [ $i -ge $from -a $i -le $to ]; then
-            if [ -f $Sincrofile ]; then
-                . ./chactXML $Sincrofile
-            fi
-        fi
-        i=$((i+1))
-    done
+#else
+#    from=1
+#    to=1000
+#    if [ -n "$QUERY_STRING" ]; then
+#        from=`echo $QUERY_STRING | cut -d"-" -f 1`
+#        to=`echo $QUERY_STRING | cut -d"-" -f 2`
+#    fi
+#    
+#    i=1
+#    for Sincrofile in $EPG_PATH/*.db ; do
+#        if [ $i -ge $from -a $i -le $to ]; then
+#            if [ -f $Sincrofile ]; then
+#                . ./chactXML $Sincrofile
+#            fi
+#        fi
+#        i=$((i+1))
+#    done
 fi
 
 echo "</SINCROGUIA></M740>"
