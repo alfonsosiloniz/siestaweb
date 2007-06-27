@@ -37,7 +37,7 @@
     <div align="center" class="titPag"><p>M750T EPG</p></div>
     <div align="center" class="subTitPag">Grabaciones realizadas</div>
        <p> 
-        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
+        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | <a href="/cgi-bin/sincro/parrilla">Parrilla</a> | 
         <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | 
         <a href="/index.html">Salir</a><br/><br/>
         <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> |
@@ -97,7 +97,7 @@
     </xsl:for-each>
     </table>
     <p>
-        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
+        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | <a href="/cgi-bin/sincro/parrilla">Parrilla</a> | 
         <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | 
         <a href="/index.html">Salir</a><br/><br/>
         <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> |

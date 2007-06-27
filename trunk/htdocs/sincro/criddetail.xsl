@@ -18,7 +18,7 @@
     <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
     <div align="center"><font class="subTitPag">Detalle de Grabación</font></div>
     <p>
-        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
+        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | <a href="/cgi-bin/sincro/parrilla">Parrilla</a> | 
         <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
         <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a></div>
     </p>
@@ -37,7 +37,7 @@
       <td class="txtNormal" align="left" valign="top">
         <p class="titChannel"><xsl:value-of select='/M750/RECORD_DETAIL/TITLE' /></p>
         <p class="titTabla"><xsl:value-of select='/M750/RECORD_DETAIL/EPG_SHORT' /></p>
-        <p><textarea onfocus="blur()" cols="120" class="cajaPlana" rows="20" name="texto"><xsl:value-of select='/M750/RECORD_DETAIL/EPG_LONG' /></textarea></p>
+        <p><textarea cols="120" class="cajaPlana" rows="20" name="texto"><xsl:value-of select='/M750/RECORD_DETAIL/EPG_LONG' /></textarea></p>
         <input class="txtNormal" type="button" value="Editar" onclick="editar()" /><br/>
       </td>
     </tr>
@@ -45,7 +45,7 @@
     </p>
     <br/>
     <p>
-        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
+        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | <a href="/cgi-bin/sincro/parrilla">Parrilla</a> | 
         <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
         <a href="/index.html">Salir</a></div>
     </p>
