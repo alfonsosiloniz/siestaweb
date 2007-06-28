@@ -98,13 +98,13 @@ cat <<-EOF
     hrrednow.style.zIndex = '99';
     if (is_ie) {
         hrrednow.style.left = "14 px";
-        hrrednow.style.top = (heightNow + 282) + " px";
+        hrrednow.style.top = (heightNow + 295) + " px";
     }
     else {
         hrrednow.style.left = "14";
-        hrrednow.style.top = (heightNow + 265);
+        hrrednow.style.top = (heightNow + 278);
     }
-    hrrednow.innerHTML= '<hr width="100%" size="3" color="#FF0000">';
+    hrrednow.innerHTML= '<A NAME="ahora"><hr width="100%" size="3" color="#FF0000"></A>';
     document.body.appendChild(hrrednow);
   }
   </script>
@@ -121,8 +121,8 @@ cat <<-EOF
     </p>
     <table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
     <tr>
-      <td class="txtNormal" align="right">
-        Buscar Programa: <input class="cajaplana" name="querystr" type="text" size="20" maxsize="50" value="" /> <input class="txtNormal" type="button" value="Buscar" onclick="buscar()" /><br/>
+      <td class="txtNormal"><div align="left"><a href="#ahora" title="Ir al programa actual">Ir al programa actual</a></div>
+        <div align="right">Buscar Programa: <input class="cajaplana" name="querystr" type="text" size="20" maxsize="50" value="" /> <input class="txtNormal" type="button" value="Buscar" onclick="buscar()" /><br/>
         Búsqueda Horaria: 
         Fecha: <select size="1" name="fecha"><option value="">Procesando...</option></select>
         Hora: <select size="1" name="hora">
@@ -151,7 +151,7 @@ cat <<-EOF
                 <option value="22:">22</option>
                 <option value="23:">23</option>
             </select>
-            <input class="txtNormal" type="button" value="Buscar" onclick="buscarFH()" />
+            <input class="txtNormal" type="button" value="Buscar" onclick="buscarFH()" /></div>
       </td>
     </tr>
     </table>
