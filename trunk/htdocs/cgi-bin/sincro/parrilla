@@ -98,11 +98,11 @@ cat <<-EOF
     hrrednow.style.zIndex = '99';
     if (is_ie) {
         hrrednow.style.left = "14 px";
-        hrrednow.style.top = (heightNow + 280) + " px";
+        hrrednow.style.top = (heightNow + 290) + " px";
     }
     else {
         hrrednow.style.left = "14";
-        hrrednow.style.top = (heightNow + 260);
+        hrrednow.style.top = (heightNow + 270);
     }
     hrrednow.innerHTML= '<hr width="100%" size="3" color="#FF0000">';
     document.body.appendChild(hrrednow);
