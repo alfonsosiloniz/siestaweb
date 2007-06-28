@@ -98,7 +98,7 @@ cat <<-EOF
     hrrednow.style.zIndex = '99';
     if (is_ie) {
         hrrednow.style.left = "14 px";
-        hrrednow.style.top = (heightNow + 285) + " px";
+        hrrednow.style.top = (heightNow + 282) + " px";
     }
     else {
         hrrednow.style.left = "14";
