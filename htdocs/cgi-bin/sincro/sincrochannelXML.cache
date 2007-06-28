@@ -19,6 +19,13 @@ else
     horaUTCinicial=`date +%s`
 fi
 
+# Comprobamos si el directorio de imagenes de la sincro de la carpeta de grabaciones esta accesible
+if [ -d $SERVER_ROOT/sincro/epg/ ]; then
+    DIR_IMG_SINCRO_ACCESIBLE=si
+else
+    DIR_IMG_SINCRO_ACCESIBLE=no
+fi
+
 CHANNEL_ID=`echo $1 | cut -d"_" -f2 | cut -d"." -f1`
 CACHE_FILE=${Cache}/sincrochannelXML.cache.$CHANNEL_ID
 
@@ -37,7 +44,8 @@ if [ $horaUTCinicial -ge 0 ]; then
     dateIniAnt=""
     cacheHTMLFile=${CACHE_FILE}.html
     echo -n "" > ${CACHE_FILE}.html
-    sincronyzed="no"
+    sincronyzed=0
+    primerPase=0
     porcentHeight=4
     
     while read line
@@ -48,18 +56,19 @@ if [ $horaUTCinicial -ge 0 ]; then
         pidcid=`echo $line | cut -d"_" -f3`
         longs=`echo $line | cut -d"_" -f5`
         imagen=`echo $line | cut -d"_" -f8`
-        if [ "$dateIniAnt" != "" ]; then
+        if [ $primerPase -eq 1 ]; then
             if [ $dateIniAnt -ge $horaUTCinicial ]; then
                 # Sincronizamos con la parrilla general el primer programa del canal actual
-                if [ "$sincronyzed" = "no" ]; then
+                if [ $sincronyzed -eq 0 ]; then
                     height=$(((($dateIniAnt-$horaUTCinicial)/100)*${porcentHeight}))
                     if [ $height -gt 0 ]; then
                         echo "<tr height=\"$height\"><td background=\"/sincro/img/capa6.gif\" class=\"borderFila txtMuyPeq\"></td></tr>" >> ${cacheHTMLFile}
                     fi
-                    sincronyzed="si"
+                    sincronyzed=1
                 fi
                 
                 duration=$((dateIni-dateIniAnt))
+                # Los programas de duracion inferior a 2,5 minutos, no caben en la parrilla
                 if [ $duration -gt 150 ]; then
                     # Calculamos el tamaño de la celda, en relacion a la duracion del programa
                     height=$(((duration/100)*${porcentHeight}))
@@ -73,8 +82,8 @@ if [ $horaUTCinicial -ge 0 ]; then
                     fi
                     
                     if [ $duration -gt 2200 ]; then
-                        echo -n "<a href='javascript:record(\"$pidcidAnt\", 0, \"$tituloAnt\")'><img src="/sincro/img/red_ball.gif" alt="Grabar" width="18" height="18" border="0"></a>&nbsp;" >> ${cacheHTMLFile}
-                        echo -n "<a href='javascript:record(\"$pidcidAnt\", 1, \"$tituloAnt\")'><img src="/sincro/img/blue_ball.gif" alt="Grabar en Serie" width="18" height="18" border="0"></a><br>" >> ${cacheHTMLFile}
+                        echo -n "<a href='javascript:record(\"$pidcidAnt\", 0, \"$tituloAnt\")' title=\"Grabar\"><img src=\"/sincro/img/red_ball.gif\" alt=\"Grabar\" width=\"18\" height=\"18\" border=\"0\"></a>&nbsp;" >> ${cacheHTMLFile}
+                        echo -n "<a href='javascript:record(\"$pidcidAnt\", 1, \"$tituloAnt\")' title=\"Grabar en Serie\"><img src=\"/sincro/img/blue_ball.gif\" alt=\"Grabar en Serie\" width=\"18\" height=\"18\" border=\"0\"></a><br>" >> ${cacheHTMLFile}
                     fi
                     
                     if [ $duration -ge 1500 ]; then
@@ -91,11 +100,13 @@ if [ $horaUTCinicial -ge 0 ]; then
                                 urlimg="/sincro/img/epg_long_img.png"
                             fi
                         fi
-                        echo -n "<a href=\"javascript:detail('$pidcidAnt', '$imagenAnt', '$longsAnt', '$CHANNEL_ID', '$dateIniAnt');\" title=\"$CHANNEL_ID - $dateFormatAnt - $tituloAnt\"><img src="$urlimg" width=77 height=52 border=0 alt=\"$CHANNEL_ID - $dateFormatAnt - $tituloAnt\"></a><br>" >> ${cacheHTMLFile}
+                        echo -n "<a href=\"javascript:detail('$pidcidAnt', '$imagenAnt', '$longsAnt', '$CHANNEL_ID', '$dateIniAnt');\" title=\"$CHANNEL_ID - $dateFormatAnt - $tituloAnt\"><img src="$urlimg" width=77 height=52 border=2 alt=\"$CHANNEL_ID - $dateFormatAnt - $tituloAnt\"></a><br>" >> ${cacheHTMLFile}
                     fi
                     echo "<a href=\"javascript:detail('$pidcidAnt', '$imagenAnt', '$longsAnt', '$CHANNEL_ID', '$dateIniAnt');\" title=\"$CHANNEL_ID - $dateFormatAnt - $tituloAnt\">$tituloAnt</a></td></tr>" >> ${cacheHTMLFile}
                 fi
             fi
+        else
+            primerPase=1
         fi
         
         dateIniAnt=$dateIni

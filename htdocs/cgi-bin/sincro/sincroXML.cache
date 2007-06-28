@@ -8,6 +8,10 @@
 # Ejecutamos el script con baja prioridad
 renice 20 $$ > /dev/null
 
+# Obtener parametros
+numParams=$#
+params=$1
+
 # Configurar entorno
 source ../www-setup
 SORT_CHANNELS=$Cache/sort_channels.txt
@@ -23,9 +27,10 @@ touch ${Cache}/sincrochannelXML.cache.generating
 echo "`date` Iniciando generacion XML de sincroguia [host: `hostname`],[horaUTCinicial: $horaUTCinicial]" > $Cache/sincro.cache.log
 echo -n "" > $Cache/sincro.cache.err
 
-# Obtener parametros
-numParams=$#
-params=$1
+if [ $numParams -eq 0 ]; then
+    #Nos guardamos la horaUTCinicial con la que hemos generado la parrilla, por si nos interesa consultarla a posteriori
+    echo "$horaUTCinicial" > $Cache/horaUTCinicial.txt
+fi
 
 # Generamos el fichero sort_channels.txt con la misma ordenación del gigaset
 [ ! -f $SORT_CHANNELS ] && ./sortChannels

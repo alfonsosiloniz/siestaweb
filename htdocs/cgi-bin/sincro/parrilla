@@ -21,6 +21,8 @@ else
     DIR_IMG_SINCRO_ACCESIBLE=no
 fi
 
+numCanales=`cat $SORT_CHANNELS | wc -l`
+
 echo Content-type: text/html
 echo ""
 
@@ -35,6 +37,10 @@ cat <<-EOF
   <script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
   <script language="JavaScript" src="/sincro/js/fechasOp.js"></script>
   <script>
+  utcParrilla=`cat $Cache/horaUTCinicial.txt`;
+  utcAhora=`date +%s`;
+  porcentHeight=4;
+  heightNow=((utcAhora-utcParrilla)/100)*porcentHeight;
   function record(id, serie, titulo) {
     enserie="";
     if (serie == 1)
@@ -84,8 +90,25 @@ cat <<-EOF
       f.fecha.options[i].value=f.fecha.options[i].text.substring(0,6)+f.fecha.options[i].text.substring(8);
     }
   }
+  function crearHrNow() {
+    hrrednow = document.createElement("div");
+    hrrednow.setAttribute("id","hrnow");
+    hrrednow.style.position = 'absolute';
+    hrrednow.style.width  = '$((numCanales*144))';
+    hrrednow.style.zIndex = '99';
+    if (is_ie) {
+        hrrednow.style.left = "14 px";
+        hrrednow.style.top = (heightNow + 280) + " px";
+    }
+    else {
+        hrrednow.style.left = "14";
+        hrrednow.style.top = (heightNow + 260);
+    }
+    hrrednow.innerHTML= '<hr width="100%" size="3" color="#FF0000">';
+    document.body.appendChild(hrrednow);
+  }
   </script>
-  <body bgcolor="#FFFFFF" onload="initFechas();">
+  <body bgcolor="#FFFFFF" onload="initFechas(); crearHrNow();">
     <form name="formulario">
     <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
     <div align="center"><a href="http://www.inout.tv/SincroGuia"><img src="/sincro/img/sincro.gif" border="0"/></a><font class="subTitPag">proporcionada por InOut TV</font></div>
