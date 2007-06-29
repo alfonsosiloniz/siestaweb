@@ -80,14 +80,14 @@ if [ $horaUTCinicial -ge 0 ]; then
                     else
                         echo -n "<td class=\"borderFila txtNormal\" align=\"center\">" >> ${cacheHTMLFile}
                     fi
-                    
+                    contenidoHTML=""
                     if [ $duration -gt 2200 ]; then
-                        echo -n "<a href='javascript:record(\"$pidcidAnt\", 0, \"$tituloAnt\")' title=\"Grabar\"><img src=\"/sincro/img/red_ball.gif\" alt=\"Grabar\" width=\"18\" height=\"18\" border=\"0\"></a>&nbsp;" >> ${cacheHTMLFile}
-                        echo -n "<a href='javascript:record(\"$pidcidAnt\", 1, \"$tituloAnt\")' title=\"Grabar en Serie\"><img src=\"/sincro/img/blue_ball.gif\" alt=\"Grabar en Serie\" width=\"18\" height=\"18\" border=\"0\"></a><br>" >> ${cacheHTMLFile}
+                        contenidoHTML="${contenidoHTML}<a href='javascript:record(\"$pidcidAnt\", 0, \"$tituloAnt\")' title=\"Grabar\"><img src=\"/sincro/img/red_ball.gif\" alt=\"Grabar\" width=\"18\" height=\"18\" border=\"0\"></a>&nbsp;"
+                        contenidoHTML="${contenidoHTML}<a href='javascript:record(\"$pidcidAnt\", 1, \"$tituloAnt\")' title=\"Grabar en Serie\"><img src=\"/sincro/img/blue_ball.gif\" alt=\"Grabar en Serie\" width=\"18\" height=\"18\" border=\"0\"></a><br>"
                     fi
                     
                     if [ $duration -ge 1500 ]; then
-                        echo -n "$dateFormatAnt<br>" >> ${cacheHTMLFile}
+                        contenidoHTML="${contenidoHTML}${dateFormatAnt}<br>"
                     fi
                     
                     if [ $duration -gt 3060 -a "$MOSTRAR_MINI_IMG" = "si" ]; then
@@ -100,9 +100,21 @@ if [ $horaUTCinicial -ge 0 ]; then
                                 urlimg="/sincro/img/epg_long_img.png"
                             fi
                         fi
-                        echo -n "<a href=\"javascript:detail('$pidcidAnt', '$imagenAnt', '$longsAnt', '$CHANNEL_ID', '$dateIniAnt');\" title=\"$CHANNEL_ID - $dateFormatAnt - $tituloAnt\"><img src="$urlimg" width=77 height=52 border=2 alt=\"$CHANNEL_ID - $dateFormatAnt - $tituloAnt\"></a><br>" >> ${cacheHTMLFile}
+                        contenidoHTML="${contenidoHTML}<a href=\"javascript:detail('$pidcidAnt', '$imagenAnt', '$longsAnt', '$CHANNEL_ID', '$dateIniAnt');\" title=\"$CHANNEL_ID - $dateFormatAnt - $tituloAnt\"><img src="$urlimg" width=77 height=52 border=2 alt=\"$CHANNEL_ID - $dateFormatAnt - $tituloAnt\"></a><br>"
                     fi
-                    echo "<a href=\"javascript:detail('$pidcidAnt', '$imagenAnt', '$longsAnt', '$CHANNEL_ID', '$dateIniAnt');\" title=\"$CHANNEL_ID - $dateFormatAnt - $tituloAnt\">$tituloAnt</a></td></tr>" >> ${cacheHTMLFile}
+                    contenidoHTML="${contenidoHTML}<a href=\"javascript:detail('$pidcidAnt', '$imagenAnt', '$longsAnt', '$CHANNEL_ID', '$dateIniAnt');\" title=\"$CHANNEL_ID - $dateFormatAnt - $tituloAnt\">$tituloAnt</a>"
+                    
+                    #Si el programa es muuuuy largo (más de 4 horas), ponemos la info 2 veces (a petición de Shark).
+                    if [ $duration -ge 14400 ]; then
+                        if [ $duration -gt 36000 ]; then
+                            contenidoHTML="${contenidoHTML}<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>${contenidoHTML}"
+                        elif [ $duration -ge 18000 ]; then
+                            contenidoHTML="${contenidoHTML}<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>${contenidoHTML}"
+                        else
+                            contenidoHTML="${contenidoHTML}<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>${contenidoHTML}"
+                        fi
+                    fi
+                    echo "${contenidoHTML}</td></tr>" >> ${cacheHTMLFile}
                 fi
             fi
         else
