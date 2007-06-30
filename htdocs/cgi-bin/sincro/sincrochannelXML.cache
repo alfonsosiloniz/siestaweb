@@ -104,7 +104,7 @@ if [ $horaUTCinicial -ge 0 ]; then
                     fi
                     contenidoHTML="${contenidoHTML}<a href=\"javascript:detail('$pidcidAnt', '$imagenAnt', '$longsAnt', '$CHANNEL_ID', '$dateIniAnt');\" title=\"$CHANNEL_ID - $dateFormatAnt - $tituloAnt\">$tituloAnt</a>"
                     
-                    #Si el programa es muuuuy largo (más de 4 horas), ponemos la info 2 veces (a petición de Shark).
+                    #Si el programa es muy largo (más de 4 horas), ponemos la info 2 veces (a petición de Shark).
                     if [ $duration -ge 14400 ]; then
                         if [ $duration -gt 36000 ]; then
                             contenidoHTML="${contenidoHTML}<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>${contenidoHTML}"
