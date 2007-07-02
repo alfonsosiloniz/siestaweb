@@ -1,0 +1,103 @@
+#!/bin/bash 
+# by pepper 27/06/2007
+# Retorna la sincroguia completa en formato de parrilla
+
+source ../www-setup
+SORT_CHANNELS=$Cache/sort_channels.txt
+PARRILLA_CHANNELS=$Cache/parrilla_channels.txt
+
+# Generamos el fichero sort_channels.txt con la misma ordenación del gigaset
+[ ! -f $SORT_CHANNELS ] && ./sortChannels
+
+if [ -f $SORT_CHANNELS ]; then
+	ListaCanales=`cat $SORT_CHANNELS`
+else
+	ListaCanales=$EPG_PATH/*.db
+fi
+
+echo Content-type: text/html
+echo ""
+
+cat <<-EOF
+<html>
+  <title>M750T - Configuracion de Parrilla de Sincroguía</title>
+  <meta http-equiv="refresh" content="600">
+  <link href="/sincro/img/m740.ico" rel="shortcut icon"></link>
+  <link href="/sincro/css/estilos.css" rel="stylesheet" type="text/css"></link>
+  <script language="JavaScript" src="/sincro/js/ajax.js"></script>
+  <script language="JavaScript" src="/sincro/js/navigator.js"></script>
+  <script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
+  <script>
+  function guardar() {
+    mostrarMensajeProceso();
+    document.forms[0].submit();
+  }
+  </script>
+  <body bgcolor="#FFFFFF">
+    <form name="formulario" action="/cgi-bin/sincro/saveConfigParrilla">
+    <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
+    <div align="center"><font class="subTitPag">Configuracion de Parrilla de Sincroguía</font></div>
+    <p>
+        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | <a href="/cgi-bin/sincro/parrilla">Parrilla</a> | 
+        <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
+        <a href="/index.html">Salir</a><br/><br/>
+        <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> |
+        <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV-TS</a> | <a href="/ssh/sshconn.html">SSH</a></div>
+    </p>
+    <br>
+    <table width="100%" border="0" cellspacing="1" cellpadding="0" align="left">
+    <tr>
+        <td width="100%" class="titTabla">
+            Seleccione los canales que desea que aparezcan en la Parrilla de la Sincroguía<br><br>
+        </td>
+    </tr>
+EOF
+
+for Sincrofile in $ListaCanales ; do
+    if [ "$bgcolor" = "#FFECD9" ]; then
+        bgcolor="#FFFFE8"
+    else
+        bgcolor="#FFECD9"
+    fi
+    CHANNEL_ID=`echo $Sincrofile | cut -d"_" -f2 | cut -d"." -f1`
+    CACHE_FILE=${Cache}/sincrochannelXML.cache.$CHANNEL_ID
+    CACHE_HTML=${Cache}/sincrochannelXML.cache.$CHANNEL_ID.html
+    if [ -f ${CACHE_FILE} ]; then
+        chName=`head -1 ${CACHE_FILE} | cut -d"\"" -f6`
+    else
+        chName=$CHANNEL_ID
+    fi
+    checked=""
+    if [ -f $PARRILLA_CHANNELS ]; then
+        isSelected=`grep "$chName" $PARRILLA_CHANNELS | wc -l`
+        if [ $isSelected -gt 0 ]; then
+            checked="checked"
+        fi
+    else
+        checked="checked"
+    fi
+    echo "<tr><td class=\"txtNormal\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+    echo "<input type=\"checkbox\" name=\"$CHANNEL_ID\" value=\"$chName\" $checked>$chName</td></tr>"
+done
+cat <<-EOF
+<tr>
+    <td width="100%" align="center">
+        <br><input type="button" onclick="guardar()" value="Guardar">
+    </td>
+</tr>
+<tr>
+    <td width="100%" align="center">
+    <p><br>
+        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | <a href="/cgi-bin/sincro/parrilla">Parrilla</a> | 
+        <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
+        <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> |
+        <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV-TS</a> | <a href="/ssh/sshconn.html">SSH</a><br/><br/>
+        <a href="/autores.html">Autores</a> | <a href="/cgi-bin/sincro/verlog">Ver Log</a> | <a href="/cgi-bin/box/estado">Ver Estado</a></div>
+    </p>
+    </td>
+    </tr>
+  </table>   
+</form>
+</body>
+</html>
+EOF
