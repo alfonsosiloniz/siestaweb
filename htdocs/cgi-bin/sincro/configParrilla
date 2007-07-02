@@ -1,6 +1,6 @@
 #!/bin/bash 
-# by pepper 27/06/2007
-# Retorna la sincroguia completa en formato de parrilla
+# by pepper 02/07/2007, (c) grupo SIESTA
+# Graba la configuración de los canales que se visualizan en la parrilla
 
 source ../www-setup
 SORT_CHANNELS=$Cache/sort_channels.txt
