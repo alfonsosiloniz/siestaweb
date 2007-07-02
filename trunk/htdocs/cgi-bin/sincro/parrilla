@@ -173,11 +173,6 @@ EOF
 
 bgcolor="#FFFFE8"
 for Sincrofile in $ListaCanales ; do
-    if [ "$bgcolor" = "#FFECD9" ]; then
-        bgcolor="#FFFFE8"
-    else
-        bgcolor="#FFECD9"
-    fi
     CHANNEL_ID=`echo $Sincrofile | cut -d"_" -f2 | cut -d"." -f1`
     CACHE_FILE=${Cache}/sincrochannelXML.cache.$CHANNEL_ID
     CACHE_HTML=${Cache}/sincrochannelXML.cache.$CHANNEL_ID.html
@@ -194,9 +189,14 @@ for Sincrofile in $ListaCanales ; do
         fi
     fi
     if [ $show -eq 1 ]; then
-        echo "          <td valign=\"top\" width=\"140\" class=\"titChannel\" nowrap><a href=\"/cgi-bin/sincro/sincrochannelXML?$CHANNEL_ID-0\">$chName</a>"
+        if [ "$bgcolor" = "#FFECD9" ]; then
+            bgcolor="#FFFFE8"
+        else
+            bgcolor="#FFECD9"
+        fi
+        echo "          <td valign=\"top\" align=\"center\" width=\"140\" class=\"titChannel\" class=\"borderFila\" nowrap><a href=\"/cgi-bin/sincro/sincrochannelXML?$CHANNEL_ID-0\">$chName</a>"
         echo "<br><font class=\"txtMuyPeq\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>"
-        echo "              <table border=\"0\" bgcolor=\"$bgcolor\" cellspacing=\"0\" cellpadding=\"0\" align=\"left\" class=\"borderTabla\">"
+        echo "              <table border=\"0\" bgcolor=\"$bgcolor\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\" class=\"borderTabla\">"
         if [ -f ${CACHE_HTML} ]; then
             cat < ${CACHE_HTML}
         else
