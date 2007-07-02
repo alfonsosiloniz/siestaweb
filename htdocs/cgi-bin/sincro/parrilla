@@ -4,6 +4,7 @@
 
 source ../www-setup
 SORT_CHANNELS=$Cache/sort_channels.txt
+PARRILLA_CHANNELS=$Cache/parrilla_channels.txt
 
 # Generamos el fichero sort_channels.txt con la misma ordenación del gigaset
 [ ! -f $SORT_CHANNELS ] && ./sortChannels
@@ -21,7 +22,11 @@ else
     DIR_IMG_SINCRO_ACCESIBLE=no
 fi
 
-numCanales=`cat $SORT_CHANNELS | wc -l`
+if [ -f $PARRILLA_CHANNELS ]; then
+    numCanales=`cat $PARRILLA_CHANNELS | wc -l`
+else
+    numCanales=`cat $SORT_CHANNELS | wc -l`
+fi
 
 echo Content-type: text/html
 echo ""
@@ -94,7 +99,7 @@ cat <<-EOF
     hrrednow = document.createElement("div");
     hrrednow.setAttribute("id","hrnow");
     hrrednow.style.position = 'absolute';
-    hrrednow.style.width  = '$((numCanales*144))';
+    hrrednow.style.width  = '$((numCanales*155))';
     hrrednow.style.zIndex = '99';
     if (is_ie) {
         hrrednow.style.left = "14 px";
@@ -121,7 +126,13 @@ cat <<-EOF
     </p>
     <table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
     <tr>
-      <td class="txtNormal"><div align="left"><a href="#ahora" title="Ir al programa actual">Ir al programa actual</a></div>
+      <td class="txtNormal">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="txtNormal">
+        <tr>
+        	<td align="left" width="150"><a href="#ahora" title="Ir al programa actual">Ir al programa actual</a></td>
+        	<td align="center"><a href="/cgi-bin/sincro/configParrilla" title="Configurar Parrilla">Configurar Parrilla</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        </tr>
+        </table>
         <div align="right">Buscar Programa: <input class="cajaplana" name="querystr" type="text" size="20" maxsize="50" value="" /> <input class="txtNormal" type="button" value="Buscar" onclick="buscar()" /><br/>
         Búsqueda Horaria: 
         Fecha: <select size="1" name="fecha"><option value="">Procesando...</option></select>
@@ -175,16 +186,25 @@ for Sincrofile in $ListaCanales ; do
     else
         chName=$CHANNEL_ID
     fi
-    echo "          <td valign=\"top\" width=\"140\" class=\"titChannel\" nowrap><a href=\"/cgi-bin/sincro/sincrochannelXML?$CHANNEL_ID-0\">$chName</a>"
-    echo "<br><font class=\"txtMuyPeq\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>"
-    echo "              <table border=\"0\" bgcolor=\"$bgcolor\" cellspacing=\"0\" cellpadding=\"0\" align=\"left\" class=\"borderTabla\">"
-    if [ -f ${CACHE_HTML} ]; then
-        cat < ${CACHE_HTML}
-    else
-        echo "<tr><td class=\"borderFila txtNormal\">La caché de este canal no está generada. Espere a que se genere la caché o fuerce la actualización desde la pantalla de <a href=\"/cgi-bin/box/estado\">Estado</a>.</td></tr>"
+    show=1
+    if [ -f $PARRILLA_CHANNELS ]; then
+        isSelected=`grep "$chName" $PARRILLA_CHANNELS | wc -l`
+        if [ $isSelected -eq 0 ]; then
+            show=0
+        fi
     fi
-    echo "          </table>"
-    echo "      </td>"
+    if [ $show -eq 1 ]; then
+        echo "          <td valign=\"top\" width=\"140\" class=\"titChannel\" nowrap><a href=\"/cgi-bin/sincro/sincrochannelXML?$CHANNEL_ID-0\">$chName</a>"
+        echo "<br><font class=\"txtMuyPeq\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>"
+        echo "              <table border=\"0\" bgcolor=\"$bgcolor\" cellspacing=\"0\" cellpadding=\"0\" align=\"left\" class=\"borderTabla\">"
+        if [ -f ${CACHE_HTML} ]; then
+            cat < ${CACHE_HTML}
+        else
+            echo "<tr><td class=\"borderFila txtNormal\">La caché de este canal no está generada. Espere a que se genere la caché o fuerce la actualización desde la pantalla de <a href=\"/cgi-bin/box/estado\">Estado</a>.</td></tr>"
+        fi
+        echo "          </table>"
+        echo "      </td>"
+    fi
 done
 cat <<-EOF
       </tr>

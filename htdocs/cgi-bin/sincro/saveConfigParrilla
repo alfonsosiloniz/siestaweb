@@ -1,0 +1,30 @@
+#!/bin/bash 
+# by pepper 27/06/2007
+# Retorna la sincroguia completa en formato de parrilla
+
+source ../www-setup
+SORT_CHANNELS=$Cache/sort_channels.txt
+PARRILLA_CHANNELS=$Cache/parrilla_channels.txt
+
+# Generamos el fichero sort_channels.txt con la misma ordenación del gigaset
+[ ! -f $SORT_CHANNELS ] && ./sortChannels
+
+echo -n "" > $PARRILLA_CHANNELS
+
+i=1
+config=`echo $QUERY_STRING | cut -d"&" -f${i}`
+while [ "$config" != "" ]
+do
+    echo $config | cut -d"=" -f2 | sed -e 's/+/ /g' | sed -e 's/%2F/\//g' | sed -e 's/%2B/\+/g' >> $PARRILLA_CHANNELS
+    i=$((i+1))
+    config=`echo $QUERY_STRING | cut -d"&" -f${i}`
+done
+
+echo Content-type: text/html
+echo ""
+
+cat <<-EOF
+<html>
+<head><script>document.location.href="/cgi-bin/sincro/parrilla"</script></head>
+</html>
+EOF
