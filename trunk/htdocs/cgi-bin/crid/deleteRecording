@@ -26,11 +26,11 @@ s2=$(( $s1+$n1+$c2 ))
 fmpg=`hexdump -v -n $c2 -s $(($s1+$n1)) -e '"%c"' $Cridfile`
 
 # Comprobamos que efectivamente, hemos extraido el nombre del fmpg. Sino, solo borramos el crid.
+recordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
 isfmpg=`echo $fmpg | grep fmpg | wc -l`
-if [ $isfmpg -gt 0 ]; then
+if [ "$fmpg" != "" -a $isfmpg -gt 0 ]; then
     echo "fmpg: $fmpg" >> /tmp/delete_recording.log
     fmpgBase=`basename $fmpg .fmpg`
-    recordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
     
     if [ -d $recordingFolder ]; then 
         echo "rm -f $recordingFolder/$fmpgBase*" >> /tmp/delete_recording.log
@@ -49,8 +49,6 @@ if [ $isfmpg -gt 0 ]; then
     fi
 else
     echo "El nombre del fmpg no se ha podido extraer del fichero crid. Borramos el .crid unicamente." >> /tmp/delete_recording.log
-    recordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
-    
     if [ -d $recordingFolder ]; then 
         echo "rm -f $Cridfile" >> /tmp/delete_recording.log
     fi
