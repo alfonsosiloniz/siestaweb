@@ -183,7 +183,7 @@ for Sincrofile in $ListaCanales ; do
     fi
     show=1
     if [ -f $PARRILLA_CHANNELS ]; then
-        isSelected=`grep "$chName" $PARRILLA_CHANNELS | wc -l`
+        isSelected=`grep "Z$chName" $PARRILLA_CHANNELS | wc -l`
         if [ $isSelected -eq 0 ]; then
             show=0
         fi

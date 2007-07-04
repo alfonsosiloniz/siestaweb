@@ -69,7 +69,7 @@ for Sincrofile in $ListaCanales ; do
     fi
     checked=""
     if [ -f $PARRILLA_CHANNELS ]; then
-        isSelected=`grep "$chName" $PARRILLA_CHANNELS | wc -l`
+        isSelected=`grep "Z${chName}" $PARRILLA_CHANNELS | wc -l`
         if [ $isSelected -gt 0 ]; then
             checked="checked"
         fi

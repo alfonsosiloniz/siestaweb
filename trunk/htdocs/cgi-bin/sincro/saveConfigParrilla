@@ -15,7 +15,8 @@ i=1
 config=`echo $QUERY_STRING | cut -d"&" -f${i}`
 while [ "$config" != "" ]
 do
-    echo $config | cut -d"=" -f2 | sed -e 's/+/ /g' | sed -e 's/%2F/\//g' | sed -e 's/%2B/\+/g' >> $PARRILLA_CHANNELS
+    echo -n "Z" >> $PARRILLA_CHANNELS
+    echo "${config}" | cut -d"=" -f2 | sed -e 's/+/ /g' | sed -e 's/%2F/\//g' | sed -e 's/%2B/\+/g' >> $PARRILLA_CHANNELS
     i=$((i+1))
     config=`echo $QUERY_STRING | cut -d"&" -f${i}`
 done
