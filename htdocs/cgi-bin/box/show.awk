@@ -31,7 +31,7 @@
 	}
 
 	#if ( $1~ /^-/ )
-	    printf("<a href=\"%s/%s?send\" title=\"Download File %s\"><img src=\"/sincro/img/%s.png\" alt=\"%s\" border=0></a> ",uri,name,name,img,img);
+	    printf("<a href=\"%s/%s?send\" title=\"Open/Download %s\"><img src=\"/sincro/img/%s.png\" alt=\"%s\" border=0></a> ",uri,name,name,img,img);
 	#else
 	#    printf("<img src=\"/sincro/img/%s.png\" alt=\"%s\"> ",img,img);
 
