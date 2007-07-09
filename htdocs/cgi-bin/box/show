@@ -3,7 +3,7 @@
 
 source def-lemmi.inc
 #source ../www-setup
-
+alert=""
 
 #--------------------------------------------------
 
@@ -39,6 +39,7 @@ function print_top()
     echo "Content-type: text/html"
     echo ""
     echo "<html>"
+    echo "<head>"
     echo "<title>M750T - Explorador $1</title>"
     echo "<meta http-equiv=\"refresh\" content=\"600\" />"
     echo "<link href=\"/sincro/img/m740.ico\" rel=\"shortcut icon\"></link>"
@@ -47,7 +48,15 @@ function print_top()
     echo "<script language=\"JavaScript\" src=\"/sincro/js/navigator.js\"></script>"
     echo "<script language=\"JavaScript\" src=\"/sincro/js/controlenviar.js\"></script>"
     echo "<script language=\"JavaScript\" src=\"/sincro/js/fechasOp.js\"></script>"
-    echo "<body bgcolor=\"#FFFFFF\">"
+    echo "<script language=\"JavaScript\">"
+    echo "function init() {"
+    echo "  if (\"$alert\".length > 0) {"
+    echo "    alert(\"$alert\");"
+    echo "  }"
+    echo "}"
+    echo "</script>"
+    echo "</head>"
+    echo "<body bgcolor=\"#FFFFFF\" onload=\"init();\">"
     echo "  <div align=\"center\"><p><font class=\"titPag\">M750T EPG</font></p></div>"
     echo "  <div align=\"center\"><font class=\"subTitPag\">Explorador de archivos: $1</font></div>"
     echo "  <p>"
@@ -158,6 +167,8 @@ function hexdump()
 function send()
 {
     echo "Content-type: $2"
+    #realTotalBytes=(`wc -c $PATH_INFO`)
+    #echo "Content-length: $realTotalBytes"
     echo "Expires: "`date -R`
     echo ""
     shift
@@ -200,6 +211,13 @@ function edit()
 function write()
 {
     sed -e 's/text=//' -e 's/%0D//g' | ./post2iso >"${PATH_INFO}"
+    # Si el fichero está bajo /var/etc, llamamos tambien a /sbin/flash_archive, para grabar los cambios en la flash
+    isFlash=`echo "${PATH_INFO}" | grep "/var/etc" | wc -l`
+    if [ $isFlash -gt 0 ]; then
+        echo "/sbin/flash_archive write ${PATH_INFO}" >> /tmp/flash_archive.log
+        /sbin/flash_archive write ${PATH_INFO} >> /tmp/flash_archive.log 2>> /tmp/flash_archive.log
+        alert="Los cambios del fichero ${PATH_INFO} se han grabado de forma persistente en la Flash"
+    fi
     view $*
 }
 
