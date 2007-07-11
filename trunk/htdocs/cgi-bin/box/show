@@ -62,7 +62,7 @@ function print_top()
     echo "  <p>"
     echo "      <div align=\"center\" class=\"txtNormal\"><a href=\"javascript:history.back()\">Atrás</a> | <a href=\"/cgi-bin/sincro/pgmactualXML\">Inicio</a> | <a href=\"/cgi-bin/sincro/parrilla\">Parrilla</a> | "
     echo "      <a href=\"/cgi-bin/crid/timerXML\">Grabaciones Pendientes</a> | <a href=\"/cgi-bin/crid/videoXML\">Grabaciones Realizadas</a> | "
-    echo "      <a href=\"/index.html\">Salir</a><br/><br/><a href=\"/osd/osd2tcp.html\">Control OSD</a> | <a href=\"/cgi-bin/box/selectLiveTv\">Ver LiveTV</a> | <a href=\"/sincro/visualizarts.html\">Ver LiveTV-TS</a> | <a href=\"/ssh/sshconn.html\">SSH</a></div>"
+    echo "      <a href=\"/index.html\">Salir</a><br/><br/><a href=\"/osd/osd2tcp.html\">Control OSD</a> | <a href=\"/utils/cmdInput.html\">Comando</a> | <a href=\"/cgi-bin/box/selectLiveTv\">Ver LiveTV</a> | <a href=\"/sincro/visualizarts.html\">Ver LiveTV-TS</a> | <a href=\"/ssh/sshconn.html\">SSH</a></div>"
     echo "  </p>"
     echo "  <table width=\"98%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\"  class=\"borderTabla2\">"
     echo "  <tr>"
@@ -116,7 +116,7 @@ function print_bottom()
     echo "  <p>"
     echo "      <div align=\"center\" class=\"txtNormal\"><a href=\"javascript:history.back()\">Atrás</a> | <a href=\"/cgi-bin/sincro/pgmactualXML\">Inicio</a> | <a href=\"/cgi-bin/sincro/parrilla\">Parrilla</a> | "
     echo "      <a href=\"/cgi-bin/crid/timerXML\">Grabaciones Pendientes</a> | <a href=\"/cgi-bin/crid/videoXML\">Grabaciones Realizadas</a> | "
-    echo "      <a href=\"/index.html\">Salir</a><br/><br/><a href=\"/osd/osd2tcp.html\">Control OSD</a> | <a href=\"/cgi-bin/box/selectLiveTv\">Ver LiveTV</a> | <a href=\"/sincro/visualizarts.html\">Ver LiveTV-TS</a> | <a href=\"/ssh/sshconn.html\">SSH</a><br/><br/>"
+    echo "      <a href=\"/index.html\">Salir</a><br/><br/><a href=\"/osd/osd2tcp.html\">Control OSD</a> | <a href=\"/utils/cmdInput.html\">Comando</a> | <a href=\"/cgi-bin/box/selectLiveTv\">Ver LiveTV</a> | <a href=\"/sincro/visualizarts.html\">Ver LiveTV-TS</a> | <a href=\"/ssh/sshconn.html\">SSH</a><br/><br/>"
     echo "      <a href=\"/autores.html\">Autores</a> | <a href=\"/cgi-bin/sincro/verlog\">Ver Log</a> | <a href=\"/cgi-bin/box/estado\">Ver Estado</a></div>"
     echo "  </p>"
     echo "</body>"
@@ -129,19 +129,19 @@ function view()
 {
     action=view
     if [[ ${1/*v*/ok} == ok ]]; then
-	print_top "$PATH_INFO" "$1"
-    echo "  <tr>"
-    echo "    <td class=\"fila\">"
-	print_actions
-	echo -n "<pre style=\"background-color:#FFEEE6; padding:.2em\" >"
-	$3 "$PATH_INFO" | head -c 1000000 | sed 's/&/\&amp;/g;s/</\&lt;/g'
-	echo "</pre>"
-	print_actions
-	print_bottom
+	    print_top "$PATH_INFO" "$1"
+        echo "  <tr>"
+        echo "    <td class=\"fila\">"
+	    print_actions
+	    echo -n "<pre style=\"background-color:#FFEEE6; padding:.2em\" >"
+	    $3 "$PATH_INFO" | head -c 1000000 | sed 's/&/\&amp;/g;s/</\&lt;/g'
+	    echo "</pre>"
+	    print_actions
+	    print_bottom
     elif [[ ${1/*s*/ok} == ok ]]; then
-	send $*
+	    send $*
     else
-	hexdump $*
+	    hexdump $*
     fi
 }
 
@@ -291,14 +291,17 @@ else
 	*.gz)		$action --v-	application/x-gzip	zcat ;;
 
 	*.avi)		$action ----	video/x-msvideo		;;
-	*.bmp)		$action ---s	image/bmp		;;
+	*.bmp)		$action ---s	image/bmp		    ;;
 	*.crid)		$action c---	application/x-crid	;;
-	*.gif)		$action ---s	image/gif		;;
+	*.gif)		$action ---s	image/gif		    ;;
 	*.html|*.htm)	$action -e-s	text/html		;;
 	*.jpeg|*.jpg)	$action ---s	image/jpeg		;;
 	*.mpeg|*.mpg)	$action ---s	video/mpeg		;;
+	*.idx)	    $action ---s	application/x-idx	;;
+	*.midx)	    $action ---s	application/x-midx	;;
+	*.fmpg)	    $action ---s	video/mpeg		    ;;
 	*.mpga|*.mp3)	$action ---s	audio/mpeg		;;
-	*.png)		$action ---s	image/png		;;
+	*.png)		$action ---s	image/png		    ;;
 	*.tar)		$action t---	application/x-tar	"tar tcf" ;;
 	*.tiff|*.tif)	$action ---s	image/tiff		;;
 	*.txt)		$action -ev-	text/plain		cat ;;
@@ -306,7 +309,7 @@ else
 	*.crontab)		$action -ev-	text/plain		cat ;;
 	*.sh)		$action -ev-	text/plain		cat ;;
 	*.cfg)		$action -ev-	text/plain		cat ;;
-	*.wav)		$action ----	audio/x-wav		;;
+	*.wav)		$action ----	audio/x-wav		    ;;
 	*.wsw)		$action ----	application/x-wsw	;;
 	*.zip)		$action ----	application/zip		;;
 
