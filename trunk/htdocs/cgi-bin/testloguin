@@ -33,7 +33,7 @@ esac
 #userlogin=`echo $QUERY_STRING | cut -d"-" -f1`
 userlogin=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2`
 #pwdlogin=`echo $QUERY_STRING | cut -d"-" -f2`
-pwdlogin=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2`
+pwdlogin=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2 | sed 's/%40/@/g'`
 
 if [ "$user" = "$userlogin" -a "$pwd" = "$pwdlogin" ]; then
     echo "`date` Login OK: $userlogin / $pwdlogin" >> /tmp/login.log
