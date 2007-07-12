@@ -99,6 +99,18 @@ fi
 echo "    </td>"
 echo "  </tr>"
 echo "  <tr>"
+echo "    <td class=\"fila titTabla\"  bgcolor=\"#ffb310\" align=\"center\">Info del box</td>"
+echo "  </tr>"
+if [ -f /usr/local/bin/siesta-version.sh ]; then
+    source /usr/local/bin/siesta-version.sh
+    echo "  <tr>"
+    echo "    <td class=\"fila\" align=\"left\" class=\"txtNormal\"><b>Versión Firmware Base:</b> $FIRMWARE_VERSION<br><b>Versión Firmware SIESTA:</b> $SIESTA_FIRMWARE_VERSION</td>"
+    echo "  </tr>"
+fi
+echo "  <tr>"
+echo "    <td class=\"fila\" align=\"left\" class=\"txtNormal\"><b>Hostname:</b> `hostname`</td>"
+echo "  </tr>"
+echo "  <tr>"
 echo "    <td class=\"fila titTabla\"  bgcolor=\"#ffb310\" align=\"center\">Espacio en disco</td>"
 echo "  </tr>"
 echo "  <tr>"
