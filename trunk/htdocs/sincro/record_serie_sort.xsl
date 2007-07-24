@@ -10,7 +10,6 @@
   <script language="JavaScript" src="/sincro/js/blink.js"></script>
   <script language="JavaScript" src="/sincro/js/navigator.js"></script>
   <script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
-  <script language="JavaScript" src="/sincro/js/botones.js"></script>
   <script>
   function deleteRec(crid) {
     if (confirm("¿Está seguro de querer eliminar definitivamente la grabación seleccionada?")) {
@@ -37,7 +36,7 @@
   <body>
     <div align="center" class="titPag"><p>M750T EPG</p></div>
     <div align="center" class="subTitPag">Grabaciones realizadas</div>
-    <script language="JavaScript">barra_botones();</script>
+    <xsl:copy-of select='document("/sincro/botones.xsl")'/>
     <div align="center" class="txtNormal">Espacio en disco: <xsl:value-of select="M750/SPACE"/><br/><br/></div>
     <table width="98%" border="0" cellspacing="0" cellpadding="2" align="center" class="borderTabla2">
     <tr bgcolor="#ffb310">
@@ -91,7 +90,7 @@
     </tr>
     </xsl:for-each>
     </table>
-    <script language="JavaScript">barra_botones();</script>
+    <xsl:copy-of select='document("/sincro/botones.xsl")'/>
   </body>
   </html>
 </xsl:template>

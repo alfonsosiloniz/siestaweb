@@ -7,7 +7,6 @@
   <title>M750T - Detalle de grabación</title>
   <link href="/sincro/img/m740.ico" rel="shortcut icon"></link>
   <link href="/sincro/css/estilos.css" rel="stylesheet" type="text/css"></link>
-  <script language="JavaScript" src="/sincro/js/botones.js"></script>
   <script>
     function editar() {
         document.location.href="/cgi-bin/crid/edittitleXML?<xsl:value-of select="/M750/RECORD_DETAIL/CRIDFILE" />";
@@ -18,7 +17,7 @@
   <form name="formulario" method="post">
     <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
     <div align="center"><font class="subTitPag">Detalle de Grabación</font></div>
-    <script language="JavaScript">barra_botones();</script>
+    <xsl:copy-of select='document("/sincro/botones.xsl")'/>
     <p>
     <table width="98%" border="0" cellspacing="0" cellpadding="1" align="center">
     <tr>
@@ -39,7 +38,7 @@
       </td>
     </tr>
     </table>
-    <script language="JavaScript">barra_botones();</script>
+    <xsl:copy-of select='document("/sincro/botones.xsl")'/>
     </p>
   </form>
   </body>
