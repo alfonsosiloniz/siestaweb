@@ -5,6 +5,7 @@
 <script language="JavaScript" src="/sincro/js/html_params.js"></script>
 <script language="JavaScript" src="/sincro/js/navigator.js"></script>
 <script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
+<script language="JavaScript" src="/sincro/js/botones.js"></script>
 <script>
 function init() {
     index=document.location.href.indexOf("://");
@@ -22,11 +23,7 @@ function enviar() {
 <form name="formulario" action="/cgi-bin/crid/download" method="get">
 <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
 <div align="center"><font class="subTitPag">Descargar Grabación</font></div>
-<p>
-    <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
-    <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-    <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a></div>
-</p>
+<script language="JavaScript">barra_botones();</script>
 <table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
 <tr>
 	<td class="txtNormal">Host: </td>
@@ -75,12 +72,7 @@ function enviar() {
 	</td>
 </tr>
 </table>
-<p>
-    <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
-    <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-    <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a><br/><br/>
-    <a href="/autores.html">Autores</a></div>
-</p>
+<script language="JavaScript">barra_botones();</script>
 </form>
 </body>
 </html>

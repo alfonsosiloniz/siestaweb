@@ -9,6 +9,7 @@
   <script language="JavaScript" src="/sincro/js/ajax.js"></script>
   <script language="JavaScript" src="/sincro/js/navigator.js"></script>
   <script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
+  <script language="JavaScript" src="/sincro/js/botones.js"></script>
   <script>
   function cancel(id) {
     if (confirm("¿Está seguro de querer cancelar la grabación seleccionada?")) {
@@ -40,13 +41,7 @@
   <body>
     <div align="center" class="titPag"><p>M750T EPG</p></div>
     <div align="center" class="subTitPag">Grabaciones pendientes</div>
-       <p> 
-        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | <a href="/cgi-bin/sincro/parrilla">Parrilla</a> | 
-        <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-        <a href="/index.html">Salir</a><br/><br/>
-        <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> | <a href="/utils/cmdInput.html">Comando</a> |
-        <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV-TS</a> | <a href="/ssh/sshconn.html">SSH</a></div> 
-    </p> 
+    <script language="JavaScript">barra_botones();</script>
     <div align="center" class="txtNormal">
         Espacio en disco: <xsl:value-of select="M750/SPACE"/><br/><br/>
         <a href="/cgi-bin/crid/viewRAFile">Ver RA_FILE (grabaciones pendientes)</a> | <a href="/cgi-bin/crid/viewSMFile">Ver SM_FILE (programaciones de series)</a><br/><br/>
@@ -82,13 +77,9 @@
     </table>
     <p>
         <div align="center" class="txtNormal">
-        <a href="/cgi-bin/crid/viewRAFile">Ver RA_FILE (grabaciones pendientes)</a> | <a href="/cgi-bin/crid/viewSMFile">Ver SM_FILE (programaciones de series)</a><br/><br/>
-        <a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | <a href="/cgi-bin/sincro/parrilla">Parrilla</a> | 
-        <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-        <a href="/index.html">Salir</a><br/><br/>
-        <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> | <a href="/utils/cmdInput.html">Comando</a> |
-        <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV-TS</a> | <a href="/ssh/sshconn.html">SSH</a><br/><br/>
-        <a href="/cgi-bin/sincro/verlog">Ver Log</a> | <a href="/cgi-bin/box/estado">Ver Estado</a></div>
+        <a href="/cgi-bin/crid/viewRAFile">Ver RA_FILE (grabaciones pendientes)</a> | <a href="/cgi-bin/crid/viewSMFile">Ver SM_FILE (programaciones de series)</a>
+        </div>
+        <script language="JavaScript">barra_botones();</script>
     </p>
   </body>
   </html>

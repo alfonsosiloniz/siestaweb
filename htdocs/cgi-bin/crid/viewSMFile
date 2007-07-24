@@ -14,14 +14,11 @@ cat <<- ---EOT---
 <script language="JavaScript" src="/sincro/js/navigator.js"></script>
 <script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
 <script language="JavaScript" src="/sincro/js/fechasOp.js"></script>
+<script language="JavaScript" src="/sincro/js/botones.js"></script>
 <body bgcolor="#FFFFFF">
   <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
   <div align="center"><font class="subTitPag">Explorador de archivos: /data/SM_FILE</font></div>
-  <p>
-      <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
-      <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-      <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV-TS</a> | <a href="/ssh/sshconn.html">SSH</a></div>
-  </p>
+  <script language="JavaScript">barra_botones();</script>
   <table width="98%" border="0" cellspacing="0" cellpadding="2" align="center"  class="borderTabla2">
   <tr>
     <td class="fila titTabla"  bgcolor="#ffb310">
@@ -50,12 +47,7 @@ cat <<- ---EOT---
     <td class="txtNormal" align="right">Explorador basado en código de <a href="http://www.open7x0.org/wiki/Benutzer:Lemmi">Lemmi</a> bajo licencia <a href="http://www.gnu.de/gpl-ger.html">GPL</a></td>
   </tr>
   </table>
-  <p>
-      <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | 
-      <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-      <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV-TS</a> | <a href="/ssh/sshconn.html">SSH</a><br/><br/>
-      <a href="/autores.html">Autores</a> | <a href="/cgi-bin/sincro/verlog">Ver Log</a> | <a href="/cgi-bin/box/estado">Ver Estado</a></div>
-  </p>
+  <script language="JavaScript">barra_botones();</script>
 </body>
 </html>
 ---EOT---

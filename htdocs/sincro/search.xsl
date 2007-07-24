@@ -10,6 +10,7 @@
   <script language="JavaScript" src="/sincro/js/navigator.js"></script>
   <script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
   <script language="JavaScript" src="/sincro/js/fechasOp.js"></script>
+  <script language="JavaScript" src="/sincro/js/botones.js"></script>
   <script>
   function record(id, serie, titulo) {
     enserie="";
@@ -65,13 +66,7 @@
   <form name="formulario">
     <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
     <div align="center"><font class="subTitPag">Resultado de búsqueda</font></div>
-    <p>
-        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | <a href="/cgi-bin/sincro/parrilla">Parrilla</a> | 
-        <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-        <a href="/index.html">Salir</a><br/><br/>
-        <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> | <a href="/utils/cmdInput.html">Comando</a> |
-        <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV-TS</a> | <a href="/ssh/sshconn.html">SSH</a></div>
-    </p>
+    <script language="JavaScript">barra_botones();</script>
     <table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
     <tr>
       <td class="txtNormal" align="right">
@@ -233,13 +228,7 @@
     </xsl:for-each>
     </table><br/>
     </xsl:for-each>
-    <p>
-        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | <a href="/cgi-bin/sincro/parrilla">Parrilla</a> | 
-        <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | <a href="/index.html">Salir</a><br/><br/>
-        <a href="/osd/osd2tcp.html">Control OSD</a> | <a href="/cgi-bin/box/show/var/etc">Editor / Explorador de Archivos</a> | <a href="/utils/cmdInput.html">Comando</a> |
-        <a href="/cgi-bin/box/selectLiveTv">Ver LiveTV</a> | <a href="/sincro/visualizarts.html">Ver LiveTV-TS</a> | <a href="/ssh/sshconn.html">SSH</a><br/><br/>
-        <a href="/autores.html">Autores</a> | <a href="/cgi-bin/sincro/verlog">Ver Log</a> | <a href="/cgi-bin/box/estado">Ver Estado</a></div>
-    </p>
+    <script language="JavaScript">barra_botones();</script>
     </form>
   </body>
   </html>

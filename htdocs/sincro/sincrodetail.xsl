@@ -6,9 +6,10 @@
   <title>M750T - Sincroguía</title>
   <link href="/sincro/img/m740.ico" rel="shortcut icon"></link>
   <link href="/sincro/css/estilos.css" rel="stylesheet" type="text/css"></link>
-  <script type="text/javascript" language="JavaScript" src="/sincro/js/ajax.js"></script>
-  <script type="text/javascript" language="JavaScript" src="/sincro/js/navigator.js"></script>
-  <script type="text/javascript" language="JavaScript" src="/sincro/js/controlenviar.js"></script>
+  <script language="JavaScript" src="/sincro/js/ajax.js"></script>
+  <script language="JavaScript" src="/sincro/js/navigator.js"></script>
+  <script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
+  <script language="JavaScript" src="/sincro/js/botones.js"></script>
   <script type="text/javascript">
   function record(id, serie) {
     if (confirm("¿Está seguro de querer grabar el programa?")) {
@@ -41,11 +42,7 @@
   <body>
     <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
     <div align="center"><font class="subTitPag">Detalle de programa</font></div>
-    <p>
-        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | <a href="/cgi-bin/sincro/parrilla">Parrilla</a> | 
-        <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-        <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a></div>
-    </p>
+    <script language="JavaScript">barra_botones();</script>
     <xsl:choose>
     <xsl:when test="/M750/PGMDETAIL/PROGRAMMED='1'">
         <p><table width="350" border="0" cellspacing="0" cellpadding="1" align="center">
@@ -98,12 +95,6 @@
 	    <xsl:attribute name="href">javascript:sincroDetail("<xsl:value-of select="/M750/PGMDETAIL/PIDCID" />")</xsl:attribute>
 	    <img src="/sincro/img/sincro_small.gif" alt="Grabar" width="18" height="18" border="0" />Ficha Sincroguía InOut</xsl:element>
     </div>
-    <br/>
-    <p>
-        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | <a href="/cgi-bin/sincro/parrilla">Parrilla</a> | 
-        <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-        <a href="/index.html">Salir</a></div>
-    </p>
   </body>
   </html>
 </xsl:template>

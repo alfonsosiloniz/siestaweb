@@ -7,6 +7,7 @@
 <link href="/sincro/css/estilos.css" rel="stylesheet" type="text/css"></link>
 <script language="JavaScript" src="/sincro/js/ajax.js"></script>
 <script language="JavaScript" src="/sincro/js/navigator.js"></script>
+<script language="JavaScript" src="/sincro/js/botones.js"></script>
 <script language="JavaScript">
 function enviar(tecla) {
     // Añadimos la fecha a la peticion para evitar la caché de los navegadores
@@ -26,12 +27,9 @@ function mostrarXMLRespuesta() {}
 </head>
 <body bgcolor="white">
 <form name="formulario">
-<div align="center"><p><font class="titPag">M750T EPG - Control OSD</font></p></div>
-<p>
-    <div align="center" class="txtNormal"><a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | <a href="/cgi-bin/sincro/parrilla">Parrilla</a> | 
-    <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-    <a href="/index.html">Salir</a></div>
-</p>
+<div align="center"><p><font class="titPag">M750T EPG</font></p></div>
+<div align="center"><font class="subTitPag">Control OSD</font></div>
+<script language="JavaScript">barra_botones();</script>
 <table width="80%" border="0" cellspacing="0" cellpadding="0" align="center">
 <tr>
 	<td class="txtInfo">Para controlar el OSD puede utilizar el teclado del ordenador, basándose en la relación de 
@@ -188,11 +186,6 @@ TimeShift: <input type="button" onclick="on_timeshift();" value="Activar TimeShi
     <td class="txtNormal" align="center"><a href="javascript:enviar('BLUE')">Azul</a></td>
 </tr>
 </table>
-<p>
-    <div align="center" class="txtNormal"><a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | <a href="/cgi-bin/sincro/parrilla">Parrilla</a> | 
-    <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-    <a href="/index.html">Salir</a><br/><br/><a href="/autores.html">Autores</a></div>
-</p>
 </form>
 </body>
 </html>
