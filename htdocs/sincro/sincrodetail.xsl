@@ -9,7 +9,6 @@
   <script language="JavaScript" src="/sincro/js/ajax.js"></script>
   <script language="JavaScript" src="/sincro/js/navigator.js"></script>
   <script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
-  <script language="JavaScript" src="/sincro/js/botones.js"></script>
   <script type="text/javascript">
   function record(id, serie) {
     if (confirm("¿Está seguro de querer grabar el programa?")) {
@@ -42,7 +41,7 @@
   <body>
     <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
     <div align="center"><font class="subTitPag">Detalle de programa</font></div>
-    <script language="JavaScript">barra_botones();</script>
+    <xsl:copy-of select='document("/sincro/botones.xsl")'/>
     <xsl:choose>
     <xsl:when test="/M750/PGMDETAIL/PROGRAMMED='1'">
         <p><table width="350" border="0" cellspacing="0" cellpadding="1" align="center">

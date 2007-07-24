@@ -6,11 +6,10 @@
   <title>M750T - Detalle de Grabación Pendiente</title>
   <link href="/sincro/img/m740.ico" rel="shortcut icon"></link>
   <link href="/sincro/css/estilos.css" rel="stylesheet" type="text/css"></link>
-  <script language="JavaScript" src="/sincro/js/botones.js"></script>
   <body>
     <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
     <div align="center"><font class="subTitPag">Detalle de Grabación Pendiente</font></div>
-    <script language="JavaScript">barra_botones();</script>
+    <xsl:copy-of select='document("/sincro/botones.xsl")'/>
     <p><table width="500" border="0" cellspacing="0" cellpadding="1" align="center">
     <tr>
       <td class="titTabla" bgcolor="#ffb310" height="18">#</td>
@@ -56,7 +55,7 @@
       </td>
     </tr>
     </table>
-    <script language="JavaScript">barra_botones();</script>
+    <xsl:copy-of select='document("/sincro/botones.xsl")'/>
     </p>
   </body>
   </html>

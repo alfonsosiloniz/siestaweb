@@ -10,7 +10,6 @@
   <script language="JavaScript" src="/sincro/js/navigator.js"></script>
   <script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
   <script language="JavaScript" src="/sincro/js/fechasOp.js"></script>
-  <script language="JavaScript" src="/sincro/js/botones.js"></script>
   <script>
   function record(id, serie, titulo) {
     enserie="";
@@ -66,7 +65,7 @@
   <form name="formulario">
     <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
     <div align="center"><font class="subTitPag">Resultado de búsqueda</font></div>
-    <script language="JavaScript">barra_botones();</script>
+    <xsl:copy-of select='document("/sincro/botones.xsl")'/>
     <table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
     <tr>
       <td class="txtNormal" align="right">
@@ -228,7 +227,7 @@
     </xsl:for-each>
     </table><br/>
     </xsl:for-each>
-    <script language="JavaScript">barra_botones();</script>
+    <xsl:copy-of select='document("/sincro/botones.xsl")'/>
     </form>
   </body>
   </html>

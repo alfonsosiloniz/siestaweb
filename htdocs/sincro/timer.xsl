@@ -9,7 +9,6 @@
   <script language="JavaScript" src="/sincro/js/ajax.js"></script>
   <script language="JavaScript" src="/sincro/js/navigator.js"></script>
   <script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
-  <script language="JavaScript" src="/sincro/js/botones.js"></script>
   <script>
   function cancel(id) {
     if (confirm("¿Está seguro de querer cancelar la grabación seleccionada?")) {
@@ -41,7 +40,7 @@
   <body>
     <div align="center" class="titPag"><p>M750T EPG</p></div>
     <div align="center" class="subTitPag">Grabaciones pendientes</div>
-    <script language="JavaScript">barra_botones();</script>
+    <xsl:copy-of select='document("/sincro/botones.xsl")'/>
     <div align="center" class="txtNormal">
         Espacio en disco: <xsl:value-of select="M750/SPACE"/><br/><br/>
         <a href="/cgi-bin/crid/viewRAFile">Ver RA_FILE (grabaciones pendientes)</a> | <a href="/cgi-bin/crid/viewSMFile">Ver SM_FILE (programaciones de series)</a><br/><br/>
@@ -79,7 +78,7 @@
         <div align="center" class="txtNormal">
         <a href="/cgi-bin/crid/viewRAFile">Ver RA_FILE (grabaciones pendientes)</a> | <a href="/cgi-bin/crid/viewSMFile">Ver SM_FILE (programaciones de series)</a>
         </div>
-        <script language="JavaScript">barra_botones();</script>
+        <xsl:copy-of select='document("/sincro/botones.xsl")'/>
     </p>
   </body>
   </html>

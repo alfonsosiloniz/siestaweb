@@ -237,7 +237,7 @@
     </xsl:for-each>
     </table><br/>
     </xsl:for-each>
-    <script language="JavaScript">barra_botones();</script>
+    <xsl:copy-of select='document("/sincro/botones.xsl")'/>
    </form>
   </body>
   </html>
