@@ -6,14 +6,11 @@
   <title>M750T - Detalle de Grabación Pendiente</title>
   <link href="/sincro/img/m740.ico" rel="shortcut icon"></link>
   <link href="/sincro/css/estilos.css" rel="stylesheet" type="text/css"></link>
+  <script language="JavaScript" src="/sincro/js/botones.js"></script>
   <body>
     <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
     <div align="center"><font class="subTitPag">Detalle de Grabación Pendiente</font></div>
-    <p>
-        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | <a href="/cgi-bin/sincro/parrilla">Parrilla</a> | 
-        <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-        <a href="/index.html">Salir</a><br/><br/><a href="/osd/osd2tcp.html">Control OSD</a></div>
-    </p>
+    <script language="JavaScript">barra_botones();</script>
     <p><table width="500" border="0" cellspacing="0" cellpadding="1" align="center">
     <tr>
       <td class="titTabla" bgcolor="#ffb310" height="18">#</td>
@@ -59,12 +56,7 @@
       </td>
     </tr>
     </table>
-    </p>
-    <br/>
-    <p>
-        <div align="center" class="txtNormal"><a href="javascript:history.back()">Atrás</a> | <a href="/cgi-bin/sincro/pgmactualXML">Inicio</a> | <a href="/cgi-bin/sincro/parrilla">Parrilla</a> | 
-        <a href="/cgi-bin/crid/timerXML">Grabaciones Pendientes</a> | <a href="/cgi-bin/crid/videoXML">Grabaciones Realizadas</a> | 
-        <a href="/index.html">Salir</a></div>
+    <script language="JavaScript">barra_botones();</script>
     </p>
   </body>
   </html>
