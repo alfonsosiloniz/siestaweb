@@ -23,3 +23,7 @@ if (kqPos !=-1) {
    is_major = parseInt(is_minor);
 }                                 
 var is_ie   = ((iePos!=-1) && (!is_opera) && (!is_khtml));
+var is_windowsCE = agt.indexOf('windows ce');
+var isMobile = false;
+if (is_windowsCE >= 0)
+    isMobile = true;
