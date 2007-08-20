@@ -10,11 +10,12 @@
   <script language="JavaScript" src="/sincro/js/blink.js"></script>
   <script language="JavaScript" src="/sincro/js/navigator.js"></script>
   <script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
+  <script language="JavaScript" src="/sincro/js/botones.js"></script>
   <script>
   function deleteRec(crid) {
     if (confirm("¿Está seguro de querer eliminar definitivamente la grabación seleccionada?")) {
-      //if (is_ie)
-      mostrarMensajeProceso();
+      if (!isMobile)
+        mostrarMensajeProceso();
       makeRequest("/cgi-bin/crid/deleteRecording?" + crid, "procesarXMLRespuesta");
     }
   }
@@ -27,8 +28,8 @@
       document.location.reload();
     }
     else {
-      //if (is_ie)
-      eliminarMensajeProceso();
+      if (!isMobile)
+        eliminarMensajeProceso();
       alert("Borrado de Grabación NO aceptado por el M750");
     }
   }
@@ -36,7 +37,14 @@
   <body>
     <div align="center" class="titPag"><p>M750T EPG</p></div>
     <div align="center" class="subTitPag">Grabaciones realizadas</div>
-    <xsl:copy-of select='document("/sincro/botones.xsl")'/>
+    <xsl:choose>
+      <xsl:when test="system-property('xsl:vendor') = 'Microsoft'">
+        <script language="JavaScript">barra_botones();</script>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy-of select='document("/sincro/botones.xsl")'/>
+      </xsl:otherwise>
+    </xsl:choose>
     <div align="center" class="txtNormal">Espacio en disco: <xsl:value-of select="M750/SPACE"/><br/><br/></div>
     <table width="98%" border="0" cellspacing="0" cellpadding="2" align="center" class="borderTabla2">
     <tr bgcolor="#ffb310">
@@ -90,7 +98,14 @@
     </tr>
     </xsl:for-each>
     </table>
-    <xsl:copy-of select='document("/sincro/botones.xsl")'/>
+    <xsl:choose>
+      <xsl:when test="system-property('xsl:vendor') = 'Microsoft'">
+        <script language="JavaScript">barra_botones();</script>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy-of select='document("/sincro/botones.xsl")'/>
+      </xsl:otherwise>
+    </xsl:choose>
   </body>
   </html>
 </xsl:template>
