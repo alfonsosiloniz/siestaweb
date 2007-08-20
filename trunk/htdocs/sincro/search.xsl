@@ -10,20 +10,21 @@
   <script language="JavaScript" src="/sincro/js/navigator.js"></script>
   <script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
   <script language="JavaScript" src="/sincro/js/fechasOp.js"></script>
+  <script language="JavaScript" src="/sincro/js/botones.js"></script>
   <script>
   function record(id, serie, titulo) {
     enserie="";
     if (serie == 1)
         enserie="en serie ";
     if (confirm("¿Está seguro de querer grabar " + enserie + "el programa \"" + titulo + "\"?")) {
-      //if (is_ie)
-      mostrarMensajeProceso();
+      if (!isMobile)
+        mostrarMensajeProceso();
       makeRequest("/cgi-bin/sincro/recordXML?" + parseInt(id, 16) + "-" + serie + "-" + new Date().getTime(), "mostrarXMLRespuesta");
     }
   }
   function mostrarXMLRespuesta(xmldoc) {
-    //if (is_ie)
-    eliminarMensajeProceso();
+    if (!isMobile)
+        eliminarMensajeProceso();
     result = xmldoc.getElementsByTagName("RESULT");
     if (result[0].firstChild.data == "1")
       alert("Programación aceptada por el M750");
@@ -35,14 +36,14 @@
   }
   function noReply() {}
   function buscar() {
-    //if (is_ie)
-    mostrarMensajeProceso();
+    if (!isMobile)
+        mostrarMensajeProceso();
     document.location.href="/cgi-bin/sincro/searchXML?" + document.forms['formulario'].querystr.value;
   }
   function buscarFH() {
     f=document.forms['formulario'];
-    //if (is_ie)
-    mostrarMensajeProceso();
+    if (!isMobile)
+        mostrarMensajeProceso();
     document.location.href="/cgi-bin/sincro/searchXML?" + f.fecha.value + " " + f.hora.value;
   }
   function initFechas(fecha) {
@@ -65,7 +66,14 @@
   <form name="formulario">
     <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
     <div align="center"><font class="subTitPag">Resultado de búsqueda</font></div>
-    <xsl:copy-of select='document("/sincro/botones.xsl")'/>
+    <xsl:choose>
+      <xsl:when test="system-property('xsl:vendor') = 'Microsoft'">
+        <script language="JavaScript">barra_botones();</script>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy-of select='document("/sincro/botones.xsl")'/>
+      </xsl:otherwise>
+    </xsl:choose>
     <table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
     <tr>
       <td class="txtNormal" align="right">
@@ -227,7 +235,14 @@
     </xsl:for-each>
     </table><br/>
     </xsl:for-each>
-    <xsl:copy-of select='document("/sincro/botones.xsl")'/>
+    <xsl:choose>
+      <xsl:when test="system-property('xsl:vendor') = 'Microsoft'">
+        <script language="JavaScript">barra_botones();</script>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy-of select='document("/sincro/botones.xsl")'/>
+      </xsl:otherwise>
+    </xsl:choose>
     </form>
   </body>
   </html>

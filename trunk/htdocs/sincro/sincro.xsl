@@ -11,6 +11,7 @@
   <script language="JavaScript" src="/sincro/js/navigator.js"></script>
   <script language="JavaScript" src="/sincro/js/controlenviar.js"></script>
   <script language="JavaScript" src="/sincro/js/fechasOp.js"></script>
+  <script language="JavaScript" src="/sincro/js/botones.js"></script>
   <script>
   function record(id, serie, titulo) {
     enserie="";
@@ -70,7 +71,14 @@
     <form name="formulario">
     <div align="center"><p><font class="titPag">M750T EPG</font></p></div>
     <div align="center"><a href="http://www.inout.tv/SincroGuia"><img src="/sincro/img/sincro.gif" border="0"/></a><font class="subTitPag">proporcionada por InOut TV</font></div>
-    <xsl:copy-of select='document("/sincro/botones.xsl")'/>
+    <xsl:choose>
+      <xsl:when test="system-property('xsl:vendor') = 'Microsoft'">
+        <script language="JavaScript">barra_botones();</script>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy-of select='document("/sincro/botones.xsl")'/>
+      </xsl:otherwise>
+    </xsl:choose>
     <table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
     <tr>
       <td class="txtNormal" align="right">
@@ -237,7 +245,14 @@
     </xsl:for-each>
     </table><br/>
     </xsl:for-each>
-    <xsl:copy-of select='document("/sincro/botones.xsl")'/>
+    <xsl:choose>
+      <xsl:when test="system-property('xsl:vendor') = 'Microsoft'">
+        <script language="JavaScript">barra_botones();</script>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy-of select='document("/sincro/botones.xsl")'/>
+      </xsl:otherwise>
+    </xsl:choose>
    </form>
   </body>
   </html>
