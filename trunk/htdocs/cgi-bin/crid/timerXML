@@ -1,2 +1,0 @@
-#!/bin/bash
-./recordingsXML /data/.timer TIMER timer.xsl

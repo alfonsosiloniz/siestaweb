@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+	<link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+	<link rel="stylesheet" href="/css/estilos.css" type="text/css"/>
+	<script type="text/javascript" src="/js/html_params.js" charset="ISO-8859-1"></script>
+	<script type="text/javascript" src="/js/navigator.js" charset="ISO-8859-1"></script>
+	<script type="text/javascript" src="/js/controlenviar.js" charset="ISO-8859-1"></script>
+	<script type="text/javascript" src="/js/botones.js" charset="ISO-8859-1"></script>
+	<title>M750T - Conexión SSH</title>
+</head>
+<body bgcolor="#FFFFFF">
+	<form name="form_m750">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+		<tr>
+			<td align="center">
+				<font class="titPag">M750T EPG</font>
+				<br>
+				<font class="subTitPag">Conexión SSH</font>
+			</td>
+		</tr>
+		<tr>
+			<td><br><script type="text/javascript">barra_botones();</script></td>
+		</tr>
+	</table>
+	<table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
+		<tr>
+			<td class="txtInfo" align="left">
+				<applet
+					code="com.mindbright.application.MindTerm.class"
+					archive="/util/mindterm_ns.jar"
+					width="0" height="0">
+					<param name="cabinets" value="mindterm_ie.cab">
+					<param name="sepframe" value="true">
+					<param name="autoprops" value="both">
+					<param name="debug" value="true">
+					<param name="appletbg" value="black">
+					<param name="appletfg" value="green">
+					<param name="exit-on-logout" value="true">
+				</applet>
+				<br>
+				1. Espera unos segundos a que el applet se abra en una nueva ventana.
+				<br>
+				<br>
+				2. Aparecerá la ventana del terminal SSH con el nombre de host ya introducido.
+				<br>
+				<br>
+				3. Si deseas ralizar la conexión SSH por un puerto diferente del estándar 22, introdúcelo manualmente, escribiendo ":puerto" a continuación del nombre del host.
+				<br>
+				<br>
+			</td>
+		</tr>
+	</table>
+	</form>
+</body>
+</html>

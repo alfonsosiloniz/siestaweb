@@ -1,0 +1,148 @@
+.borderBotones {
+	border-left: solid Black 1px;
+	border-top: solid Black 1px;
+	border-bottom: solid Black 1px;
+	font-family: Verdana;
+	font-size: 10px;
+	font-style: normal;
+}
+
+.borderBotones2 {
+	border-right: solid Black 1px;
+	border-left: solid Black 1px;
+	border-top: solid Black 1px;
+	border-bottom: solid Black 1px;
+	font-family: Verdana;
+	font-size: 10px;
+	font-style: normal;
+}
+
+.borderTabla {
+	border-right: solid Black 1px;
+	border-left: solid Black 1px;
+	border-bottom: solid Black 1px;
+}
+
+.borderTabla2 {
+	border-right: solid Black 1px;
+	border-left: solid Black 1px;
+	border-top: solid Black 1px;
+}
+
+.borderTabla3 {
+	border-bottom: solid #D3D3D3 1px;
+	border-bottom-width: thin;
+	border-right: solid #D3D3D3 1px;
+	border-right-width: thin;
+	border-left: solid #D3D3D3 1px;
+	border-left-width: thin;
+}
+
+.fila {
+	border-bottom: solid Black 1px;
+	font-family: Verdana;
+	font-size: 12px;
+	font-style: normal;
+}
+
+.borderFila {
+	border-top: solid Black 1px;
+}
+
+.titPag{
+	font-family: verdana;
+	font-size: 30px;
+	font-weight: bold;
+	color: #ffb310;
+	padding-left: 15px;
+}
+
+.subTitPag{
+	font-family: verdana;
+	font-size: 24px;
+	font-weight: bold;
+	color: Navy;
+	padding-left: 15px;
+}
+
+.titTabla{
+	font-family: verdana;
+	font-size: 12px;
+	font-weight: bold;
+	color: Black;
+}
+
+.titChannel{
+	font-family: verdana;
+	font-size: 16px;
+	font-weight: bold;
+	color: Black;
+}
+
+.txtNormal {
+	font-family: Verdana;
+	font-size: 12px;
+	font-style: normal;
+}
+
+.txtPeq {
+	font-family: Verdana;
+	font-size: 10px;
+	font-style: normal;
+}
+
+.txtMuyPeq {
+	font-family: Verdana;
+	font-size: 8px;
+	font-style: normal;
+}
+
+.txtNormalG {
+	font-family: Verdana;
+	font-size: 14px;
+	font-style: normal;
+}
+
+.txtInfo {
+	font-family: verdana;
+	font-size: 11px;
+	font-weight: bold;
+	color: #c80000;
+}
+
+.txtAvisos {
+	font-family: Verdana;
+	font-size: 18px;
+	font-style: normal;
+	color: #FF0000;
+}
+
+.txtParam {
+	font-family: Verdana;
+	font-size: 14px;
+	font-weight: bold;
+	font-style: normal;
+}
+.cajaParam {
+	font-family: Verdana,Arial;
+	font-size: 12px;
+	font-style: normal;
+	background-color: #FFFF80;
+	color: #000000;
+	border-style: groove;
+}
+
+.Grid{font-family:verdana,Arial;font-size:11px;color:#000000;}
+.NPastilla{font-family:verdana,Arial;font-size:12px;color:#000000;}
+.TitColGrid{font-family:verdana,Arial;font-size:11px;color:#000000;font-weight:bold;}
+.cajaPlana{border-style:groove;color:#000000;font-size:11px;font-family:Verdana,Arial;}
+.TitGridND{font-family:verdana,Arial;font-size:11px;color:#666666;text-decoration:none;font-weight:bold;}
+
+.cajaEPG{
+	border-style: groove;
+	background-color: #FFEEE6;
+	color: #000000;
+	font-family: Verdana,Arial;
+	font-size: 11px;
+	padding: .2em;
+}
