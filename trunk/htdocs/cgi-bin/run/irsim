@@ -1,0 +1,14 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 25-07-2007
+#
+# Invocación remota de teclas
+
+# Configurar entorno
+source ../fweb.shi
+
+# Obtener y enviar codigo tecla
+tecla=`echo $QUERY_STRING | cut -d"-" -f1`
+echo "sim 0 00 $tecla web_server" > /dev/tcp/localhost/8765
+
+# Resultado OK
+enviar_xml_ok

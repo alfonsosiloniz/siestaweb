@@ -1,0 +1,12 @@
+#!/bin/bash
+# pepper, (c) grupo SIESTA, 16-08-2007
+#
+# Script que lanza la descarga de imagenes en background
+
+# Configurar entorno
+source ../fweb.shi
+
+./getsincroimg &
+
+# Resultado OK
+enviar_xml_ok

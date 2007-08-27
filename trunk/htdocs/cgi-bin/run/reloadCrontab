@@ -1,0 +1,28 @@
+#!/bin/bash
+# pepper, jotabe, (c) grupo SIESTA, 24-08-2007
+#
+# Script que realiza la recarga del fichero /var/etc/root.crontab
+
+# Configurar entorno
+source ../fweb.shi
+FICHERO_CRONTAB_TMP=/tmp/crontab.root
+FICHERO_CRONTAB_SYS=/tmp/crontab.sys
+FICHERO_CRONTAB_USER=/var/etc/root.crontab
+
+# Recargar crontab si existen fichero de tareas de sistema y usuario
+if [ -f $FICHERO_CRONTAB_SYS -a -f $FICHERO_CRONTAB_USER ]; then
+	# Tareas de sistema
+	cp -f $FICHERO_CRONTAB_SYS $FICHERO_CRONTAB_TMP
+
+	# Añadir tareas de usuario
+	cat $FICHERO_CRONTAB_USER >> $FICHERO_CRONTAB_TMP
+
+	# Actualizar tareas
+	crontab $FICHERO_CRONTAB_TMP 2> /dev/null
+
+	# Eliminar temporales
+	rm -f $FICHERO_CRONTAB_TMP
+fi
+
+# Resultado OK
+enviar_xml_ok

@@ -1,0 +1,89 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 02-05-2007
+#
+# Script que genera un fichero de comandos con las instrucciones necesarias para
+# visualizar el timeshift en el PC local mediante MPlayer
+
+host=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2 | sed -e 's/%3A/:/g'`
+port=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2`
+user=`echo $QUERY_STRING | cut -d"&" -f3 | cut -d"=" -f2`
+pwd=`echo $QUERY_STRING | cut -d"&" -f4 | cut -d"=" -f2`
+mplayer=`echo $QUERY_STRING | cut -d"&" -f5 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g' | sed -e 's/+/ /g' | sed -e 's/%2F/\//g'`
+tmpdir=`echo $QUERY_STRING | cut -d"&" -f6 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\\\/g' | sed -e 's/%2F/\//g'`
+aspect=`echo $QUERY_STRING | cut -d"&" -f7 | cut -d"=" -f2`
+#so=`echo $QUERY_STRING | cut -d"&" -f8 | cut -d"=" -f2`
+
+#Por si el host viene con puerto, lo quitamos para el ftp y lo dejamos para el http
+ftphost=`echo $host | cut -d":" -f1`
+
+mplayerOptions="-cache 4096 -quiet -noaspect -aspect $aspect -autosync 30 -framedrop"
+
+function dos() {
+	echo $2
+}
+DIR_MPG=`dos \`grep "DeviceRecordingFolder" /var/etc/settings.txt\``
+#RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
+plsfile=$tmpdir/mplayer_temp_`date +%s`.pls
+
+echo "Content-type: application/octet-stream"
+echo "Content-Disposition: attachment; filename=verts.cmd"
+echo ""
+echo "@ECHO OFF"
+echo "echo Iniciando..."
+echo SET USUARIO="$user"
+echo SET PASS="$pwd"
+echo SET HOST="$host"
+echo SET FTP_HOST="$ftphost"
+echo SET FTP_PORT="$port"
+echo SET BASE_URL="http://%HOST%"
+echo SET TEMP="$tmpdir"
+echo SET MPLAYER="$mplayer"
+echo SET OPCIONES_MPLAYER="$mplayerOptions"
+echo SET CADENA_FTP="ftp://%USUARIO%:%PASS%@%FTP_HOST%:%FTP_PORT%"
+echo "echo @echo off > .\start_mplayer.cmd"
+echo "echo echo Llenando el buffer de MPlayer con wget. Espera unos segundos .... >> .\start_mplayer.cmd"
+# Damos tiempo a wget para que descargue el fichero antes de comenzar con la reproduccion
+echo "echo sleep 15 >> .\start_mplayer.cmd"
+ultmpg=`./getmpgts`
+i=`echo $ultmpg | cut -d"." -f3`
+i=$((i+1-1))
+fmpg=`echo $ultmpg | cut -d"." -f1`.fmpg
+while [ $i -lt 40 ]; do
+	if [ $i -lt 10 ]; then
+		echo "echo ${fmpg}.00$i.mpg >> $plsfile"
+	else
+		echo "echo ${fmpg}.0$i.mpg >> $plsfile"
+	fi
+	i=$((i+1))
+done
+echo "echo \"%MPLAYER%\" %OPCIONES_MPLAYER% -playlist $plsfile >> .\start_mplayer.cmd"
+echo "echo del /f /q $tmpdir\*.mpg >> .\start_mplayer.cmd"
+echo "echo del /f /q $tmpdir\*.pls >> .\start_mplayer.cmd"
+echo "echo exit >> .\start_mplayer.cmd"
+# Lanzamos el reproductor en background, mientras continua la descarga del fichero (wget) en foreground
+echo "start /b .\start_mplayer.cmd"
+echo ":bucle"
+# Obtenemos el fichero del timeshift
+echo "wget -q -O - %BASE_URL%/cgi-bin/crid/getmpgts?$DIR_MPG > %TEMP%\ultmpg"
+echo "SET /P FICHERO=<%TEMP%\ultmpg"
+echo "SET NOMBRE_COMPLETO=%CADENA_FTP%$DIR_MPG/%FICHERO%"
+echo "goto inicio"
+echo ":recargar"
+# Damos tiempo para que el gigaset genere fichero mpg antes de continuar descargando
+echo "sleep 8"
+echo ":inicio"
+# Descarga contínua del fichero de timeshift
+echo "wget --continue --passive-ftp -P $tmpdir %NOMBRE_COMPLETO%"
+# Una vez descargado, comprobamos los tamaños para ver si esta completo ya el mpg
+echo "wget -q -O - http://$host/cgi-bin/crid/getfilesize?$DIR_MPG/%FICHERO% > $tmpdir/filesize.tmp"
+# Por si el mpg no esta completo damos 1 segundo para que el gigaset siga escribiendo y asi los tamaños no cuadren
+echo "sleep 1"
+echo "SET /P FILE_SIZE_GIGA=<$tmpdir\filesize.tmp"
+# Calculamos el tamaño del fichero descargado
+echo "wc -c $tmpdir\%FICHERO% | cut -d c -f 1 > $tmpdir\filesize2.tmp"
+echo "SET /P FILE_SIZE_PC=<$tmpdir\filesize2.tmp"
+# Comprobamos los tamaños de ambos ficheros
+echo "wget -q -O - http://$host/cgi-bin/crid/checkfilesizes?%FILE_SIZE_GIGA%-%FILE_SIZE_PC% > $tmpdir/checksize.tmp"
+echo "SET /P CHECK_SIZE=<$tmpdir\checksize.tmp"
+echo "if \"%CHECK_SIZE%\" == \"NO\" goto recargar"
+echo "goto bucle"

@@ -1,0 +1,76 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 25-07-2007
+#
+# Validacion de login de usuario
+# Formato de $USUARIO -> usuario:password
+
+# Configurar entorno
+source www-setup.shi
+source fweb.shi
+user=`echo ${USUARIO} | cut -d":" -f1`
+pwd=`echo ${USUARIO} | cut -d":" -f2`
+LOG=/tmp/login.log
+
+# check input data : GET or POST
+case $REQUEST_METHOD in
+	GET)
+		# CGI Arguments are in QUERY_STRING
+		;;
+
+	POST)
+		# First line from standard input contains CGI arguments
+		read -r query_string
+		# If QUERY_STRING is non-empty, append the string read from
+		# standard input. This is useful for debugging purposes
+		if [ "${QUERY_STRING}" != "" ]; then
+			QUERY_STRING="${QUERY_STRING}&${query_string}"
+		else
+			QUERY_STRING=${query_string}
+		fi
+		;;
+esac
+
+# Obtener usuario y contraseña para validar
+userlogin=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2`
+pwdlogin=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2 | sed 's/%40/@/g'`
+
+# Enviar cabecera http
+http_header
+
+# Comprobar login
+if [ "$user" = "$userlogin" -a "$pwd" = "$pwdlogin" ]; then
+	# Login correcto
+	echo "`date` Login OK: $userlogin / $pwdlogin" >> $LOG
+	# Respuesta html
+	echo "<html>
+	<head>
+		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/>
+		<script language=\"JavaScript\" src=\"/js/cookies.js\"></script>
+		<script language=\"JavaScript\">
+			setCookie(\"LOGGED\", new Date().getTime(), getExpire());
+		</script>
+		<title>Login OK</title>
+	</head>
+	<body>
+		<script>
+			document.location.href=\"/cgi-bin/sincro/pgmactual\";
+		</script>
+	</body>
+</html>"
+else
+	# Login incorrecto
+	echo "`date` Login NOK: $userlogin / $pwdlogin" >> $LOG
+	# Respuesta html
+	echo "<html>
+	<head>
+		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/>
+		<title>Login incorrecto</title>
+	</head>
+	<body>
+		<script>
+			alert(\"Usuario/contraseña incorrecto\");
+			document.location.href=\"/index.html\";
+		</script>
+	</body>
+</html>"
+fi

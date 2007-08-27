@@ -1,0 +1,132 @@
+#!/bin/bash 
+# jotabe, (c) Grupo SIESTA, 13-08-2007
+#
+# Extraer informacion de fichero crid y pasarlo a variables de entorno
+# $1 Fichero .crid
+#
+# $CRID_Version					-> Siempre 2
+# $CRID_ID						-> Identificador unico de crid
+# $Rec_State					-> Estado de la grabacion
+#									1	Pendiente
+#									2	Grabando
+#									3	Grabacion correcta
+#									4	Error de grabacion
+#									5	Grabacion cancelada
+#									8	Conflicto de grabacion
+#									9	Episodio borrado de serie
+# $EPG_start_time				-> Fecha/hora inicio (UTC)
+# $FMT_start_time				-> Fecha/hora inicio (formato imprimible)
+# $EPG_end_time					-> Fecha/hora final (UTC)
+# $FMT_end_time					-> Fecha/hora final (formato imprimible)
+# $Duration						-> Duracion programada
+# $user_access_data				-> No usado, siempre 0
+# $recording_pre_offset			-> No usado, siempre -1
+# $recording_post_offset		-> No usado, siempre -1
+# $Rec_Type						-> Tipo de grabacion
+#									1	EPG/Sincroguia
+#									2	Timer
+#									4	EPG/Sincroguia en serie
+#									8	Timer en serie
+#									32	Manual (en directo)
+# $IDserie						-> Identificador de serie
+# $Grabacion_protegida			-> 0 sin proteger / 1 protegido
+# $Titulo						-> Titulo
+# $num_fmpg						-> Nº de fragmentos de grabacion (normalmente 1)
+# $fmpgNN						-> Nombre fichero de fragmento
+# $fmpgNN_absolute_start_time	-> Posible comienzo del timeshift
+# $fmpgNN_start_timestamp		-> 90 kHz
+# $fmpgNN_end_timestamp			-> 90 kHz
+# $EPG_short					-> Descripcion corta
+# $EPG_long						-> Descripcion larga
+# $playback_timestamp			-> Posicion de visionado
+#
+# Este script es incluido desde otros, no debe invocarse directamente
+
+# Obtener parametro
+Cridfile=$1
+
+# Configurar entorno
+DiaSemana=([1]="Lun" [2]="Mar" [3]="Mie" [4]="Jue" [5]="Vie" [6]="Sab" [7]="Dom")
+declare -a Crid0
+declare -a Crid1
+
+# Leer 1ª seccion
+#-------------------------------------------------
+Crid0=( `hexdump -n 50 -e '1/4 "%d \n" 2/4 "%X \n" 8/4 "%d \n" 1/2 "%d \n" 1/4 "%d \n"' $Cridfile` )
+
+# Identificador y estado
+CRID_Version=${Crid0[0]}
+CRID_ID=`printf "%08X%08X" 0x${Crid0[1]} 0x${Crid0[2]}`
+Rec_State=${Crid0[3]}
+
+# Inicio, final y duracion
+EPG_start_time=${Crid0[4]}
+ds=`awk "BEGIN {print strftime( \"%u\" , $EPG_start_time) }"`
+FMT_start_time=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M\" , $EPG_start_time) }"`
+FMT_start_time="$FMT_start_time, ${DiaSemana[ds]}"
+EPG_end_time=${Crid0[5]}
+ds=`awk "BEGIN {print strftime( \"%u\" , $EPG_end_time) }"`
+FMT_end_time=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M\" , $EPG_end_time) }"`
+FMT_end_time="$FMT_end_time, ${DiaSemana[ds]}"
+Duration=$((($EPG_end_time-$EPG_start_time)/60))
+
+# No usados
+user_access_data=${Crid0[6]}
+recording_pre_offset=${Crid0[7]}
+recording_post_offset=${Crid0[8]}
+
+# Tipo de grabacion, identificador serie y marca protegido
+Rec_Type=${Crid0[9]}
+IDserie=${Crid0[10]}
+Grabacion_protegida=${Crid0[11]}
+
+# Obtener titulo
+bytesTitulo=${Crid0[12]}
+Titulo=`hexdump -v -n $bytesTitulo -s 50 -e '"%c"' $Cridfile | sed -e 's/&/&amp;/g;s/_/-/g'`
+
+# Leer 2ª seccion (ficheros .fmpg - fragmentos de grabacion)
+#-------------------------------------------------
+b=$((50+$bytesTitulo))
+num_fmpg=`hexdump -s $b -n 4 -e '1/4 "%d"' $Cridfile`
+
+# Recorrer fragmentos
+i=0
+b=$(($b+4))
+while [ $i -lt $num_fmpg ]; do
+	# Nombre fichero de fragmento
+	bytesNombreFichero=`hexdump -s $b -n 4 -e '1/4 "%d"' $Cridfile`
+	b=$(($b+4))
+	tmp=`hexdump -v -s $b -n $bytesNombreFichero -e '"%c"' $Cridfile`
+	eval "fmpg${i}='${tmp}'"
+	b=$(($b+$bytesNombreFichero))
+
+	# Datos fichero de fragmento
+	Crid1=( `hexdump -s $b -n 20 -e '1/4 "%d \n" 4/4 "%X \n"' $Cridfile | sed -e 's/&/&amp;/g'` )
+	tmp=${Crid1[0]}
+	eval "fmpg${i}_absolute_start_time='${tmp}'"
+	tmp=`printf "%08X%08X" 0x${Crid1[1]} 0x${Crid1[2]}`
+	eval "fmpg${i}_start_timestamp='${tmp}'"
+	tmp=`printf "%08X%08X" 0x${Crid1[3]} 0x${Crid1[4]}`
+	eval "fmpg${i}_end_timestamp='${tmp}'"
+
+	# Siguiente fragmento
+	b=$(($b+20))
+	i=$(($i+1))
+done
+
+# Leer 3ª seccion (datos EPG/Sincroguia)
+#-------------------------------------------------
+bytesEPG_short=`hexdump -s $b -n 4 -e '1/4 "%d"' $Cridfile`
+b=$(($b+4))
+#EPG_short=`hexdump -v -s $b -n $bytesEPG_short -e '"%c"' $Cridfile | sed -e 's/&/&amp;/g'`
+EPG_short=`hexdump -v -s $b -n $bytesEPG_short -e '/1 "&#%d;"' $Cridfile | sed -e 's/&#5;//g;s/&#138;/\n/g' `
+b=$(($b+$bytesEPG_short))
+
+bytesEPG_long=`hexdump -s $b -n 4 -e '1/4 "%d"' $Cridfile`
+b=$(($b+4))
+#EPG_long=`hexdump -v -s $b -n $bytesEPG_long -e '"%c"' $Cridfile | sed -e 's/&/&amp;/g'`
+EPG_long=`hexdump -v -s $b -n $bytesEPG_long -e '/1 "&#%d;"' $Cridfile | sed -e 's/&#5;//g;s/&#138;/\n/g' `
+b=$(($b+$bytesEPG_long))
+
+playback_timestamp=`hexdump -s $b -n 4 -e '1/4 "%d"' $Cridfile`
+        

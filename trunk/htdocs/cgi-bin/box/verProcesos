@@ -1,0 +1,6 @@
+#!/bin/bash
+# jotabe, (c) Grupo SIESTA, 21-08-2007
+#
+# Volcado procesos en ejecucion
+
+ps -axfww | sed -e 's/&/&amp;/g;s/>/\&gt;/g;s/</\&lt;/g'

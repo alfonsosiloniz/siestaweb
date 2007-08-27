@@ -1,0 +1,102 @@
+#!/bin/bash
+# Lemmi @ m740.info/forum, 2005-09-04 -> GPL
+# jotabe, (c) Grupo SIESTA, 08-08-2007
+#
+# Definicion funciones de explorador de archivos para gigaset
+# $SCRIPT_NAME	-> Script del explorador
+# $PATH_INFO	-> Fichero a mostrar
+# $action		-> Accion
+# $flags		-> Flags de acciones
+#
+# Este script es incluido desde otros, no debe invocarse directamente
+
+#--------------------------------------------------
+# Imprimir acciones
+#--------------------------------------------------
+function print_actions() {
+	# Separador
+	echo "<p>"
+	# Accion view
+	[ $action != view -a ${flags/*v*/ok} == ok ] && echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?view\">VIEW</a>]"
+	# Accion hexdump
+	[ $action != hexdump ] && echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?hexdump\">HEXDUMP</a>]"
+	# Accion edit si tamaño fichero es menor de 50000
+	if [ $action != edit -a ${flags/*e*/ok} == ok ]; then
+		info=(`ls -l "$PATH_INFO"`)
+		[ ${info[4]} -le 50000 ] && echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?edit\">EDIT</a>]"
+	fi
+	# Accion download
+	echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?send\">DOWNLOAD</a>]"
+	# Separador
+	echo "</p>"
+}
+
+#--------------------------------------------------
+# Enviar comienzo pagina
+# $1 Titulo
+# $2 Flags
+#--------------------------------------------------
+function print_top() {
+    #html_begin "$1"
+    flags="$2"
+
+	# Enviar documento html
+	html_doc_start "M750T - Explorador $1" 600 "-an-efb-"
+
+	# Respuesta html
+	onload=""
+	[ "Z$alert" != "Z"  ] && onload="alert('$alert');"
+	html_top "Explorador de archivos: $1" $onload ""
+	echo "		<br>
+		<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\" class=\"borderTabla2\">
+			<tr>
+				<td class=\"fila titTabla\"  bgcolor=\"#ffb310\">"
+
+	# Obtener path de fichero con enlaces
+	line=`basename "$PATH_INFO"`
+	tmppath=`dirname "$PATH_INFO"`
+	[ "$PATH_PREFIX" == "///" ] && line=""
+	# Recorrer carpetas poniendo enlaces
+	while [ "$tmppath" != "/" ]; do
+		tmpfile=`basename "$tmppath"`
+		tmppath=`dirname "$tmppath"`
+		line="<font class=\"titChannel\"><a href=\"$SCRIPT_NAME$tmppath/$tmpfile\">$tmpfile</a> / $line</font>"
+	done
+	# Mostrar path
+	echo "					<a class=\"titChannel\" href=\"$SCRIPT_NAME/\">&nbsp;/</a> $line"
+
+	# Comprobar enlaces simbolicos
+	realpath=`realpath "$PATH_INFO"`
+	if [ $? -eq 0 -a "$PATH_INFO" != "$realpath" ]; then
+		echo "&nbsp; (enlace simbolico en la ruta)<br>"
+		#echo "[<a class=\"titChannel\" href=\"ftp://`hostname -f`$realpath\">FTP</a>] &nbsp;"
+
+		# Obtener path de ruta real con enlaces
+		tmpfile=`basename "$realpath"`
+		tmppath=`dirname "$realpath"`
+		line="<a class=\"titChannel\" href=\"$SCRIPT_NAME$tmppath/$tmpfile\">$tmpfile</a>"
+		# Recorrer carpetas poniendo enlaces
+		while [ "$tmppath" != "/" ]; do
+			tmpfile=`basename "$tmppath"`
+			tmppath=`dirname "$tmppath"`
+			line="<a class=\"titChannel\" href=\"$SCRIPT_NAME$tmppath/$tmpfile\">$tmpfile</a> / $line"
+		done
+		# Mostrar path real
+		echo "					<a class=\"titChannel\" href=\"$SCRIPT_NAME/\">&nbsp;/</a> $line"
+	fi
+	echo "				</td>"
+	echo "			</tr>"
+}
+
+#--------------------------------------------------
+# Enviar final pagina
+#--------------------------------------------------
+function print_bottom() {
+	echo "		</table>
+		<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">
+			<tr>
+				<td class=\"txtNormal\" align=\"right\">Explorador basado en código de <a href=\"http://www.open7x0.org/wiki/Benutzer:Lemmi\">Lemmi</a> bajo licencia <a href=\"http://www.gnu.de/gpl-ger.html\">GPL</a></td>
+			</tr>
+		</table>"
+	html_doc_end
+}

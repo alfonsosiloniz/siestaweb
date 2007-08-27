@@ -1,0 +1,83 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 02-05-2007
+#
+# Script que genera un fichero de comandos con las instrucciones necesarias para
+# visualizar una grabación en el PC local mediante MPlayer
+
+host=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2 | sed -e 's/%3A/:/g'`
+port=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2`
+Cridfile=`echo $QUERY_STRING | cut -d"&" -f3 | cut -d"=" -f2 | sed -e 's/%2F/\//g'`
+user=`echo $QUERY_STRING | cut -d"&" -f4 | cut -d"=" -f2`
+pwd=`echo $QUERY_STRING | cut -d"&" -f5 | cut -d"=" -f2`
+mplayer=`echo $QUERY_STRING | cut -d"&" -f6 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g' | sed -e 's/+/ /g' | sed -e 's/%2F/\//g'`
+tmpdir=`echo $QUERY_STRING | cut -d"&" -f7 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g' | sed -e 's/%2F/\//g'`
+aspect=`echo $QUERY_STRING | cut -d"&" -f8 | cut -d"=" -f2`
+so=`echo $QUERY_STRING | cut -d"&" -f9 | cut -d"=" -f2`
+encurso=`echo $QUERY_STRING | cut -d"&" -f10 | cut -d"=" -f2`
+
+#Por si el host viene con puerto, lo quitamos para el ftp y lo dejamos para el http
+ftphost=`echo $host | cut -d":" -f1`
+
+# Procesar fichero crid
+source ./crid2var.shi $Cridfile
+
+# Opciones de mplayer
+mplayerOptions="-cache 2048 -quiet -noaspect -aspect $aspect -autosync 30 -framedrop -ni"
+
+# Obtener carpeta de almacenamiento
+recordingDir=`dirname $Cridfile`
+
+# Log del proceso
+echo "`date` Peticion visualizacion grabacion:
+	$ftphost, $port, $Cridfile, ${fmpg0}*, $user, $pwd, $aspect, Titulo: $Titulo" >> /tmp/view_video.log
+
+# Fichero playlist
+plsfile=$tmpdir/mplayer_temp_`date +%s`.pls
+
+# Descargar fichero de visualizacion
+echo "Content-type: application/octet-stream"
+if [ $so -eq 0 ] ; then
+	#echo Linux/Unix
+	echo "Content-Disposition: attachment; filename=ver_grabacion.sh"
+	echo ""
+	echo "#!/bin/sh"
+	echo "rm -f $plsfile"
+	echo "touch $plsfile"
+	if [ "$encurso" = "NO" ]; then
+		for mpg in ${recordingDir}/${fmpg0}*.mpg; do
+			echo "echo \"ftp://${user}:${pwd}@${ftphost}:${port}${mpg}\" >> $plsfile"
+		done
+	else
+		i=0
+		while [ $i -lt 40 ]; do
+			if [ $i -lt 10 ]; then
+				echo "echo \"ftp://${user}:${pwd}@${ftphost}:${port}${recordingDir}/${fmpg0}.00$i.mpg\" >> $plsfile"
+			else
+				echo "echo \"ftp://${user}:${pwd}@${ftphost}:${port}${recordingDir}/${fmpg0}.0$i.mpg\" >> $plsfile"
+			fi
+			i=$((i+1))
+		done
+	fi
+	echo "$mplayer $mplayerOptions -playlist $plsfile"
+else
+	#echo Windows
+	echo "Content-Disposition: attachment; filename=visualizar_grabacion.cmd"
+	echo ""
+	echo "@echo off > $plsfile"
+	if [ "$encurso" = "NO" ]; then
+		for mpg in ${recordingDir}/${fmpg0}*.mpg; do
+			echo "echo ftp://${user}:${pwd}@${ftphost}:${port}$mpg >> $plsfile"
+		done
+	else
+		i=0
+		while [ $i -lt 40 ]; do
+			if [ $i -lt 10 ]; then
+				echo "echo ftp://${user}:${pwd}@${ftphost}:${port}${recordingDir}/${fmpg0}.00$i.mpg >> $plsfile"
+			else
+				echo "echo ftp://${user}:${pwd}@${ftphost}:${port}${recordingDir}/${fmpg0}.0$i.mpg >> $plsfile"
+			fi
+			i=$((i+1))
+		done
+	fi
+	echo "\"$mplayer\" $mplayerOptions -playlist $plsfile"
+fi

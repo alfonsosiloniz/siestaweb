@@ -1,0 +1,70 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 02-07-2007
+#
+# Configuracion de los canales que se visualizan en la parrilla
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+PARRILLA_CHANNELS=${Cache}/parrilla_channels.txt
+CFG_PARRILLA=""
+[ -f $PARRILLA_CHANNELS ] && CFG_PARRILLA=`cat $PARRILLA_CHANNELS`
+
+# Obtenemos lista de canales
+source gen-lista-canales.shi
+
+# Enviar documento html
+html_doc_start "M750T - Configuración de Parrilla de Sincroguía" "" "-an-e-b-" "
+function guardar() {
+	mostrarMensajeProceso();
+	document.forms['form_m750'].submit();
+}"
+
+# Respuesta html
+html_top "Configuración de Parrilla de Sincroguía" "" "/cgi-bin/sincro/saveConfigParrilla"
+echo "			<br>
+			<table width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"0\" align=\"center\">
+				<tr>
+					<td width=\"100%\" class=\"titTabla\">
+					Seleccione los canales que desea que aparezcan en la Parrilla de la Sincroguía<br><br>
+					</td>
+				</tr>"
+
+# Recorrer canales
+for Sincrofile in $ListaCanales; do
+	# Obtener datos canal
+	chID=`echo $Sincrofile | cut -d"_" -f2 | cut -d"." -f1`
+	chName=`grep :${chID}: ${Cache}/info_channels.txt | head -1 | cut -d":" -f4`
+
+	# Comprobar si esta marcado
+	checked="checked"
+	if [ ${#CFG_PARRILLA} -ne 0 ]; then
+		# Se sustituye la plantilla *:${chID}:* por OK
+		# Si el resultado no es OK el canal no estaba en la lista -> se desmarca
+		[ ${CFG_PARRILLA/*:${chID}:*/OK} != OK ] && checked=""
+	fi
+
+	# Alternar colores
+	if [ "$bgcolor" = "#FFECD9" ]; then
+		bgcolor="#FFFFE8"
+	else
+		bgcolor="#FFECD9"
+	fi
+
+	# Volcar datos canal
+	echo "				<tr>
+					<td bgcolor=\"$bgcolor\" class=\"txtNormal\">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<input type=\"checkbox\" name=\"$chID\" value=\"$chID\" $checked>$chName
+					</td>
+				</tr>"
+done
+
+# Final html
+echo "				<tr>
+					<td width=\"100%\" align=\"center\">
+						<br><input type=\"button\" onclick=\"guardar();\" value=\"Guardar\">
+					</td>
+				</tr>
+			</table>"
+html_doc_end no

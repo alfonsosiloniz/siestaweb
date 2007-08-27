@@ -1,0 +1,12 @@
+#!/bin/bash
+# pepper, (c) grupo SIESTA, 16-08-2007
+#
+# Script que lanza la comprobacion de HD en background
+
+# Configurar entorno
+source ../fweb.shi
+
+./checkDisk &
+
+# Resultado OK
+enviar_xml_ok

@@ -1,0 +1,13 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 10-05-2007
+#
+# Script para matar el servidor de streaming
+
+# Configurar entorno
+source ../fweb.shi
+
+# Detener dvbstream
+pkill -HUP dvbstream 2> /dev/null
+
+# Resultado OK
+enviar_xml_ok

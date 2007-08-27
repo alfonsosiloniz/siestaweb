@@ -1,0 +1,38 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 26-04-2007
+#
+# Script que elimina una grabación a partir del fichero .crid, retorna el resultado en XML
+
+# Obtener parametros
+if [ $# = 1 ]; then
+	Cridfile=$1
+else
+	# Eliminar fecha/hora del parametro
+	Cridfile=${QUERY_STRING%-*}
+fi
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
+
+# Log del proceso
+echo "`date` Borrar grabación de Crid: $Cridfile" >> /tmp/delete_recording.log
+
+# Obtenemos carpeta de grabaciones
+recordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
+
+# Comprobar carpeta
+if [ -d $RecordingFolder ]; then
+	# Log
+	echo "rm -f $Cridfile" >> /tmp/delete_recording.log
+	echo "rm -f $Cachefile" >> /tmp/delete_recording.log
+	# Borrar ficheros
+	rm -f $Cridfile >> /tmp/delete_recording.log 2>> /tmp/delete_recording.log
+	rm -f $Cachefile
+	# Resultado OK
+	enviar_xml_ok
+else
+	# Resultado NO OK
+	enviar_xml_err
+fi

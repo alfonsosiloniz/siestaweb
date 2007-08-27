@@ -1,0 +1,79 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 02-05-2007
+#
+# Mostrar informacion sobre grabacion pendiente.
+
+# Obtener parametros
+Recording=`echo $QUERY_STRING | cut -d"-" -f1`
+Cridfile=`echo $QUERY_STRING | cut -d"-" -f2`
+
+# Configurar entorno
+source ../fweb.shi
+RECS_FILE=/data/RA_FILE
+SERIES_FILE=/data/SM_FILE
+
+num=`grep $Recording $RECS_FILE | cut -d" " -f1`
+gIni=`grep $Recording $RECS_FILE | cut -d" " -f8`
+gIni=$((gIni/60))
+gFin=`grep $Recording $RECS_FILE | cut -d" " -f9`
+gFin=$((gFin/60))
+serieFlag=`grep $Recording $SERIES_FILE | wc -l`
+
+# Recorrer fichero RA_FILE si el identificador de grabacion esta dentro
+n=1
+sint=1
+found=0
+[ ${#num} -ne 0 ] && while read line; do
+	# Saltamos la primera linea
+	if [ $n -gt 1 ]; then
+		# La segunda linea contiene el numero de grabaciones del Sintonizador 1
+		if [ $n -eq 2 ]; then
+			numRecs=$line
+			numRecs=$((numRecs+4))
+		else
+			# Comprobamos si ya hemos leído todas las grabaciones del sintonizador
+			if [ $n -eq $numRecs ]; then
+				numRecsNew=$line
+				numRecs=$(($numRecs+$numRecsNew+1))
+				sint=2
+			else
+				nRec=`echo $line | cut -d" " -f6`
+				if [ ${#nRec} -ne 0 -a ${#num} -ne 0 ]; then
+					if [ $nRec -eq $num ]; then
+						found=1
+						break
+					fi
+				fi
+			fi
+		fi
+	fi
+	# Siguiente linea
+	n=$((n+1))
+done < $RECS_FILE
+
+# Enviar documento xml
+xml_doc "/xsl/timerdetail.xsl"
+
+# Resultado xml
+echo "<M750>
+	<TIMER_DETAIL>"
+
+# Procesar resultado
+if [ $found -eq 1 ]; then
+	# Devolver datos timer
+	echo "		<NUM_REC>$num</NUM_REC>
+		<GUARDA_INI>$gIni</GUARDA_INI>
+		<GUARDA_FIN>$gFin</GUARDA_FIN>
+		<SINT>$sint</SINT>
+		<SERIE>$serieFlag</SERIE>"
+
+	# Procesar fichero crid
+	./crid2xml $Cridfile
+else
+	# Error identificador no encontrado
+	echo "		<ERROR>La grabación pendiente con identificador $Recording no se encuentra.</ERROR>"
+fi
+
+# Final xml
+echo "	</TIMER_DETAIL>
+</M750>"
