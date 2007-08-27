@@ -1,6 +1,0 @@
-#!/bin/bash
-# iso2post - convert to ISO/ASCII charset to httpd get/post compatible hex encoding
-# Martin Ostermann 2005-08-23
-
-# a bug in hexdump inhibits direct use of %
-hexdump -v -e '/1 "-%02X"' | sed -e 's/-/%/g'

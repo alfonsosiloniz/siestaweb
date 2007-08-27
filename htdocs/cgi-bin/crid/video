@@ -1,2 +1,0 @@
-#!/bin/bash
-./recordings `sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt` Grabaciones

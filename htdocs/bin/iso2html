@@ -1,6 +1,0 @@
-#!/bin/bash
-# iso2html - convert ISO/ASCII charset to html
-# Martin Ostermann 2005-08-23
-
-#quick and dirty for now...
-hexdump -v -e '/1 "&#%d;"'
