@@ -1,0 +1,8 @@
+#!/bin/bash 
+# (c) Grupo SIESTA, 06-08-2007
+#
+# Devolver grabaciones pendientes
+
+# Procesar carpeta .timer
+./lista-crid2xml /data/.timer TIMER timer.xsl
+# ./lista-crid2xml /var/cache TIMER timer.xsl

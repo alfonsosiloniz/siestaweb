@@ -1,0 +1,31 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 27-07-2007
+#
+# Script que programa una grabacion y retorna el resultado en XML
+
+# Obtener parametros
+pid=`echo $QUERY_STRING | cut -d"-" -f1`
+serie=`echo $QUERY_STRING | cut -d"-" -f2`
+
+# Configurar entorno
+source ../fweb.shi
+
+# Log del proceso
+echo "`date` Petición de grabación: $QUERY_STRING" >> /tmp/record.log
+
+# Enviar peticion a wavebox
+wcpre=`cat /data/RA_FILE | wc -l`
+echo "RECORD $pid $serie" > /dev/tcp/localhost/2010
+sleep 4
+wcpost=`cat /data/RA_FILE | wc -l`
+
+# Comprobar resultado
+if [ $wcpre -lt $wcpost ]; then
+	# Resultado OK
+	enviar_xml_ok
+	echo "`date` Resultado: OK" >> /tmp/record.log
+else
+	# Resultado NO OK
+	enviar_xml_err
+	echo "`date` Resultado: NOK" >> /tmp/record.log
+fi

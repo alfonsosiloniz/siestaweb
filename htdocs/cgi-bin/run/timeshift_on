@@ -1,0 +1,46 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 25-07-2007
+#
+# Hack de activacion de timeshift desde Mis Grabaciones
+
+# Configurar entorno
+source ../fweb.shi
+
+/usr/bin/txt2osd -x -1 -y -1 -d 2000 -b 0x7F000000 -s 30 "Activando TimeShift"
+sleep 1
+/data/scripts/irsim.sh TV
+sleep 1
+/data/scripts/irsim.sh MENU
+sleep 4
+/data/scripts/irsim.sh CURSOR_UP
+usleep 500000
+/data/scripts/irsim.sh CURSOR_UP
+usleep 500000
+/data/scripts/irsim.sh OK
+usleep 500000
+/data/scripts/irsim.sh CURSOR_DOWN
+usleep 500000
+/data/scripts/irsim.sh CURSOR_DOWN
+usleep 500000
+/data/scripts/irsim.sh CURSOR_DOWN
+usleep 500000
+/data/scripts/irsim.sh OK
+usleep 500000
+/data/scripts/irsim.sh CURSOR_UP
+usleep 500000
+/data/scripts/irsim.sh OK
+usleep 500000
+/data/scripts/irsim.sh CURSOR_UP
+usleep 500000
+/data/scripts/irsim.sh CURSOR_UP
+usleep 500000
+/data/scripts/irsim.sh CURSOR_UP
+usleep 500000
+/data/scripts/irsim.sh CURSOR_UP
+usleep 500000
+/data/scripts/irsim.sh OK
+usleep 500000
+/data/scripts/irsim.sh TV
+
+# Resultado OK
+enviar_xml_ok

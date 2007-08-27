@@ -1,0 +1,13 @@
+#!/bin/bash
+# jotabe, (c) Grupo SIESTA, 22-08-2007
+#
+# Descarga de lista de imagenes de sincroguia que faltan.
+
+# Configurar entorno
+LST=/tmp/images.txt
+
+# Descargar fichero de imagenes
+echo "Content-type: application/octet-stream"
+echo "Content-Disposition: attachment; filename=images.txt"
+echo ""
+cat $LST

@@ -1,0 +1,26 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 27-07-2007
+#
+# Script de cambio de canal. Válido para canales de 0..99
+
+# Configurar entorno
+source ../fweb.shi
+
+# Enviar teclas a lircd
+if [ "$QUERY_STRING" != "" ]; then
+	echo "sim 0 00 TV web_server" > /dev/tcp/localhost/8765
+	usleep 300000
+	tecla=`echo $QUERY_STRING | cut -d"-" -f1`
+	if [ $tecla -gt 9 ]; then
+		tecla1=`echo $tecla | cut -b1-1`
+		tecla2=`echo $tecla | cut -b2-2`
+		echo "sim 0 00 $tecla1 web_server" > /dev/tcp/localhost/8765
+		usleep 300000
+		echo "sim 0 00 $tecla2 web_server" > /dev/tcp/localhost/8765
+	else
+		echo "sim 0 00 $tecla web_server" > /dev/tcp/localhost/8765
+	fi
+fi
+
+# Resultado OK
+enviar_xml_ok

@@ -1,0 +1,247 @@
+#!/bin/bash
+# pepper, jotabe, (c) Grupo SIESTA, 22-08-2007
+#
+# Visualizacion de estado y log's del sistema
+
+# Obtener parametro
+id_accion=`echo "$QUERY_STRING" | sed 's/^id_log=//g' | cut -d"&" -f1`
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+STICK_PARTITION=(`df 2> /dev/null | grep SWAP`)
+get_modo_video
+if [ "$ModoVideo" = "Apagado" ] ; then
+	accion_power="Encender"
+	img_power="on.gif"
+else
+	accion_power="Apagar"
+	img_power="off.gif"
+fi
+
+# Enviar documento html
+html_doc_start "M750T - Estado del box" "" "-a----bm"
+
+# Respuesta html
+html_top "Estado del box" "" ""
+
+# 2ª barra de botones y desplegable de acciones
+echo "				<br>
+				<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
+					<tr>
+						<td width=\"40%\" align=\"left\">
+							<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
+								<tr height="64">
+									<script type=\"text/javascript\">
+										poner_boton(\"Programa<br>Actual\",       \"/img/pgmactual.gif\",    \"Actualizar caché de programa actual\",   \"javascript:actCachePgmAct();\"       );
+										poner_boton(\"Caché<br>Sincroguía\",      \"/img/cache_sincro.gif\", \"Actualizar caché de todos los canales\", \"javascript:actCacheCanales();\"      );
+										poner_boton(\"Imagenes<br>Sincroguía\",   \"/img/getsincroimg.gif\", \"Descargar imagenes de Sincroguía\",      \"javascript:downloadSincroImg();\"    );
+										poner_boton(\"Reload<br>root.crontab\",   \"/img/crontab.gif\",      \"Recargar root.crontab\",                 \"javascript:reloadCrontab();\"        );
+										poner_boton(\"Reiniciar<br>Gigaset\",     \"/img/reboot.gif\",       \"Reiniciar Gigaset\",                     \"javascript:reboot();\"               );
+										poner_boton(\"$accion_power<br>Gigaset\", \"/img/$img_power\",       \"$accion_power Gigaset\",                 \"javascript:enviarTecla('POWER'); reloadDelayed();\" ,\"si\");
+									</script>
+								</tr>
+							</table>
+						</td>
+						<td width=\"50%\" align=\"center\">
+							Ver estado: <select name=\"id_log\" id=\"id_log\">
+								<option value=\"log_pgmactual\">Estado generación de caché de Programa Actual</option>
+								<option value=\"log_cache_sincro\">Estado generación de caché de todos los canales de la Sincroguía</option>
+								<option value=\"log_getsincroimg\">Descargas de imágenes de Sincroguía</option>
+								<option value=\"log_crond\">Log Crond</option>
+								<option value=\"log_keycontrol\">Log Key-control</option>
+								<option value=\"log_synctime\">Log de sincronización de hora</option>
+								<option value=\"log_run_httpd\">Ejecuciones de run-httpd.sh</option>
+								<option value=\"log_swap\">Log Swap</option>
+								<option value=\"log_record\">Grabaciones programadas/canceladas desde la aplicación</option>
+								<option value=\"log_login\">Login en la aplicación</option>
+								<option value=\"log_search\">Búsquedas realizadas</option>
+								<option value=\"log_download\">Descargas de grabaciones realizadas a local</option>
+								<option value=\"log_view_video\">Visualizaciones de grabaciones en PC local</option>
+								<option value=\"log_delete\">Borrado de grabaciones realizadas</option>
+								<option value=\"log_checkdisk\">Chequeo de particiones del disco</option>
+								<option value=\"log_cmd\">Comandos ejecutados</option>
+								<option value=\"log_RECORDER_LOG\">Log del grabador</option>
+								<option value=\"log_WDG\">Reinicios wavebox (watchdog)</option>
+								<option value=\"log_df\">Espacio en disco (df)</option>
+								<option value=\"log_free\">Uso de memoria (free)</option>
+								<option value=\"log_crontab\">Procesos Planificados (crontab -l)</option>
+								<option value=\"log_ifconfig\">Configuración de Red (ifconfig)</option>
+								<option value=\"log_ps\">Procesos en ejecución (ps)</option>
+								<option value=\"log_mount\">Puntos de montaje (cat /proc/mounts)</option>
+								<option value=\"log_act_sincro\">Actualización de la Sincroguía</option>
+							</select>
+							<script type=\"text/javascript\">document.getElementById('id_log').value=\"$id_accion\";</script>
+							&nbsp;&nbsp;
+							<input class=\"txtNormal\" type=\"submit\" value=\"Ver\">
+						</td>
+					</tr>
+				</table>
+				<br>
+				<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\" class=\"borderTabla2\">"
+
+# Procesar peticion
+	case $id_accion in
+		log_pgmactual )
+			print_log_file "Generación de caché de Programa Actual"                    "${Cache}/cache.pgmactual.log";;
+		log_cache_sincro )
+			print_log_file "Generación de caché de todos los canales de la Sincroguía" "${Cache}/cache.sincro.log";;
+		log_crond )
+			print_log_file "Log Crond"                                                 "/var/log/crond.log";;
+		log_keycontrol )
+			print_log_file "Log Key-Control"                                           "/var/log/key-control.log";;
+		log_synctime )
+			print_log_file "Log de sincronización de hora"                             "/var/log/time.log";;
+		log_run_httpd )
+			print_log_file "Ejecuciones de run-httpd.sh"                               "/var/log/run-http.log";;
+		log_swap )
+			print_log_file "Log Swap"                                                  "/var/log/swap.log";;
+		log_record )
+			print_log_file "Grabaciones programadas/canceladas desde la aplicación"    "/tmp/record.log";;
+		log_login )
+			print_log_file "Login en la aplicación"                                    "/tmp/login.log";;
+		log_search )
+			print_log_file "Búsquedas realizadas"                                      "/tmp/search.log";;
+		log_download )
+			print_log_file "Descargas de grabaciones realizadas a local"               "/tmp/download.log";;
+		log_view_video )
+			print_log_file "Visualizaciones de grabaciones en PC local"                "/tmp/view_video.log";;
+		log_delete )
+			print_log_file "Borrado de grabaciones realizadas"                         "/tmp/delete_recording.log";;
+		log_checkdisk )
+			print_log_file "Chequeo de particiones del disco"                          "/tmp/checkdisk.log";;
+		log_cmd )
+			print_log_file "Comandos ejecutados"                                      "/tmp/cmd.log";;
+		log_RECORDER_LOG )
+			print_log_file "Log del grabador"                                          "/data/START_RECORDER_LOG" "./viewRecorderLog";;
+		log_WDG )
+			print_log_file "Reinicios wavebox (watchdog)"                              "/data/WDG_LOG";;
+		log_df )
+			print_log_file "Espacio en disco (df)"                                     "/dev/null"                "df";;
+		log_free )
+			print_log_file "Uso de memoria (free)"                                     "/dev/null"                "free";;
+		log_crontab )
+			print_log_file "Procesos Planificados (crontab)"                           "/dev/null"                "crontab -l";;
+		log_ifconfig )
+			print_log_file "Configuración de Red (ifconfig)"                           "/dev/null"                "ifconfig";;
+		log_ps )
+			print_log_file "Procesos en ejecución (ps)"                                "/dev/null"                "./verProcesos";;
+		log_getsincroimg )
+			print_log_file "Descargas de imágenes de Sincroguía"                       "/tmp/getsincroimg.log"
+			# Boton descarga images.txt
+			[ -f /tmp/images.txt ] && echo "					<tr>
+						<td  align=\"center\">
+							<br>
+							<input type=\"button\" value=\"Descargar images.txt\" class=\"txtInfo\" onclick=\"descargarImages()\">
+							<br>&nbsp;<br>
+						</td>
+					</tr>"
+			;;
+
+		log_mount )
+			# Encabezado puntos de montaje
+			echo "				<tr>
+					<td class=\"fila titTabla\" bgcolor=\"#ffb310\" align=\"center\">Puntos de montaje</td>
+				</tr>
+				<tr>
+					<td class=\"fila\">
+						<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\" class=\"borderTabla2\">
+							<tr>
+								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">&nbsp;</font></th>
+								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Dispositivo</font></th>
+								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Punto de montaje</font></th>
+								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">File System Type</font></th>
+								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Opciones Montaje</font></th>
+							</tr>"
+
+			# Volcado filesystems
+			declare -a devs
+			cat /proc/mounts > /tmp/mounts.tmp
+			while read line; do
+				isdev=`echo $line | grep "/dev/sd" | wc -l`
+				devs=(`echo $line`)
+				if [ $isdev -gt 0 -a "$STICK_PARTITION" != "${devs[0]}" ]; then
+					link="<input type=\"button\" style=\"width: 130px;\" value=\"check ${devs[0]}\" class=\"txtInfo\" onclick=\"checkHD('${devs[0]}','${devs[2]}')\">"
+				else
+					link=""
+				fi
+				echo "	<tr>
+					<td width="150">${link}</td>
+					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">${devs[0]}</font></td>
+					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\"><a href=\"/cgi-bin/box/show${devs[1]}\" title=\"Explorar ${devs[1]}\">${devs[1]}</a></font></td>
+					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">${devs[2]}</font></td>
+					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">${devs[3]}</font></td>
+				</tr>"
+			done < /tmp/mounts.tmp
+
+			# Cerrar tabla
+			echo "						</table>
+					</td>
+				</tr>"
+			;;
+
+		log_act_sincro )
+			declare -a status
+			status=(`grep LastEPG_Upload /var/etc/settings.txt`)
+			dateFormat=`awk "BEGIN {print strftime( \"%d/%m/%Y %H:%M %Z\", ${status[1]}) }"`
+
+			# Encabezado actualizacion sincroguia
+			echo "				<tr>
+					<td class=\"fila titTabla\" bgcolor=\"#ffb310\" align=\"center\">
+						Actualización de la Sincroguía ( <font style=\"text-decoration: underline; \">Última actualización: $dateFormat</font> )
+					</td>
+				</tr>
+				<tr>
+					<td class=\"fila\" align=\"left\">
+						<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
+							<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>
+							<tr align=\"center\" style=\"font-family:courier new; font-size:12px; text-decoration: underline; font-weight: bold;\">
+								<td width=\"10%\">ID Canal</td>
+								<td width=\"23%\">Fecha/Hora</td>
+								<td width=\"10%\">ID Canal</td>
+								<td width=\"23%\">Fecha/Hora</td>
+								<td width=\"10%\">ID Canal</td>
+								<td width=\"24%\">Fecha/Hora</td>
+							</tr>
+							<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+
+			# Volcado horas actualizacion sincroguia
+			sort /data/EPG_Status.txt > /tmp/EPG_Status.txt
+			col=1
+			while read line; do
+				status=( `echo $line` )
+				dateFormat=`awk "BEGIN {print strftime( \"%d/%m/%Y %H:%M %Z\", ${status[0]}) }"`
+				[ $col -eq 1 ] && echo "<tr align=\"center\" style=\"font-family:courier new; font-size:12px;\">"
+				echo "	<td>${status[1]}</td>"
+				echo "	<td>$dateFormat</td>"
+				[ $col -eq 3 ] && echo "</tr>"
+				# Avanzar columna
+				col=$(($col+1))
+				[ $col -gt 3 ] && col=1
+			done < /tmp/EPG_Status.txt
+			rm -f /tmp/EPG_Status.txt
+
+			# Cerrar tabla
+			echo "						</table>
+					</td>
+				</tr>"
+			;;
+	
+		* ) ;;
+	esac
+
+# Estado y uptime
+echo "					<tr><td class=\"titTabla\" bgcolor=\"#ffb310\" height=\"4\"></td></tr>
+					<tr>
+						<td class=\"fila titTabla\" bgcolor=\"#ffb310\" align=\"center\">
+							Estado: $ModoVideo
+							<br>
+							<br>
+							Carga del sistema (uptime)
+							<pre>`uptime`</pre>
+						</td>
+					</tr>
+				</table>"
+
+# Final html
+html_doc_end

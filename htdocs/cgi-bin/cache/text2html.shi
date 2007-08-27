@@ -1,0 +1,144 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 28-03-2007
+#
+# Genera fichero cache de parrilla (html) de 1 canal
+# $1 <- Fichero sincroguia (.db)
+# $2 <- Fichero cache text
+# $3 -> Fichero cache html
+# $4 -> horaUTCinicial
+#
+# Este script es incluido desde otros, no debe invocarse directamente
+
+# Obtener parametros
+chID=`echo $1 | cut -d"_" -f2 | cut -d"." -f1`
+CACHE_FILE_TEXT=$2
+CACHE_FILE_HTML=$3
+horaUTCinicial=$4
+
+# Configurar entorno
+dateIniAnt=""
+sincronyzed=0
+primerPase=0
+porcentHeight=4
+seg_ajuste=0
+
+# Recorrer fichero .text
+# La duracion de los programas se calcula como diferencia entre lineas, por lo
+# la primera linea se procesa en la segunda pasada y la ultima linea no se procesa.
+while read line; do
+	if [ ${#line} -ne 0 ]; then
+		# Obtener datos linea actual
+		dateIni=`echo $line | cut -d"_" -f1`
+		dateFormat=`echo $line | cut -d"_" -f4`
+		titulo=`echo $line | cut -d"_" -f6`
+		pidcid=`echo $line | cut -d"_" -f3`
+		longs=`echo $line | cut -d"_" -f5`
+		imagen=`echo $line | cut -d"_" -f8-`
+
+		# Saltar proceso primera linea
+		if [ $primerPase -eq 1 ]; then
+			# Comprobar comienzo programa mayor que horaUTCinicial
+			if [ $dateIniAnt -ge $horaUTCinicial ]; then
+				# Sincronizamos con parrilla general el primer programa del canal actual
+				if [ $sincronyzed -eq 0 ]; then
+					# Calcular duracion de la sincronizacion + ajuste
+					duration=$((${dateIniAnt}-${horaUTCinicial}+${seg_ajuste}))
+					# Calcular altura celda para sincronizar
+					height=$(((${duration}*${porcentHeight})/100))
+					# Calcular ajuste
+					seg_ajuste=$((${duration}-((${height}*100)/${porcentHeight})))
+					[ $height -gt 0 ] && echo "<tr height=\"$height\"><td background=\"/img/capa6.gif\" class=\"borderFila txtMuyPeq\"></td></tr>"
+					# Marca de inicio parrilla sincronizada
+					sincronyzed=1
+				fi
+
+				# Calcular duracion del programa + ajuste
+				duration=$((${dateIni}-${dateIniAnt}+${seg_ajuste}))
+
+				# Los programas de duracion inferior a 2,5 minutos, no caben en la parrilla
+				if [ $duration -lt 150 ]; then
+					# Se pasa la duracion del programa como ajuste para el siguiente
+					seg_ajuste=${duration}
+				else
+					# Calcular tamaño de la celda segun duracion del programa
+					# Cada minuto son 2.4 pixeles, por lo que se calcula tambien el
+					# tiempo de ajuste que corresponde a la parte decimal de los
+					# pìxeles para añadirlo al siguiente programa
+					height=$(((${duration}*${porcentHeight})/100))
+					seg_ajuste=$((${duration}-((${height}*100)/${porcentHeight})))
+
+					# Tamaño celda
+					echo -n "<tr height=\"$height\">"
+
+					# Tamaño del texto segun duracion del programa
+					if [ $duration -lt 600 ]; then
+						echo "<td class=\"borderFila txtMuyPeq\" align=\"center\">"
+					elif [ $duration -le 1800 ]; then
+						echo "<td class=\"borderFila txtPeq\" align=\"center\">"
+					else
+						echo "<td class=\"borderFila txtNormal\" align=\"center\">"
+					fi
+
+					# Obtenemos contenido celda
+					contenidoHTML=""
+
+					# Botones de grabacion
+					if [ $duration -gt 2200 ]; then
+						contenidoHTML="${contenidoHTML}	<a href='javascript:programarGrabacion(\"$pidcidAnt\", 0, \"$tituloAnt\")' title=\"Grabar\"><img src=\"/img/red_ball.gif\" alt=\"Grabar\" width=\"18\" height=\"18\" border=\"0\"></a>&nbsp;"
+						contenidoHTML="${contenidoHTML}	<a href='javascript:programarGrabacion(\"$pidcidAnt\", 1, \"$tituloAnt\")' title=\"Grabar en Serie\"><img src=\"/img/blue_ball.gif\" alt=\"Grabar en Serie\" width=\"18\" height=\"18\" border=\"0\"></a><br>"
+					fi
+
+					# Fecha-Hora del programa
+					if [ $duration -ge 1500 ]; then
+						contenidoHTML="${contenidoHTML}	${dateFormatAnt}<br>"
+					fi
+
+					# Imagen. Por la noche HD apagado -> poner enlace a internet
+					if [ $duration -gt 3060 -a "$MOSTRAR_MINI_IMG" = "si" ]; then
+						if [ "Z$imagenAnt" != "Z" ]; then
+							# Comprobar si obtener imagen de internet
+							if [ "Z$OBTENER_IMG_INET" = "Zsi" ]; then
+								urlimg="http://www.inout.tv/fotos/$imagenAnt"
+							else
+								urlimg="/img/epg/$imagenAnt"
+							fi
+						else
+							urlimg="/img/epg_long_img.png"
+						fi
+						contenidoHTML="${contenidoHTML}	<a href=\"javascript:detallePrograma('$pidcidAnt', '$imagenAnt', '$longsAnt', '$chID', '$dateIniAnt');\" title=\"$chID - $dateFormatAnt - $tituloAnt\"><img src="$urlimg" width=77 height=52 border=2 alt=\"$chID - $dateFormatAnt - $tituloAnt\"></a><br>"
+					fi
+
+					# Nombre programa
+					contenidoHTML="${contenidoHTML}	<a href=\"javascript:detallePrograma('$pidcidAnt', '$imagenAnt', '$longsAnt', '$chID', '$dateIniAnt');\" title=\"$chID - $dateFormatAnt - $tituloAnt\">$tituloAnt</a>"
+
+					# Volcar celda
+					echo "${contenidoHTML}"
+
+					#Si el programa es muuuuy largo (más de 4 horas), ponemos la info 2 veces (a petición de Shark).
+					if [ $duration -ge 14400 ]; then
+						# Separacion
+						echo "<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>"
+						[ $duration -ge 18000 ] && echo "<br><br><br><br><br>"
+						[ $duration -gt 36000 ] && echo "<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>"
+						# Repetir contenido celda
+						echo "${contenidoHTML}"
+					fi
+
+					# Final programa
+					echo "</td></tr>"
+				fi
+			fi
+		else
+			primerPase=1
+		fi
+
+		# Guardar datos linea anterior
+		dateIniAnt=$dateIni
+		dateFormatAnt=$dateFormat
+		tituloAnt=$titulo
+		pidcidAnt=$pidcid
+		imagenAnt=$imagen
+		longsAnt=$longs
+	fi
+done < ${CACHE_FILE_TEXT} >> ${CACHE_FILE_HTML}
+# Todo el bloque do-while tiene como salidar estandar el fichero CACHE_FILE_HTML

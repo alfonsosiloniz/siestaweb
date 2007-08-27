@@ -1,0 +1,48 @@
+#!/bin/bash
+# (c) Grupo SIESTA, 02-08-2007
+#
+# Configuracion entorno www
+
+# Obtener SERVER_ROOT
+if [ "Z$SCRIPT_NAME" != "Z" ]; then
+	# Ejecucion desde httpd
+	DIR_NAME=`dirname $SCRIPT_NAME`
+	SERVER_ROOT=${PWD%$DIR_NAME}
+else
+	# Ejecucion fuera de httpd
+	SERVER_ROOT=`grep "SIESTA_HOME_HTTP =" /var/etc/siesta-settings.txt | cut -d"=" -f2`
+	SERVER_ROOT=`echo $SERVER_ROOT`
+	[ ${#SERVER_ROOT} -eq 0 ] && SERVER_ROOT=/data/htdocs
+fi
+
+# Configurar entorno
+PATH=$PATH:${SERVER_ROOT}/bin
+WWW_SETTINGS=/var/etc/www-settings.txt
+
+# Configurar hora local
+export TZ=`cat /etc/TZ_jra`
+
+# Parametros por defecto
+Cache=/var/cache
+EPG_PATH=/data/EPG
+USUARIO=root:root
+MOSTRAR_MINI_IMG=si
+OBTENER_IMG_INET=si
+DESCARGA_IMG=si
+CACHE_EPG_LONG=si
+
+# Lectura parametros
+if [ -f $WWW_SETTINGS ]; then
+	source $WWW_SETTINGS
+else
+	# Generar configuracion por defecto
+	cat <<- EOT >$WWW_SETTINGS
+	Cache=$Cache
+	EPG_PATH=$EPG_PATH
+	USUARIO=$USUARIO
+	MOSTRAR_MINI_IMG=$MOSTRAR_MINI_IMG
+	OBTENER_IMG_INET=$OBTENER_IMG_INET
+	DESCARGA_IMG=$DESCARGA_IMG
+	CACHE_EPG_LONG=$CACHE_EPG_LONG
+	EOT
+fi

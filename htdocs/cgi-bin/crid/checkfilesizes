@@ -1,0 +1,10 @@
+#!/bin/sh
+size1=`echo $QUERY_STRING | cut -d"-" -f1`
+size2=`echo $QUERY_STRING | cut -d"-" -f2`
+
+echo "if [ $size1 -gt $size2 ]; then" >> /tmp/checksizes.txt
+if [ $size1 -gt $size2 ]; then
+    echo "NO"
+else
+    echo "SI"
+fi

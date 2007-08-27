@@ -1,0 +1,15 @@
+#!/bin/bash
+# (c) Grupo SIESTA, 14-08-2007
+#
+# Ver TV en directo mediante ficheros de timeshift
+
+# Configurar entorno
+source ../fweb.shi
+
+# Enviar cabecera http
+http_header
+
+# Enviar documento html
+cat ../../html/verTvTS.inc
+cat ../../html/mplayer.inc
+html_doc_end

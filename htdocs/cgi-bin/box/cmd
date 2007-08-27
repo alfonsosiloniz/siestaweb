@@ -1,0 +1,89 @@
+#!/bin/bash
+# Lemmi, 2006-07-11 -> GPL
+# pepper, (c) Grupo SIESTA, 27-07-2007
+#
+# Ejecucion de comandos linux en gigaset
+
+# Procesar parametros get/post
+##eval `./proccgi $*`
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+LOG=/tmp/cmd.log
+pie_botones="no"
+cmd_permitidos="cat df fdisk halt ls ps reboot grep wc touch echo cp crontab tar ln dos2unix kill pkill bunzip2 netstat traceroute unzip wget"
+
+# Obtener comando para ejecutar
+##line=`echo "$FORM_command"`
+line=`httpd -d "$QUERY_STRING" | sed 's/^command=//g' | cut -d"&" -f1`
+#line=`echo "$QUERY_STRING" | sed 's/^command=//g' | cut -d"&" -f1`
+cmd_print=`echo "$line" | sed 's/&/\&amp;/g;s/</\&lt;/g'`
+cmd=${line// *}
+
+# Enviar documento html
+html_doc_start "M750T - Ejecución de comandos" "" "------b-"
+
+# Respuesta html
+html_top "Ejecución de comandos" "" ""
+echo "				<br>
+				<table width=\"90%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
+					<tr>
+						<td colspan=\"2\" class=\"titTabla\">Comando a ejecutar:</td>
+					</tr>
+					<tr>
+						<td colspan=\"2\" class=\"titTabla\" height=\"10\"></td>
+					</tr>
+					<tr>
+						<td class=\"txtNormal\">
+							<input type=\"text\" name=\"command\" id=\"command\" size=\"40\" maxlength=\"100\" class=\"cajaPlana\" value=\"$cmd_print\">&nbsp;&nbsp;
+							<input type=\"Submit\" value=\"Ejecutar\">
+							<script type=\"text/javascript\">document.getElementById('command').focus();</script>
+						</td>
+					</tr>
+				</table>"
+
+# Comprobar comando
+if [ "Z${cmd}" != "Z" ]; then
+	# Guardar log
+	echo "`date` -> $line" >> $LOG
+
+	# Comprobar comando permitido
+	if echo "$cmd_permitidos" | grep -q "\b$cmd\b"
+	then
+		# Devolver resultado comando
+		echo "				<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
+					<tr>
+						<td>
+							<br>
+							<h2>Resultado: <tt>$cmd_print</tt></h2>
+							<p>
+							<pre style=\"background-color: #FFEEE6; padding: .3em\">`$line 2>&1 | sed 's/&/\&amp;/g;s/</\&lt;/g'`
+							</pre>
+						</td>	
+					</tr>
+				</table>"
+
+		# Poner botones en pie de pagina
+		pie_botones="si"
+	else
+		# Comando no permitido
+		echo "				<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
+					<tr>
+						<td>
+							<br>
+							Comando: <tt>$cmd_print</tt>
+							<p>
+							<span style=\"background-color: #FFEEE6; border-color: #a00000\">
+								El comando especificado no está permitido.
+							</span>
+							<p>
+							Comandos permitidos: <tt>$cmd_permitidos</tt>
+						</td>	
+					</tr>
+				</table>"
+	fi
+fi
+
+# Final html 
+html_doc_end $pie_botones

@@ -1,0 +1,159 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 25-07-2007
+#
+# Ver TV en directo con dvbstream
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+CACHE_FILE=${Cache}/verTvLive.cache
+
+# Generar fichero cache de canales si no existe
+if [ ! -f $CACHE_FILE ]; then
+	echo -n "" > $CACHE_FILE
+	while read line; do
+		channelName=`echo "$line" | cut -b1-25`
+		cn=`echo "$line" | cut -b40-41`
+		p1=`echo "$line" | cut -b57-61`
+		p2=`echo "$line" | cut -b47-50`
+		p3=`echo "$line" | cut -b52-55`
+		freq=$((770000000+($cn-58)*8000000))
+		echo "<option value=\"'$freq', '`printf %d 0x$p1`', '`printf %d 0x$p2`', '`printf %d 0x$p3`'\">$channelName</option>" >> $CACHE_FILE
+	done < /var/etc/services.txt
+fi
+
+# Enviar documento html
+html_doc_start "M750T - Ver LiveTV" "" "-an-e-b-" "
+function init() {
+	index=document.location.href.indexOf(\"://\");
+	host=document.location.href.substring(index+3);
+	index=host.indexOf(\"/\");
+	host=host.substring(0, index);
+	document.forms[0].host.value=host;
+}
+function startStream() {
+	eval(\"verCanal(\"+document.forms[0].canal.value+\")\");
+}
+function verCanal(frq, p1, p2, p3) {
+	f=document.forms[0];
+	if (f.ip.value.length == 0) {
+		alert(\"Debes indicar la IP de tu PC local\");
+		f.ip.focus();
+		return;
+	}
+	//if (is_ie)
+	//  mostrarMensajeProceso();
+	url=\"/cgi-bin/box/startdvbstream?host=\" + f.host.value;
+	url+=\"&port=\" + f.port.value;
+	url+=\"&ip=\" + f.ip.value;
+	url+=\"&dvbstream=\" + f.dvbstream.value;
+	url+=\"&mplayer=\" + f.mplayer.value;
+	url+=\"&aspect=\" + f.aspect.value;
+	url+=\"&freq=\" + frq;
+	url+=\"&p1=\" + p1;
+	url+=\"&p2=\" + p2;
+	url+=\"&p3=\" + p3;
+	makeRequest(url+\"&date=\"+new Date().getTime(), \"mostrarXMLRespuesta\");
+	alert(\"Se ha enviado la petición.\nEjecuta M750_TVLive.cmd y si no se inicia la reproducción comprueba que los datos introducidos eran correctos\");
+}
+function download() {
+	f=document.forms[0];
+	f.action=\"/cgi-bin/box/dl-tvLive\";
+	document.forms[0].submit();
+}
+function reboot() {
+	if (confirm(\"¿Confirma el reboot del Gigaset?\")) {
+		makeRequest(\"/cgi-bin/box/reboot?\" + new Date().getTime(), \"noReply\");
+		alert(\"Se ha mandado la petición de Reboot.\nEn unos segundos el sistema se reiniciará\");
+	}
+}
+function stopServer() {
+	if (confirm(\"¿Confirma el Stop del Servidor de Streaming?\")) {
+		makeRequest(\"/cgi-bin/box/stopdvbstream?\" + new Date().getTime(), \"noReply\");
+		alert(\"Se ha mandado la petición de Stop del servidor de Streaming.\nYa puedes cambiar de canal\");
+	}
+}
+function noReply(xmldoc) {}
+function mostrarXMLRespuesta(xmldoc) {
+	/*if (is_ie)
+		eliminarMensajeProceso();
+	result = xmldoc.getElementsByTagName(\"RESULT\");
+	if (result[0].firstChild.data == \"OK\")
+		alert(\"Servidor DVBStream arrancado correctamente\");
+	else
+		alert(\"Se ha producido un error arrancando el servidor DVBStream.\nRevisa los datos del path y vuelve a probar.\");*/
+}"
+
+# Respuesta html
+html_top "Ver LiveTV" "init();" "/cgi-bin/box/verTvLive"
+
+# Respuesta html
+echo "		<br>
+		<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
+		<tr>
+			<td class=\"txtNormal\">Host: </td>
+			<td class=\"txtNormal\"><input type=\"text\" name=\"host\" size=\"50\" maxlength=\"100\" class=\"cajaplana\"></td>
+		</tr>
+		<tr>
+			<td class=\"txtNormal\">Puerto:</td>
+			<td class=\"txtNormal\"><input type=\"text\" name=\"port\" value=\"1234\" size=\"5\" maxlength=\"5\" class=\"cajaplana\"></td>
+		</tr>
+		<tr>
+			<td class=\"txtNormal\">IP del PC donde verás la TV: </td>
+			<td class=\"txtNormal\"><input type=\"text\" name=\"ip\" size=\"17\" maxlength=\"16\" class=\"cajaplana\"></td>
+		</tr>
+		<tr>
+			<td class=\"txtNormal\">Path de dvbstream en el Gigaset:</td>
+			<td class=\"txtNormal\"><input type=\"text\" name=\"dvbstream\" value=\"/var/media/USB-HDD/bin/dvbstream\" size=\"70\" maxlength=\"200\" class=\"cajaplana\"></td>
+		</tr>
+		<tr>
+			<td class=\"txtNormal\">Path de MPlayer en el PC local:</td>
+			<td class=\"txtNormal\"><input type=\"text\" name=\"mplayer\" value=\"C:\Archivos de programa\mplayer\mplayer.exe\" size=\"70\" maxlength=\"200\" class=\"cajaplana\"></td>
+		</tr>
+		<tr>
+			<td class=\"txtNormal\">Relación de Aspecto:</td>
+			<td class=\"txtNormal\">
+				<select size=\"1\" name=\"aspect\">
+					<option value=\"1.3333\" selected>4:3</option>
+					<option value=\"1.7777\">16:9</option>
+					<option value=\"1.25\">1.25</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class=\"txtNormal\" height=\"20\" colspan=\"2\">&nbsp;</td>
+		</tr>
+		<tr>
+			<td class=\"txtNormal\" height=\"20\" colspan=\"2\">
+				<table width=\"100%\" border=\"0\" cellspacing=\"10\" cellpadding=\"0\" align=\"center\">
+					<tr>
+						<td class=\"txtNormal\" valign=\"top\"><font class="titChannel">Paso 1</font> : <br><br>Descarga el fichero de ejecución de Mplayer y guardalo en tu PC local:<br><br><input type=\"button\" value=\"Descargar M750_TVLive.cmd\" onclick=\"download();\" class=\"cajaPlana\"></td>
+						<td class=\"txtNormal\" valign=\"top\"><font class="titChannel">Paso 2</font> : <br><br>Selección del Canal:<br/>
+							<select class=\"cajaPlana\" name=\"canal\" size=1>`cat < $CACHE_FILE`</select>
+						</td>
+						<td class=\"txtNormal\" valign=\"top\"><font class="titChannel">Paso 3</font>: <br><br>Matar wavebox y ejecución del <b>dvbstream</b>:<br><br><input type=\"button\" value=\"1. Stop dvbstream\" onclick=\"stopServer();\" class=\"cajaPlana\"><br><input type=\"button\" value=\"2. Start dvbstream\" onclick=\"startStream();\" class=\"cajaPlana\">
+						<td class=\"txtNormal\" valign=\"top\"><font class="titChannel">Paso 4</font>: <br><br>Ejecuta en el PC el fichero <b>M750_TVLive.cmd</b>.
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td class=\"txtInfo\" colspan=\"2\">
+				<br><br>Para poder ver la TV en directo, hay que matar el wavebox y los procesos que permiten ver la TV en la televisión.<br>
+				Una vez termines de ver la TV en directo en el PC, deberás reiniciar el M750T para que los procesos wavebox vuelvan a ejecutarse.<br><br>
+				Para realizar el <u>cambio de canal</u>, finaliza MPlayer (Esq / q) y ejecuta de nuevo desde el Paso 2 al Paso 4. El fichero M750_TVLive.cmd es el mismo
+				para todos los canales.
+			</td>
+		</tr>
+		<tr>
+			<td class=\"txtNormal\" height=\"20\" colspan=\"2\">&nbsp;</td>
+		</tr>
+		<tr>
+			<td class=\"txtNormal\" align=\"center\" colspan=\"2\"><input type=\"button\" value=\"Reiniciar Gigaset\" onclick=\"reboot();\"></td>
+		</tr>
+		</table>
+		<input type=\"hidden\" name=\"freq\" value=\"\">
+		<input type=\"hidden\" name=\"p1\" value=\"\">
+		<input type=\"hidden\" name=\"p2\" value=\"\">
+		<input type=\"hidden\" name=\"p3\" value=\"\">"
+html_doc_end

@@ -1,0 +1,30 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 25-04-2007
+#
+# Mostrar informacion sobre grabacion (fichero crid)
+
+# Obtener parametro
+Cridfile=$QUERY_STRING
+
+# Configurar entorno
+source ../fweb.shi
+
+# Enviar documento xml
+xml_doc "/xsl/criddetail.xsl"
+
+# Resultado xml
+echo "<M750>
+	<RECORD_DETAIL>"
+
+# Procesar resultado
+if [ -f $Cridfile ]; then
+	# Procesar fichero crid
+	./crid2xml $Cridfile
+else
+	# Error fichero crid no encontrado
+	echo "		<ERROR>La fichero de grabación $Cridfile no se encuentra.</ERROR>"
+fi
+
+# Final xml
+echo "	</RECORD_DETAIL>
+</M750>"

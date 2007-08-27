@@ -1,0 +1,66 @@
+#!/bin/bash
+# pepper, (c) grupo SIESTA, 24-07-2007
+#
+# Script que realiza un reboot del sistema
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+get_modo_video
+
+# Si esta encendido, hacemos un apagado rápido, para desmontar el HD
+if [ "$ModoVideo" = "Encendido" ]; then
+	/data/scripts/irsim.sh POWER
+	sleep 15
+fi
+
+# Matamos los posibles procesos de generación de la caché
+pkill -9 run-http.sh
+pkill -9 pgmactualXML.cache
+pkill -9 sincroXML.cache
+pkill -9 sincrochannelXML.cache
+pkill -9 chactextXML
+sleep 2
+pkill -9 inout_wdg
+sleep 1
+pkill -9 wavebox; pkill -9 play_backend; pkill -9 record_backend; pkill -9 mount
+sleep 1
+
+# Borramos los posibles ficherso de marca de generacion de cache en proceso
+rm -f ${Cache}/*.generating
+
+# Quitar marca de disco usb
+umount /var/media/USB-HDD > /dev/null 2> /dev/null
+[ -f /data/.usb ] && rm /data/.usb
+
+echo "Escribiendo los datos de /var/etc en la flash..."
+/sbin/flash_archive write /var/etc/*
+
+STICK_MOUNT=/var/media/SWAP
+STICK_DIR=${STICK_MOUNT}/swapfiles
+FLAGSWAP=${STICK_DIR}/flag
+SWAPFILE=${STICK_DIR}/file
+
+# desmontamos manualmente la swap, puesto que el halt -r no lo hace
+SWP_SIZE=(`grep ^SwapTotal /proc/meminfo`)
+if [ ${SWP_SIZE[1]} != 0 ]; then
+    if [ -f $FLAGSWAP ]; then
+        swapoff ${SWAPFILE}
+        umount ${STICK_MOUNT}
+    else
+        USB_DISK=/var/media/USB-HDD
+        USB_DIR=${USB_DISK}/.swap
+        FLAGSWAP=${USB_DIR}/.flag
+        SWAPFILE=${USB_DIR}/.file
+        if [ -f $FLAGSWAP ]; then
+            swapoff ${SWAPFILE}
+        fi
+    fi
+fi
+
+# Reboot del sistema
+#halt -r
+picctl set-reboot 10 30
+
+# Resultado OK
+enviar_xml_ok

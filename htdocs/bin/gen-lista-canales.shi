@@ -1,0 +1,46 @@
+#!/bin/bash
+# (c) Grupo SIESTA, 02-08-2007
+#
+# Obtener lista de canales. Define las siguientes variables
+# $SORT_CHANNELS -> Fichero de ordenacion de canales
+# $INFO_CHANNELS -> Fichero de informacion de canales
+# $ListaCanales  -> Lista de canales generada
+#
+# Este script es incluido desde otros, no debe invocarse directamente
+
+# Configurar entorno
+SORT_CHANNELS=${Cache}/sort_channels.txt
+INFO_CHANNELS=${Cache}/info_channels.txt
+
+# Comprobamos si existe fichero de ordenacion de canales
+if [ ! -f $SORT_CHANNELS ]; then
+	# Generar ficheros vacios
+	echo -n "" > $SORT_CHANNELS
+	echo -n "" > $INFO_CHANNELS
+	
+	# Recorrer /var/etc/user_services.txt
+	i=1
+	while read line; do
+		id=`echo $line | cut -d":" -f2`
+		if [ "Z$id" != "Z" ]; then
+			exists=`cat /var/etc/services.txt | cut -b140-145 | grep $id | wc -l`
+			if [ $exists -eq 1 ]; then
+				chName=`grep $id /var/etc/services.txt | cut -b0-20 | awk 'gsub(/[ \t]+$/, "", $0)'`
+				chID=`grep -i -H "${chName}" /var/etc/eps_mapping.txt | grep -i :"${chName}": | cut -d"," -f2`
+				# Añadir a lista de programas y canales
+				echo "${i}:${id}:${chID}:${chName}:" >> $INFO_CHANNELS
+				# Si existe chID se añade a lista ordenada de canales
+				[ ${#chID} -ne 0 ] && echo "$EPG_PATH/IO_${chID}.db" >> $SORT_CHANNELS
+				# Nuevo numero de programa
+				i=$((i+1))
+			fi
+		fi
+	done < /var/etc/user_services.txt
+fi
+
+# Obtenemos lista de canales
+if [ -f $SORT_CHANNELS ]; then
+	ListaCanales=`cat $SORT_CHANNELS`
+else
+	ListaCanales=$EPG_PATH/*.db
+fi

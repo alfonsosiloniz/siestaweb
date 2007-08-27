@@ -1,0 +1,150 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 06-06-2007
+#
+# Visualizar contenido fichero RA_FILE
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+source ../box/fshow.shi
+FICHERO=/data/RA_FILE
+
+# Ajustar variables para script show
+SCRIPT_NAME=/cgi-bin/box/show
+PATH_INFO=${FICHERO}
+action="view"
+flags="-ev-"
+
+# Enviar documento html
+print_top ${FICHERO} ${flags}
+echo "			<tr>"
+echo "				<td class=\"fila\">"
+print_actions
+echo "					<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" bgcolor=\"#FFEEE6\">
+						<tr class=\"titChannel\">
+							<td width=\"20%\">Fecha/Hora Inicio</td>
+							<td width=\"20%\">Fecha/Hora Fin</td>
+							<td width=\"20%\" align=\"center\">Guarda Inicial (min)</td>
+							<td width=\"20%\" align=\"center\">Guarda Final (min)</td>
+							<td width=\"10%\" align=\"center\">Prioridad</td>
+							<td width=\"10%\" align=\"center\">ID Grab</td>
+						</tr>
+						<tr>
+							<td colspan=6 class=titTabla height=\"4\"></td>
+						</tr>
+						<tr>
+							<td colspan=6 class=titTabla height=\"1\" bgcolor=\"#000000\"></td>
+						</tr>"
+
+# Recorrer fichero RA_FILE
+n=1
+sint=1
+declare -a record
+while read line; do
+	if [ ${#line} -ne 0 ]; then
+        # Saltamos la primera linea
+        if [ $n -gt 1 ]; then
+            #La linea 2 contiene el numero de grabaciones del sintonizador 1
+            if [ $n -eq 2 ]; then
+                nRecs=$line
+                readedRecs=-1
+                # Encabezado sintonizador 1
+                echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+                echo "<tr><td colspan=\"6\" class=\"titTabla\">Sintonizador $sint</td></tr>"
+                echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+            else
+                # Si ya hemos leido todas las grabaciones
+                if [ $readedRecs -gt $nRecs ]; then
+                    nRecs=$line
+                    readedRecs=-1
+                    sint=$((sint+1))
+                    if [ $sint -lt 3 ]; then
+                    	# Encabezado sintonizador 2
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"1\" bgcolor=\"black\"></td></tr>"
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\">Sintonizador $sint</td></tr>"
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+                    else
+                    	# Encabezado detalle
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"1\" bgcolor=\"black\"></td></tr>"
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+                        echo "<tr><td colspan=\"6\" class=\"titChannel\">Detalle Grabaciones</td></tr>"
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+                        echo "<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+                        echo "</table>"
+                        echo "<table width=\"100%\" border=\"1\" bordercolor=\"#000000\" cellpadding=\"2\" cellspacing=\"0\" bgcolor=\"#FFEEE6\">"
+                        echo "<tr class=\"titTabla\">"
+                        echo "	<td align=\"center\">ID Grab</td>"
+                        echo "	<td align=\"center\">X</td>"
+                        echo "	<td align=\"center\">ID Programa</td>"
+                        echo "	<td align=\"center\">ID Serie</td>"
+                        echo "	<td align=\"center\">Pri.</td>"
+                        echo "	<td align=\"center\">Inicio</td>"
+                        echo "	<td align=\"center\">Final</td>"
+                        echo "	<td align=\"center\">Guarda Ini</td>"
+                        echo "	<td align=\"center\">Guarda Fin</td>"
+                        echo "	<td align=\"center\">X</td>"
+                        echo "	<td align=\"center\">X</td>"
+                        echo "	<td align=\"center\">X</td>"
+                        echo "	<td align=\"center\">X</td>"
+                        echo "	<td align=\"center\">X</td>"
+                        echo "	<td align=\"center\">X</td>"
+                        echo "	<td align=\"center\">X</td>"
+                        echo "	<td align=\"center\">X</td>"
+                        echo "	<td align=\"center\">Sint.</td>"
+                        echo "</tr>"
+                    fi
+                else
+                    if [ $readedRecs -lt $nRecs ]; then
+                        # Si la linea es del sintonizador 1 o 2
+                        if [ $sint -lt 3 ]; then
+                            record=( `echo $line` )
+                            dateFormatIni=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M %Z\" , ${record[0]}) }"`
+                            dateFormatFin=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M %Z\" , ${record[1]}) }"`
+                            gIni=${record[2]}
+                            gFin=${record[3]}
+                            # Linea sintonizador 1/2
+                            echo "<tr class=\"txtNormal\"><td>$dateFormatIni</td><td>$dateFormatFin</td><td align=\"center\">$((gIni/60))</td><td align=\"center\">$((gFin/60))</td><td align=\"center\">${record[4]}</td><td align=\"center\">${record[5]}</td></tr>"
+                        else
+                            record=( `echo $line` )
+                            dateFormatIni=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M %Z\" , ${record[5]}) }"`
+                            dateFormatFin=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M %Z\" , ${record[6]}) }"`
+                            gIni=${record[7]}
+                            gFin=${record[8]}
+                            # Linea detalle
+                            echo "<tr class=\"txtNormal\"><td nowrap align=\"center\">${record[0]}</td>"
+                            echo "<td nowrap align=\"center\">${record[1]}</td>"
+                            echo "<td nowrap align=\"center\">${record[2]}</td>"
+                            echo "<td nowrap align=\"center\">${record[3]}</td>"
+                            echo "<td nowrap align=\"center\">${record[4]}</td>"
+                            echo "<td nowrap align=\"center\">$dateFormatIni</td>"
+                            echo "<td nowrap align=\"center\">$dateFormatFin</td>"
+                            echo "<td nowrap align=\"center\">$((gIni/60))</td>"
+                            echo "<td nowrap align=\"center\">$((gFin/60))</td>"
+                            echo "<td nowrap align=\"center\">${record[9]}</td>"
+                            echo "<td nowrap align=\"center\">${record[10]}</td>"
+                            echo "<td nowrap align=\"center\">${record[11]}</td>"
+                            echo "<td nowrap align=\"center\">${record[12]}</td>"
+                            echo "<td nowrap align=\"center\">${record[13]}</td>"
+                            echo "<td nowrap align=\"center\">${record[14]}</td>"
+                            echo "<td nowrap align=\"center\">${record[15]}</td>"
+                            echo "<td nowrap align=\"center\">${record[16]}</td>"
+                        echo "<td nowrap align=\"center\">$((record[17]+1))</td></tr>"
+                        fi
+                    fi
+                fi
+            fi
+        fi
+    fi
+    n=$((n+1))
+    readedRecs=$((readedRecs+1))
+done < ${FICHERO}
+
+# Final html
+echo "					</table>"
+print_actions
+echo "				</td>"
+echo "			</tr>"
+print_bottom

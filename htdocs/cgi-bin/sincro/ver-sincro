@@ -1,0 +1,69 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 27-07-2007
+#
+# Retorna la Sincroguía en XML de 1 canal
+# ver-sincro?chID-pgmActual
+
+# Ejecutamos el script con baja prioridad
+renice 20 $$ > /dev/null
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+chID=`echo $QUERY_STRING | cut -d"-" -f1`
+pgmActual=`echo $QUERY_STRING | cut -d"-" -f2`
+CACHE_FILE=${Cache}/cache.$chID
+
+# Comprobar directorio de imagenes de sincroguia en carpeta de grabaciones
+if [ -d $SERVER_ROOT/img/epg/ ]; then
+	DIR_IMG_SINCRO_ACCESIBLE=si
+else
+	DIR_IMG_SINCRO_ACCESIBLE=no
+fi
+
+# Comprobar cache generado
+if [ -s ${CACHE_FILE}.xml ]; then
+	# Comprobar si estamos en proceso de generacion de XML se esta generando
+	if [ -f ${CACHE_FILE}.generating ]; then
+		# Esperar hasta finalizar generacion (maximo de 5 minutos)
+		i=0
+		while [ -f ${CACHE_FILE}.generating -a $i -lt 300 ]; do
+			sleep 1
+			i=$((i+1))
+		done
+	fi
+	
+ 	# Enviar documento xml con sincroguia de canal
+ 	xml_doc "/xsl/sincro.xsl"
+	echo "<M740>
+	<SINCROGUIA actual=\"$pgmActual\" miniatures=\"$MOSTRAR_MINI_IMG\" getImgInet=\"$OBTENER_IMG_INET\" localSincroImgAcc=\"$DIR_IMG_SINCRO_ACCESIBLE\">
+`cat < ${CACHE_FILE}.xml`
+	</SINCROGUIA>
+</M740>"
+else
+	# Enviar documento html
+	html_doc_start "M750T - Sincroguía" "" "------b-"
+	
+	# Respuesta html
+	html_top "<a href=\"http://www.inout.tv/SincroGuia\"><img src=\"/img/sincro.gif\" border=\"0\"/></a>proporcionada por InOut TV" "" ""
+	echo "			<br>
+			<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">
+				<tr>
+					<td class=\"titChannel\" align=\"center\">
+						<font class=\"txtAvisos\">"
+
+	# Comprobar si estamos en proceso de generacion de XML
+	if [ -f ${CACHE_FILE}.generating ]; then
+		echo "La caché de este canal se está generando. Espere a que termine la generación."
+	else
+		echo "No se puede mostrar la Sincroguia del canal porque no se ha generado todavia el caché.<br><br>"
+		echo "Puede ir a la pagina de <a href=\"/cgi-bin/box/estado\">estado</a> para generarlo ahora"
+	fi
+
+	# Final html
+	echo "						</font>
+					</td>
+				</tr>
+			</table>"
+	html_doc_end no
+fi

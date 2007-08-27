@@ -1,0 +1,110 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 28-03-2007
+#
+# Genera ficheros cache de sincroguía (xml y text) de 1 canal
+# $1 <- Fichero sincroguia (.db)
+# $2 -> Fichero cache xml
+# $3 -> Fichero cache text
+#
+# Gracias a jotabe por las mejoras introducidas y por las traducciones de los
+# dias de la semana al castellano
+#
+# Este script es incluido desde otros, no debe invocarse directamente
+
+# Obtener parametros
+chID=`echo $1 | cut -d"_" -f2 | cut -d"." -f1`
+CACHE_FILE_XML=$2
+CACHE_FILE_TEXT=$3
+CACHE_FILE_TEMP=${CACHE_FILE_TEXT}.temp
+
+# Configurar entorno
+NumBytes=0
+DiaSemana=([1]="Lun" [2]="Mar" [3]="Mie" [4]="Jue" [5]="Vie" [6]="Sab" [7]="Dom")
+
+# Comprobar fichero sincroguia
+if [ -f $1 ]; then
+	# Generar fichero vacio
+	echo -n "" > ${CACHE_FILE_TEMP}
+
+	# Obtener tamaño fichero
+	totalBytes=`hexdump -v -n 4 -e '"%d"' $1`
+	totalBytes=$((totalBytes+4))
+	realTotalBytes=(`wc -c $1`)
+	[ $realTotalBytes -lt $totalBytes ] && totalBytes=$realTotalBytes
+
+	# Obtener datos canal
+	mapping=`grep :${chID}: ${Cache}/info_channels.txt | head -1`
+	cid=`echo "$mapping" | cut -d":" -f2`
+	chName=`echo "$mapping" | cut -d":" -f4`
+	numChannel=`echo "$mapping" | cut -d":" -f1`
+
+	# Comienzo datos xml
+	echo "<CHANNEL cid=\"$cid\" id=\"${chID}\" name=\"$chName\" file=\"$1\" numChannel=\"$numChannel\">" >> ${CACHE_FILE_XML}
+
+	# Recorrer fichero .db
+	n=4
+	nIni=$n
+	nextN=$((n+50))
+	# Limitamos a 26000 bytes (unos 4 días) la lectura del fichero, para no generar un XML intratable
+	while [ $totalBytes -gt $nextN -a $n -le 26000 ]; do
+	#while [ $totalBytes -gt $nextN ]; do
+		# Leemos todos los datos de cada registro de la sincro
+		nIni=$n
+		declare -a Sincro
+		#Sincro=( `hexdump -v -n 25 -s $n -e '1/4 "%d \n" 1/4 "%d \n" 1/4 "%X" "\n" 1/4 "%X" "\n" 1/4 "%d \n" 1/4 "%d \n" 1/1 "%d \n"' $1` )
+		Sincro=( `hexdump -v -n 25 -s $n -e '2/4 "%d \n" 2/4 "%X \n" 2/4 "%d \n" 1/1 "%d \n"' $1` )
+		bytesPgm=${Sincro[0]}
+		pid=${Sincro[1]}
+		pidcid=`printf "%08X%08X" 0x${Sincro[2]} 0x${Sincro[3]}`
+		dateIni=${Sincro[4]}
+		rest=$(($totalBytes-$n))
+		if [ $bytesPgm -gt $rest ]; then
+			echo "</CHANNEL>" >> ${CACHE_FILE_XML}
+			NumBytes=$n
+			return
+		fi
+		longs=${Sincro[5]}
+		bytesTitulo=${Sincro[6]}
+		n=$((n+25))
+		titulo=`hexdump -v -n $bytesTitulo -s $n -e '"%c"' $1 | sed -e 's/&/&amp;/g;s/_/-/g'`
+		n=$((n+$bytesTitulo))
+		bytesSubtitulo=`hexdump -v -n 2 -s $n -e '1/2 "%d"' $1`
+		n=$((n+2))
+		subtitulo=`hexdump -v -n $bytesSubtitulo -s $n -e '"%c"' $1 | sed -e 's/&/&amp;/g;s/_/-/g'`
+		n=$((n+$bytesSubtitulo))
+		bytesImagen=`hexdump -v -n 1 -s $n -e '1/1 "%d"' $1`
+		n=$((n+1))
+		imagen=`hexdump -v -n $bytesImagen -s $n -e '"%c"' $1`
+		n=$((n+$bytesImagen))
+		n=$(($bytesPgm+$nIni+4))
+		nextN=$((n+50))
+		ds=`awk "BEGIN {print strftime( \"%u\" , $dateIni) }"`
+		dateFormat=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M\" , $dateIni) }"`
+		dateFormat="$dateFormat, ${DiaSemana[ds]}"
+
+		# Datos xml
+		echo "	<PROGRAM id=\"${pid}\" pid=\"${pidcid}\" chid=\"${chID}\">
+		<TITLE>$titulo</TITLE>
+		<SUBTITLE>$subtitulo</SUBTITLE>
+		<LONG>$longs</LONG>
+		<IMAGE>$imagen</IMAGE>
+		<DATE>${dateFormat}</DATE>
+		<DATE_UTC>$dateIni</DATE_UTC>
+		<DATE_FIN></DATE_FIN>
+	</PROGRAM>" >> ${CACHE_FILE_XML}
+
+		# Generacion de texto para la posterior ordenacion temporal
+		echo "${dateIni}_${pid}_${pidcid}_${dateFormat}_${longs}_${titulo}_${subtitulo}_${imagen}" >> ${CACHE_FILE_TEMP}
+	done
+	# Fin datos xml
+	echo "</CHANNEL>" >> ${CACHE_FILE_XML}
+
+	# Devolver numero de bytes leidos
+	NumBytes=$n
+
+	# Ordenar fichero text y borrar temporal
+	sort ${CACHE_FILE_TEMP} > ${CACHE_FILE_TEXT}
+	rm -f ${CACHE_FILE_TEMP}
+else
+	echo "<ERROR>Fichero $1 no encontrado</ERROR>" >> ${CACHE_FILE_XML}
+fi

@@ -1,0 +1,113 @@
+#!/bin/bash
+# jotabe, (c) Grupo SIESTA, 24-08-2007
+#
+# Configuracion LCK-SIESTA
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+SIESTA_SETTINGS_CONF_FILE=/etc/siesta-settings.conf
+SIESTA_SETTINGS_FILE=/var/etc/siesta-settings.txt
+
+# Enviar documento html
+html_doc_start "M750T - Configuración LCK-SIESTA" "" "-an-e-b-" "
+function guardar() {
+	mostrarMensajeProceso();
+	document.forms['form_m750'].submit();
+}"
+
+# Respuesta html
+html_top "Configuración LCK-SIESTA" "" "/cgi-bin/box/saveConfigSIESTA"
+
+#Obtener fecha configuracion
+FECHA_CFG=`grep "Fecha configuracion:" $SIESTA_SETTINGS_FILE`
+[ ${#FECHA_CFG} -ne 0  ] && echo "				<br>
+				<table width=\"50%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
+					<tr>
+						<td align=\"center\" bgcolor=\"#ffb310\" class=\"titTabla\" height=\"20\">
+							${FECHA_CFG}
+						</td>
+					</tr>
+				</table>"
+
+# Volcado parametros
+echo "				<br>
+				<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">"
+
+# Recorrer fichero configuracion
+while read line; do
+	if [ ${#line} -ne 0 ]; then
+		if [ ${line:0:1} != "#" ]; then
+			# Alternar colores
+			if [ "$bgcolor" = "#FFECD9" ]; then
+				bgcolor="#FFFFE8"
+			else
+				bgcolor="#FFECD9"
+			fi
+
+			# Obtener datos y valor parametro
+			TMP=(`echo $line`)
+			NombreParametro=${TMP[0]}
+			TipoParametro=${TMP[1]}
+			TMP2=`grep ^${NombreParametro} $SIESTA_SETTINGS_FILE | cut -d"=" -f2-`
+			ValorParametro=${TMP2# }
+
+			# Nombre parametro
+			echo "					<tr bgcolor=\"$bgcolor\">
+						<td width=\"30%\" align=\"right\" class=\"txtParam\">
+							${NombreParametro}:&nbsp;
+						</td>"
+
+			# Tipo de parametro
+			echo "						<td width=\"20%\" align=\"left\" class=\"txtParam\">"
+			case $TipoParametro in
+				key )
+					# Parametro key, desplegable
+					echo "							<select name=\"${NombreParametro}\" id=\"${NombreParametro}\" class=\"cajaParam\">"
+					# Recorrer opciones
+					i=2
+					TMP2=${TMP[$i]}
+					while [ ${#TMP2} -ne 0 ]; do
+						echo "								<option value=\"${TMP2}\">${TMP2}</option>"
+						i=$(($i+1))
+						TMP2=${TMP[$i]}
+					done
+					echo "							</select>"
+					# Valor de la opcion
+					echo "							<script type=\"text/javascript\">document.getElementById('${NombreParametro}').value=\"${ValorParametro}\";</script>"
+					;;
+# 				list ) ;;
+				num )
+					# Parametro numerico, caja texto
+					echo "							<input type=\"num\" name=\"${NombreParametro}\" value=\"${ValorParametro}\" size=\"8\" maxlength=\"32\" class=\"cajaParam\">"
+					;;
+				str )
+					# Parametro string, caja texto
+					echo "							<input type=\"text\" name=\"${NombreParametro}\" value=\"${ValorParametro}\" size=\"40\" maxlength=\"128\" class=\"cajaParam\">"
+					;;
+				*)
+					echo "							$TipoParametro"
+					;;
+			esac
+			echo "						</td>"
+
+			# Descripcion parametro
+			echo "						<td width=\"50%\" align=\"left\" class=\"txtParam\">
+							$DescripcionParametro
+						</td>
+					</tr>"
+		fi
+	fi
+done < $SIESTA_SETTINGS_CONF_FILE
+
+# Boton guardar
+echo "					<tr>
+						<td colspan=\"2\">&nbsp;</td>
+						<td align=\"center\">
+							<br><input type=\"button\" onclick=\"guardar();\" value=\"Guardar\">
+						</td>
+					</tr>
+				</table>"
+
+# Final html
+html_doc_end

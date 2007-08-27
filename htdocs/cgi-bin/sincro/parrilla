@@ -1,0 +1,179 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 27-06-2007
+#
+# Retorna la sincroguia completa en formato de parrilla
+
+# Ejecutamos el script con baja prioridad
+renice 20 $$ > /dev/null
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+PARRILLA_CHANNELS=${Cache}/parrilla_channels.txt
+CFG_PARRILLA=""
+[ -f $PARRILLA_CHANNELS ] && CFG_PARRILLA=`cat $PARRILLA_CHANNELS`
+
+# Obtenemos lista de canales
+source gen-lista-canales.shi
+
+# Obtener numero de canales a procesar
+if [ -f $PARRILLA_CHANNELS ]; then
+	# Sustituimos : por \n y despues contamos lineas
+	numCanales=`cat $PARRILLA_CHANNELS | sed 's/:/\n/g' | wc -l`
+	# Restamos 2 porque debe empezar y terminar con :
+	[ $numCanales -ge 2 ] && numCanales=$((numCanales-2))
+else
+	numCanales=`cat $SORT_CHANNELS | wc -l`
+fi
+
+# Obtener hora inicio y hora actual
+if [ -f ${Cache}/horaUTCinicial.txt ]; then
+	utcParrilla=`cat ${Cache}/horaUTCinicial.txt`
+else
+	utcParrilla=`date +%s`
+fi
+utcAhora=`date +%s`
+
+# Enviar documento html
+html_doc_start "M750T - Sincroguía" 600 "-an-efbm" "
+utcParrilla=${utcParrilla};
+utcAhora=${utcAhora};
+porcentHeight=4;
+heightNow=((utcAhora-utcParrilla)/100)*porcentHeight;
+function crearHrNow() {
+	if ( heightNow != 0 ) {
+		hrrednow = document.createElement(\"div\");
+		hrrednow.setAttribute(\"id\",\"hrnow\");
+		hrrednow.style.position = 'absolute';
+		hrrednow.style.width = '$((numCanales*141))';
+		hrrednow.style.zIndex = '99';
+		if (is_ie) {
+			hrrednow.style.left = '22 px';
+			hrrednow.style.top = (heightNow + 296) + \" px\";
+		}
+		else {
+			hrrednow.style.left = '20';
+			hrrednow.style.top = (heightNow + 288);
+		}
+		hrrednow.innerHTML= '<A NAME=\"ahora\"><hr width=\"100%\" size=\"3\" color=\"#FF0000\"></A>';
+		document.body.appendChild(hrrednow);
+	}
+}"
+
+# Respuesta html
+html_top "<a href=\"http://www.inout.tv/SincroGuia\"><img src=\"/img/sincro.gif\" border=\"0\"/></a>proporcionada por InOut TV" "initFechas(); crearHrNow();" ""
+echo "				<br>
+				<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
+					<tr>
+						<td class=\"txtNormal\">
+							<table width=\"98%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"txtNormal\">
+								<tr>
+								<td align=\"left\" width=\"200\"><a href=\"#ahora\" title=\"Ir al programa actual\">Ir al programa actual (`date +\"%H:%M\"`)</a></td>
+								<td align=\"center\"><a href=\"/cgi-bin/sincro/configParrilla\" title=\"Configurar Parrilla\">Configurar Parrilla</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="txtNormal" align="right">
+							Buscar Programa: <input class=\"cajaplana\" name=\"querystr\" type=\"text\" size=\"20\" maxsize=\"50\" value=\"\"/>
+							<input class=\"txtNormal\" type=\"button\" value=\"Buscar\" onclick=\"buscarPrograma()\"/><br/>
+							Búsqueda Horaria:
+							Fecha: <select size=\"1\" name=\"fecha\"><option value=\"\">Procesando...</option></select>
+							Hora: <select size=\"1\" name=\"hora\">
+								<option value=\"00:\">0</option>
+								<option value=\"01:\">1</option>
+								<option value=\"02:\">2</option>
+								<option value=\"03:\">3</option>
+								<option value=\"04:\">4</option>
+								<option value=\"05:\">5</option>
+								<option value=\"06:\">6</option>
+								<option value=\"07:\">7</option>
+								<option value=\"08:\">8</option>
+								<option value=\"09:\">9</option>
+								<option value=\"10:\">10</option>
+								<option value=\"11:\">11</option>
+								<option value=\"12:\">12</option>
+								<option value=\"13:\">13</option>
+								<option value=\"14:\">14</option>
+								<option value=\"15:\">15</option>
+								<option value=\"16:\">16</option>
+								<option value=\"17:\">17</option>
+								<option value=\"18:\">18</option>
+								<option value=\"19:\">19</option>
+								<option value=\"20:\">20</option>
+								<option value=\"21:\">21</option>
+								<option value=\"22:\">22</option>
+								<option value=\"23:\">23</option>
+							</select>
+							<input class=\"txtNormal\" type=\"button\" value=\"Buscar\" onclick=\"buscarProgramaFH()\" />
+						</td>
+					</tr>
+				</table>
+				<table border=\"0\" cellspacing=\"1\" cellpadding=\"0\" align=\"left\">
+					<tr>"
+
+# Recorrer canales
+for Sincrofile in $ListaCanales; do
+	# Obtener identificador canal
+	chID=`echo $Sincrofile | cut -d"_" -f2 | cut -d"." -f1`
+
+	# Comprobar si esta marcado
+	show=1
+	if [ ${#CFG_PARRILLA} -ne 0 ]; then
+		# Se sustituye la plantilla *:${chID}:* por OK
+		# Si el resultado no es OK el canal no estaba en la lista -> se desmarca
+		[ ${CFG_PARRILLA/*:${chID}:*/OK} != OK ] && show=0
+	fi
+
+	# Volcar parrilla canal
+	if [ $show -eq 1 ]; then
+		# Obtener resto de datos canal
+		LCK_CACHE=${Cache}/cache.$chID.generating
+		CACHE_HTML=${Cache}/cache.$chID.html
+		mapping=`grep :${chID}: ${Cache}/info_channels.txt | head -1`
+		chName=`echo "$mapping" | cut -d":" -f4`
+		numChannel=`echo "$mapping" | cut -d":" -f1`
+
+		# Alternar colores
+		if [ "$bgcolor" = "#FFECD9" ]; then
+			bgcolor="#FFFFE8"
+		else
+			bgcolor="#FFECD9"
+		fi
+
+		# Generar columna de parrilla
+		echo "					<td valign=\"top\" align=\"center\" width=\"140\" class=\"titChannel\" class=\"borderFila\" nowrap><a href=\"/cgi-bin/sincro/ver-sincro?$chID-0\">$chName</a>
+						<br>
+						<font class="txtPeq"><a href=\"javascript:cambioCanal($numChannel)\">Ver Canal</a> </font>
+						<br>
+						<br>
+						<table border=\"0\" bgcolor=\"$bgcolor\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\" class=\"borderTabla\">"
+
+		# Incluir fichero cache o mensaje de advertencia
+		if [ -f ${LCK_CACHE} ]; then
+			echo "							<tr>
+								<td align=\"center\" class=\"borderFila txtNormal\">La caché de este canal se está generando.
+								Espere a que se termine la generación.
+								</td>
+							</tr>"
+		elif [ -f ${CACHE_HTML} ]; then
+			cat < ${CACHE_HTML}
+		else
+			echo "							<tr>
+								<td align=\"center\" class=\"borderFila txtNormal\">La caché de este canal no está generada.
+								Espere a que se genere la caché o fuerce la actualización desde la pantalla de
+								<a href=\"/cgi-bin/box/estado\">Estado</a>.
+								</td>
+							</tr>"
+		fi
+
+		echo "						</table>
+					</td>"
+	fi
+done
+
+# Final html
+echo "				</tr>
+			</table>"
+html_doc_end

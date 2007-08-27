@@ -1,0 +1,32 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 02-05-2007
+#
+# Script que genera un fichero de comandos con las instrucciones necesarias para
+# descargar a la máquina local una grabación completa, utilizando wget.
+
+host=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2 | sed -e 's/%3A/:/g'`
+port=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2`
+Cridfile=`echo $QUERY_STRING | cut -d"&" -f3 | cut -d"=" -f2 | sed -e 's/%2F/\//g'`
+user=`echo $QUERY_STRING | cut -d"&" -f4 | cut -d"=" -f2`
+pwd=`echo $QUERY_STRING | cut -d"&" -f5 | cut -d"=" -f2`
+dir=`echo $QUERY_STRING | cut -d"&" -f6 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g'`
+
+#Por si el host viene con puerto, lo quitamos para el ftp y lo dejamos para el http
+ftphost=`echo $host | cut -d":" -f1`
+
+# Procesar fichero crid
+source ./crid2var.shi $Cridfile
+
+# Obtener carpeta de almacenamiento
+recordingDir=`dirname $Cridfile`
+
+# Log del proceso
+echo "`date` Peticion descarga grabacion:
+	$ftphost, $port, $Cridfile, ${fmpg0}*, $user, $pwd, Titulo: $Titulo" >> /tmp/download.log
+
+# Descargar fichero de descarga
+echo "Content-type: application/octet-stream"
+echo "Content-Disposition: attachment; filename=descargar_grabacion.cmd"
+echo ""
+echo "wget --passive-ftp -P "$dir" ftp://${user}:${pwd}@${ftphost}:${port}${Cridfile}"
+echo "wget --passive-ftp -P "$dir" ftp://${user}:${pwd}@${ftphost}:${port}${recordingDir}/${fmpg0}*"

@@ -1,0 +1,15 @@
+#!/bin/bash
+# (c) Grupo SIESTA, 14-08-2007
+#
+# Ver grabacion (fichero .crid)
+
+# Configurar entorno
+source ../fweb.shi
+
+# Enviar cabecera http
+http_header
+
+# Enviar documento html
+cat ../../html/verGrabacion.inc
+cat ../../html/mplayer.inc
+html_doc_end
