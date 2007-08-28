@@ -1,7 +1,7 @@
 #!/bin/bash
 # jotabe, (c) Grupo SIESTA, 24-08-2007
 #
-# Guarda la configuración de LCK-SIESTA
+# Guarda la configuración de SIESTA
 
 # Configurar entorno
 LocalBin=/usr/local/bin
@@ -30,7 +30,7 @@ http_header
 echo "<html>
 <head>
 	<script type=\"text/javascript\">
-		document.location.href=\"/cgi-bin/box/config\"
+		document.location.href=\"/cgi-bin/box/configSIESTA\"
 	</script>
 </head>
 </html>"

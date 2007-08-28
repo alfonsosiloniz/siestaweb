@@ -1,0 +1,190 @@
+LCK.cfg
+=======
+
+El fichero esta en /var/etc. Para modificarlo debemos descargarlo por
+FTP al pc, editarlo y despues volverlo a subir. Con las nuevas
+versiones se puede editar in-situ utilizando el editor vi.
+
+
+#PARAMETRO: SG_ON bool
+SG_ON 1
+
+Controla la sincronización de recortes de grabaciones (para los que se
+pierden los finales por errores en la hora).
+
+
+#PARAMETRO: FULLSCREEN_ONLOAD bool
+FULLSCREEN_ONLOAD 2
+
+Activa el paso a pantalla completa en arranque.
+
+
+#PARAMETRO: BANNERS bool
+BANNERS 2
+
+Controla si se muestran los banners, excepto el del menu principal, que
+siempre se muestra.
+
+
+#PARAMETRO: SLEEP_HD bool
+SLEEP_HD 2
+
+Controla la parada del disco duro al hacer un apagado del gigaset.
+
+
+#PARAMETRO: SAMBA bool
+SAMBA 1
+
+Controla la activacion del servidor samba en el gigaset.
+
+
+#PARAMETRO: HACK_TIMESHIFT bool
+HACK_TIMESHIFT 1
+
+En grabaciones se usa esta función para hacer un avance rápido 30, 120
+y 300 segundos respectivamente al pulsar OK una, dos o tres veces.
+Con el parámetro desactivado funciona el menú rápido de cambio de
+canales pulsando la techa OK y la  funcionalidad "Avance y retroceso
+rápido por minutos en tv en vivo y grabaciones", pero no funciona al
+pulsar OK una, dos o tres veces en grabación para avance rápido 30, 120
+y 300 segundos.
+Con el parámetro activado funciona al pulsar OK en grabación para
+avance rápido 30 segundos, etc.. pero no funciona al pulsar OK el menú
+rápido de cambio de canales y la  funcionalidad "Avance y retroceso
+rápido por minutos en tv en vivo y grabaciones".
+Por tanto, esta función es incompatible con la de "Avance y retroceso
+rápido por minutos en tv en vivo y grabaciones". Es decir se puede usar
+una u otra, pero no ambas.
+
+
+
+#PARAMETRO: UMOUNT_PENDRIVE bool
+UMOUNT_PENDRIVE 1
+
+Controla si se desmonta el USB2 (donde se pone el pendrive) en apagado
+rápido. No debe activarse si se pone SWAP en el pendrive.
+
+
+#PARAMETRO: TOUCH_SCART_ONREBOOT bool
+TOUCH_SCART_ONREBOOT 2
+
+Controla la activación y desactivación del conector SCART al reiniciar.
+Así sabemos que se está reiniciando. Sirve tanto para el reinicio de la
+sesión de mantenimiento como para cuando le damos a STOP.
+
+
+
+#PARAMETRO: SLEEP_HD_ATNIGHT bool
+SLEEP_HD_ATNIGHT 2
+
+Controla la parada del disco duro tras la sesión de mantenimiento. Si
+está en standby después de la sesión de mantenimiento seguirá en
+standby y se apaga el HD si cambiamos el valor de este parametro.
+Cuidado porque por la noche se bajan contenidos, como por ejemplo,
+videos, imagenes de la EPG... y apagando el disco podrían no bajarse.
+Si queréis imágenes, dejad un día a la semana la caja encendida por la
+noche y se cargarán.
+
+
+#PARAMETRO: UPNP bool
+UPNP 1
+
+Controla la activación del cliente UPNP.
+
+
+#PARAMETRO: RECORD_ON_SAME_TUNNER bool
+RECORD_ON_SAME_TUNNER 2
+
+Controla el uso de un solo sintonizador para grabaciones consecutivas.
+Normalmente se utiliza un sintonizador para cada grabacion pero
+activando esta opcion se usará un solo sintonizador cuando sean
+grabaciones consecutivas en el mismo canal dejando libre el otro para
+una tercera grabacion.
+
+
+#PARAMETRO: RSS_FILE str
+RSS_FILE RSS.tar.bz2
+
+Nombre del fichero RSS, por si alguien se quiere anadir el RSS que
+desee.
+
+
+#PARAMETRO: LCK_PORT num
+LCK_PORT 2011
+
+Puerto de control grabaciones externas. El valor es el puerto de
+comunicación mas 1.
+
+
+#PARAMETRO: MOSCA_SHOW bool
+MOSCA_SHOW 1
+
+Controla la aparicion de un cuadro gris para tapar la 'mosca' de los
+canales para evitar el quemado de las pantallas.
+
+
+#PARAMETRO: MOSCA_1 str
+MOSCA_1 565:58:90:52
+
+Coordenadas en pantalla para el cuadro de la mosca protectora.
+
+
+#PARAMETRO: UPLOAD_START num
+UPLOAD_START 7200
+
+Hora de la sesión de mantenimiento. El valor esta indicado en segundos.
+Por ejemplo para poner la sesion de mantenimiento a las 2:00 este
+parametro debe tener el valor 7200.
+
+
+#PARAMETRO: REBOOT_START num
+REBOOT_START 18000
+
+Hora del reboot nocturno del sistema. El valor esta indicado en
+segundos. Por ejemplo para poner el reinicio a las 5:00 este parametro
+debe tener el valor 18000.
+
+
+#PARAMETRO: TextR num
+TextR 240
+
+Componente ROJO del color de menus.
+
+
+#PARAMETRO: TextG num
+TextG 240
+
+Componente VERDE del color de menus.
+
+
+#PARAMETRO: TextB num
+TextB 240
+
+Componente AZUL del color de menus.
+
+
+#PARAMETRO: TextR_disabled num
+TextR_disabled 120
+
+Componente ROJO del color de opciones desactivadas de menus.
+
+
+#PARAMETRO: TextG_disabled num
+TextG_disabled 120
+
+Componente VERDE del color de opciones desactivadas de menus.
+
+
+#PARAMETRO: TextB_disabled num
+TextB_disabled 120
+
+Componente AZUL del color de opciones desactivadas de menus.
+
+
+#PARAMETRO: DAYS_TV1 num
+DAYS_TV1 9
+
+Numero de días mas 1 que contendrá la sincroguia por canal (para no
+cargar tanto el equipo en canales que no vemos). Dejar mínimo a 3 y
+máximo a 9. Para desactivar poner a 1
+
