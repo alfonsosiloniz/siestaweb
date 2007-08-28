@@ -1,0 +1,170 @@
+#!/bin/bash
+# jotabe, (c) Grupo SIESTA, 28-08-2007
+#
+# Configuracion LCK
+
+#--------------------------------------------------
+# Generar indice de descripciones parametros
+#--------------------------------------------------
+function gen_ix_desc() {
+	# Prepara busqueda
+	param="#PARAMETRO: "
+	n=1
+	start=1
+	found=0
+
+	# Recorrer fichero descripciones
+	while read lin; do
+		# Buscar parametro
+		if [ "Z${lin:0:12}" = "Z$param" ]; then
+			# Comprobar descripcion anterior
+			[ $found -eq 1 ] && echo ",$((n-start-2))"
+			# Nombre parametro
+			par=`echo "$lin" | cut -d" " -f2`
+			echo -n "$par,$n"
+			start=$n
+			found=1
+		fi
+
+		# Avanzar linea
+		n=$((n+1))
+	done < $LCK_SETTINGS_DESC_PARAM > $LCK_SETTINGS_DESC_PARAM_IX
+
+	# Comprobar ultima descripcion
+	[ $found -eq 1 ] && echo ",$((n-start-2))" >> $LCK_SETTINGS_DESC_PARAM_IX
+}
+
+#--------------------------------------------------
+# Obtener descripcion parametro
+# $1 Nombre parametro
+#--------------------------------------------------
+function desc_parametro() {
+	# Buscar datos indice
+	start=`grep $1 $LCK_SETTINGS_DESC_PARAM_IX | cut -d"," -f2`
+	num_lines=`grep $1 $LCK_SETTINGS_DESC_PARAM_IX | cut -d"," -f3`
+	# Extraer descripcion
+	if [ "Z$start" != "Z" -a "Z$num_lines" != "Z" ]; then
+		echo -n "<pre>"
+		head -q -n $((start+num_lines-1)) $LCK_SETTINGS_DESC_PARAM | tail -q -n $num_lines
+		echo "</pre>"
+	fi
+}
+
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+LCK_SETTINGS_FILE=/var/etc/LCK.cfg
+LCK_SETTINGS_CONF_FILE=lck-settings.conf
+LCK_SETTINGS_DESC_PARAM=lck-settings.desc
+LCK_SETTINGS_DESC_PARAM_IX=/tmp/lck-settings.desc.ix
+
+# Enviar documento html
+html_doc_start "M750T - Configuración LCK" "" "-an-e-b-" "
+function guardar() {
+	mostrarMensajeProceso();
+	document.forms['form_m750'].submit();
+}"
+
+# Respuesta html
+html_top "Configuración LCK" "" "/cgi-bin/box/saveConfigLCK"
+
+# Generar indice de descripciones parametros
+[ $LCK_SETTINGS_DESC_PARAM -nt $LCK_SETTINGS_DESC_PARAM_IX ] && gen_ix_desc
+
+# Volcado parametros
+echo "				<br>
+				<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">"
+
+# Recorrer fichero
+while read line; do
+	if [ ${#line} -ne 0 ]; then
+		if [ ${line:0:1} != "#" ]; then
+			# Alternar colores
+			if [ "$bgcolor" = "#FFECD9" ]; then
+				bgcolor="#FFFFE8"
+			else
+				bgcolor="#FFECD9"
+			fi
+
+			# Obtener datos, valor parametro y tipo de parametro
+			TMP=(`echo $line`)
+			NombreParametro=${TMP[0]}
+			ValorParametro=${TMP[1]}
+			if [ ${NombreParametro:0:5} = "DAYS_" ]; then
+				TipoParametro="days"
+			else
+				TMP2=(`grep ^${NombreParametro} $LCK_SETTINGS_CONF_FILE`)
+				TipoParametro=${TMP2[1]}
+			fi
+			[ "Z$TipoParametro" = "Z" ] && TipoParametro="str"
+			
+			# Nombre parametro
+			echo "					<tr bgcolor=\"$bgcolor\">
+						<td width=\"25%\" align=\"right\" class=\"txtParam\">
+							${NombreParametro}:&nbsp;
+						</td>"
+
+			# Tipo de parametro
+			echo "						<td width=\"20%\" align=\"left\" class=\"txtParam\">"
+			case $TipoParametro in
+				days )
+					# Parametro days, desplegable nº dias
+					echo "							<select name=\"${NombreParametro}\" id=\"${NombreParametro}\" class=\"cajaParam\">
+								<option value=\"1\">Desactivado</option>
+								<option value=\"2\">1 día</option>
+								<option value=\"3\">2 días</option>
+								<option value=\"4\">3 días</option>
+								<option value=\"5\">4 días</option>
+								<option value=\"6\">5 días</option>
+								<option value=\"7\">6 días</option>
+								<option value=\"8\">7 días</option>
+								<option value=\"9\">8 días</option>
+							</select>"
+					# Valor de la opcion
+					echo "							<script type=\"text/javascript\">document.getElementById('${NombreParametro}').value=\"${ValorParametro}\";</script>"
+					;;
+				bool )
+					# Parametro bool, desplegable Verdadero/Falso
+					echo "							<select name=\"${NombreParametro}\" id=\"${NombreParametro}\" class=\"cajaParam\">
+								<option value=\"1\">Falso</option>
+								<option value=\"2\">Verdadero</option>
+							</select>"
+					# Valor de la opcion
+					echo "							<script type=\"text/javascript\">document.getElementById('${NombreParametro}').value=\"${ValorParametro}\";</script>"
+					;;
+				num )
+					# Parametro numerico, caja texto
+					echo "							<input type=\"num\" name=\"${NombreParametro}\" value=\"${ValorParametro}\" size=\"8\" maxlength=\"32\" class=\"cajaParam\">"
+					;;
+				str )
+					# Parametro string, caja texto
+					echo "							<input type=\"text\" name=\"${NombreParametro}\" value=\"${ValorParametro}\" size=\"40\" maxlength=\"128\" class=\"cajaParam\">"
+					;;
+				*)
+					echo "							$TipoParametro"
+					;;
+			esac
+			echo "						</td>"
+
+			# Descripcion parametro
+			echo "						<td width=\"1%\">&nbsp;</td>"
+			echo "						<td width=\"54%\" align=\"left\" class=\"txtDescParam\">"
+			desc_parametro $NombreParametro
+			echo "						</td>
+					</tr>"
+		fi
+	fi
+done < $LCK_SETTINGS_FILE
+
+# Boton guardar
+echo "					<tr>
+						<td colspan=\"3\">&nbsp;</td>
+						<td align=\"center\">
+							<br><input type=\"button\" onclick=\"guardar();\" value=\"Guardar\">
+						</td>
+					</tr>
+				</table>"
+
+# Final html
+html_doc_end

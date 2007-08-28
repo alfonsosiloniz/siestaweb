@@ -1,0 +1,51 @@
+#!/bin/bash
+# jotabe, (c) Grupo SIESTA, 28-08-2007
+#
+# Guarda la configuración de LCK
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+LCK_SETTINGS_FILE=/var/etc/LCK.cfg
+TMP1=${LCK_SETTINGS_FILE}.temp
+TMP2=${LCK_SETTINGS_FILE}.temp2
+
+# Generar fichero con valores de parametros
+httpd -d "${QUERY_STRING}" | sed 's/&/\n/g;s/=/ /g' > $TMP1
+# echo "$QUERY_STRING" | sed 's/&/\n/g;s/%3A/:/g;s/=/ /g' > $TMP1
+
+# Recorrer fichero
+while read line; do
+	if [ ${#line} -ne 0 ]; then
+		if [ ${line:0:1} != "#" ]; then
+			# Obtener nombre y valor parametro
+			TMP=(`echo $line`)
+			NombreParametro=${TMP[0]}
+			TMP3=(`grep ^${NombreParametro} $TMP1`)
+			ValorParametro=${TMP3[1]}
+			# Nuevo valor
+			echo "$NombreParametro $ValorParametro"
+		else
+			echo $line
+		fi
+	else
+		echo $line
+	fi
+done < $LCK_SETTINGS_FILE > $TMP2
+
+# Actualizar configuracion
+mv -f $TMP2 $LCK_SETTINGS_FILE
+
+# Eliminar ficheros temporales
+rm -f $TMP1
+# rm -f $TMP2
+
+# Enviar redireccion html
+http_header
+echo "<html>
+<head>
+	<script type=\"text/javascript\">
+		document.location.href=\"/cgi-bin/box/configLCK\"
+	</script>
+</head>
+</html>"
