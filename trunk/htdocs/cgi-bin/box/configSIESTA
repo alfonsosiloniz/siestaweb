@@ -158,7 +158,7 @@ done < $SIESTA_SETTINGS_CONF_FILE
 # Botones ayuda y guardar
 echo "					<tr>
 						<td align=\"center\">
-							<br><input type=\"button\" onclick=\"document.location.href='/cgi-bin/box/verParamSIESTA'\" value=\"Ayuda parámetros\">
+							<br><input type=\"button\" onclick=\"window.open('/cgi-bin/box/verParamSIESTA','paramSIESTA','menubar=no,toolbar=NO,scrollbars=yes,resizable=YES,width=800,height=600');\" value=\"Ayuda parámetros\">
 						</td>
 						<td colspan=\"2\">&nbsp;</td>
 						<td align=\"center\">

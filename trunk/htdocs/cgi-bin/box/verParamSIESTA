@@ -10,15 +10,27 @@ source ../fweb.shi
 html_doc_start "M750T - Parámetros SIESTA" "" "--n---b-"
 
 # Respuesta html
-html_top "Parámetros SIESTA" "" ""
-
-# Volcado descripciones parametros
-echo "				<br>
+echo "<body bgcolor=\"#FFFFFF\">
+<form name=\"form_m750\" method=\"get\">
+	<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
+		<tr>
+			<td align=\"center\">
+				<font class=\"titPag\">M750T EPG</font>
+				<br>
+				<font class=\"subTitPag\">Parámetros SIESTA</font>
+			</td>
+		</tr>
+	</table>
+	<table width=\"98%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
+		<tr>
+			<td>
+				<br>
 				<table width=\"60%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
 					<tr>
 						<td align=\"left\">
 							<pre>"
 
+# Volcado descripciones parametros
 cat siesta-settings.desc
 
 # Final html
@@ -26,4 +38,4 @@ echo "							</pre>
 						</td>
 					</tr>
 				</table>"
-html_doc_end
+html_doc_end no
