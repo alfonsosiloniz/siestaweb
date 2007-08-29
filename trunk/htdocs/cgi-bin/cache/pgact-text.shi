@@ -61,7 +61,8 @@ echo "	<PROGRAM id=\"${pid}\" pid=\"${pidcid}\" chid=\"${chID}\">
 		<DATE>$dateFormatIni</DATE>
 		<DATE_FIN>$dateFormatFin</DATE_FIN>
 		<DATE_UTC>$dateIni</DATE_UTC>
-	</PROGRAM></CHANNEL>" >> ${CACHE_FILE_XML}
+	</PROGRAM>
+</CHANNEL>" >> ${CACHE_FILE_XML}
 
 					# Terminamos proceso
 					found=1

@@ -21,7 +21,7 @@ function gen_ix_desc() {
 			[ $found -eq 1 ] && echo ",$((n-start-2))"
 			# Nombre parametro
 			par=`echo "$lin" | cut -d" " -f2`
-			echo -n "$par,$n"
+			echo -n ":$par:,$n"
 			start=$n
 			found=1
 		fi
@@ -40,8 +40,8 @@ function gen_ix_desc() {
 #--------------------------------------------------
 function desc_parametro() {
 	# Buscar datos indice
-	start=`grep $1 $LCK_SETTINGS_DESC_PARAM_IX | cut -d"," -f2`
-	num_lines=`grep $1 $LCK_SETTINGS_DESC_PARAM_IX | cut -d"," -f3`
+	start=`grep ":$1:" $LCK_SETTINGS_DESC_PARAM_IX | cut -d"," -f2`
+	num_lines=`grep ":$1:" $LCK_SETTINGS_DESC_PARAM_IX | cut -d"," -f3`
 	# Extraer descripcion
 	if [ "Z$start" != "Z" -a "Z$num_lines" != "Z" ]; then
 		echo -n "<pre>"
@@ -54,6 +54,7 @@ function desc_parametro() {
 # Configurar entorno
 source ../www-setup.shi
 source ../fweb.shi
+VER_DESCRIPCIONES=0
 LCK_SETTINGS_FILE=/var/etc/LCK.cfg
 LCK_SETTINGS_CONF_FILE=lck-settings.conf
 LCK_SETTINGS_DESC_PARAM=lck-settings.desc
@@ -87,7 +88,7 @@ while read line; do
 				bgcolor="#FFECD9"
 			fi
 
-			# Obtener datos, valor parametro y tipo de parametro
+			# Obtener datos, valor parametro y tipo de parametro (por defecto str)
 			TMP=(`echo $line`)
 			NombreParametro=${TMP[0]}
 			ValorParametro=${TMP[1]}
@@ -150,7 +151,7 @@ while read line; do
 			# Descripcion parametro
 			echo "						<td width=\"1%\">&nbsp;</td>"
 			echo "						<td width=\"54%\" align=\"left\" class=\"txtDescParam\">"
-			desc_parametro $NombreParametro
+			[ $VER_DESCRIPCIONES -ne 0 ] && desc_parametro $NombreParametro
 			echo "						</td>
 					</tr>"
 		fi
@@ -159,7 +160,10 @@ done < $LCK_SETTINGS_FILE
 
 # Boton guardar
 echo "					<tr>
-						<td colspan=\"3\">&nbsp;</td>
+						<td align=\"center\">
+							<br><input type=\"button\" onclick=\"document.location.href='/cgi-bin/box/verParamLCK'\" value=\"Ayuda parámetros\">
+						</td>
+						<td colspan=\"2\">&nbsp;</td>
 						<td align=\"center\">
 							<br><input type=\"button\" onclick=\"guardar();\" value=\"Guardar\">
 						</td>

@@ -1,0 +1,29 @@
+#!/bin/bash
+# jotabe, (c) Grupo SIESTA, 28-08-2007
+#
+# Ver descripcion parametros LCK
+
+# Configurar entorno
+source ../fweb.shi
+
+# Enviar documento html
+html_doc_start "M750T - Parámetros LCK" "" "--n---b-"
+
+# Respuesta html
+html_top "Parámetros LCK" "" ""
+
+# Volcado descripciones parametros
+echo "				<br>
+				<table width=\"60%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
+					<tr>
+						<td align=\"left\">
+							<pre>"
+
+cat lck-settings.desc
+
+# Final html
+echo "							</pre>
+						</td>
+					</tr>
+				</table>"
+html_doc_end

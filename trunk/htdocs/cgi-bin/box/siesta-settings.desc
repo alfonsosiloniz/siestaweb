@@ -1,89 +1,93 @@
 siesta-settings.txt
 ===================
 
-El fichero esta en /var/etc. Para modificarlo debemos descargarlo por
-FTP al pc, editarlo y despues volverlo a subir. Con las nuevas
-versiones se puede editar in-situ utilizando el editor vi.
+El fichero está en /var/etc. Para modificarlo debemos
+descargarlo por FTP al pc, editarlo y despues volverlo a subir.
+Con las nuevas versiones del firm se puede editar in-situ
+utilizando el editor vi o mediante la aplicación de gestion web. 
 
 
 #PARAMETRO: SIESTA_ACTIVAR_WAVEBOX key si no
 SIESTA_ACTIVAR_WAVEBOX = si
 
-Controla la ejecucion del wavebox.
+Controla la ejecución del wavebox.
 
 
 #PARAMETRO: SIESTA_RETARDO_RUN num 180 1 600
 SIESTA_RETARDO_RUN = 180
 
-Controla el tiempo de retardo para la ejecucion de tareas en segundo
-plano.
+Controla el tiempo de retardo para la ejecución de tareas en
+segundo plano.
 
 
 #PARAMETRO: SIESTA_QUITAR_MENU_MATINAL key si no
 SIESTA_QUITAR_MENU_MATINAL = si
 
-Controla la eliminacion del menu matinal.
+Controla la eliminación del menu matinal.
 
 
 #PARAMETRO: SIESTA_OSD_SCRIPTS_LCK key no si
 SIESTA_OSD_SCRIPTS_LCK = no
 
-Controla la aparicion en pantalla de mensajes de ejecucion de scripts
-del firm LCK.
+Controla la aparición en pantalla de mensajes de ejecución de
+scripts del firm LCK.
 
 
 #PARAMETRO: SIESTA_COLDSTART key si no
 SIESTA_COLDSTART = si
 
-Controla la ejecucion del script coldstart.sh para quitar la pantalla
-en negro en el encendido total.
+Controla la ejecución del script coldstart.sh para quitar la
+pantalla en negro desde el encendido total.
 
 
 #PARAMETRO: SIESTA_SINCRONIZAR_HORA key no arranque horario
 SIESTA_SINCRONIZAR_HORA = no
 
-Controla la sincronizacion de hora con un servidor externo. Puede estar
-desactivado, sincronizar solo al arrancar o periodicamente cada hora en
-el minuto 25.
+Controla la sincronización de hora con un servidor externo.
+Puede estar desactivado, sincronizar solo al arrancar o
+periodicamente cada hora en el minuto 25.
 
 
 #PARAMETRO: SIESTA_ACTIVAR_KEYCONTROL key no si
 SIESTA_ACTIVAR_KEYCONTROL = no
 
-Controla la activacion de siesta-key-control. Con esta utilidad podemos
-controlar el bloqueo/desbloqueo del mando a distancia del gigaset.
+Controla la activación de siesta-key-control. Con esta utilidad
+podemos controlar el bloqueo/desbloqueo del mando a distancia
+del gigaset.
 
 
-#PARAMETRO: SIESTA_FICHERO_KEYCONTROL str /usr/local/bin/siesta-key-control.sh
+#PARAMETRO: SIESTA_FICHERO_KEYCONTROL str siesta-key-control.sh
 SIESTA_FICHERO_KEYCONTROL = /usr/local/bin/siesta-key-control.sh
 
-Ruta del script siesta-key-control. Por defecto se pone el ejecutable
-que viene incluido en el firmware. Se puede modificar para ejecutar
-otro script.
+Ruta del script siesta-key-control. Por defecto se pone el
+ejecutable que viene incluido en el firmware. Se puede modificar
+para ejecutar otro script.
 
 
 #PARAMETRO: SIESTA_OPCIONES_KEYCONTROL str
 SIESTA_OPCIONES_KEYCONTROL = 
 
-Opciones a pasar como parametros al script siesta-key-control. Podemos
-usar las siguientes opciones:
+Opciones a pasar como parametros al script siesta-key-control.
+Podemos usar las siguientes opciones:
 
 -d
-Modo depuracion, muestra mensajes en consola durante la ejecución.
+Modo depuración, muestra mensajes durante la ejecución.
 
 -c
 Modo macros, sin implementar.
 
 -m
-Modo mejorado, bloqueo/desbloqueo con una sola tecla. Debe usarse una
-de las teclas especiales, desde EXTRA_F1 a EXTRA_F7.
+Modo mejorado, bloqueo/desbloqueo con una sola tecla. Debe
+usarse una de las teclas especiales, desde EXTRA_F1 a EXTRA_F7.
 
 -t TeclaBloqueo
-Código de la tecla de bloqueo. En el modo normal debe ser un código
-tipo LCK_xxx, en el modo mejorado debe ser un código tipo EXTRA_xx.
+Código de la tecla de bloqueo. En el modo normal debe ser un
+código tipo LCK_xxx, en el modo mejorado debe ser un código
+tipo EXTRA_xx.
 
 -k
-Muestra en pantalla un listado con los códigos de teclas disponibles
+Muestra en pantalla un listado con los códigos de teclas
+disponibles.
 
 -b ColorFondo
 Color de fondo de mensajes, Valor hexadecimal 32 bits 0xTTRRGGBB
@@ -92,31 +96,33 @@ Color de fondo de mensajes, Valor hexadecimal 32 bits 0xTTRRGGBB
 Color de texto de mensajes, Valor hexadecimal 32 bits 0xTTRRGGBB
 
 -l
-Modo de inicio bloqueado. Cuando el gigaset está apagado solo responde
-a la tecla POWER, al encenderlo si hemos puesto esta opcion arranca con
-el bloqueo activado. Debemos hacer que uno de los gigaset arranque
-normalmente y el resto de ellos (el otro) en modo bloqueado.
+Modo de inicio bloqueado. Cuando el gigaset está apagado solo
+responde a la tecla POWER, al encenderlo si hemos puesto esta
+opción arranca con el bloqueo activado. Debemos hacer que uno de
+los gigaset arranque normalmente y el resto de ellos
+(normalmente el otro) en modo bloqueado.
 
-Si el gigaset que tiene el modo de inicio bloqueado se ha encendido
-para hacer una grabación programada la salida de video esta desactivada
-y no responde al mando a distancia, en este caso si pulsamos la tecla
-POWER se activará la señal de video pero continuará en modo bloqueado.
+Si el gigaset que tiene el modo de inicio bloqueado se ha
+encendido para hacer una grabación programada la salida de video
+estará desactivada y no responde al mando a distancia, en este
+caso si pulsamos la tecla POWER se activará la señal de video
+pero continuará en modo bloqueado.
 
 -a
-Modo aviso, advertencia de mando bloqueado cada vez que pulsamos una
-tecla.
+Modo aviso, advertencia de mando bloqueado cada vez que pulsamos
+una tecla.
 
 -w
-Ejecuta proceso de monitorizacion para reiniciar el proceso key-control
-si se modifica el proceso lircd.
+Ejecuta proceso de monitorización para reiniciar el proceso
+key-control si se modifica el proceso lircd.
 
 -e
-Ejecutar siesta-key-control. Es obligatorio pasar este parametro para
-ejecutar siesta-key-control.
+Ejecutar siesta-key-control. Es obligatorio pasar este parametro
+para ejecutar siesta-key-control.
 
 -p
-Detener siesta-key-control. Con este parametro detenemos la ejecucion
-de siesta-key-control.
+Detener siesta-key-control. Con este parametro detenemos la
+ejecución de siesta-key-control.
 
 -h
 Muestra un mensaje de ayuda.
@@ -125,15 +131,15 @@ Muestra un mensaje de ayuda.
 #PARAMETRO: SIESTA_ACTIVAR_OSD2TCP key si no
 SIESTA_ACTIVAR_OSD2TCP = si
 
-Controla la activacion de osd2tcp. Con esta utilidad podemos ver los
-menus del gigaset desde nuestro PC.
+Controla la activación de osd2tcp. Con esta utilidad podemos ver
+los menús del gigaset desde nuestro PC.
 
 
 #PARAMETRO: SIESTA_FICHERO_OSD2TCP str /usr/bin/osd2tcp
 SIESTA_FICHERO_OSD2TCP = /usr/bin/osd2tcp
 
-Ruta del ejecutable osd2tcp. Por defecto se pone el ejecutable que
-viene incluido en el firmware.
+Ruta del ejecutable osd2tcp. Por defecto se pone el ejecutable
+que viene incluido en el firmware.
 
 
 #PARAMETRO: SIESTA_OPCIONES_OSD2TCP str
@@ -160,35 +166,35 @@ SIESTA_NOMBRE_HOST4 =
 SIESTA_IP_HOST5 =
 SIESTA_NOMBRE_HOST5 =
 
-Relacion de direcciones ip y nombres de otros ordenadores de nuestra
-red. Se puede utilizar para referirnos a otros gigaset/pc por el nombre
-en lugar de por su direccion ip.
+Relación de direcciones ip y nombres de otros ordenadores de
+nuestra red. Se puede utilizar para referirnos a otros
+gigaset/pc por el nombre en lugar de por su direccion ip.
 No es necesario poner en esta lista la ip y el nombre del propio
-gigaset, esta informacion se incluye automaticamente.
+gigaset, esta información se incluye automaticamente.
 
 
 #PARAMETRO: SIESTA_ACTIVAR_FTP key si no
 SIESTA_ACTIVAR_FTP = si
 
-Controla la ejecucion del servicio FTP.
+Controla la ejecución del servicio FTP.
 
 
 #PARAMETRO: SIESTA_ACTIVAR_TELNET key si no
 SIESTA_ACTIVAR_TELNET = si
 
-Controla la ejecucion del servicio TELNET.
+Controla la ejecución del servicio TELNET.
 
 
 #PARAMETRO: SIESTA_ACTIVAR_SSH key si no
 SIESTA_ACTIVAR_SSH = si
 
-Controla la ejecucion del servicio SSH.
+Controla la ejecución del servicio SSH.
 
 
 #PARAMETRO: SIESTA_ACTIVAR_HTTP key no si
 SIESTA_ACTIVAR_HTTP = no
 
-Controla la ejecucion del servidor web.
+Controla la ejecución del servidor web.
 
 
 #PARAMETRO: SIESTA_PORT_HTTP num 80 1 65535
@@ -212,108 +218,113 @@ Usuario y contraseña de acceso al servidor web.
 #PARAMETRO: SIESTA_EPG_HTTP str /data/EPG
 SIESTA_EPG_HTTP = /data/EPG
 
-Ruta de la carpeta de ficheros de la sincrogia.
+Ruta de la carpeta de ficheros de la sincroguía.
 
 
 #PARAMETRO: SIESTA_CACHE_HTTP str /var/cache
 SIESTA_CACHE_HTTP = /var/cache
 
-Ruta de la carpeta de cache de ficheros del servidor web.
+Ruta de la carpeta de caché de ficheros del servidor web.
 
 
 #PARAMETRO: SIESTA_CACHE_EPG_LONG key si no
 SIESTA_CACHE_EPG_LONG = si
 
-Configura la inclusion de las descripciones largas de la sincroguia en
-el cache.
+Configura la inclusión de las descripciones largas de la
+sincroguía en el caché.
 
 
 #PARAMETRO: SIESTA_CACHE_XML_ARRANQUE key si no
 SIESTA_CACHE_XML_ARRANQUE = si
 
-Controla la generacion de ficheros XML en el arranque.
+Controla la generación de ficheros XML en el arranque.
 
 
 #PARAMETRO: SIESTA_MOSTRAR_MINI_IMG key si no
 SIESTA_MOSTRAR_MINI_IMG = si
 
-Configura el preview de las imágenes en la lista de programas actuales
-y de detalle de canal. Si lo ponemos a "no" veremos la pantalla sin las
-imágenes pequeñas. Si lo ponemos a "si", entra en juego el siguiente
-parámetro.
+Configura el preview de las imágenes en la lista de programas
+actuales y de detalle de canal. Si lo ponemos a "no" veremos la
+pantalla sin las imágenes pequeñas. Si lo ponemos a "si", entra
+en juego el siguiente parámetro.
 
 
 #PARAMETRO: SIESTA_OBTENER_IMG_INET key si no
 SIESTA_OBTENER_IMG_INET = si
 
-Configura dónde se van a ir a buscar en primera instancia las imágenes.
-Si lo ponemos a "si", se obtendrán de internet. Si lo ponemos a "no",
-se intentarán obtener del link creado en
-$SERVER_ROOT/img/epg --> $Carpeta_grabacion/epg. Si ese directorio está
-accesible, se sacan de allí, y si no lo está, entonces se muestra la
-imagen genérica. 
+Configura dónde se van a ir a buscar en primera instancia las
+imágenes. Si lo ponemos a "si", se obtendrán de internet. Si lo
+ponemos a "no", se intentarán obtener del link creado en
+$SERVER_ROOT/img/epg --> $Carpeta_grabacion/epg. Si ese
+directorio está accesible, se sacan de allí, y si no lo está,
+entonces se muestra la imagen genérica. 
 
 
 #PARAMETRO: SIESTA_ACTIVAR_DESCARGA_IMG key si no
 SIESTA_ACTIVAR_DESCARGA_IMG = si
 
-Controla la descarga automatica de las imagenes de la Sincroguia desde
-la pagina web de InOut. La descarga se realiza despues de la generacion
-del cache, bien en el arranque o en la generacion nocturna.
+Controla la descarga automatica de las imagenes de la sincroguía
+desde la pagina web de InOut. La descarga se realiza despues de
+la generación del caché, bien en el arranque o en la generación
+nocturna.
 
 
 #PARAMETRO: SIESTA_ORDEN_GRABACIONES key time serie
 SIESTA_ORDEN_GRABACIONES = time
 
-Determina el orden en el que aparecen por defecto las grabaciones
-realizadas.
+Determina el orden en el que aparecen por defecto las
+grabaciones realizadas.
 
 
 #PARAMETRO: SIESTA_CANALES_PARRILLA str :TV1:La2:A3:C4:T5:La6:
 SIESTA_CANALES_PARRILLA = :TV1:La2:A3:C4:T5:La6:
 
-Lista de canales que se mostraran en la parrilla.
+Lista de canales que se mostrarán en la parrilla.
 
 
 #PARAMETRO: SIESTA_ACTIVAR_CROND key no si
 SIESTA_ACTIVAR_CROND = no
 
-Controla la ejecucion de crond. Si lo activamos debemos generar un
-fichero /var/etc/root.crontab con el formato de trabajos de cron.
+Controla la ejecución de crond. Si lo activamos debemos generar
+un fichero /var/etc/root.crontab con el formato de trabajos de
+cron.
 
 
 #PARAMETRO: SIESTA_ACTIVAR_SAMBA key no si
 SIESTA_ACTIVAR_SAMBA = no
 
-Controla la activacion del servidor samba en el gigaset.
+Controla la activación del servidor samba en el gigaset.
 
 
 #PARAMETRO: SIESTA_RETARDO_SAMBA num 60 1 600
 SIESTA_RETARDO_SAMBA = 60
 
-Tiempo de retrado entre el arranque del gigaset y la activacion de
-samba. Es necesario un retardo porque samba se ejecuta desde el disco
-duro externo y hay que dar tiempo al proceso wavebox a montarlo.
+Tiempo de retardo entre el arranque del gigaset y la activación
+de samba. Es necesario un retardo porque samba se ejecuta desde
+el disco duro externo y hay que dar tiempo al proceso wavebox a
+montarlo.
 
 
 #PARAMETRO: SIESTA_RUTA_SAMBA str /var/media/USB-HDD/bin/samba
 SIESTA_RUTA_SAMBA = /var/media/USB-HDD/bin/samba
 
-Ruta de la carpeta que contiene los ejecutable de samba. Debemos
-descargar estos ejecutables y descomprimirlos en una carpeta del disco
-duro.
+Ruta de la carpeta que contiene los ejecutables de samba.
+Debemos descargar estos ejecutables y descomprimirlos en una
+carpeta del disco duro.
 
 
 #PARAMETRO: SIESTA_GRUPO_SAMBA str WORKGROUP
 SIESTA_GRUPO_SAMBA = WORKGROUP
 
-Grupo de trabajo de nuestra red local. Debemos poner aqui el mismo
-grupo de trabajo de nuestro pc para poder ver el gigaset desde Mis
-sitios de red.
+Grupo de trabajo de nuestra red local. Debemos poner aquí el
+mismo grupo de trabajo de nuestro pc para poder ver el gigaset
+desde Mis sitios de red.
+
 
 #PARAMETRO: SIESTA_RUTA_USB_SAMBA str /var/media/USB-HDD
 SIESTA_RUTA_USB_SAMBA = /var/media/USB-HDD
 
-Carpeta a compartir mediante samba. Por defecto se comparte todo el
-disco duro externo, pero podemos decidir compartir otra carpeta.
+Carpeta a compartir mediante samba. Por defecto se comparte todo
+el disco duro externo, pero podemos decidir compartir otra
+carpeta.
 

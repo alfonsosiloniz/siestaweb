@@ -15,30 +15,33 @@ httpd -d "${QUERY_STRING}" | sed 's/&/\n/g;s/=/ /g' > $TMP1
 # echo "$QUERY_STRING" | sed 's/&/\n/g;s/%3A/:/g;s/=/ /g' > $TMP1
 
 # Recorrer fichero
+sed_script=""
 while read line; do
 	if [ ${#line} -ne 0 ]; then
 		if [ ${line:0:1} != "#" ]; then
 			# Obtener nombre y valor parametro
 			TMP=(`echo $line`)
 			NombreParametro=${TMP[0]}
+			ValorParametro0=${TMP[1]}
 			TMP3=(`grep ^${NombreParametro} $TMP1`)
 			ValorParametro=${TMP3[1]}
-			# Nuevo valor
-			echo "$NombreParametro $ValorParametro"
-		else
-			echo $line
+			if [ "Z$ValorParametro" != "Z$ValorParametro0" ]; then
+				# Generar script de sustitucion
+				[ ${#sed_script} -ne 0 ] && sed_script="${sed_script};"
+				sed_script="${sed_script}s/$line/$NombreParametro $ValorParametro/g"
+			fi
 		fi
-	else
-		echo $line
 	fi
-done < $LCK_SETTINGS_FILE > $TMP2
+done < $LCK_SETTINGS_FILE
 
-# Actualizar configuracion
-mv -f $TMP2 $LCK_SETTINGS_FILE
+# Sustituir valores parametros y actualizar configuracion
+if [ ${#sed_script} -ne 0 ]; then
+	sed -e "$sed_script" $LCK_SETTINGS_FILE > $TMP2
+	mv -f $TMP2 $LCK_SETTINGS_FILE
+fi
 
 # Eliminar ficheros temporales
 rm -f $TMP1
-# rm -f $TMP2
 
 # Enviar redireccion html
 http_header
