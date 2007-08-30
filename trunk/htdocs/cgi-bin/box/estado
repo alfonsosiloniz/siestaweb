@@ -129,7 +129,7 @@ echo "				<br>
 		log_getsincroimg )
 			print_log_file "Descargas de imágenes de Sincroguía"                       "/tmp/getsincroimg.log"
 			# Boton descarga images.txt
-			[ -f /tmp/images.txt ] && echo "					<tr>
+			[ -s /tmp/images.txt ] && echo "					<tr>
 						<td  align=\"center\">
 							<br>
 							<input type=\"button\" value=\"Descargar images.txt\" class=\"txtInfo\" onclick=\"descargarImages()\">
