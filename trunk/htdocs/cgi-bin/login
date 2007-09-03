@@ -1,0 +1,28 @@
+#!/bin/bash
+# jotabe, (c) Grupo SIESTA, 03-09-2007
+#
+# Comprobacion mostrar login de usuario
+
+# Configurar entorno
+source www-setup.shi
+source fweb.shi
+LOG=/tmp/login.log
+
+# Comprobar si es necesario mostrar login
+if [ "Z${USUARIO}" = "Zno:no" ]; then
+	# Login directo
+	echo "`date` Login directo" >> $LOG
+	destino="/cgi-bin/sincro/pgmactual"
+else
+	destino="/html/login.html"
+fi
+
+# Enviar redireccion html
+http_header
+echo "<html>
+<head>
+	<script type=\"text/javascript\">
+		document.location.href=\"${destino}\"
+	</script>
+</head>
+</html>"
