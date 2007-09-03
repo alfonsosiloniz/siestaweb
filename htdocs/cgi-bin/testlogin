@@ -45,14 +45,14 @@ if [ "$user" = "$userlogin" -a "$pwd" = "$pwdlogin" ]; then
 	echo "<html>
 	<head>
 		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/>
-		<script language=\"JavaScript\" src=\"/js/cookies.js\"></script>
-		<script language=\"JavaScript\">
+		<script type=\"text/javascript\" src=\"/js/cookies.js\"></script>
+		<script type=\"text/javascript\">
 			setCookie(\"LOGGED\", new Date().getTime(), getExpire());
 		</script>
 		<title>Login OK</title>
 	</head>
 	<body>
-		<script>
+		<script type=\"text/javascript\">
 			document.location.href=\"/cgi-bin/sincro/pgmactual\";
 		</script>
 	</body>
@@ -67,7 +67,7 @@ else
 		<title>Login incorrecto</title>
 	</head>
 	<body>
-		<script>
+		<script type=\"text/javascript\">
 			alert(\"Usuario/contraseña incorrecto\");
 			document.location.href=\"/index.html\";
 		</script>
