@@ -25,6 +25,9 @@ rm -f $TMP2
 # Volcado nuevos parametros
 source siesta-dump-settings.shi
 
+# Pasar parametros configuracion a www-settings.txt
+./ss2ws
+
 # Enviar redireccion html
 http_header
 echo "<html>

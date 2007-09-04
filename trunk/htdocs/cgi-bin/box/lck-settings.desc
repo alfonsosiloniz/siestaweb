@@ -134,22 +134,26 @@ MOSCA_1 565:58:90:52
 Coordenadas en pantalla para el cuadro de la mosca protectora.
 
 
-#PARAMETRO: UPLOAD_START num
+#PARAMETRO: UPLOAD_START time
 UPLOAD_START 7200
 
 Hora de la sesión de mantenimiento. El valor esta indicado en
 segundos.
 Por ejemplo para poner la sesión de mantenimiento a las 2:00
 este parametro debe tener el valor 7200.
+Desde la configuración web se puede introducir directamente la
+hora y minuto de la sesión de mantenimiento.
 
 
-#PARAMETRO: REBOOT_START num
+#PARAMETRO: REBOOT_START time
 REBOOT_START 18000
 
 Hora del reinicio nocturno del sistema. El valor esta indicado
 en segundos.
 Por ejemplo para poner el reinicio a las 5:00 este parametro
 debe tener el valor 18000.
+Desde la configuración web se puede introducir directamente la
+hora y minuto del reinicio nocturno del sistema
 
 
 #PARAMETRO: TextR num

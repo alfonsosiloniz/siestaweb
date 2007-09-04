@@ -205,9 +205,23 @@ function enviar_xml_err() {
 #--------------------------------------------------
 
 #--------------------------------------------------
+# Obtener arquitectura maquina
+#--------------------------------------------------
+function get_maquina() {
+	local ARQ
+	# Obtener arquitectura
+	ARQ=`uname -m`
+	if [ "Z${ARQ}" = "Zmips" ]; then
+		MAQUINA="GigaSet"
+	else
+		MAQUINA="PC"
+	fi
+}
+
+#--------------------------------------------------
 # Obtener estado gigaset
 #--------------------------------------------------
-function get_modo_video () {
+function get_modo_video() {
 	# Buscar nº de modulos que estan usando el modulo video
 	M_V=(`lsmod | grep ^video`)
 	if [ ${M_V[2]} = 0 ]; then
@@ -216,15 +230,5 @@ function get_modo_video () {
 		ModoVideo="Encendido"
 	fi
 }
-
-
-
-
-
-
-
-##		<meta http-equiv="Refresh" content="60"/>
-##		<meta http-equiv="Expires" content="0"/>
-##		<meta http-equiv="Pragma" content="no-cache"/>
 
 #--------------------------------------------------

@@ -33,7 +33,7 @@ if [ -s ${CACHE_FILE} ]; then
 
 	# Enviar documento xml con programa actual
 	xml_doc "/xsl/sincro.xsl"
-	echo "	<M740>
+	echo "<M740>
 	<SINCROGUIA actual=\"0\" miniatures=\"$MOSTRAR_MINI_IMG\" getImgInet=\"$OBTENER_IMG_INET\" localSincroImgAcc=\"$DIR_IMG_SINCRO_ACCESIBLE\">
 `cat < ${CACHE_FILE}`
 	</SINCROGUIA>
