@@ -11,8 +11,12 @@ TMP1=${LCK_SETTINGS_FILE}.temp
 TMP2=${LCK_SETTINGS_FILE}.temp2
 
 # Generar fichero con valores de parametros
-httpd -d "${QUERY_STRING}" | sed 's/&/\n/g;s/=/ /g' > $TMP1
-# echo "$QUERY_STRING" | sed 's/&/\n/g;s/%3A/:/g;s/=/ /g' > $TMP1
+get_maquina
+if [ $MAQUINA = "GigaSet" ]; then
+	httpd -d "${QUERY_STRING}" | sed 's/&/\n/g;s/=/ /g' > $TMP1
+else
+	echo "$QUERY_STRING" | sed 's/&/\n/g;s/%3A/:/g;s/=/ /g' > $TMP1
+fi
 
 # Recorrer fichero
 sed_script=""
