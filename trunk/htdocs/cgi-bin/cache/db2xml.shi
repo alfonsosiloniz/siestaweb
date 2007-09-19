@@ -18,8 +18,51 @@ CACHE_FILE_TEXT=$3
 CACHE_FILE_TEMP=${CACHE_FILE_TEXT}.temp
 
 # Configurar entorno
-NumBytes=0
-DiaSemana=([1]="Lun" [2]="Mar" [3]="Mie" [4]="Jue" [5]="Vie" [6]="Sab" [7]="Dom")
+# NumBytes=0
+# DiaSemana=([1]="Lun" [2]="Mar" [3]="Mie" [4]="Jue" [5]="Vie" [6]="Sab" [7]="Dom")
+
+# Comprobar fichero sincroguia
+if [ -f $1 ]; then
+	# Generar fichero vacio
+# 	echo -n "" > ${CACHE_FILE_TEMP}
+	
+	# Generar fichero text
+	www-tools db2text $1 > ${CACHE_FILE_TEMP}
+
+	# Ordenar fichero text y borrar temporal
+	sort ${CACHE_FILE_TEMP} > ${CACHE_FILE_TEXT}
+	rm -f ${CACHE_FILE_TEMP}
+
+	# Obtener datos canal
+	mapping=`grep :${chID}: ${Cache}/info_channels.txt | head -1`
+	cid=`echo "$mapping" | cut -d":" -f2`
+	chName=`echo "$mapping" | cut -d":" -f4`
+	numChannel=`echo "$mapping" | cut -d":" -f1`
+
+	# Comienzo datos xml
+	echo "<CHANNEL cid=\"$cid\" id=\"${chID}\" name=\"$chName\" file=\"$1\" numChannel=\"$numChannel\">" >> ${CACHE_FILE_XML}
+
+	# Generar fichero xml
+	www-tools text2xml ${chID} ${CACHE_FILE_TEXT} >> ${CACHE_FILE_XML}
+
+	# Fin datos xml
+	echo "</CHANNEL>" >> ${CACHE_FILE_XML}
+
+	# Devolver numero de bytes leidos
+# 	NumBytes=$n
+else
+	echo "<ERROR>Fichero $1 no encontrado</ERROR>" >> ${CACHE_FILE_XML}
+fi
+
+return
+
+
+
+
+
+
+
+
 
 # Comprobar fichero sincroguia
 if [ -f $1 ]; then

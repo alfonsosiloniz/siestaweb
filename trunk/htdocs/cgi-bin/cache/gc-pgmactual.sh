@@ -20,6 +20,7 @@ CACHE_FILE=${Cache}/cache.pgmactual.xml
 touch ${LCK_PGMACTUAL}
 
 # Log del proceso
+utc_inicio=`date +%s`
 echo "`date` Inicio generación XML de Programa Actual [host: `hostname`]" > $LOG
 
 # Obtenemos lista de canales
@@ -50,7 +51,9 @@ mv ${CACHE_FILE}.temp ${CACHE_FILE}
 rm -f ${CACHE_FILE}.generating
 
 # Log del proceso
-echo "`date` Fin generación XML de Programa Actual [host: `hostname`]" >> $LOG
+utc_final=`date +%s`
+tiempo_proceso=`TZ=UTC awk "BEGIN {print strftime( \"%H:%M:%S\", $(($utc_final-$utc_inicio))) }"`
+echo "`date` Fin generación XML de Programa Actual [host: `hostname`], Tiempo generación: ${tiempo_proceso}" >> $LOG
 
 # Eliminar marca de generacion de programa actual
 rm -f ${LCK_PGMACTUAL}

@@ -41,7 +41,7 @@ if [ -f $1 ]; then
 	# Proceso de generacion de fichero html
 	if [ $horaUTCinicial -ge 0 ]; then
 		echo "`date` Generación text->html de Canal $chID" >> $LOG
-		source ./text2html.shi $1 ${CACHE_FILE}.text ${CACHE_FILE}.html ${horaUTCinicial}
+# 		source ./text2html.shi $1 ${CACHE_FILE}.text ${CACHE_FILE}.html ${horaUTCinicial}
 	fi
 fi
 
