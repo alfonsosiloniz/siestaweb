@@ -1,5 +1,5 @@
 #!/bin/bash
-# (c) Grupo SIESTA, 02-08-2007
+# (c) Grupo SIESTA, 18-09-2007
 #
 # Obtener lista de canales. Define las siguientes variables
 # $SORT_CHANNELS -> Fichero de ordenacion de canales
@@ -9,6 +9,7 @@
 # Este script es incluido desde otros, no debe invocarse directamente
 
 # Configurar entorno
+CFG_DIR=/var/etc
 SORT_CHANNELS=${Cache}/sort_channels.txt
 INFO_CHANNELS=${Cache}/info_channels.txt
 
@@ -18,15 +19,15 @@ if [ ! -f $SORT_CHANNELS ]; then
 	echo -n "" > $SORT_CHANNELS
 	echo -n "" > $INFO_CHANNELS
 	
-	# Recorrer /var/etc/user_services.txt
+	# Recorrer user_services.txt
 	i=1
 	while read line; do
 		id=`echo $line | cut -d":" -f2`
 		if [ "Z$id" != "Z" ]; then
-			exists=`cat /var/etc/services.txt | cut -b140-145 | grep $id | wc -l`
+			exists=`grep ${id}$ $CFG_DIR/services.txt | wc -l`
 			if [ $exists -eq 1 ]; then
-				chName=`grep $id /var/etc/services.txt | cut -b0-20 | awk 'gsub(/[ \t]+$/, "", $0)'`
-				chID=`grep -i -H "${chName}" /var/etc/eps_mapping.txt | grep -i :"${chName}": | cut -d"," -f2`
+				chName=`grep ${id}$ $CFG_DIR/services.txt | cut -b0-20 | awk 'gsub(/[ \t]+$/, "", $0)'`
+				chID=`grep -i "${chName}" $CFG_DIR/eps_mapping.txt | grep -i "^${chName}:" | head -n 1 | cut -d"," -f2`
 				# Añadir a lista de programas y canales
 				echo "${i}:${id}:${chID}:${chName}:" >> $INFO_CHANNELS
 				# Si existe chID se añade a lista ordenada de canales
@@ -35,7 +36,7 @@ if [ ! -f $SORT_CHANNELS ]; then
 				i=$((i+1))
 			fi
 		fi
-	done < /var/etc/user_services.txt
+	done < $CFG_DIR/user_services.txt
 fi
 
 # Obtenemos lista de canales

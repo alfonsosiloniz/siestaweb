@@ -14,6 +14,7 @@ LOG=/tmp/getsincroimg.log
 ERR=/tmp/getsincroimg.err
 
 # Log del proceso
+utc_inicio=`date +%s`
 echo "`date` Iniciando el proceso de descarga de imágenes de la sincroguía" > $LOG
 echo -n "" > $ERR
 
@@ -36,9 +37,6 @@ if [ -d $RecordingFolder/EPG ]; then
 
 	# Descargar lista de imágenes
 	get-lista-img.sh $LST $RecordingFolder/EPG >> $LOG 2>>$ERR
-
-	# Log del proceso
-	echo "`date` Finalizado el proceso de descarga de imágenes de la sincroguía" >> $LOG
 fi
 
 # Gestionar estado gigaset
@@ -46,3 +44,8 @@ if [ "$ModoVideo" = "Apagado" ]; then
 	/data/scripts/irsim.sh POWER
 	echo "`date` Apagando el gigaset..." >> $LOG
 fi
+
+# Log del proceso
+utc_final=`date +%s`
+tiempo_proceso=`TZ=UTC awk "BEGIN {print strftime( \"%H:%M:%S\", $(($utc_final-$utc_inicio))) }"`
+echo "`date` Finalizado el proceso de descarga de imágenes de la sincroguía, Tiempo generación: ${tiempo_proceso}" >> $LOG

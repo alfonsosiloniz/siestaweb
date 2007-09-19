@@ -76,7 +76,7 @@ function guardar() {
 html_top "Configuración LCK" "" "/cgi-bin/box/saveConfigLCK"
 
 # Generar indice de descripciones parametros
-[ $LCK_SETTINGS_DESC_PARAM -nt $LCK_SETTINGS_DESC_PARAM_IX ] && gen_ix_desc
+[ $VER_DESCRIPCIONES -ne 0 -a $LCK_SETTINGS_DESC_PARAM -nt $LCK_SETTINGS_DESC_PARAM_IX ] && gen_ix_desc
 
 # Volcado parametros
 echo "				<br>

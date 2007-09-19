@@ -27,6 +27,7 @@ horaUTCinicial=`date +%s`
 touch ${LCK_SINCRO}
 
 # Log del proceso
+utc_inicio=`date +%s`
 echo "`date` Inicio generación XML de Sincroguía [host: `hostname`],[horaUTCinicial: $horaUTCinicial]" > $LOG
 echo -n "" > $ERR
 
@@ -65,7 +66,9 @@ for Sincrofile in $ListaCanales; do
 done
 
 # Log del proceso
-echo "`date` Fin generación XML de Sincroguía [host: `hostname`]" >> $LOG
+utc_final=`date +%s`
+tiempo_proceso=`TZ=UTC awk "BEGIN {print strftime( \"%H:%M:%S\", $(($utc_final-$utc_inicio))) }"`
+echo "`date` Fin generación XML de Sincroguía [host: `hostname`], Tiempo generación: ${tiempo_proceso}" >> $LOG
 
 # Eliminar marcas de generacion de cache XML
 rm -f ${LCK_SINCRO}
