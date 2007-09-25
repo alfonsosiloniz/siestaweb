@@ -9,8 +9,8 @@
 
 /* Instruuciones de uso */
 void db2text_uso(void){
-	fprintf(stderr,"db2text IO_ID.db\n\n");
-	fprintf(stderr,"    IO_ID.db      -> Fichero de datos de sincroguia (.db)\n");
+	fprintf(stderr,"db2text IO_ID.db\n");
+	fprintf(stderr,"    IO_ID.db       -> Fichero de datos de sincroguia (.db)\n");
 }
 
 /* Funcion db2text */
@@ -32,7 +32,7 @@ int db2text(char *file_db){
 
    	/* Abrir fichero */
 	file=fopen(file_db,"rb");
-	if ( file==NULL ){
+	if ( file == NULL ) {
 		fprintf (stderr, "No se puede abrir el fichero %s\n",file_db);
 	} else {
 		/* Leer tamaño total */
@@ -40,8 +40,8 @@ int db2text(char *file_db){
 
 		/* Recorrer datos */
 		pos=4;
-//		while (pos<500){           // Limitar a 500 bytes para pruebas
-		while (pos<totalBytes){
+//		while ( pos < 500 ) {			// Limitar a 500 bytes para pruebas
+		while ( pos < totalBytes ) {
 			/* Tamaño programa */
 			bytesPgm=read_LONG(file);
 			pos+=4;
@@ -125,6 +125,11 @@ int db2text(char *file_db){
 
 	return resultado;
 }
+
+
+/**************************************/
+/*  Funciones internas                */
+/**************************************/
 
 /* Funcion x4 */
 LONG x4(void *p){

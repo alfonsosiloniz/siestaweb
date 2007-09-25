@@ -1,5 +1,5 @@
 #!/bin/bash
-# pepper, (c) Grupo SIESTA, 28-03-2007
+# pepper, jotabe, (c) Grupo SIESTA, 20-09-2007
 #
 # Genera cache de sincroguía en XML de 1 canal
 # $1 Fichero sincroguia (.db)
@@ -28,21 +28,70 @@ touch ${LCK_FILE}
 
 # Generar cache
 if [ -f $1 ]; then
+	# Obtener datos canal
+	mapping=`grep ":${chID}:" ${Cache}/info_channels.txt | head -1`
+	cid=`echo "$mapping" | cut -d":" -f2`
+	chName=`echo "$mapping" | cut -d":" -f4`
+	numChannel=`echo "$mapping" | cut -d":" -f1`
+
 	# Generar ficheros vacios
-	echo -n "" > ${CACHE_FILE}.xml
 	echo -n "" > ${CACHE_FILE}.text
+	echo -n "" > ${CACHE_FILE}.xml
 	echo -n "" > ${CACHE_FILE}.html
 
-	# Proceso de generacion de ficheros xml y text
-	echo -n "`date` Generación db->xml/text de Canal $chID" >> $LOG
-	source ./db2xml.shi $1 ${CACHE_FILE}.xml ${CACHE_FILE}.text
-	echo " [${NumBytes} bytes leidos]" >> $LOG
+	# Log del proceso
+	printf "%s Canal [%3s]: Generación " "`date`" "$chID" >> $LOG
 
-	# Proceso de generacion de fichero html
-	if [ $horaUTCinicial -ge 0 ]; then
-		echo "`date` Generación text->html de Canal $chID" >> $LOG
-# 		source ./text2html.shi $1 ${CACHE_FILE}.text ${CACHE_FILE}.html ${horaUTCinicial}
+	# Generar fichero text
+	echo -n "db->text" >> $LOG
+	www-tools db2text $1 > ${CACHE_FILE}.text.temp
+	ST_db2text=$?
+	if [ $ST_db2text -ne 0 ]; then
+		echo " <b>ERROR</b>" >> $LOG
+	else
+		# Ordenar fichero text
+		sort ${CACHE_FILE}.text.temp > ${CACHE_FILE}.text
+
+		# Generar fichero xml
+		echo -n ",text->xml" >> $LOG
+		echo "<CHANNEL cid=\"$cid\" id=\"${chID}\" name=\"$chName\" file=\"$1\" numChannel=\"$numChannel\">" >> ${CACHE_FILE}.xml
+		www-tools text2xml ${chID} ${CACHE_FILE}.text >> ${CACHE_FILE}.xml
+		ST_text2xml=$?
+		echo "</CHANNEL>" >> ${CACHE_FILE}.xml
+		if [ $ST_text2xml -ne 0 ]; then
+			echo " <b>ERROR</b>" >> $LOG
+		else
+			# Generar fichero html
+			if [ $horaUTCinicial -ge 0 ]; then
+				echo -n ",text->html" >> $LOG
+				# Comprobar si mostrar imagenes
+				if [ "$MOSTRAR_MINI_IMG" != "si" ]; then
+					MOSTRAR_IMG=0
+				else
+					# Comprobar si obtener imagen de internet
+					if [ "Z$OBTENER_IMG_INET" = "Zsi" ]; then
+						MOSTRAR_IMG=2
+					else
+						MOSTRAR_IMG=1
+					fi
+				fi
+				www-tools text2html ${chID} ${CACHE_FILE}.text ${horaUTCinicial} ${MOSTRAR_IMG} >> ${CACHE_FILE}.html
+				ST_text2html=$?
+			else
+				ST_text2html=0
+			fi
+
+			if [ $ST_text2html -ne 0 ]; then
+				echo " <b>ERROR</b>" >> $LOG
+			else
+				# Resultado correcto
+				echo " = OK" >> $LOG
+			fi
+		fi
 	fi
+
+	#Eliminar temporales
+	rm -f ${CACHE_FILE}.text.temp
 fi
 
 # Eliminar marca de generacion de cache de canal

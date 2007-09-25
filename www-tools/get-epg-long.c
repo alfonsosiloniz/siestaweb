@@ -8,7 +8,7 @@
 
 /* Instruuciones de uso */
 void get_epg_long_uso(void){
-	fprintf(stderr,"get-epg-long EPGLong_ID.txt Desplazamiento\n\n");
+	fprintf(stderr,"get-epg-long EPGLong_ID.txt Desplazamiento\n");
 	fprintf(stderr,"    EPGLong_ID.txt -> Fichero de descripciones largas\n");
 	fprintf(stderr,"    Desplazamiento -> Desplazamiento en bytes del inicio de la descripcion\n");
 }
@@ -30,7 +30,7 @@ int get_epg_long(char *fichero, long inicio){
 
    	/* Abrir fichero */
 	file=fopen(fichero,"rb");
-	if ( file==NULL ){
+	if ( file == NULL ) {
 		fprintf (stderr, "No se puede abrir el fichero %s\n",fichero);
 	} else {
 		/* Saltar inicio, leer bufer y cerrar fichero */

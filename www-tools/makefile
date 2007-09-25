@@ -7,7 +7,7 @@ STRIP = mips-uclibc-strip
 RM    = rm -f
 
 # Modulos del proyecto
-OBJ    = main.o get-epg-long.o db2text.o text2xml.o
+OBJ    = main.o get-epg-long.o db2text.o text2xml.o text2html.o
 BIN    = www-tools
 #CFLAGS = -Wall -Os
 #LFLAGS = -s -Wl,-warn-common
@@ -33,6 +33,9 @@ db2text.o: db2text.c
 
 text2xml.o: text2xml.c
 	$(CC) $(CFLAGS) -c text2xml.c -o text2xml.o 
+
+text2html.o: text2html.c
+	$(CC) $(CFLAGS) -c text2html.c -o text2html.o 
 
 clean:
 	${RM} $(OBJ) $(BIN)

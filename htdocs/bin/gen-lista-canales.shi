@@ -27,7 +27,7 @@ if [ ! -f $SORT_CHANNELS ]; then
 			exists=`grep ${id}$ $CFG_DIR/services.txt | wc -l`
 			if [ $exists -eq 1 ]; then
 				chName=`grep ${id}$ $CFG_DIR/services.txt | cut -b0-20 | awk 'gsub(/[ \t]+$/, "", $0)'`
-				chID=`grep -i "${chName}" $CFG_DIR/eps_mapping.txt | grep -i "^${chName}:" | head -n 1 | cut -d"," -f2`
+				chID=`grep -i "${chName}" $CFG_DIR/eps_mapping.txt | grep -i "^${chName}:" | head -1 | cut -d"," -f2`
 				# Añadir a lista de programas y canales
 				echo "${i}:${id}:${chID}:${chName}:" >> $INFO_CHANNELS
 				# Si existe chID se añade a lista ordenada de canales
