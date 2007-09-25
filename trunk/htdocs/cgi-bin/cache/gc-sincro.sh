@@ -11,6 +11,8 @@ renice 20 $$ > /dev/null
 # Obtener parametros
 numParams=$#
 params=$1
+# numParams=1
+# params="TV1:La2:A3:C4:"
 
 # Configurar entorno
 source ../www-setup.shi
@@ -56,7 +58,9 @@ for Sincrofile in $ListaCanales; do
 	if [ $found -eq 1 ]; then
 		# Copia temporal de sincroguia
 		cp $Sincrofile /tmp/`basename $Sincrofile` >> $LOG 2>> $ERR
-		if [ $? = 0 -a -f /tmp/`basename $Sincrofile` ]; then
+
+		# Extraer datos
+		if [ $? -eq 0 -a -f /tmp/`basename $Sincrofile` ]; then
 			./gc-sincro-ch.sh /tmp/`basename $Sincrofile` $horaUTCinicial >> $LOG 2>> $ERR
 		fi
 
@@ -65,14 +69,11 @@ for Sincrofile in $ListaCanales; do
 	fi
 done
 
-# Log del proceso
-utc_final=`date +%s`
-tiempo_proceso=`TZ=UTC awk "BEGIN {print strftime( \"%H:%M:%S\", $(($utc_final-$utc_inicio))) }"`
-echo "`date` Fin generación XML de Sincroguía [host: `hostname`], Tiempo generación: ${tiempo_proceso}" >> $LOG
-
 # Eliminar marcas de generacion de cache XML
 rm -f ${LCK_SINCRO}
 rm -f ${LCK_PGMACTUAL}
 
-# Descarga de imagenes de sincroguia
-[ "Z$DESCARGA_IMG" = "Zsi" -a $numParams -eq 0 ] && run-http.sh /cgi-bin/box/getsincroimg
+# Log del proceso
+utc_final=`date +%s`
+tiempo_proceso=`TZ=UTC awk "BEGIN {print strftime( \"%H:%M:%S\", $(($utc_final-$utc_inicio))) }"`
+echo "`date` Fin generación XML de Sincroguía [host: `hostname`], Tiempo generación: ${tiempo_proceso}" >> $LOG

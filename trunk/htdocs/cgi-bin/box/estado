@@ -83,9 +83,17 @@ echo "				<br>
 # Procesar peticion
 	case $id_accion in
 		log_pgmactual )
-			print_log_file "Generación de caché de Programa Actual"                    "${Cache}/cache.pgmactual.log";;
+			print_log_file "Generación de caché de Programa Actual"                    "${Cache}/cache.pgmactual.log"
+			if [ -s ${Cache}/cache.pgmactual.err ]; then
+				print_log_file "Errores en generación de caché de Programa Actual"     "${Cache}/cache.pgmactual.err"
+			fi
+			;;
 		log_cache_sincro )
-			print_log_file "Generación de caché de todos los canales de la Sincroguía" "${Cache}/cache.sincro.log";;
+			print_log_file "Generación de caché de todos los canales de la Sincroguía" "${Cache}/cache.sincro.log"
+			if [ -s ${Cache}/cache.sincro.err ]; then
+				print_log_file "Errores en generación de caché de Sincroguía"          "${Cache}/cache.sincro.err"
+			fi
+			;;
 		log_crond )
 			print_log_file "Log Crond"                                                 "/var/log/crond.log";;
 		log_keycontrol )
@@ -127,7 +135,7 @@ echo "				<br>
 		log_ps )
 			print_log_file "Procesos en ejecución (ps)"                                "/dev/null"                "./verProcesos";;
 		log_getsincroimg )
-			print_log_file "Descargas de imágenes de Sincroguía"                       "/tmp/getsincroimg.log"
+			print_log_file "Descarga de imágenes de Sincroguía"                        "/tmp/getsincroimg.log"
 			# Boton descarga images.txt
 			[ -s /tmp/images.txt ] && echo "					<tr>
 						<td  align=\"center\">
@@ -136,6 +144,10 @@ echo "				<br>
 							<br>&nbsp;<br>
 						</td>
 					</tr>"
+			# Mostrar errores
+			if [ -s /tmp/getsincroimg.err ]; then
+				print_log_file "Errores en descarga de imágenes de Sincroguía"         "/tmp/getsincroimg.err"
+			fi
 			;;
 
 		log_mount )
