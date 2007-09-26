@@ -40,7 +40,7 @@ done
 
 if [ ${PART_MOUNTED} -eq 0 ]; then
 	if [ "${fstype}" = "ext2" -o "${fstype}" = "ext3" ]; then
-		echo "`date` Iniciando chequeo del disco: e2fsck -p -v $partition" >> $LOG
+		echo "`date` Iniciando chequeo del disco: e2fsck -y -v $partition" >> $LOG
 		e2fsck -y -v $partition >> $LOG 2>> $ERR
 	else
 		echo "`date` Iniciando chequeo del disco: dosfsck -a -v -w $partition" >> $LOG
