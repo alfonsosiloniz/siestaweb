@@ -22,17 +22,17 @@ void text2html_uso(void){
 int text2html(char *ch_id, char *file_text, long horaUTCinicio, long mostrar_img){
 	int resultado;
 	FILE *file;
-	int primerPase=0;			/* Marca de primera pasada completada */
-	int sync_top=0;				/* Marca de borde superior sincronizado */
-	int seg_ajuste=0;			/* Segundos de ajuste */
-	char bf_in[LON_BUF_PGM+1];	/* Linea datos programa sin procesar */
-	pgm_sincro pgm0;			/* Datos programa anterior */
-	pgm_sincro pgm1;			/* Datos programa actual */
-	int duration;
-	int height;
+	int primerPase=0;					/* Marca de primera pasada completada */
+	int sync_top=0;						/* Marca de borde superior sincronizado */
+	int seg_ajuste=0;					/* Segundos de ajuste */
+	char bf_in[LON_BUF_PGM+1];			/* Linea datos programa sin procesar */
+	pgm_sincro pgm0;					/* Datos programa anterior */
+	pgm_sincro pgm1;					/* Datos programa actual */
+	int duration;						/* Duracion del programa en segundos */
+	int height;							/* Altura de la celda de programa */
+	char url_img[LON_BUF_TXT+1];		/* Buffer url imagen */
+	char tmp[LON_BUF_TEXTO_LONG+1];		/* Buffer temporal html */
 	char html[LON_BUF_TEXTO_LONG+1];	/* Buffer html */
-	char txt[LON_BUF_TEXTO_LONG+1];		/* Buffer html */
-	char img[LON_BUF_TXT+1];			/* Buffer url imagen */
 
 	/* Inicializar variables */
 	resultado=-3;
@@ -68,9 +68,6 @@ int text2html(char *ch_id, char *file_text, long horaUTCinicio, long mostrar_img
 							seg_ajuste=duration-((height*100)/PORCENTAJE_ALTURA);
 							/* Celda de ajuste */
 							if ( height > 0 ) {
-//								printf("duration: %i\n",duration);
-//								printf("height: %i\n",height);
-//								printf("seg_ajuste: %i\n",seg_ajuste);
 								fprintf(stdout,"<tr height=\"%i\">\n\t<td background=\"/img/capa6.gif\" class=\"borderFila txtMuyPeq\"></td>\n</tr>\n",height);
 							}
 							/* Marca de parrilla sincronizada */
@@ -109,16 +106,16 @@ int text2html(char *ch_id, char *file_text, long horaUTCinicio, long mostrar_img
 
 							/* Botones de grabacion */
 							if ( duration > 2200 ) {
-								sprintf(txt,"\t\t<a href='javascript:programarGrabacion(\"%08X%08X\", 0, \"%s\")' title=\"Grabar\"><img src=\"/img/red_ball.gif\" alt=\"Grabar\" width=\"18\" height=\"18\" border=\"0\"></a>&nbsp;\n",pgm0.pidcid1,pgm0.pidcid2,pgm0.titulo);
-								strcat(html,txt);
-								sprintf(txt,"\t\t<a href='javascript:programarGrabacion(\"%08X%08X\", 1, \"%s\")' title=\"Grabar en Serie\"><img src=\"/img/blue_ball.gif\" alt=\"Grabar en Serie\" width=\"18\" height=\"18\" border=\"0\"></a><br>\n",pgm0.pidcid1,pgm0.pidcid2,pgm0.titulo);
-								strcat(html,txt);
+								sprintf(tmp,"\t\t<a href='javascript:programarGrabacion(\"%08X%08X\", 0, \"%s\")' title=\"Grabar\"><img src=\"/img/red_ball.gif\" alt=\"Grabar\" width=\"18\" height=\"18\" border=\"0\"></a>&nbsp;\n",pgm0.pidcid1,pgm0.pidcid2,pgm0.titulo);
+								strcat(html,tmp);
+								sprintf(tmp,"\t\t<a href='javascript:programarGrabacion(\"%08X%08X\", 1, \"%s\")' title=\"Grabar en Serie\"><img src=\"/img/blue_ball.gif\" alt=\"Grabar en Serie\" width=\"18\" height=\"18\" border=\"0\"></a><br>\n",pgm0.pidcid1,pgm0.pidcid2,pgm0.titulo);
+								strcat(html,tmp);
 							}
 
 							/* Fecha-Hora del programa */
 							if ( duration >= 1500 ) {
-								sprintf(txt,"\t\t%s<br>\n",pgm0.date_str);
-								strcat(html,txt);
+								sprintf(tmp,"\t\t%s<br>\n",pgm0.date_str);
+								strcat(html,tmp);
 							}
 
 							/* Imagen. Por la noche HD apagado -> poner enlace a internet */
@@ -126,25 +123,26 @@ int text2html(char *ch_id, char *file_text, long horaUTCinicio, long mostrar_img
 								if ( strlen(pgm0.imagen) != 0 ) {
 									/* Comprobar si obtener imagen de internet */
 									if ( mostrar_img == 2 ) {
-										sprintf(img,"http://www.inout.tv/fotos/%s",pgm0.imagen);
+										sprintf(url_img,"http://www.inout.tv/fotos/%s",pgm0.imagen);
 									} else {
-										sprintf(img,"/img/epg/%s",pgm0.imagen);
+										sprintf(url_img,"/img/epg/%s",pgm0.imagen);
 									}
 								} else {
-									sprintf(img,"/img/epg_long_img.png");
+									sprintf(url_img,"/img/epg_long_img.png");
 								}
-								sprintf(txt,"\t\t<a href=\"javascript:detallePrograma('%08X%08X', '%s', '%i', '%s', '%i');\" title=\"%s - %s - %s\"><img src=\"%s\" width=77 height=52 border=2 alt=\"%s - %s - %s\"></a><br>\n",pgm0.pidcid1,pgm0.pidcid2,pgm0.imagen,pgm0.ix_long,ch_id,pgm0.date_utc,ch_id,pgm0.date_str,pgm0.titulo,img,ch_id,pgm0.date_str,pgm0.titulo);
-								strcat(html,txt);
+								sprintf(tmp,"\t\t<a href=\"javascript:detallePrograma('%08X%08X', '%s', '%i', '%s', '%i');\" title=\"%s - %s - %s\"><img src=\"%s\" width=77 height=52 border=2 alt=\"%s - %s - %s\"></a><br>\n",pgm0.pidcid1,pgm0.pidcid2,pgm0.imagen,pgm0.ix_long,ch_id,pgm0.date_utc,ch_id,pgm0.date_str,pgm0.titulo,url_img,ch_id,pgm0.date_str,pgm0.titulo);
+								strcat(html,tmp);
 							}
 
 							/* Nombre programa */
-							sprintf(txt,"\t\t<a href=\"javascript:detallePrograma('%08X%08X', '%s', '%i', '%s', '%i');\" title=\"%s - %s - %s\">%s</a>",pgm0.pidcid1,pgm0.pidcid2,pgm0.imagen,pgm0.ix_long,ch_id,pgm0.date_utc,ch_id,pgm0.date_str,pgm0.titulo,pgm0.titulo);
-							strcat(html,txt);
+							sprintf(tmp,"\t\t<a href=\"javascript:detallePrograma('%08X%08X', '%s', '%i', '%s', '%i');\" title=\"%s - %s - %s\">%s</a>",pgm0.pidcid1,pgm0.pidcid2,pgm0.imagen,pgm0.ix_long,ch_id,pgm0.date_utc,ch_id,pgm0.date_str,pgm0.titulo,pgm0.titulo);
+							strcat(html,tmp);
 
 							/* Volcar celda */
 							fprintf(stdout,"%s\n",html);
 
 							/* Si el programa es muuuuy largo (más de 4 horas), ponemos la info 2 veces (a petición de Shark) */
+//							printf("duration: %i\n",duration);
 							if ( duration >= 14400 ) {
 								/* Separacion */
 								fprintf(stdout,"\t\t<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>");

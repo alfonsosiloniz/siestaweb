@@ -48,7 +48,7 @@ else
 
 		# Comprobar resultado de ip
 		if [ $no_ip -ne 0 ]; then
-			echo "`date` No se ha podido resolver la IP del servidor www.inout.tv... Abortamos el proceso."
+			echo "`date` No se ha podido resolver la IP del servidor www.inout.tv... Abortamos el proceso"
 			exit -4
 		else
 			echo "`date` Servidor www.inout.tv, <b>IP=[$ipInOut]</b>"
@@ -77,7 +77,7 @@ else
 			done < $LST_IMG
 
 			# Mensaje de final
-			echo "`date` Finalizada la descarga de imágenes de la sincroguía"
+			echo "`date` Fin descarga de imágenes de Sincroguía"
 		fi
 	fi
 fi

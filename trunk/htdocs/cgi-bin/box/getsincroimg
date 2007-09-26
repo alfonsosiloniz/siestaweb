@@ -15,7 +15,7 @@ ERR=/tmp/getsincroimg.err
 
 # Log del proceso
 utc_inicio=`date +%s`
-echo "`date` Iniciando el proceso de descarga de imágenes de la sincroguía" > $LOG
+echo "`date` Inicio proceso descarga de imágenes de Sincroguía [host: `hostname`]" > $LOG
 echo -n "" > $ERR
 
 # Nos guardamos el estado inicial del giga por si está apagado, apagarlo al final
@@ -48,4 +48,4 @@ fi
 # Log del proceso
 utc_final=`date +%s`
 tiempo_proceso=`TZ=UTC awk "BEGIN {print strftime( \"%H:%M:%S\", $(($utc_final-$utc_inicio))) }"`
-echo "`date` Finalizado el proceso de descarga de imágenes de la sincroguía, Tiempo generación: ${tiempo_proceso}" >> $LOG
+echo "`date` Fin proceso descarga de imágenes de Sincroguía, Tiempo proceso descarga: ${tiempo_proceso}" >> $LOG

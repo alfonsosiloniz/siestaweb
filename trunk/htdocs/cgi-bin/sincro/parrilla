@@ -27,8 +27,8 @@ else
 fi
 
 # Obtener hora inicio y hora actual
-if [ -f ${Cache}/horaUTCinicial.txt ]; then
-	utcParrilla=`cat ${Cache}/horaUTCinicial.txt`
+if [ -f ${Cache}/horaUTCparrilla.txt ]; then
+	utcParrilla=`cat ${Cache}/horaUTCparrilla.txt`
 else
 	utcParrilla=`date +%s`
 fi

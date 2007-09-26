@@ -18,13 +18,13 @@ DIR_IMG=`echo $2 | sed 's/\/$//'`
 DIR_CACHE=`echo $3 | sed 's/\/$//'`
 
 # Log del proceso
-echo "`date` Iniciando listado de imágenes de la sincroguía"
+echo "`date` Inicio listado imágenes de Sincroguía"
 
 # Recorrer ficheros .text
 echo -n "" > $LST_IMG.tmp
 for textfile in $DIR_CACHE/*.text; do
-    channel=`echo $textfile | cut -d"." -f2`
-    echo "`date` Lectura de fichero <b>[Canal=$channel]</b>"
+    chID=`echo $textfile | cut -d"." -f2`
+	printf "`date` Canal [%3s]: Fichero datos -> ${textfile}\n" "$chID" 
     cat $textfile | cut -d"_" -f8- >> $LST_IMG.tmp
 done
 
@@ -45,4 +45,4 @@ done < $LST_IMG.tmp2
 rm -f $LST_IMG.tmp $LST_IMG.tmp2
 
 # Fin del proceso
-echo "`date` Finalizado listado de imágenes de la sincroguía (`cat $LST_IMG | wc -l` imágenes)."
+echo "`date` Fin listado imágenes de Sincroguía (`cat $LST_IMG | wc -l` imágenes)"
