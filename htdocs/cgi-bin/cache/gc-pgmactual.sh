@@ -40,7 +40,7 @@ for Sincrofile in $ListaCanales; do
 		# Comprobar generacion de caché de canal
 		if [ ! -f ${CHANNEL_CACHE}.generating ]; then
 			# Log del proceso
-			printf "`date` Datos canal [%3s] -> ${CHANNEL_CACHE}.text\n" "$chID" >> $LOG
+			printf "`date` Canal [%3s]: Fichero datos -> ${CHANNEL_CACHE}.text\n" "$chID" >> $LOG
 
 			# Obtener datos de canal de fichero .text
 			source ./pgact-text.shi $Sincrofile ${CHANNEL_CACHE}.text ${CACHE_FILE}.temp >> $LOG 2>> $ERR

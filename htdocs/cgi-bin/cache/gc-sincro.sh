@@ -20,7 +20,7 @@ LCK_SINCRO=${Cache}/cache.sincro.generating
 LCK_PGMACTUAL=${Cache}/cache.pgmactual.generating
 LOG=${Cache}/cache.sincro.log
 ERR=${Cache}/cache.sincro.err
-horaUTCinicial=`date +%s`
+horaUTCparrilla=`date +%s`
 
 # Comprobar marca de generacion de cache XML
 [ -f ${LCK_SINCRO} ] && exit -1
@@ -28,13 +28,20 @@ horaUTCinicial=`date +%s`
 # Crear marca de generacion de cache XML
 touch ${LCK_SINCRO}
 
+# Guardar horaUTCparrilla de generacion de la parrilla
+if [ $numParams -eq 0 ]; then
+	echo "$horaUTCparrilla" > ${Cache}/horaUTCparrilla.txt
+else
+	if [ -f ${Cache}/horaUTCparrilla.txt ]; then
+		horaUTCparrilla=`cat ${Cache}/horaUTCparrilla.txt`
+	fi
+fi
+
+
 # Log del proceso
 utc_inicio=`date +%s`
-echo "`date` Inicio generación XML de Sincroguía [host: `hostname`],[horaUTCinicial: $horaUTCinicial]" > $LOG
+echo "`date` Inicio generación XML de Sincroguía [host: `hostname`], [Hora UTC parrilla: $horaUTCparrilla]" > $LOG
 echo -n "" > $ERR
-
-# Guardar horaUTCinicial de generacion de la parrilla
-[ $numParams -eq 0 ] && echo "$horaUTCinicial" > $Cache/horaUTCinicial.txt
 
 # Obtenemos lista de canales
 source gen-lista-canales.shi
@@ -47,7 +54,7 @@ for Sincrofile in $ListaCanales; do
 	# Comprobar si canal esta en la lista de canales a generar
 	if [ $numParams -eq 1 ]; then
 		# Si solo se actualizan algunos canales, no actualizamos la parrilla, puesto que se pintaría mal
-		horaUTCinicial="-1"
+# 		horaUTCparrilla="-1"
 		# Buscar en lista de canales
 		found=`echo $params | grep "$chID:" | wc -l`
 	else
@@ -57,15 +64,19 @@ for Sincrofile in $ListaCanales; do
 	# Generar cache
 	if [ $found -eq 1 ]; then
 		# Copia temporal de sincroguia
-		cp $Sincrofile /tmp/`basename $Sincrofile` >> $LOG 2>> $ERR
+# 		cp $Sincrofile /tmp/`basename $Sincrofile` >> $LOG 2>> $ERR
 
 		# Extraer datos
-		if [ $? -eq 0 -a -f /tmp/`basename $Sincrofile` ]; then
-			./gc-sincro-ch.sh /tmp/`basename $Sincrofile` $horaUTCinicial >> $LOG 2>> $ERR
-		fi
+# 		if [ $? -eq 0 -a -f /tmp/`basename $Sincrofile` ]; then
+# 			./gc-sincro-ch.sh /tmp/`basename $Sincrofile` $horaUTCparrilla >> $LOG 2>> $ERR
+# 		fi
 
-		#Eliminar temporales
-	    rm -f /tmp/`basename $Sincrofile`
+# 		if [ -f $Sincrofile ]; then
+			./gc-sincro-ch.sh $Sincrofile $horaUTCparrilla >> $LOG 2>> $ERR
+# 		fi
+
+		# Eliminar temporales
+# 	    rm -f /tmp/`basename $Sincrofile`
 	fi
 done
 
