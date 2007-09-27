@@ -9,17 +9,17 @@
 
 /* Instruuciones de uso */
 void text2html_uso(void){
-	fprintf(stderr,"text2html channel_id cache.ID.text horaUTCinicial mostrar_img\n");
-	fprintf(stderr,"    channel_id     -> Identificador de canal\n");
-	fprintf(stderr,"    cache.ID.text  -> Fichero de datos de sincroguia (.text)\n");
-	fprintf(stderr,"    horaUTCinicial -> Hora UTC comienzo parrilla\n");
-	fprintf(stderr,"    mostrar_img    -> 0 = No mostrar imagenes sincroguia\n");
-	fprintf(stderr,"                   -> 1 = Mostrar imagenes sincroguia desde HD\n");
-	fprintf(stderr,"                   -> 2 = Mostrar imagenes sincroguia desde Internet\n");
+	fprintf(stderr,"text2html channel_id cache.ID.text horaUTCparrilla mostrar_img\n");
+	fprintf(stderr,"    channel_id      -> Identificador de canal\n");
+	fprintf(stderr,"    cache.ID.text   -> Fichero de datos de sincroguia (.text)\n");
+	fprintf(stderr,"    horaUTCparrilla -> Hora UTC comienzo parrilla\n");
+	fprintf(stderr,"    mostrar_img     -> 0 = No mostrar imagenes sincroguia\n");
+	fprintf(stderr,"                    -> 1 = Mostrar imagenes sincroguia desde HD\n");
+	fprintf(stderr,"                    -> 2 = Mostrar imagenes sincroguia desde Internet\n");
 }
 
 /* Funcion text2html */
-int text2html(char *ch_id, char *file_text, long horaUTCinicio, long mostrar_img){
+int text2html(char *ch_id, char *file_text, long horaUTCparrilla, long mostrar_img){
 	int resultado;
 	FILE *file;
 	int primerPase=0;					/* Marca de primera pasada completada */
@@ -30,6 +30,7 @@ int text2html(char *ch_id, char *file_text, long horaUTCinicio, long mostrar_img
 	pgm_sincro pgm1;					/* Datos programa actual */
 	int duration;						/* Duracion del programa en segundos */
 	int height;							/* Altura de la celda de programa */
+	int sep,n;							/* Separacion en celdas grandes */
 	char url_img[LON_BUF_TXT+1];		/* Buffer url imagen */
 	char tmp[LON_BUF_TEXTO_LONG+1];		/* Buffer temporal html */
 	char html[LON_BUF_TEXTO_LONG+1];	/* Buffer html */
@@ -37,10 +38,10 @@ int text2html(char *ch_id, char *file_text, long horaUTCinicio, long mostrar_img
 	/* Inicializar variables */
 	resultado=-3;
 
-//	printf("    channel_id: %s\n",ch_id);
-//	printf(" cache.ID.text: %s\n",file_text);
-//	printf("horaUTCinicial: %li\n",horaUTCinicio);
-//	printf("   mostrar_img: %li\n",mostrar_img);
+//	printf("     channel_id: %s\n",ch_id);
+//	printf("  cache.ID.text: %s\n",file_text);
+//	printf("horaUTCparrilla: %li\n",horaUTCparrilla);
+//	printf("    mostrar_img: %li\n",mostrar_img);
 
    	/* Abrir fichero */
 	file=fopen(file_text,"rt");
@@ -56,12 +57,12 @@ int text2html(char *ch_id, char *file_text, long horaUTCinicio, long mostrar_img
 			if ( get_pgm(bf_in,&pgm1) ) {
 				/* Saltar primera linea */
 				if ( primerPase ) {
-					/* Comprobar comienzo programa mayor que horaUTCinicio */
-					if ( pgm0.date_utc >= horaUTCinicio ) {
+					/* Comprobar comienzo programa mayor que horaUTCparrilla */
+					if ( pgm0.date_utc >= horaUTCparrilla ) {
 						/* Sincronizar con parrilla general el primer programa del canal */
 						if ( ! sync_top ) {
 							/* Calcular duracion de la sincronizacion + ajuste */
-							duration=pgm0.date_utc-horaUTCinicio+seg_ajuste;
+							duration=pgm0.date_utc-horaUTCparrilla+seg_ajuste;
 							/* Altura celda ajuste */
 							height=(duration*PORCENTAJE_ALTURA)/100;
 							/* Calcular ajuste */
@@ -142,13 +143,15 @@ int text2html(char *ch_id, char *file_text, long horaUTCinicio, long mostrar_img
 							fprintf(stdout,"%s\n",html);
 
 							/* Si el programa es muuuuy largo (más de 4 horas), ponemos la info 2 veces (a petición de Shark) */
-//							printf("duration: %i\n",duration);
 							if ( duration >= 14400 ) {
 								/* Separacion */
-								fprintf(stdout,"\t\t<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>");
-								if ( duration >= 18000 ) fprintf(stdout,"<br><br><br><br><br>");
-								if ( duration > 36000 ) fprintf(stdout,"<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>");
+								sep=20;
+								if ( duration >= 18000 ) sep+=5;
+								if ( duration > 36000 ) sep+=25;
+								fprintf(stdout,"\t\t");
+								for(n=1;n<=sep;n++) fprintf(stdout,"<br>");
 								fprintf(stdout,"\n");
+
 								/* Repetir contenido celda */
 								fprintf(stdout,"%s\n",html);
 							}
@@ -163,18 +166,6 @@ int text2html(char *ch_id, char *file_text, long horaUTCinicio, long mostrar_img
 
 				/* Guardar datos programa anterior */
 				memcpy(&pgm0,&pgm1,sizeof(pgm_sincro));
-
-				/* Generar xml resultado */
-/*				fprintf(stdout,"<PROGRAM id=\"%i\" pid=\"%08X%08X\" chid=\"%s\">\n", \
-					pgm.pid,pgm.pidcid1,pgm.pidcid2,ch_id);
-				fprintf(stdout,"\t<TITLE>%s</TITLE>\n",pgm.titulo);
-				fprintf(stdout,"\t<SUBTITLE>%s</SUBTITLE>\n",pgm.subtitulo);
-				fprintf(stdout,"\t<LONG>%i</LONG>\n",pgm.ix_long);
-				fprintf(stdout,"\t<IMAGE>%s</IMAGE>\n",pgm.imagen);
-				fprintf(stdout,"\t<DATE>%s</DATE>\n",pgm.date_str);
-				fprintf(stdout,"\t<DATE_UTC>%i</DATE_UTC>\n",pgm.date_utc);
-				fprintf(stdout,"\t<DATE_FIN></DATE_FIN>\n");
-				fprintf(stdout,"</PROGRAM>\n");*/
 			}
 		}
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-# pepper, (c) Grupo SIESTA, 03-04-2007
+# pepper, jotabe, (c) Grupo SIESTA, 26-09-2007
 #
 # Genera fichero cache de programa actual
 
@@ -13,6 +13,7 @@ LCK_PGMACTUAL=${Cache}/cache.pgmactual.generating
 LOG=${Cache}/cache.pgmactual.log
 ERR=${Cache}/cache.pgmactual.err
 CACHE_FILE=${Cache}/cache.pgmactual.xml
+now=`date +%s`
 
 # Comprobar marcas de generacion de cache XML y programa actual
 [ -f ${LCK_SINCRO} -o -f ${LCK_PGMACTUAL} ] && exit -1
@@ -22,7 +23,8 @@ touch ${LCK_PGMACTUAL}
 
 # Log del proceso
 utc_inicio=`date +%s`
-echo "`date` Inicio generación XML de Programa Actual [host: `hostname`]" > $LOG
+echo "`date` Inicio generación XML de Programa Actual [host: `hostname`], [Hora UTC: $now]" > $LOG
+echo -n "" > $ERR
 
 # Obtenemos lista de canales
 source gen-lista-canales.shi
@@ -39,11 +41,26 @@ for Sincrofile in $ListaCanales; do
 
 		# Comprobar generacion de caché de canal
 		if [ ! -f ${CHANNEL_CACHE}.generating ]; then
-			# Log del proceso
-			printf "`date` Canal [%3s]: Fichero datos -> ${CHANNEL_CACHE}.text\n" "$chID" >> $LOG
+			# Obtener datos canal
+			mapping=`grep ":${chID}:" ${Cache}/info_channels.txt | head -1`
+			cid=`echo "$mapping" | cut -d":" -f2`
+			chName=`echo "$mapping" | cut -d":" -f4`
+			numChannel=`echo "$mapping" | cut -d":" -f1`
 
-			# Obtener datos de canal de fichero .text
-			source ./pgact-text.shi $Sincrofile ${CHANNEL_CACHE}.text ${CACHE_FILE}.temp >> $LOG 2>> $ERR
+			# Log del proceso
+			printf "`date` Canal [%3s]: text->programa_actual" "$chID" >> $LOG
+
+			# Obtener programa actual de fichero .text
+			echo "<CHANNEL cid=\"$cid\" id=\"${chID}\" name=\"$chName\" file=\"$1\" numChannel=\"$numChannel\">" >> ${CACHE_FILE}.temp
+			www-tools text2pgact ${chID} ${CHANNEL_CACHE}.text ${now} >> ${CACHE_FILE}.temp 2>> $ERR
+			ST_text2pgact=$?
+			echo "</CHANNEL>" >> ${CACHE_FILE}.temp
+			if [ $ST_text2pgact -ne 0 ]; then
+				echo " <b>ERROR</b>" >> $LOG
+			else
+				# Resultado generacion OK
+				echo " = OK" >> $LOG
+			fi
 		fi
 	fi
 done

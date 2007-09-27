@@ -9,8 +9,8 @@
 /* Instruuciones de uso */
 void get_epg_long_uso(void){
 	fprintf(stderr,"get-epg-long EPGLong_ID.txt Desplazamiento\n");
-	fprintf(stderr,"    EPGLong_ID.txt -> Fichero de descripciones largas\n");
-	fprintf(stderr,"    Desplazamiento -> Desplazamiento en bytes del inicio de la descripcion\n");
+	fprintf(stderr,"    EPGLong_ID.txt  -> Fichero de descripciones largas\n");
+	fprintf(stderr,"    Desplazamiento  -> Desplazamiento en bytes del inicio de la descripcion\n");
 }
 
 /* Funcion get_epg_long */

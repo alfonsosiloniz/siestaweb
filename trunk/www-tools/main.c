@@ -8,6 +8,7 @@
 #include "db2text.h"
 #include "text2xml.h"
 #include "text2html.h"
+#include "text2pgact.h"
 
 /* Definiciones globales */
 char *DiaSemana[]={"Dom","Lun","Mar","Mie","Jue","Vie","Sab"};
@@ -108,6 +109,18 @@ int main(int argc, char *argv[]){
 				fprintf(stderr,"Uso: ");
 				text2html_uso();
 			}
+		} else if ( ! strcasecmp(func,"text2pgact") ) {
+			/* Funcion text2pgact */
+			resultado=-2;
+			if ( num_par == 3 ) {
+				/* Ejecutar funcion */
+				resultado=text2pgact(par1,par2,strtol(par3,NULL,0));
+			} else {
+				/* Error parametros funcion */
+				print_version();
+				fprintf(stderr,"Uso: ");
+				text2pgact_uso();
+			}
 		} else {
 			print_version();
 			print_uso();
@@ -128,6 +141,8 @@ int main(int argc, char *argv[]){
 		fprintf(stderr,"\n");
 		text2html_uso();
 		fprintf(stderr,"\n");
+		text2pgact_uso();
+		fprintf(stderr,"\n");
 	}
 
 	/* Final y resultado */
@@ -140,7 +155,7 @@ int main(int argc, char *argv[]){
 
 /* Imprimir version aplicacion */
 void print_version(){
-	fprintf(stderr,"www-tools v1.02 (2007-09-19)\n\n");
+	fprintf(stderr,"www-tools v1.10 (2007-09-26)\n\n");
 }
 
 /* Imprimir uso de aplicacion */

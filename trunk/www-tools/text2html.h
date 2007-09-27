@@ -13,7 +13,7 @@
 
 /* Declaracion funciones */
 void	text2html_uso	(void);
-int		text2html		(char *ch_id, char *file_text, long horaUTCinicio, long mostrar_img);
+int		text2html		(char *ch_id, char *file_text, long horaUTCparrilla, long mostrar_img);
 
 
 #endif

@@ -10,8 +10,8 @@
 /* Instruuciones de uso */
 void text2xml_uso(void){
 	fprintf(stderr,"text2xml channel_id cache.ID.text\n");
-	fprintf(stderr,"    channel_id     -> Identificador de canal\n");
-	fprintf(stderr,"    cache.ID.text  -> Fichero de datos de sincroguia (.text)\n");
+	fprintf(stderr,"    channel_id      -> Identificador de canal\n");
+	fprintf(stderr,"    cache.ID.text   -> Fichero de datos de sincroguia (.text)\n");
 }
 
 /* Funcion text2xml */

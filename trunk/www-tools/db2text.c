@@ -10,7 +10,7 @@
 /* Instruuciones de uso */
 void db2text_uso(void){
 	fprintf(stderr,"db2text IO_ID.db\n");
-	fprintf(stderr,"    IO_ID.db       -> Fichero de datos de sincroguia (.db)\n");
+	fprintf(stderr,"    IO_ID.db        -> Fichero de datos de sincroguia (.db)\n");
 }
 
 /* Funcion db2text */
