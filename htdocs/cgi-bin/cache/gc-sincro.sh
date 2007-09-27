@@ -1,5 +1,5 @@
-#!/bin/bash 
-# pepper, (c) Grupo SIESTA, 03-04-2007
+#!/bin/bash
+# pepper, jotabe, (c) Grupo SIESTA, 26-09-2007
 #
 # Generacion de cache de todos los canales
 # $1 Lista opcional de canales a actualizar (formato TV3:TV1:...: / siempre termina con ":")
@@ -11,8 +11,6 @@ renice 20 $$ > /dev/null
 # Obtener parametros
 numParams=$#
 params=$1
-# numParams=1
-# params="TV1:La2:A3:C4:"
 
 # Configurar entorno
 source ../www-setup.shi
@@ -37,7 +35,6 @@ else
 	fi
 fi
 
-
 # Log del proceso
 utc_inicio=`date +%s`
 echo "`date` Inicio generación XML de Sincroguía [host: `hostname`], [Hora UTC parrilla: $horaUTCparrilla]" > $LOG
@@ -52,32 +49,11 @@ for Sincrofile in $ListaCanales; do
 	chID=`echo "$Sincrofile" | cut -d"_" -f2 | cut -d"." -f1`
 
 	# Comprobar si canal esta en la lista de canales a generar
-	if [ $numParams -eq 1 ]; then
-		# Si solo se actualizan algunos canales, no actualizamos la parrilla, puesto que se pintaría mal
-# 		horaUTCparrilla="-1"
-		# Buscar en lista de canales
-		found=`echo $params | grep "$chID:" | wc -l`
-	else
-		found=1
-	fi
+	found=1
+	[ $numParams -eq 1 ] && found=`echo $params | grep "$chID:" | wc -l`
 
 	# Generar cache
-	if [ $found -eq 1 ]; then
-		# Copia temporal de sincroguia
-# 		cp $Sincrofile /tmp/`basename $Sincrofile` >> $LOG 2>> $ERR
-
-		# Extraer datos
-# 		if [ $? -eq 0 -a -f /tmp/`basename $Sincrofile` ]; then
-# 			./gc-sincro-ch.sh /tmp/`basename $Sincrofile` $horaUTCparrilla >> $LOG 2>> $ERR
-# 		fi
-
-# 		if [ -f $Sincrofile ]; then
-			./gc-sincro-ch.sh $Sincrofile $horaUTCparrilla >> $LOG 2>> $ERR
-# 		fi
-
-		# Eliminar temporales
-# 	    rm -f /tmp/`basename $Sincrofile`
-	fi
+	[ $found -eq 1 ] && ./gc-sincro-ch.sh $Sincrofile $horaUTCparrilla >> $LOG 2>> $ERR
 done
 
 # Eliminar marcas de generacion de cache XML

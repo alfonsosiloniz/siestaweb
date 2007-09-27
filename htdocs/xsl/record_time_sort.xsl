@@ -60,7 +60,6 @@
 						<th class="fila" align="left">&#160;</th>
 						<th class="fila" align="left">&#160;</th>
 						<th class="fila" align="left">&#160;</th>
-						<th class="fila" align="left">&#160;</th>
 					</tr>
 					<xsl:for-each select="M750/RECORDINGS/RECORD">
 						<xsl:sort select="UTC_TIME" order="descending" />
@@ -119,10 +118,24 @@
 										<img src="/img/skin/Record_rot.png" alt="En grabación" width="20" height="20" border="0" />
 									</xsl:when>
 									<xsl:when test="REC_STATE='3'">
-										<img src="/img/skin/Icon_record_OK.png" alt="Grabación correcta" width="20" height="20" border="0" />
+										<xsl:choose>
+											<xsl:when test="PLAYBACK_TS='0'">
+												<img src="/img/skin/Icon_record_OK.png" alt="Grabación correcta" width="20" height="20" border="0" />
+											</xsl:when>
+											<xsl:otherwise>
+												<img src="/img/skin/Icon_record_OK_played.png" alt="Grabación correcta con visionado" width="20" height="20" border="0" />
+											</xsl:otherwise>
+										</xsl:choose>
 									</xsl:when>
 									<xsl:when test="REC_STATE='4'">
-										<img src="/img/skin/Icon_record_error.png" alt="Grabación erronea" width="20" height="20" border="0" />
+										<xsl:choose>
+											<xsl:when test="PLAYBACK_TS='0'">
+												<img src="/img/skin/failed_icon.png" alt="Grabación erronea" width="20" height="20" border="0" />
+											</xsl:when>
+											<xsl:otherwise>
+												<img src="/img/skin/failed_icon_played.png" alt="Grabación erronea con visionado" width="20" height="20" border="0" />
+											</xsl:otherwise>
+										</xsl:choose>
 									</xsl:when>
 									<xsl:otherwise>&#160;</xsl:otherwise>
 								</xsl:choose>
@@ -141,15 +154,7 @@
 							<td class="fila">
 								<xsl:choose>
 									<xsl:when test="IMPORTANT='1'">
-										<img src="/img/skin/Icon_record_locked.png" alt="Grabación protegida" width="20" height="20" border="0" />
-									</xsl:when>
-									<xsl:otherwise>&#160;</xsl:otherwise>
-								</xsl:choose>
-							</td>
-							<td class="fila">
-								<xsl:choose>
-									<xsl:when test="PLAYBACK_TS!='0'">
-										<img src="/img/Icon_with_playback_mark.png" alt="Grabación con visionado" width="20" height="20" border="0" />
+										<img src="/img/skin/important_icon.png" alt="Grabación protegida" width="20" height="20" border="0" />
 									</xsl:when>
 									<xsl:otherwise>&#160;</xsl:otherwise>
 								</xsl:choose>
