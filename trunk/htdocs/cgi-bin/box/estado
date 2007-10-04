@@ -23,7 +23,7 @@ fi
 html_doc_start "M750T - Estado del box" "" "-a----bm"
 
 # Respuesta html
-html_top "Estado del box" "" ""
+html_top "Estado del box" "" "" ""
 
 # 2ª barra de botones y desplegable de acciones
 echo "				<br>

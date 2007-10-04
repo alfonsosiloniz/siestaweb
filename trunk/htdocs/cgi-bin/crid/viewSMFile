@@ -15,7 +15,7 @@ action="view"
 flags="-ev-"
 
 # Enviar documento html
-print_top ${FICHERO} ${flags}
+print_top ${FICHERO} ${flags} ""
 echo "			<tr>"
 echo "				<td class=\"fila\">"
 print_actions

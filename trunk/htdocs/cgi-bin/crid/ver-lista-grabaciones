@@ -39,7 +39,7 @@ else
 	html_doc_start "M750T - Grabaciones Realizadas" "" "------b-"
 
 	# Respuesta html
-	html_top "Grabaciones Realizadas" "" ""
+	html_top "Grabaciones Realizadas" "" "" ""
 	echo "			<br>
 			<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">
 				<tr>

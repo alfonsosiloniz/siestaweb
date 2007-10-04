@@ -85,7 +85,7 @@ function mostrarXMLRespuesta(xmldoc) {
 }"
 
 # Respuesta html
-html_top "Ver LiveTV" "init();" "/cgi-bin/box/verTvLive"
+html_top "Ver LiveTV" "init();" "/cgi-bin/box/verTvLive" ""
 
 # Respuesta html
 echo "		<br>

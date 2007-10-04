@@ -11,30 +11,10 @@
 # Este script es incluido desde otros, no debe invocarse directamente
 
 #--------------------------------------------------
-# Imprimir acciones
-#--------------------------------------------------
-function print_actions() {
-	# Separador
-	echo "<p>"
-	# Accion view
-	[ $action != view -a ${flags/*v*/ok} == ok ] && echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?view\">VIEW</a>]"
-	# Accion hexdump
-	[ $action != hexdump ] && echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?hexdump\">HEXDUMP</a>]"
-	# Accion edit si tamaño fichero es menor de 50000
-	if [ $action != edit -a ${flags/*e*/ok} == ok ]; then
-		info=(`ls -l "$PATH_INFO"`)
-		[ ${info[4]} -le 50000 ] && echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?edit\">EDIT</a>]"
-	fi
-	# Accion download
-	echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?send\">DOWNLOAD</a>]"
-	# Separador
-	echo "</p>"
-}
-
-#--------------------------------------------------
 # Enviar comienzo pagina
 # $1 Titulo
 # $2 Flags
+# $3 Funcion form action (post)
 #--------------------------------------------------
 function print_top() {
     #html_begin "$1"
@@ -46,7 +26,15 @@ function print_top() {
 	# Respuesta html
 	onload=""
 	[ "Z$alert" != "Z"  ] && onload="alert('$alert');"
-	html_top "Explorador de archivos: $1" $onload ""
+
+	# Funcion form action
+	if [ "Z$3" = "Z"  ]; then
+		html_top "Explorador de archivos: $1" "$onload" "" ""
+	else
+		html_top "Explorador de archivos: $1" "$onload" "$3" "post"
+	fi
+
+	# Comienzo tabla
 	echo "		<br>
 		<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\" class=\"borderTabla2\">
 			<tr>
@@ -86,6 +74,27 @@ function print_top() {
 	fi
 	echo "				</td>"
 	echo "			</tr>"
+}
+
+#--------------------------------------------------
+# Imprimir acciones
+#--------------------------------------------------
+function print_actions() {
+	# Separador
+	echo "<p>"
+	# Accion view
+	[ $action != view -a ${flags/*v*/ok} == ok ] && echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?view\">VIEW</a>]"
+	# Accion hexdump
+	[ $action != hexdump ] && echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?hexdump\">HEXDUMP</a>]"
+	# Accion edit si tamaño fichero es menor de 50000
+	if [ $action != edit -a ${flags/*e*/ok} == ok ]; then
+		info=(`ls -l "$PATH_INFO"`)
+		[ ${info[4]} -le 50000 ] && echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?edit\">EDIT</a>]"
+	fi
+	# Accion download
+	echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?send\">DOWNLOAD</a>]"
+	# Separador
+	echo "</p>"
 }
 
 #--------------------------------------------------
