@@ -29,7 +29,7 @@ cmd=${line// *}
 html_doc_start "M750T - Ejecución de comandos" "" "------b-"
 
 # Respuesta html
-html_top "Ejecución de comandos" "" ""
+html_top "Ejecución de comandos" "" "" ""
 echo "				<br>
 				<table width=\"90%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
 					<tr>

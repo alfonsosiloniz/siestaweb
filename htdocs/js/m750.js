@@ -107,7 +107,7 @@ function reloadDelayed() {
 // Generar cache programa actual
 //-------------------------------------------------
 function actCachePgmAct() {
-	if (confirm("La generación de la cache del programa actual tarda unos 2 minutos.\n\n¿Confirma la actualización de dicha caché?")) {
+	if (confirm("La generación de la caché del programa actual tarda unos 30 segundos.\n\n¿Confirma la actualización de dicha caché?")) {
 		makeRequest("/cgi-bin/cache/bg-gc-pgmactual.sh?" + new Date().getTime(), "noReply");
 		alert("Se ha mandado la petición de actualización de la caché del programa actual.\n\nSigue el proceso en la página de estado de la aplicación.");
 		document.location.href="/cgi-bin/box/estado?id_log=log_pgmactual";
@@ -118,7 +118,7 @@ function actCachePgmAct() {
 // Generar cache sincroguia
 //-------------------------------------------------
 function actCacheCanales() {
-	if (confirm("La generación de la cache de los canales tarda unos 50 minutos.\n\n¿Confirma la actualización de dicha caché?")) {
+	if (confirm("La generación de la caché de los canales tarda unos 2 minutos.\n\n¿Confirma la actualización de dicha caché?")) {
 		makeRequest("/cgi-bin/cache/bg-gc-sincro.sh?" + new Date().getTime(), "noReply");
 		alert("Se ha mandado la petición de actualización de la caché de los canales.\n\nSigue el proceso en la página de estado de la aplicación.");
 		document.location.href="/cgi-bin/box/estado?id_log=log_cache_sincro";
@@ -129,7 +129,7 @@ function actCacheCanales() {
 // Descargar imagenes sincroguia
 //-------------------------------------------------
 function downloadSincroImg() {
-	if (confirm("El proceso de descarga de las imágenes tarda unos 6 minutos.\n\n¿Confirma la descarga de las imágenes de la sincroguia?")) {
+	if (confirm("El proceso de descarga de las imágenes tarda unos 5 minutos.\n\n¿Confirma la descarga de las imágenes de la sincroguia?")) {
 		makeRequest("/cgi-bin/box/bg-getsincroimg?" + new Date().getTime(), "noReply");
 		alert("Se ha mandado la petición de Descarga.\n\nSigue el proceso en la página de estado de la aplicación.");
 		document.location.href="/cgi-bin/box/estado?id_log=log_getsincroimg";

@@ -23,7 +23,7 @@ touch ${LCK_PGMACTUAL}
 
 # Log del proceso
 utc_inicio=`date +%s`
-echo "`date` Inicio generación XML de Programa Actual [host: `hostname`], [Hora UTC: $now]" > $LOG
+echo "`date` Inicio generación XML de Programa Actual [host: `hostname`]" > $LOG
 echo -n "" > $ERR
 
 # Obtenemos lista de canales

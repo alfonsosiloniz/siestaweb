@@ -70,19 +70,24 @@ function html_doc_start() {
 # $1 Titulo
 # $2 Funcion boby onload
 # $3 Funcion form action
+# $4 Form action (get/post)
 #--------------------------------------------------
 function html_top() {
 	# Funcion body onload
-	if [ "Z$2" != "Z"  ]; then
-		echo "<body bgcolor=\"#FFFFFF\" onload=\"${2}\">"
-	else
+	if [ "Z$2" = "Z"  ]; then
 		echo "<body bgcolor=\"#FFFFFF\">"
+	else
+		echo "<body bgcolor=\"#FFFFFF\" onload=\"${2}\">"
 	fi
 	# Funcion form action
-	if [ "Z$3" != "Z"  ]; then
-		echo "<form name=\"form_m750\" method=\"get\" action=\"${3}\">"
-	else
+	if [ "Z$3" = "Z"  ]; then
 		echo "<form name=\"form_m750\" method=\"get\">"
+	else
+		if [ "Z$4" = "Zpost"  ]; then
+			echo "<form name=\"form_m750\" method=\"post\" action=\"${3}\">"
+		else
+			echo "<form name=\"form_m750\" method=\"get\" action=\"${3}\">"
+		fi
 	fi
 	# Tabla principal
 	echo "	<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">

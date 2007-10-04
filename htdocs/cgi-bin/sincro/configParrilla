@@ -21,7 +21,7 @@ function guardar() {
 }"
 
 # Respuesta html
-html_top "Configuración de Parrilla de Sincroguía" "" "/cgi-bin/sincro/saveConfigParrilla"
+html_top "Configuración de Parrilla de Sincroguía" "" "/cgi-bin/sincro/saveConfigParrilla" ""
 echo "			<br>
 			<table width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"0\" align=\"center\">
 				<tr>
