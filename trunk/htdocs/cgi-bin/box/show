@@ -68,7 +68,7 @@ function hexdump() {
 }
 
 #--------------------------------------------------
-# Accion hexdump
+# Accion send
 # $1 flags
 # $2 mime-type
 # $3 view-cmd
@@ -112,7 +112,8 @@ function edit() {
 }
 
 #--------------------------------------------------
-
+# Accion write, datos fichero en POST
+#--------------------------------------------------
 function write() {
 	sed -e 's/text=//;s/%0D//g' | ./post2iso > "${PATH_INFO}"
 	# Si el fichero está bajo /var/etc, llamamos tambien a /sbin/flash_archive, para grabar los cambios en la flash
@@ -122,7 +123,16 @@ function write() {
 		/sbin/flash_archive write ${PATH_INFO} >> /tmp/flash_archive.log 2>> /tmp/flash_archive.log
 		alert="Los cambios del fichero ${PATH_INFO} se han grabado de forma persistente en FlashRAM"
 	fi
-	view $*
+
+	# Enviar redireccion html para accion view
+	http_header
+	echo "<html>
+	<head>
+		<script type=\"text/javascript\">
+			document.location.href=\"$SCRIPT_NAME$PATH_INFO?view\"
+		</script>
+	</head>
+	</html>"
 }
 
 #--------------------------------------------------
@@ -220,6 +230,7 @@ else
 	*.crontab)		$action -ev-	text/plain				cat			;;
 	*.sh)			$action -ev-	text/plain				cat			;;
 	*.cfg)			$action -ev-	text/plain				cat			;;
+	*.log)			$action -ev-	text/plain				cat			;;
 	*.wav)			$action ----	audio/x-wav							;;
 	*.wsw)			$action ----	application/x-wsw					;;
 	*.zip)			$action ----	application/zip						;;

@@ -33,12 +33,12 @@ source gen-lista-canales.shi
 echo -n "" > ${CACHE_FILE}.temp
 
 # Recorremos lista de canales
-for Sincrofile in $ListaCanales; do
-	if [ -f $Sincrofile ]; then
-		# Obtener identificador de canal
-		chID=`echo $Sincrofile | cut -d"_" -f2 | cut -d"." -f1`
-		CHANNEL_CACHE=${Cache}/cache.$chID
+for chID in $ListachIDs; do
+	# Obtener cache de canal
+	CHANNEL_CACHE=${Cache}/cache.$chID
 
+	# Comprobar cache de canal
+	if [ -f ${CHANNEL_CACHE}.text ]; then
 		# Comprobar generacion de caché de canal
 		if [ ! -f ${CHANNEL_CACHE}.generating ]; then
 			# Obtener datos canal
