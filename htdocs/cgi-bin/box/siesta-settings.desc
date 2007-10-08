@@ -65,7 +65,7 @@ para ejecutar otro script.
 
 
 #PARAMETRO: SIESTA_OPCIONES_KEYCONTROL str
-SIESTA_OPCIONES_KEYCONTROL = 
+SIESTA_OPCIONES_KEYCONTROL =
 
 Opciones a pasar como parametros al script siesta-key-control.
 Podemos usar las siguientes opciones:
@@ -238,6 +238,41 @@ sincroguía en el caché.
 SIESTA_CACHE_XML_ARRANQUE = si
 
 Controla la generación de ficheros XML en el arranque.
+
+
+#PARAMETRO: SIESTA_CACHE_TIME_FULL str
+SIESTA_CACHE_TIME_FULL =
+
+Hora y minuto de la generación completa de ficheros XML. Se debe
+utilizar el formato de tareas cron, en horario UTC. Por ejemplo
+para ejecutar la generación a las 05:30 (verano) se debe poner:
+
+30 3 * * *
+
+Dejando este parámetro vacio se usará la hora REBOOT_START de
+LCK.cfg más 15 minutos.
+
+
+#PARAMETRO: SIESTA_CACHE_TIME_UPDATE str
+SIESTA_CACHE_TIME_UPDATE =
+
+Hora y minuto de la actualización de ficheros XML. Como en el
+parámetro anterior se debe utilizar el formato de tareas cron.
+Dejando este parámetro vacio se usarán las siguientes horas:
+04:52, 08:52, 10:52, 12:52, 14:52, 16:52,
+18:52, 19:52, 20:52, 21:52, 22:52 y  23:52
+
+
+#PARAMETRO: SIESTA_CACHE_LIST_UPDATE str
+SIESTA_CACHE_LIST_UPDATE =
+
+Lista de canales para la actualización de ficheros XML. Se debe
+utilizar ':'' para separar los canales y tambien al final, por
+ejemplo:
+
+:TV1:La2:A3:C4:T5:La6:
+
+Dejando este parámetro vacio se actualizarán todos los canales.
 
 
 #PARAMETRO: SIESTA_MOSTRAR_MINI_IMG key si no

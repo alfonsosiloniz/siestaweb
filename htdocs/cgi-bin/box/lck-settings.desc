@@ -141,6 +141,33 @@ Controla la gestión de datos de EPG para aquellos canales que no
 tienen Sincroguia.
 
 
+#PARAMETRO: TIME_CHANNELS str
+TIME_CHANNELS TV1,La2,C4,La6,T5,A3
+
+Lista de canales para la sincronización horaria en el arranque
+del gigaset.
+
+
+#PARAMETRO: PIP_SIZE num
+PIP_SIZE 240
+
+Anchura ventana PIP.
+
+
+#PARAMETRO: PIP_COLOR str
+PIP_COLOR 255,255,0,128
+
+Color del marco de la vantana PIP sin grabacion en curso.
+Valores de componentes ROJO, VERDE, AZUL Y TRANSPARENCIA.
+
+
+#PARAMETRO: PIP_RECORDING str
+PIP_RECORDING 255,255,0,128
+
+Color del marco de la vantana PIP con grabacion en curso.
+Valores de componentes ROJO, VERDE, AZUL Y TRANSPARENCIA.
+
+
 #PARAMETRO: UPLOAD_START time
 UPLOAD_START 7200
 
