@@ -1,6 +1,6 @@
 #!/bin/bash
 # Martin Ostermann, 2005-08-21
-# pepper, (c) Grupo SIESTA, 28-03-2007
+# pepper, jotabe, (c) Grupo SIESTA, 16-10-2007
 # Modificado por phosy para devolver el espacio libre en disco, 06-05-2007
 #
 # Devolver informacion de lista de ficheros crid
@@ -10,6 +10,7 @@
 
 # Obtener parametros
 Recordings=$1
+# Recordings=/usb/old
 crid_class=$2
 
 # Configurar entorno
@@ -46,7 +47,8 @@ if [ -d $Recordings ]; then
 		Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
 		if [ $Cridfile -nt $Cachefile ] ; then
 			# Procesar fichero crid
-			source ./crid2var.shi $Cridfile
+# 			source ./crid2var.shi $Cridfile
+			eval `www-tools crid2var ${Cridfile}`
 
 			# Calcular espacio usado en grabaciones
 			if [ "$crid_class" = "RECORDINGS" ]; then

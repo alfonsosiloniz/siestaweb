@@ -1,6 +1,6 @@
 #!/bin/bash 
 # Martin Ostermann, 2005-08-21
-# pepper, (c) Grupo SIESTA, 25-04-2007
+# pepper, jotabe, (c) Grupo SIESTA, 16-10-2007
 #
 # Devolver informacion de fichero crid
 # $1 Fichero .crid
@@ -11,13 +11,15 @@ Cridfile=$1
 # Configurar entorno
 source ../www-setup.shi
 
-# Obtener datos canal
+# Obtener datos canal (numChannel, cid, chID, chName)
 file=`basename $Cridfile .crid`
 cid=${file: -5}
-chName=`grep :${cid}: ${Cache}/info_channels.txt | head -1 | cut -d":" -f4`
+# chName=`grep :${cid}: ${Cache}/info_channels.txt | head -1 | cut -d":" -f4`
+eval `www-tools infoID ${cid} ${Cache}/info_channels.txt`
 
 # Procesar fichero crid
-source ./crid2var.shi $Cridfile
+# source ./crid2var.shi $Cridfile
+eval `www-tools crid2var ${Cridfile}`
 
 # Volcar datos xml
 echo "<CHANNEL_NAME>$chName</CHANNEL_NAME>

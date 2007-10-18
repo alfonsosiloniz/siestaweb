@@ -18,8 +18,8 @@ void text2xml_uso(void){
 int text2xml(char *ch_id, char *file_text){
 	int resultado;
 	FILE *file;
-	char bf_in[LON_BUF_PGM+1];	/* Linea datos programa sin procesar */
-	pgm_sincro pgm;				/* Datos programa */
+	BYTE bf_in[LBF_PGM+1];	/* Linea datos programa sin procesar */
+	pgm_sincro pgm;			/* Datos programa */
 
 	/* Inicializar variables */
 	resultado=-3;
@@ -34,7 +34,7 @@ int text2xml(char *ch_id, char *file_text){
 	} else {
 		/* Recorrer datos */
 //		fgets(bf_in,LON_BUF_PGM,file); {	// Solo primera linea para pruebas
-		while ( fgets(bf_in,LON_BUF_PGM,file) != NULL ) {
+		while ( fgets(bf_in,LBF_PGM,file) != NULL ) {
 			/* Eliminar LF al final de la linea */
 			eliminarLF(bf_in);
 

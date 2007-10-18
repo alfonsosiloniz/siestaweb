@@ -68,7 +68,7 @@ if [ $found -eq 1 ]; then
 		<SERIE>$serieFlag</SERIE>"
 
 	# Procesar fichero crid
-	./crid2xml $Cridfile
+	./crid2xml.sh $Cridfile
 else
 	# Error identificador no encontrado
 	echo "		<ERROR>La grabación pendiente con identificador $Recording no se encuentra.</ERROR>"

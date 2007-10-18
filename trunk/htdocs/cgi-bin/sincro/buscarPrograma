@@ -17,21 +17,21 @@ fi
 source ../www-setup.shi
 source ../fweb.shi
 LOG=/tmp/search.log
+SORT_CHIDS=${Cache}/sort_chIDs.txt
 SEARCH_RESULT=${Cache}/search_result.txt
 
 # Log de busqueda actual
 query=`echo $search | sed -e 's/%20/ /g'`
 echo "`date` \"$query\"" >> $LOG
 
-# Obtenemos lista de canales
-source gen-lista-canales.shi
-
-# Recorremos lista de canales
+# Recorrer lista de canales
 echo -n "" > $SEARCH_RESULT
-for chID in `cat ${Cache}/info_channels.txt | cut -d":" -f3`; do
-	# Buscar en fichero .text
-	grep -H -i "$query" ${Cache}/cache.${chID}.text >> $SEARCH_RESULT
-done
+if [ -f $SORT_CHIDS ]; then
+	for chID in `cat $SORT_CHIDS`; do
+		# Buscar en fichero .text
+		grep -H -i "$query" ${Cache}/cache.${chID}.text >> $SEARCH_RESULT
+	done
+fi
 
 # Comprobar directorio de imagenes de sincroguia en carpeta de grabaciones
 if [ -d $SERVER_ROOT/img/epg/ ]; then

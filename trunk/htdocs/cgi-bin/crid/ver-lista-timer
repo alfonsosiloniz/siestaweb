@@ -4,5 +4,5 @@
 # Devolver grabaciones pendientes
 
 # Procesar carpeta .timer
-./lista-crid2xml /data/.timer TIMER timer.xsl
-# ./lista-crid2xml /var/cache TIMER timer.xsl
+./lista-crid2xml.sh /data/.timer TIMER timer.xsl
+# ./lista-crid2xml.sh /var/cache TIMER timer.xsl

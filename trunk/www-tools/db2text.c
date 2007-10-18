@@ -17,13 +17,13 @@ void db2text_uso(void){
 int db2text(char *file_db){
 	int resultado;
 	FILE *file;
-	int totalBytes;				/* Tamaño fichero db */
-	int pos;					/* Posicion de lectura en fichero */
-	int bytesPgm;				/* Tamaño datos programa */
-	int posPgm;					/* Posicion de lectura en programa */
-	BYTE bf_in[LON_BUF_PGM];	/* Datos programa sin procesar */
-	char txt[LON_BUF_TXT+1];	/* Buffer texto para sanear */
-	pgm_sincro pgm;				/* Datos programa */
+	int totalBytes;			/* Tamaño fichero db */
+	int pos;				/* Posicion de lectura en fichero */
+	int bytesPgm;			/* Tamaño datos programa */
+	int posPgm;				/* Posicion de lectura en programa */
+	BYTE bf_in[LBF_PGM];	/* Datos programa sin procesar */
+	BYTE txt[LBF_TXT+1];	/* Buffer texto para sanear */
+	pgm_sincro pgm;			/* Datos programa */
 
 	/* Inicializar variables */
 	resultado=-3;
@@ -47,7 +47,7 @@ int db2text(char *file_db){
 			pos+=4;
 
 			/* Comprobar si datos programa caben en buffer */
-			if ( bytesPgm > LON_BUF_PGM ) break;
+			if ( bytesPgm > LBF_PGM ) break;
 			/* Leer datos programa */
 			fread(bf_in,1,bytesPgm,file);
 
@@ -62,23 +62,23 @@ int db2text(char *file_db){
 			posPgm=20;
 			pgm.bytesTitulo=x1(bf_in+posPgm);
 			/* Comprobar si titulo cabe en el buffer */
-			if ( pgm.bytesTitulo > LON_BUF_TXT ) break;
+			if ( pgm.bytesTitulo > LBF_TXT ) break;
 			strncpy(txt,bf_in+posPgm+1,pgm.bytesTitulo);
 			txt[pgm.bytesTitulo]='\x00';
-			sanear_txt(txt,pgm.titulo,LON_BUF_TXT,FILTRO_CRLF);
+			sanear_txt(txt,pgm.titulo,LBF_TXT,FILTRO_CRLF);
             posPgm+=1+pgm.bytesTitulo;
 
 			pgm.bytesSubtitulo=x2(bf_in+posPgm);
 			/* Comprobar si subtitulo cabe en el buffer */
-			if ( pgm.bytesSubtitulo > LON_BUF_TXT ) break;
+			if ( pgm.bytesSubtitulo > LBF_TXT ) break;
 			strncpy(txt,bf_in+posPgm+2,pgm.bytesSubtitulo);
 			txt[pgm.bytesSubtitulo]='\x00';
-			sanear_txt(txt,pgm.subtitulo,LON_BUF_TXT,FILTRO_CRLF);
+			sanear_txt(txt,pgm.subtitulo,LBF_TXT,FILTRO_CRLF);
             posPgm+=2+pgm.bytesSubtitulo;
 
 			pgm.bytesImagen=x1(bf_in+posPgm);
 			/* Comprobar si imagen cabe en el buffer */
-			if ( pgm.bytesImagen > LON_BUF_TXT ) break;
+			if ( pgm.bytesImagen > LBF_TXT ) break;
 			strncpy(pgm.imagen,bf_in+posPgm+1,pgm.bytesImagen);
 			pgm.imagen[pgm.bytesImagen]='\x00';
             posPgm+=1+pgm.bytesImagen+1;
@@ -124,59 +124,4 @@ int db2text(char *file_db){
 	}
 
 	return resultado;
-}
-
-
-/**************************************/
-/*  Funciones internas                */
-/**************************************/
-
-/* Funcion x4 */
-LONG x4(void *p){
-	LONG tmp;
-
-	/* Leer int */
-	tmp=*(LONG *)p;
-
-	#ifdef MS_DOS
-	/* Convertir de mips a intel */
-	int b1,b2,b3,b4;
-
-	b1=(tmp&0xFF000000)>>24;
-	b2=(tmp&0x00FF0000)>>16;
-	b3=(tmp&0x0000FF00)>>8;
-	b4=(tmp&0x000000FF);
-	tmp=(((b4*256+b3)*256+b2)*256)+b1;
-	#endif
-
-	return tmp;
-}
-
-/* Funcion x2 */
-WORD x2(void *p){
-	WORD tmp;
-
-	/* Leer short */
-	tmp=*(WORD *)p;
-
-	#ifdef MS_DOS
-	/* Convertir de mips a intel */
-	int b1,b2;
-
-	b1=(tmp&0xFF00)>>8;
-	b2=(tmp&0x00FF);
-	tmp=(b2*256)+b1;
-	#endif
-
-	return tmp;
-}
-
-/* Funcion x1 */
-BYTE x1(void *p){
-	BYTE tmp;
-
-	/* Leer char */
-	tmp=*(BYTE *)p;
-
-	return tmp;
 }

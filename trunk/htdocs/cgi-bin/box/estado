@@ -29,11 +29,10 @@ html_top "Estado del box" "" "" ""
 echo "				<br>
 				<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
 					<tr>
-						<td width=\"40%\" align=\"left\">
+						<td width=\"30%\" align=\"left\">
 							<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
 								<tr height="64">
 									<script type=\"text/javascript\">
-										poner_boton(\"Programa<br>Actual\",       \"/img/pgmactual.gif\",    \"Actualizar caché de programa actual\",   \"javascript:actCachePgmAct();\"       );
 										poner_boton(\"Caché<br>Sincroguía\",      \"/img/cache_sincro.gif\", \"Actualizar caché de todos los canales\", \"javascript:actCacheCanales();\"      );
 										poner_boton(\"Imagenes<br>Sincroguía\",   \"/img/getsincroimg.gif\", \"Descargar imagenes de Sincroguía\",      \"javascript:downloadSincroImg();\"    );
 										poner_boton(\"Reload<br>root.crontab\",   \"/img/crontab.gif\",      \"Recargar root.crontab\",                 \"javascript:reloadCrontab();\"        );
@@ -45,9 +44,9 @@ echo "				<br>
 						</td>
 						<td width=\"50%\" align=\"center\">
 							Ver estado: <select name=\"id_log\" id=\"id_log\">
-								<option value=\"log_pgmactual\">Estado generación de caché de Programa Actual</option>
-								<option value=\"log_cache_sincro\">Estado generación de caché de todos los canales de la Sincroguía</option>
+								<option value=\"log_cache_sincro\">Generación de caché de Sincroguía</option>
 								<option value=\"log_getsincroimg\">Descargas de imágenes de Sincroguía</option>
+								<option value=\"log_pgmactual\">Log generación de Programa Actual</option>
 								<option value=\"log_crond\">Log Crond</option>
 								<option value=\"log_keycontrol\">Log Key-control</option>
 								<option value=\"log_synctime\">Log de sincronización de hora</option>
@@ -82,16 +81,31 @@ echo "				<br>
 
 # Procesar peticion
 	case $id_accion in
-		log_pgmactual )
-			print_log_file "Generación de caché de Programa Actual"                    "${Cache}/cache.pgmactual.log"
-			if [ -s ${Cache}/cache.pgmactual.err ]; then
-				print_log_file "Errores en generación de caché de Programa Actual"     "${Cache}/cache.pgmactual.err"
-			fi
-			;;
 		log_cache_sincro )
-			print_log_file "Generación de caché de todos los canales de la Sincroguía" "${Cache}/cache.sincro.log"
+			print_log_file "Generación de caché de Sincroguía"                         "${Cache}/cache.sincro.log"
 			if [ -s ${Cache}/cache.sincro.err ]; then
 				print_log_file "Errores en generación de caché de Sincroguía"          "${Cache}/cache.sincro.err"
+			fi
+			;;
+		log_getsincroimg )
+			print_log_file "Descargas de imágenes de Sincroguía"                       "/tmp/getsincroimg.log"
+			# Boton descarga images.txt
+			[ -s /tmp/images.txt ] && echo "					<tr>
+						<td  align=\"center\">
+							<br>
+							<input type=\"button\" value=\"Descargar images.txt\" class=\"txtInfo\" onclick=\"descargarImages()\">
+							<br>&nbsp;<br>
+						</td>
+					</tr>"
+			# Mostrar errores
+			if [ -s /tmp/getsincroimg.err ]; then
+				print_log_file "Errores en descarga de imágenes de Sincroguía"         "/tmp/getsincroimg.err"
+			fi
+			;;
+		log_pgmactual )
+			print_log_file "Log generación de Programa Actual"                         "${Cache}/cache.pgmactual.log"
+			if [ -s ${Cache}/cache.pgmactual.err ]; then
+				print_log_file "Errores en generación de Programa Actual"              "${Cache}/cache.pgmactual.err"
 			fi
 			;;
 		log_crond )
@@ -117,7 +131,11 @@ echo "				<br>
 		log_delete )
 			print_log_file "Borrado de grabaciones realizadas"                         "/tmp/delete_recording.log";;
 		log_checkdisk )
-			print_log_file "Chequeo de particiones del disco"                          "/tmp/checkdisk.log";;
+			print_log_file "Chequeo de particiones del disco"                          "/tmp/checkdisk.log"
+			if [ -s /tmp/checkdisk.err ]; then
+				print_log_file "Errores en chequeo de particiones del disco"           "/tmp/checkdisk.err"
+			fi
+			;;
 		log_cmd )
 			print_log_file "Comandos ejecutados"                                      "/tmp/cmd.log";;
 		log_RECORDER_LOG )
@@ -134,22 +152,6 @@ echo "				<br>
 			print_log_file "Configuración de Red (ifconfig)"                           "/dev/null"                "ifconfig";;
 		log_ps )
 			print_log_file "Procesos en ejecución (ps)"                                "/dev/null"                "./verProcesos";;
-		log_getsincroimg )
-			print_log_file "Descarga de imágenes de Sincroguía"                        "/tmp/getsincroimg.log"
-			# Boton descarga images.txt
-			[ -s /tmp/images.txt ] && echo "					<tr>
-						<td  align=\"center\">
-							<br>
-							<input type=\"button\" value=\"Descargar images.txt\" class=\"txtInfo\" onclick=\"descargarImages()\">
-							<br>&nbsp;<br>
-						</td>
-					</tr>"
-			# Mostrar errores
-			if [ -s /tmp/getsincroimg.err ]; then
-				print_log_file "Errores en descarga de imágenes de Sincroguía"         "/tmp/getsincroimg.err"
-			fi
-			;;
-
 		log_mount )
 			# Encabezado puntos de montaje
 			echo "				<tr>

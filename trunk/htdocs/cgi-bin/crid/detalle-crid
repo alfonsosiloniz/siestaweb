@@ -19,7 +19,7 @@ echo "<M750>
 # Procesar resultado
 if [ -f $Cridfile ]; then
 	# Procesar fichero crid
-	./crid2xml $Cridfile
+	./crid2xml.sh $Cridfile
 else
 	# Error fichero crid no encontrado
 	echo "		<ERROR>La fichero de grabación $Cridfile no se encuentra.</ERROR>"
