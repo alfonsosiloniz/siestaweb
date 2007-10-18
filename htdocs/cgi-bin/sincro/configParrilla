@@ -6,12 +6,11 @@
 # Configurar entorno
 source ../www-setup.shi
 source ../fweb.shi
+SORT_CHIDS=${Cache}/sort_chIDs.txt
+INFO_CHANNELS=${Cache}/info_channels.txt
 PARRILLA_CHANNELS=${Cache}/parrilla_channels.txt
 CFG_PARRILLA=""
 [ -f $PARRILLA_CHANNELS ] && CFG_PARRILLA=`cat $PARRILLA_CHANNELS`
-
-# Obtenemos lista de canales
-source gen-lista-canales.shi
 
 # Enviar documento html
 html_doc_start "M750T - Configuración de Parrilla de Sincroguía" "" "-an-e-b-" "
@@ -25,44 +24,47 @@ html_top "Configuración de Parrilla de Sincroguía" "" "/cgi-bin/sincro/saveConfi
 echo "			<br>
 			<table width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"0\" align=\"center\">
 				<tr>
-					<td width=\"100%\" class=\"titTabla\">
+					<td colspan=\"4\" class=\"titTabla\" align=\"center\">
 					Seleccione los canales que desea que aparezcan en la Parrilla de la Sincroguía<br><br>
 					</td>
 				</tr>"
 
-# Recorrer canales
-for Sincrofile in $ListaCanales; do
-	# Obtener datos canal
-	chID=`echo $Sincrofile | cut -d"_" -f2 | cut -d"." -f1`
-	chName=`grep :${chID}: ${Cache}/info_channels.txt | head -1 | cut -d":" -f4`
+# Recorrer lista de canales
+if [ -f $SORT_CHIDS ]; then
+	for chID in `cat $SORT_CHIDS`; do
+		# Obtener datos canal (numChannel, cid, chID, chName)
+		eval `www-tools infoID ${chID} ${INFO_CHANNELS}`
 
-	# Comprobar si esta marcado
-	checked="checked"
-	if [ ${#CFG_PARRILLA} -ne 0 ]; then
-		# Se sustituye la plantilla *:${chID}:* por OK
-		# Si el resultado no es OK el canal no estaba en la lista -> se desmarca
-		[ ${CFG_PARRILLA/*:${chID}:*/OK} != OK ] && checked=""
-	fi
+		# Comprobar si esta marcado
+		checked="checked"
+		if [ ${#CFG_PARRILLA} -ne 0 ]; then
+			# Se sustituye la plantilla *:${chID}:* por OK
+			# Si el resultado no es OK el canal no estaba en la lista -> se desmarca
+			[ ${CFG_PARRILLA/*:${chID}:*/OK} != OK ] && checked=""
+		fi
 
-	# Alternar colores
-	if [ "$bgcolor" = "#FFECD9" ]; then
-		bgcolor="#FFFFE8"
-	else
-		bgcolor="#FFECD9"
-	fi
+		# Alternar colores
+		if [ "$bgcolor" = "#FFECD9" ]; then
+			bgcolor="#FFFFE8"
+		else
+			bgcolor="#FFECD9"
+		fi
 
-	# Volcar datos canal
-	echo "				<tr>
-					<td bgcolor=\"$bgcolor\" class=\"txtNormal\">
-						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		# Volcar datos canal
+		echo "				<tr>
+					<td width=\"35%\">&nbsp;</td>
+					<td width=\"5%\" bgcolor=\"$bgcolor\" class=\"txtNormal\" align=\"center\">[ $numChannel ]</td>
+					<td bgcolor=\"$bgcolor\" class=\"txtNormal\" align=\"left\">
 						<input type=\"checkbox\" name=\"$chID\" value=\"$chID\" $checked>$chName
 					</td>
+					<td width=\"35%\">&nbsp;</td>
 				</tr>"
-done
+	done
+fi
 
 # Final html
 echo "				<tr>
-					<td width=\"100%\" align=\"center\">
+					<td colspan=\"4\" align=\"center\">
 						<br><input type=\"button\" onclick=\"guardar();\" value=\"Guardar\">
 					</td>
 				</tr>

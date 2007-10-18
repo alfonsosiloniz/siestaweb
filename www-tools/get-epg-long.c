@@ -17,8 +17,8 @@ void get_epg_long_uso(void){
 int get_epg_long(char *fichero, long inicio){
 	int resultado;
 	FILE *file;
-	char txt_in[LON_BUF_TEXTO_LONG+1];		/* Buffer texto para sanear */
-	char txt_out[LON_BUF_TEXTO_LONG*2+1];	/* Texto saneado */
+	BYTE txt_in[LBF_TEXTO_LONG+1];		/* Buffer texto para sanear */
+	BYTE txt_out[LBF_TEXTO_LONG*2+1];	/* Texto saneado */
 
 	/* Inicializar variables */
 	resultado=-3;
@@ -35,11 +35,11 @@ int get_epg_long(char *fichero, long inicio){
 	} else {
 		/* Saltar inicio, leer bufer y cerrar fichero */
 		fseek(file,inicio,SEEK_SET);
-		fread(txt_in,1,LON_BUF_TEXTO_LONG,file);
+		fread(txt_in,1,LBF_TEXTO_LONG,file);
 		fclose(file);
 
 		/* Procesar caracteres especiales */
-		sanear_txt(txt_in,txt_out,LON_BUF_TEXTO_LONG*2,FILTRO_8A);
+		sanear_txt(txt_in,txt_out,LBF_TEXTO_LONG*2,FILTRO_8A);
 
 		/* Generar texto resultado */
 		fprintf(stdout,"%s",txt_out);

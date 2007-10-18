@@ -104,17 +104,6 @@ function reloadDelayed() {
 }
 
 //-------------------------------------------------
-// Generar cache programa actual
-//-------------------------------------------------
-function actCachePgmAct() {
-	if (confirm("La generación de la caché del programa actual tarda unos 30 segundos.\n\n¿Confirma la actualización de dicha caché?")) {
-		makeRequest("/cgi-bin/cache/bg-gc-pgmactual.sh?" + new Date().getTime(), "noReply");
-		alert("Se ha mandado la petición de actualización de la caché del programa actual.\n\nSigue el proceso en la página de estado de la aplicación.");
-		document.location.href="/cgi-bin/box/estado?id_log=log_pgmactual";
-	}
-}
-
-//-------------------------------------------------
 // Generar cache sincroguia
 //-------------------------------------------------
 function actCacheCanales() {

@@ -19,11 +19,11 @@ void text2pgact_uso(void){
 int text2pgact(char *ch_id, char *file_text, long horaUTC){
 	int resultado;
 	FILE *file;
-	int found=0;						/* Marca de programa encontrado */
-	int primerPase=0;					/* Marca de primera pasada completada */
-	char bf_in[LON_BUF_PGM+1];			/* Linea datos programa sin procesar */
-	pgm_sincro pgm0;					/* Datos programa anterior */
-	pgm_sincro pgm1;					/* Datos programa actual */
+	int found=0;			/* Marca de programa encontrado */
+	int primerPase=0;		/* Marca de primera pasada completada */
+	char bf_in[LBF_PGM+1];	/* Linea datos programa sin procesar */
+	pgm_sincro pgm0;		/* Datos programa anterior */
+	pgm_sincro pgm1;		/* Datos programa actual */
 
 	/* Inicializar variables */
 	resultado=-3;
@@ -38,7 +38,7 @@ int text2pgact(char *ch_id, char *file_text, long horaUTC){
 		fprintf (stderr, "No se puede abrir el fichero %s\n",file_text);
 	} else {
 		/* Recorrer datos */
-		while ( (! found) &&(fgets(bf_in,LON_BUF_PGM,file) != NULL) ) {
+		while ( (! found) && (fgets(bf_in,LBF_PGM,file) != NULL) ) {
 			/* Eliminar LF al final de la linea */
 			eliminarLF(bf_in);
 

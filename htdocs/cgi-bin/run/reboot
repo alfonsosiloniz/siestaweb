@@ -16,7 +16,6 @@ fi
 
 # Matamos los posibles procesos de generación de la caché
 pkill -9 run-http.sh
-pkill -9 gc-pgmactual.sh
 pkill -9 gc-sincro.sh
 pkill -9 gc-sincro-ch.sh
 sleep 2
@@ -52,12 +51,15 @@ if [ ${SWP_SIZE[1]} != 0 ]; then
 	fi
 fi
 
-# Quitar marca de disco usb
-umount /var/media/USB-HDD > /dev/null 2> /dev/null
+# Quitar marcas de disco usb, disco montado y desmontar disco
 [ -f /data/.usb ] && rm /data/.usb
+[ -f /var/media/USB-HDD/.mounted_flag ] && rm /var/media/USB-HDD/.mounted_flag
+umount /var/media/USB-HDD > /dev/null 2> /dev/null
+sleep 2
+pkill -9 umount
+sleep 2
 
 # Guardar ficheros /var/etc
-echo "Escribiendo los datos de /var/etc en la flash..."
 /sbin/flash_archive write /var/etc/*
 
 # Reboot del sistema

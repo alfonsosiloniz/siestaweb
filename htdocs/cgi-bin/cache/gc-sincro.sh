@@ -1,5 +1,5 @@
 #!/bin/bash
-# pepper, jotabe, (c) Grupo SIESTA, 04-10-2007
+# pepper, jotabe, (c) Grupo SIESTA, 10-10-2007
 #
 # Generacion de cache de sincroguía
 # $1 Tipo de generacion / Lista de canales
@@ -25,9 +25,9 @@ esac
 # Configurar entorno
 source ../www-setup.shi
 LCK_SINCRO=${Cache}/cache.sincro.generating
-LCK_PGMACTUAL=${Cache}/cache.pgmactual.generating
 LOG=${Cache}/cache.sincro.log
 ERR=${Cache}/cache.sincro.err
+SORT_CHANNELS=${Cache}/sort_channels.txt
 horaUTCparrilla=`date +%s`
 
 # Comprobar marca de generacion de cache XML
@@ -52,32 +52,38 @@ else
 fi
 echo -n "" > $ERR
 
-# Obtenemos lista de canales
-source gen-lista-canales.shi
+# Generar datos de canales
+if [ ! -f $SORT_CHANNELS ]; then
+	echo "`date` Generación datos de canales (info_channels.txt)" >> $LOG
+	source gen-info-canales.shi
+fi
 
-# Recorremos lista de canales
-for Sincrofile in $ListaCanales; do
-	# Obtener identificador de canal
-	chID=`echo "$Sincrofile" | cut -d"_" -f2 | cut -d"." -f1`
+# Recorrer lista de canales
+if [ -f $SORT_CHANNELS ]; then
+	for Sincrofile in `cat $SORT_CHANNELS`; do
+		# Obtener identificador de canal
+		chID=`echo "$Sincrofile" | cut -d"_" -f2 | cut -d"." -f1`
 
-	# Comprobar si canal esta en la lista de canales a generar
-	if [ $full_cache -eq 1 ]; then
-		found=1
-	else
-		if [ ${#lst_ch} -eq 0 ]; then
+		# Comprobar si canal esta en la lista de canales a generar
+		if [ $full_cache -eq 1 ]; then
 			found=1
 		else
-			found=`echo $lst_ch | grep "$chID:" | wc -l`
+			if [ ${#lst_ch} -eq 0 ]; then
+				found=1
+			else
+				found=`echo $lst_ch | grep "$chID:" | wc -l`
+			fi
 		fi
-	fi
 
-	# Generar cache
-	[ $found -eq 1 ] && ./gc-sincro-ch.sh $Sincrofile $full_cache $horaUTCparrilla >> $LOG 2>> $ERR
-done
+		# Generar cache
+		[ $found -eq 1 ] && ./gc-sincro-ch.sh $Sincrofile $full_cache $horaUTCparrilla >> $LOG 2>> $ERR
+	done
+else
+	echo "`date` Datos de canales no encontrados (${SORT_CHANNELS})" >> $LOG
+fi
 
-# Eliminar marcas de generacion de cache XML
+# Eliminar marca de generacion de cache XML
 rm -f ${LCK_SINCRO}
-rm -f ${LCK_PGMACTUAL}
 
 # Log del proceso
 utc_final=`date +%s`

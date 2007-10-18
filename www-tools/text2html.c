@@ -22,18 +22,18 @@ void text2html_uso(void){
 int text2html(char *ch_id, char *file_text, long horaUTCparrilla, long mostrar_img){
 	int resultado;
 	FILE *file;
-	int primerPase=0;					/* Marca de primera pasada completada */
-	int sync_top=0;						/* Marca de borde superior sincronizado */
-	int seg_ajuste=0;					/* Segundos de ajuste */
-	char bf_in[LON_BUF_PGM+1];			/* Linea datos programa sin procesar */
-	pgm_sincro pgm0;					/* Datos programa anterior */
-	pgm_sincro pgm1;					/* Datos programa actual */
-	int duration;						/* Duracion del programa en segundos */
-	int height;							/* Altura de la celda de programa */
-	int sep,n;							/* Separacion en celdas grandes */
-	char url_img[LON_BUF_TXT+1];		/* Buffer url imagen */
-	char tmp[LON_BUF_TEXTO_LONG+1];		/* Buffer temporal html */
-	char html[LON_BUF_TEXTO_LONG+1];	/* Buffer html */
+	int primerPase=0;				/* Marca de primera pasada completada */
+	int sync_top=0;					/* Marca de borde superior sincronizado */
+	int seg_ajuste=0;				/* Segundos de ajuste */
+	char bf_in[LBF_PGM+1];			/* Linea datos programa sin procesar */
+	pgm_sincro pgm0;				/* Datos programa anterior */
+	pgm_sincro pgm1;				/* Datos programa actual */
+	int duration;					/* Duracion del programa en segundos */
+	int height;						/* Altura de la celda de programa */
+	int sep,n;						/* Separacion en celdas grandes */
+	char url_img[LBF_TXT+1];		/* Buffer url imagen */
+	char tmp[LBF_TEXTO_LONG+1];		/* Buffer temporal html */
+	char html[LBF_TEXTO_LONG+1];	/* Buffer html */
 
 	/* Inicializar variables */
 	resultado=-3;
@@ -49,7 +49,7 @@ int text2html(char *ch_id, char *file_text, long horaUTCparrilla, long mostrar_i
 		fprintf (stderr, "No se puede abrir el fichero %s\n",file_text);
 	} else {
 		/* Recorrer datos */
-		while ( fgets(bf_in,LON_BUF_PGM,file) != NULL ) {
+		while ( fgets(bf_in,LBF_PGM,file) != NULL ) {
 			/* Eliminar LF al final de la linea */
 			eliminarLF(bf_in);
 

@@ -33,7 +33,7 @@ RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var
 # Comprobar carpeta
 if [ -d $RecordingFolder ]; then
 	# Procesar carpeta de grabaciones
-	./lista-crid2xml $RecordingFolder RECORDINGS $xsl
+	./lista-crid2xml.sh $RecordingFolder RECORDINGS $xsl
 else
 	# Enviar documento html
 	html_doc_start "M750T - Grabaciones Realizadas" "" "------b-"

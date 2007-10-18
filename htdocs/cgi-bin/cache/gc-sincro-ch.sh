@@ -1,5 +1,5 @@
 #!/bin/bash
-# pepper, jotabe, (c) Grupo SIESTA, 26-09-2007
+# pepper, jotabe, (c) Grupo SIESTA, 10-10-2007
 #
 # Genera cache de sincroguía en XML de 1 canal
 # $1 Fichero sincroguia (.db)
@@ -23,6 +23,7 @@ source ../www-setup.shi
 LCK_FILE=${Cache}/cache.$chID.generating
 LOG=${Cache}/cache.sincro.log
 ERR=${Cache}/cache.sincro.err
+INFO_CHANNELS=${Cache}/info_channels.txt
 CACHE_FILE=${Cache}/cache.$chID
 
 # Crear marca de generacion de cache de canal
@@ -30,11 +31,8 @@ touch ${LCK_FILE}
 
 # Generar cache
 if [ -f $1 ]; then
-	# Obtener datos canal
-	mapping=`grep ":${chID}:" ${Cache}/info_channels.txt | head -1`
-	cid=`echo "$mapping" | cut -d":" -f2`
-	chName=`echo "$mapping" | cut -d":" -f4`
-	numChannel=`echo "$mapping" | cut -d":" -f1`
+	# Obtener datos canal (numChannel, cid, chID, chName)
+	eval `www-tools infoID ${chID} ${INFO_CHANNELS}`
 
 	# Log del proceso
 	printf "`date` Canal [%3s]: " "$chID" >> $LOG
@@ -56,17 +54,17 @@ if [ -f $1 ]; then
 		# Copia temporal de sincroguia
 		DB_FILE=/tmp/`basename $1`
 		cp $1 $DB_FILE
-	
+
 		# Extraer datos
 		if [ $? -eq 0 -a -f $DB_FILE ]; then
 			# Generar ficheros vacios
 			echo -n "" > ${CACHE_FILE}.text
 			echo -n "" > ${CACHE_FILE}.xml
 			echo -n "" > ${CACHE_FILE}.html
-		
+
 			# Log del proceso
 			echo -n "Generación " >> $LOG
-		
+
 			# Generar fichero text
 			echo -n "db->text" >> $LOG
 			www-tools db2text $DB_FILE > ${CACHE_FILE}.text.temp
@@ -76,7 +74,7 @@ if [ -f $1 ]; then
 			else
 				# Ordenar fichero text
 				sort ${CACHE_FILE}.text.temp > ${CACHE_FILE}.text
-		
+
 				# Generar fichero xml
 				echo -n ",text->xml" >> $LOG
 				echo "<CHANNEL cid=\"$cid\" id=\"${chID}\" name=\"$chName\" file=\"$1\" numChannel=\"$numChannel\">" >> ${CACHE_FILE}.xml
@@ -97,7 +95,7 @@ if [ -f $1 ]; then
 							MOSTRAR_IMG=1
 						fi
 					fi
-	
+
 					# Generar fichero html
 					echo -n ",text->html" >> $LOG
 					www-tools text2html ${chID} ${CACHE_FILE}.text ${horaUTCparrilla} ${MOSTRAR_IMG} >> ${CACHE_FILE}.html
@@ -113,10 +111,10 @@ if [ -f $1 ]; then
 		else
 			echo " <b>ERROR</b> copia fichero datos" >> $LOG
 		fi
-	
+
 		# Eliminar temporales
 		rm -f ${CACHE_FILE}.text.temp
-	    rm -f $DB_FILE
+		rm -f $DB_FILE
 	fi
 fi
 

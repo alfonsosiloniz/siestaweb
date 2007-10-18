@@ -33,13 +33,6 @@ Controla la aparición en pantalla de mensajes de ejecución de
 scripts del firm LCK.
 
 
-#PARAMETRO: SIESTA_COLDSTART key si no
-SIESTA_COLDSTART = si
-
-Controla la ejecución del script coldstart.sh para quitar la
-pantalla en negro desde el encendido total.
-
-
 #PARAMETRO: SIESTA_SINCRONIZAR_HORA key no arranque horario
 SIESTA_SINCRONIZAR_HORA = no
 

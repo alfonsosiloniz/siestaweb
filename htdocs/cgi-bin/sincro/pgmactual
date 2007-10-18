@@ -1,5 +1,5 @@
 #!/bin/bash
-# pepper, (c) Grupo SIESTA, 27-07-2007
+# pepper, jotabe, (c) Grupo SIESTA, 10-10-2007
 #
 # Retorna la sincroguia con el programa actual para todos los canales
 
@@ -9,7 +9,13 @@ renice 20 $$ > /dev/null
 # Configurar entorno
 source ../www-setup.shi
 source ../fweb.shi
-CACHE_FILE=${Cache}/cache.pgmactual.xml
+LCK_SINCRO=${Cache}/cache.sincro.generating
+LOG_SINCRO=${Cache}/cache.sincro.log
+LOG=${Cache}/cache.pgmactual.log
+ERR=${Cache}/cache.pgmactual.err
+SORT_CHIDS=${Cache}/sort_chIDs.txt
+INFO_CHANNELS=${Cache}/info_channels.txt
+now=`date +%s`
 
 # Comprobar directorio de imagenes de sincroguia en carpeta de grabaciones
 if [ -d $SERVER_ROOT/img/epg/ ]; then
@@ -18,50 +24,83 @@ else
 	DIR_IMG_SINCRO_ACCESIBLE=no
 fi
 
-# Comprobar cache generado
-if [ -s ${CACHE_FILE} ]; then
-	# Comprobar si estamos en proceso de generacion de XML
-	if [ -f ${CACHE_FILE}.generating ]; then
-		# Esperar hasta fin generacion (maximo de 2 minutos)
-		# El fichero se genera con un nombre temporal y despues se renombra
-		i=0
-		while [ -f ${CACHE_FILE}.generating -a $i -lt 120 ]; do
-			sleep 1
-			i=$((i+1))
-		done
-	fi
+# Comprobar generacion cache XML
+info=""
+if [ ! -f ${LOG_SINCRO} ]; then
+	info="No se puede mostrar la información sobre el programa actual porque no se ha generado todavia el caché.
+	<br><br>
+	Puede ir a la pagina de <a href=\"/cgi-bin/box/estado\">estado</a> para generarlo ahora"
+elif [ -f ${LCK_SINCRO} ]; then
+	info="No se puede mostrar la información sobre el programa actual porque en este momento se está generando el caché.
+	<br><br>
+	Puede ir a la pagina de <a href=\"/cgi-bin/box/estado\">estado</a> para comprobar el proceso"
+fi
 
-	# Enviar documento xml con programa actual
-	xml_doc "/xsl/sincro.xsl"
-	echo "<M740>
-	<SINCROGUIA actual=\"0\" miniatures=\"$MOSTRAR_MINI_IMG\" getImgInet=\"$OBTENER_IMG_INET\" localSincroImgAcc=\"$DIR_IMG_SINCRO_ACCESIBLE\">
-`cat < ${CACHE_FILE}`
-	</SINCROGUIA>
-</M740>"
-else
+# Comprobar marca de generacion de cache XML
+if [ ${#info} -ne 0 ]; then
 	# Enviar documento html
 	html_doc_start "M750T - Sincroguía" "" "------b-"
-
-	# Respuesta html
 	html_top "<a href=\"http://www.inout.tv/SincroGuia\"><img src=\"/img/sincro.gif\" border=\"0\"/></a>proporcionada por InOut TV" "" "" ""
 	echo "			<br>
 			<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">
 				<tr>
 					<td class=\"titChannel\" align=\"center\">
-						<font class=\"txtAvisos\">"
-
-	# Comprobar si estamos en proceso de generacion de XML
-	if [ -f ${CACHE_FILE}.generating ]; then
-		echo "La caché de programa actual se está generando. Espere a que termine la generación."
-	else
-		echo "No se puede mostrar la información sobre el programa actual porque no se ha generado todavia el caché.<br><br>"
-		echo "Puede ir a la pagina de <a href=\"/cgi-bin/box/estado\">estado</a> para generarlo ahora"
-	fi
-
-	# Final html
-	echo "						</font>
+						<font class=\"txtAvisos\">$info</font>
 					</td>
 				</tr>
 			</table>"
 	html_doc_end no
+else
+	# Log del proceso
+	utc_inicio=`date +%s`
+	echo "`date` Inicio generación XML de Programa Actual [host: `hostname`]" > $LOG
+	echo -n "" > $ERR
+
+	# Enviar documento xml con programa actual
+	xml_doc "/xsl/sincro.xsl"
+	echo "<M740>
+	<SINCROGUIA actual=\"0\" miniatures=\"$MOSTRAR_MINI_IMG\" getImgInet=\"$OBTENER_IMG_INET\" localSincroImgAcc=\"$DIR_IMG_SINCRO_ACCESIBLE\">"
+
+	# Recorrer lista de canales
+	if [ -f $SORT_CHIDS ]; then
+		for chID in `cat $SORT_CHIDS`; do
+			# Obtener cache de canal
+			CHANNEL_CACHE=${Cache}/cache.$chID
+
+			# Comprobar cache de canal
+			if [ -f ${CHANNEL_CACHE}.text ]; then
+				# Comprobar generacion de caché de canal
+				if [ ! -f ${CHANNEL_CACHE}.generating ]; then
+					# Obtener datos canal (numChannel, cid, chID, chName)
+					eval `www-tools infoID ${chID} ${INFO_CHANNELS}`
+
+					# Log del proceso
+					printf "`date` Canal [%3s]: text->programa_actual" "$chID" >> $LOG
+
+					# Obtener programa actual de fichero .text
+					echo "<CHANNEL cid=\"$cid\" id=\"${chID}\" name=\"$chName\" file=\"${CHANNEL_CACHE}.text\" numChannel=\"$numChannel\">"
+					www-tools text2pgact ${chID} ${CHANNEL_CACHE}.text ${now} 2>> $ERR
+					ST_text2pgact=$?
+					echo "</CHANNEL>"
+					if [ $ST_text2pgact -ne 0 ]; then
+						echo " <b>ERROR</b>" >> $LOG
+					else
+						# Resultado generacion OK
+						echo " = OK" >> $LOG
+					fi
+				fi
+			fi
+		done
+	else
+		echo "`date` Datos de canales no encontrados (${SORT_CHIDS})" >> $LOG
+	fi
+
+	# Final xml
+	echo "	</SINCROGUIA>
+</M740>"
+
+	# Log del proceso
+	utc_final=`date +%s`
+	tiempo_proceso=`TZ=UTC awk "BEGIN {print strftime( \"%H:%M:%S\", $(($utc_final-$utc_inicio))) }"`
+	echo "`date` Fin generación XML de Programa Actual [host: `hostname`], Tiempo generación: ${tiempo_proceso}" >> $LOG
 fi

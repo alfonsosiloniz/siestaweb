@@ -9,13 +9,13 @@ FICHERO_CRONTAB_TMP=/tmp/crontab.root
 FICHERO_CRONTAB_SYS=/tmp/crontab.sys
 FICHERO_CRONTAB_USER=/var/etc/root.crontab
 
-# Recargar crontab si existen fichero de tareas de sistema y usuario
-if [ -f $FICHERO_CRONTAB_SYS -a -f $FICHERO_CRONTAB_USER ]; then
+# Recargar crontab si existe fichero de tareas de sistema
+if [ -f $FICHERO_CRONTAB_SYS ]; then
 	# Tareas de sistema
 	cp -f $FICHERO_CRONTAB_SYS $FICHERO_CRONTAB_TMP
 
-	# Añadir tareas de usuario
-	cat $FICHERO_CRONTAB_USER >> $FICHERO_CRONTAB_TMP
+	# Añadir tareas cron de usuario
+	[ -f $FICHERO_CRONTAB_USER ] && cat $FICHERO_CRONTAB_USER >> $FICHERO_CRONTAB_TMP
 
 	# Actualizar tareas
 	crontab $FICHERO_CRONTAB_TMP 2> /dev/null
