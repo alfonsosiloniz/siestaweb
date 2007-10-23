@@ -32,9 +32,9 @@ echo "Content-Disposition: attachment; filename=descargar_grabacion.cmd"
 echo ""
 echo "wget --passive-ftp -P "$dir" ftp://${user}:${pwd}@${ftphost}:${port}${Cridfile}"
 echo "wget --passive-ftp -P "$dir" ftp://${user}:${pwd}@${ftphost}:${port}${recordingDir}/${fmpg0}*"
-if [ $offPC = "SI" ]; then
-    echo "shutdown -s"
-fi
 if [ $offGiga = "SI" ]; then
     echo "wget http://${host}/cgi-bin/run/irsim?POWER"
+fi
+if [ $offPC = "SI" ]; then
+    echo "shutdown -s"
 fi
