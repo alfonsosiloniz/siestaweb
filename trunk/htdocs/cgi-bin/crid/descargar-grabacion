@@ -10,6 +10,8 @@ Cridfile=`echo $QUERY_STRING | cut -d"&" -f3 | cut -d"=" -f2 | sed -e 's/%2F/\//
 user=`echo $QUERY_STRING | cut -d"&" -f4 | cut -d"=" -f2`
 pwd=`echo $QUERY_STRING | cut -d"&" -f5 | cut -d"=" -f2`
 dir=`echo $QUERY_STRING | cut -d"&" -f6 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g'`
+offPC=`echo $QUERY_STRING | cut -d"&" -f7 | cut -d"=" -f2`
+offGiga=`echo $QUERY_STRING | cut -d"&" -f8 | cut -d"=" -f2`
 
 #Por si el host viene con puerto, lo quitamos para el ftp y lo dejamos para el http
 ftphost=`echo $host | cut -d":" -f1`
@@ -30,3 +32,9 @@ echo "Content-Disposition: attachment; filename=descargar_grabacion.cmd"
 echo ""
 echo "wget --passive-ftp -P "$dir" ftp://${user}:${pwd}@${ftphost}:${port}${Cridfile}"
 echo "wget --passive-ftp -P "$dir" ftp://${user}:${pwd}@${ftphost}:${port}${recordingDir}/${fmpg0}*"
+if [ $offPC = "SI" ]; then
+    echo "shutdown -s"
+fi
+if [ $offGiga = "SI" ]; then
+    echo "wget http://${host}/cgi-bin/run/irsim?POWER"
+fi
