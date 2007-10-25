@@ -1,6 +1,6 @@
 #!/bin/bash
 # Martin Ostermann, 2005-08-21
-# pepper, jotabe, (c) Grupo SIESTA, 16-10-2007
+# pepper, (c) Grupo SIESTA, 28-03-2007
 # Modificado por phosy para devolver el espacio libre en disco, 06-05-2007
 #
 # Devolver informacion de lista de ficheros crid
@@ -10,7 +10,6 @@
 
 # Obtener parametros
 Recordings=$1
-# Recordings=/usb/old
 crid_class=$2
 
 # Configurar entorno
@@ -32,13 +31,18 @@ if [ -d $video_dir ]; then
 	disk_spaceMb=$((disk_space/1024))
 	disk_spaceGb=$((disk_spaceMb/1024))
 	echo "	<SPACE>$disk_spaceMb Mb ($disk_spaceGb Gb ~ $((disk_spaceGb/2)) horas)</SPACE>"
-fi 
+fi
+
+CachefileTemp=${Cache}/lista-grabaciones.xml.tmp
+rm -f $CachefileTemp
+touch $CachefileTemp
 
 # Clase ficheros .crid
 echo "	<${crid_class} now=\"`date +%s`\">"
 
 # Comprobar carpeta
 if [ -d $Recordings ]; then
+    IDserieActual=""
 	# Recorrer ficheros .crid
 	for Cridfile in $Recordings/*.crid; do
 # 	for Cridfile in $Recordings/*.refXML; do
@@ -47,8 +51,7 @@ if [ -d $Recordings ]; then
 		Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
 		if [ $Cridfile -nt $Cachefile ] ; then
 			# Procesar fichero crid
-# 			source ./crid2var.shi $Cridfile
-			eval `www-tools crid2var ${Cridfile}`
+			source ./crid2var.shi $Cridfile
 
 			# Calcular espacio usado en grabaciones
 			if [ "$crid_class" = "RECORDINGS" ]; then
@@ -69,21 +72,9 @@ if [ -d $Recordings ]; then
 			 fi
 
 			# Volcar datos a fichero cache
-			( echo "<RECORD>
-	<CRID_FILE>$Cridfile</CRID_FILE>
-	<TITLE>$Titulo</TITLE>
-	<REC_STATE>$Rec_State</REC_STATE>
-	<INIT_TIME>$FMT_start_time</INIT_TIME>
-	<END_TIME>$FMT_end_time</END_TIME>
-	<DURATION>$Duration</DURATION>
-	<UTC_TIME>$EPG_start_time</UTC_TIME>
-	<UTC_END_TIME>$EPG_end_time</UTC_END_TIME>
-	<SERIE_ID>$IDserie</SERIE_ID>
-	<IMPORTANT>$Grabacion_protegida</IMPORTANT>
-	<PLAYBACK_TS>$playback_timestamp</PLAYBACK_TS>
-	<PIDCID>$CRID_ID</PIDCID>
-	<NUM_FMPG>$num_fmpg</NUM_FMPG>
-	<FMPG>$fmpg0</FMPG>"
+			# Es muy importante que cada grabacion vaya en una sola linea, y ademas que el SERIE_ID sea el primer tag del XML
+			# para una posterior ordenacion de la lista por Serie
+			( echo -n "<SERIE_ID>$IDserie</SERIE_ID><CRID_FILE>$Cridfile</CRID_FILE><TITLE>$Titulo</TITLE><REC_STATE>$Rec_State</REC_STATE><INIT_TIME>$FMT_start_time</INIT_TIME><END_TIME>$FMT_end_time</END_TIME><DURATION>$Duration</DURATION><UTC_TIME>$EPG_start_time</UTC_TIME><UTC_END_TIME>$EPG_end_time</UTC_END_TIME><IMPORTANT>$Grabacion_protegida</IMPORTANT><PLAYBACK_TS>$playback_timestamp</PLAYBACK_TS><PIDCID>$CRID_ID</PIDCID><NUM_FMPG>$num_fmpg</NUM_FMPG><FMPG>$fmpg0</FMPG>"
 
 			# Recorrer fragmentos adicionales
 			i=1
@@ -91,19 +82,36 @@ if [ -d $Recordings ]; then
 				# Nombre fragmento
 				TMP='$fmpg'${i}
 				eval "TMP2=$TMP"
-				echo "	<FMPG${i}>$TMP2</FMPG${i}>"
+				echo -n "<FMPG${i}>$TMP2</FMPG${i}>"
 				# Siguiente fragmento
 				i=$(($i+1))
 			done
 	
-			echo "	<SPACE>$du</SPACE>
-</RECORD>" ) > $Cachefile
+			echo "<SPACE>$du</SPACE>" ) > $Cachefile
 		fi
 
 		# Devolver resultado de cache de fichero crid
-		cat <$Cachefile
+		cat $Cachefile >> $CachefileTemp
 	done
 fi
+
+# Por defecto, enviamos la lista de grabaciones ordenadas por serie, con un nuevo campo CAMBIO_SERIE que indica si del registro anterior
+# al actual, ha cambiado el identificador de Serie, para luego pintarlo correctamente en pantalla, diferenciando entre series.
+sort $CachefileTemp > ${CachefileTemp}.sort
+echo -n "" > $CachefileTemp
+serieAct=""
+while read line; do
+    serie=`echo $line | cut -d ">" -f2 | cut -d "<" -f 1`
+    if [ "$serie" != "$serieAct" -a "$serieAct" != "" ]; then
+        echo "<RECORD><CAMBIO_SERIE>1</CAMBIO_SERIE>$line</RECORD>" >> $CachefileTemp
+    else
+        echo "<RECORD><CAMBIO_SERIE>0</CAMBIO_SERIE>$line</RECORD>" >> $CachefileTemp
+    fi
+    serieAct=$serie
+done < ${CachefileTemp}.sort
+
+cat <$CachefileTemp
+rm -f ${CachefileTemp} ${CachefileTemp}.sort
 
 # Final xml
 echo "	</${crid_class}>
