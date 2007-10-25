@@ -62,7 +62,12 @@
 						<th class="fila" align="left">&#160;</th>
 					</tr>
 					<xsl:for-each select="M750/RECORDINGS/RECORD">
-						<xsl:sort select="TITLE" order="ascending" />
+						<!--<xsl:sort select="SERIE_ID" order="descending" />-->
+						<xsl:choose>
+							<xsl:when test="CAMBIO_SERIE='1'">
+								<tr><td colspan="11" bgcolor="black" style="height: 1px;"></td></tr>
+							</xsl:when>
+						</xsl:choose>
 						<tr>
 							<td class="fila" align="right" width="65">
 								<xsl:choose>
