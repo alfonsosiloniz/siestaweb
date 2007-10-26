@@ -68,6 +68,11 @@
 								<tr><td colspan="11" bgcolor="black" style="height: 1px;"></td></tr>
 							</xsl:when>
 						</xsl:choose>
+						<xsl:choose>
+							<xsl:when test="CAMBIO_SERIE='1' and SERIE_ID &lt; '0'">
+								<tr><td class="fila" height="20"></td><td colspan="10" class="titChannel"><xsl:value-of select="TITLE"/></td></tr>
+							</xsl:when>
+						</xsl:choose>
 						<tr>
 							<td class="fila" align="right" width="65">
 								<xsl:choose>

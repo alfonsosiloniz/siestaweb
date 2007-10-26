@@ -97,7 +97,7 @@ fi
 
 # Por defecto, enviamos la lista de grabaciones ordenadas por serie, con un nuevo campo CAMBIO_SERIE que indica si del registro anterior
 # al actual, ha cambiado el identificador de Serie, para luego pintarlo correctamente en pantalla, diferenciando entre series.
-sort $CachefileTemp > ${CachefileTemp}.sort
+sort -r $CachefileTemp > ${CachefileTemp}.sort
 echo -n "" > $CachefileTemp
 serieAct=""
 while read line; do
