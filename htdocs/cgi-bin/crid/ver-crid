@@ -4,6 +4,7 @@
 # Script que genera un fichero de comandos con las instrucciones necesarias para
 # visualizar una grabación en el PC local mediante MPlayer
 
+# Obtener parametros
 host=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2 | sed -e 's/%3A/:/g'`
 port=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2`
 Cridfile=`echo $QUERY_STRING | cut -d"&" -f3 | cut -d"=" -f2 | sed -e 's/%2F/\//g'`
@@ -18,8 +19,12 @@ encurso=`echo $QUERY_STRING | cut -d"&" -f10 | cut -d"=" -f2`
 #Por si el host viene con puerto, lo quitamos para el ftp y lo dejamos para el http
 ftphost=`echo $host | cut -d":" -f1`
 
+# Configurar entorno
+source ../www-setup.shi
+
 # Procesar fichero crid
-source ./crid2var.shi $Cridfile
+# source ./crid2var.shi $Cridfile
+eval `www-tools crid2var ${Cridfile}`
 
 # Opciones de mplayer
 mplayerOptions="-cache 2048 -quiet -noaspect -aspect $aspect -autosync 30 -framedrop -ni"

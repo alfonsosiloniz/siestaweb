@@ -30,8 +30,9 @@ fi
 RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
 # RecordingFolder=/var/cache
 
-# Comprobar carpeta
-if [ -d $RecordingFolder ]; then
+# Comprobar carpeta, contar nº de grabaciones
+numCrids=`ls -la $RecordingFolder/*.crid 2>/dev/null | wc -l`
+if [ $numCrids -ne 0 ]; then
 	# Procesar carpeta de grabaciones
 	./lista-crid2xml.sh $RecordingFolder RECORDINGS $xsl
 else
