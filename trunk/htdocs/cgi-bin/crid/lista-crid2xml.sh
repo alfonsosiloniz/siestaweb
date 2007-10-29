@@ -42,7 +42,7 @@ echo "	<${crid_class} now=\"`date +%s`\">"
 
 # Comprobar carpeta
 if [ -d $Recordings ]; then
-    IDserieActual=""
+	IDserieActual=""
 	# Recorrer ficheros .crid
 	for Cridfile in $Recordings/*.crid; do
 # 	for Cridfile in $Recordings/*.refXML; do
@@ -51,7 +51,8 @@ if [ -d $Recordings ]; then
 		Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
 		if [ $Cridfile -nt $Cachefile ] ; then
 			# Procesar fichero crid
-			source ./crid2var.shi $Cridfile
+# 			source ./crid2var.shi $Cridfile
+			eval `www-tools crid2var ${Cridfile}`
 
 			# Calcular espacio usado en grabaciones
 			if [ "$crid_class" = "RECORDINGS" ]; then
@@ -101,13 +102,13 @@ sort -r $CachefileTemp > ${CachefileTemp}.sort
 echo -n "" > $CachefileTemp
 serieAct=""
 while read line; do
-    serie=`echo $line | cut -d ">" -f2 | cut -d "<" -f 1`
-    if [ "$serie" != "$serieAct" -a "$serieAct" != "" ]; then
-        echo "<RECORD><CAMBIO_SERIE>1</CAMBIO_SERIE>$line</RECORD>" >> $CachefileTemp
-    else
-        echo "<RECORD><CAMBIO_SERIE>0</CAMBIO_SERIE>$line</RECORD>" >> $CachefileTemp
-    fi
-    serieAct=$serie
+	serie=`echo $line | cut -d ">" -f2 | cut -d "<" -f 1`
+	if [ "$serie" != "$serieAct" -a "$serieAct" != "" ]; then
+		echo "<RECORD><CAMBIO_SERIE>1</CAMBIO_SERIE>$line</RECORD>" >> $CachefileTemp
+	else
+		echo "<RECORD><CAMBIO_SERIE>0</CAMBIO_SERIE>$line</RECORD>" >> $CachefileTemp
+	fi
+	serieAct=$serie
 done < ${CachefileTemp}.sort
 
 cat <$CachefileTemp
