@@ -23,7 +23,6 @@ ftphost=`echo $host | cut -d":" -f1`
 source ../www-setup.shi
 
 # Procesar fichero crid
-# source ./crid2var.shi $Cridfile
 eval `www-tools crid2var ${Cridfile}`
 
 # Opciones de mplayer

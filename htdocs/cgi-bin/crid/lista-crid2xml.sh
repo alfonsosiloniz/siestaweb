@@ -1,6 +1,6 @@
 #!/bin/bash
 # Martin Ostermann, 2005-08-21
-# pepper, (c) Grupo SIESTA, 28-03-2007
+# pepper, jotabe, (c) Grupo SIESTA, 29-10-2007
 # Modificado por phosy para devolver el espacio libre en disco, 06-05-2007
 #
 # Devolver informacion de lista de ficheros crid
@@ -10,6 +10,7 @@
 
 # Obtener parametros
 Recordings=$1
+# Recordings=/usb/old
 crid_class=$2
 
 # Configurar entorno
@@ -33,9 +34,9 @@ if [ -d $video_dir ]; then
 	echo "	<SPACE>$disk_spaceMb Mb ($disk_spaceGb Gb ~ $((disk_spaceGb/2)) horas)</SPACE>"
 fi
 
+# Vaciar lista de ficheros para ordenacion
 CachefileTemp=${Cache}/lista-grabaciones.xml.tmp
-rm -f $CachefileTemp
-touch $CachefileTemp
+echo -n "" > $CachefileTemp
 
 # Clase ficheros .crid
 echo "	<${crid_class} now=\"`date +%s`\">"
@@ -51,7 +52,6 @@ if [ -d $Recordings ]; then
 		Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
 		if [ $Cridfile -nt $Cachefile ] ; then
 			# Procesar fichero crid
-# 			source ./crid2var.shi $Cridfile
 			eval `www-tools crid2var ${Cridfile}`
 
 			# Calcular espacio usado en grabaciones
@@ -100,18 +100,24 @@ fi
 # al actual, ha cambiado el identificador de Serie, para luego pintarlo correctamente en pantalla, diferenciando entre series.
 sort -r $CachefileTemp > ${CachefileTemp}.sort
 echo -n "" > $CachefileTemp
-serieAct=""
+serieAct="0"
 while read line; do
 	serie=`echo $line | cut -d ">" -f2 | cut -d "<" -f 1`
-	if [ "$serie" != "$serieAct" -a "$serieAct" != "" ]; then
-		echo "<RECORD><CAMBIO_SERIE>1</CAMBIO_SERIE>$line</RECORD>" >> $CachefileTemp
+	if [ "Z$serie" != "Z$serieAct" ]; then
+		cambio_serie=1
 	else
-		echo "<RECORD><CAMBIO_SERIE>0</CAMBIO_SERIE>$line</RECORD>" >> $CachefileTemp
+		cambio_serie=0
 	fi
+
+	# Volcar linea datos
+	echo "		<RECORD>
+			<CAMBIO_SERIE>$cambio_serie</CAMBIO_SERIE>
+			$line
+		</RECORD>" >> $CachefileTemp
 	serieAct=$serie
 done < ${CachefileTemp}.sort
 
-cat <$CachefileTemp
+cat < $CachefileTemp
 rm -f ${CachefileTemp} ${CachefileTemp}.sort
 
 # Final xml

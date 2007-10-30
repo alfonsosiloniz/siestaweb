@@ -1,6 +1,6 @@
 #!/bin/bash 
 # Martin Ostermann, 2005-08-21
-# pepper, jotabe, (c) Grupo SIESTA, 16-10-2007
+# pepper, jotabe, (c) Grupo SIESTA, 29-10-2007
 #
 # Devolver informacion de fichero crid
 # $1 Fichero .crid
@@ -14,12 +14,13 @@ source ../www-setup.shi
 # Obtener datos canal (numChannel, cid, chID, chName)
 file=`basename $Cridfile .crid`
 cid=${file: -5}
-# chName=`grep :${cid}: ${Cache}/info_channels.txt | head -1 | cut -d":" -f4`
 eval `www-tools infoID ${cid} ${Cache}/info_channels.txt`
 
-# Procesar fichero crid
-# source ./crid2var.shi $Cridfile
-eval `www-tools crid2var ${Cridfile}`
+# Procesar fichero crid, se usa source para respetar los finales de linea en EPG_long
+TMP=${Cache}/crid2xml-$$.tmp
+www-tools crid2var ${Cridfile} > $TMP
+source $TMP
+rm -f $TMP
 
 # Volcar datos xml
 echo "<CHANNEL_NAME>$chName</CHANNEL_NAME>

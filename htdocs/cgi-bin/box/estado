@@ -5,6 +5,8 @@
 
 # Obtener parametro
 id_accion=`echo "$QUERY_STRING" | sed 's/^id_log=//g' | cut -d"&" -f1`
+id_part=`echo "$QUERY_STRING" | sed 's/^id_log=//g' | cut -d"&" -f2`
+id_tipo_part=`echo "$QUERY_STRING" | sed 's/^id_log=//g' | cut -d"&" -f3`
 
 # Configurar entorno
 source ../www-setup.shi
@@ -162,6 +164,7 @@ echo "				<br>
 						<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\" class=\"borderTabla2\">
 							<tr>
 								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">&nbsp;</font></th>
+								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">&nbsp;</font></th>
 								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Dispositivo</font></th>
 								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Punto de montaje</font></th>
 								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">File System Type</font></th>
@@ -175,12 +178,15 @@ echo "				<br>
 				isdev=`echo $line | grep "/dev/sd" | wc -l`
 				devs=(`echo $line`)
 				if [ $isdev -gt 0 -a "$STICK_PARTITION" != "${devs[0]}" ]; then
-					link="<input type=\"button\" style=\"width: 130px;\" value=\"check ${devs[0]}\" class=\"txtInfo\" onclick=\"checkHD('${devs[0]}','${devs[2]}')\">"
+					link_fsck="<a href=\"javascript:checkHD('${devs[0]}','${devs[2]}')\"   title=\"check ${devs[0]}\"    style=\"text-decoration:none;\"><img src=\"/img/checkHD.gif\" width=\"32\" height=\"32\" border=\"0\" alt=\"check ${devs[0]}\"></a>"
+					link_dump="<a href=\"/cgi-bin/box/estado?id_log=log_mount&${devs[0]}\" title=\"dumpe2fs ${devs[0]}\" style=\"text-decoration:none;\"><img src=\"/img/dumpHD.gif\" width=\"32\" height=\"32\" border=\"0\" alt=\"dumpe2fs ${devs[0]}\"></a>"
 				else
-					link=""
+					link_fsck=""
+					link_dump=""
 				fi
 				echo "	<tr>
-					<td width="150">${link}</td>
+					<td align=\"center\">${link_fsck}</td>
+					<td align=\"center\">${link_dump}</td>
 					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">${devs[0]}</font></td>
 					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\"><a href=\"/cgi-bin/box/show${devs[1]}\" title=\"Explorar ${devs[1]}\">${devs[1]}</a></font></td>
 					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">${devs[2]}</font></td>
@@ -192,6 +198,12 @@ echo "				<br>
 			echo "						</table>
 					</td>
 				</tr>"
+
+			# Comprobar dump
+			dump=`grep $id_part /proc/mounts | wc -l`
+			if [ $dump -ne 0 ]; then
+				print_log_file "Volcado partición (dumpe2fs -h $id_part)"              "/dev/null"                "dumpe2fs -h $id_part"
+			fi
 			;;
 
 		log_act_sincro )
