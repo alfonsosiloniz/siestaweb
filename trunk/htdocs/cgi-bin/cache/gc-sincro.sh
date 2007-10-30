@@ -36,6 +36,12 @@ horaUTCparrilla=`date +%s`
 # Crear marca de generacion de cache XML
 touch ${LCK_SINCRO}
 
+# Si en actualizacion no existe horaUTCparrilla.txt se pasa a generacion completa
+if [ $full_cache -eq 0 -a ! -f ${Cache}/horaUTCparrilla.txt ]; then
+	full_cache=1
+	lst_ch=""
+fi
+
 # Guardar horaUTCparrilla de generacion de la parrilla
 if [ $full_cache -eq 1 ]; then
 	echo "$horaUTCparrilla" > ${Cache}/horaUTCparrilla.txt
