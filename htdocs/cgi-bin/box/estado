@@ -180,6 +180,9 @@ echo "				<br>
 				if [ $isdev -gt 0 -a "$STICK_PARTITION" != "${devs[0]}" ]; then
 					link_fsck="<a href=\"javascript:checkHD('${devs[0]}','${devs[2]}')\"   title=\"check ${devs[0]}\"    style=\"text-decoration:none;\"><img src=\"/img/checkHD.gif\" width=\"32\" height=\"32\" border=\"0\" alt=\"check ${devs[0]}\"></a>"
 					link_dump="<a href=\"/cgi-bin/box/estado?id_log=log_mount&${devs[0]}\" title=\"dumpe2fs ${devs[0]}\" style=\"text-decoration:none;\"><img src=\"/img/dumpHD.gif\" width=\"32\" height=\"32\" border=\"0\" alt=\"dumpe2fs ${devs[0]}\"></a>"
+				elif [ "$STICK_PARTITION" = "${devs[0]}" ]; then
+					link_fsck=""
+					link_dump="<a href=\"/cgi-bin/box/estado?id_log=log_mount&${devs[0]}\" title=\"dumpe2fs ${devs[0]}\" style=\"text-decoration:none;\"><img src=\"/img/dumpHD.gif\" width=\"32\" height=\"32\" border=\"0\" alt=\"dumpe2fs ${devs[0]}\"></a>"
 				else
 					link_fsck=""
 					link_dump=""
