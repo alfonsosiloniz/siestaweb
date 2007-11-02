@@ -11,8 +11,8 @@
 	<script type="text/javascript" src="/js/botones.js" charset="ISO-8859-1"></script>
 	<script type="text/javascript">
 function editar() {
-	alert("Edicion temporalmente desactivada.");
-//    document.location.href="/cgi-bin/crid/edittitleXML?<xsl:value-of select="/M750/RECORD_DETAIL/CRIDFILE" />";
+   //alert("Edicion temporalmente desactivada.");
+   document.location.href="/cgi-bin/crid/edit-title?<xsl:value-of select="/M750/RECORD_DETAIL/CRID_FILE" />";
 }
 	</script>
 	<title>M750T - Detalle de Grabación</title>
@@ -80,7 +80,7 @@ function editar() {
 									<textarea class="cajaEPG" cols="120" rows="24" name="texto" readonly="1">
 										<xsl:value-of select='/M750/RECORD_DETAIL/EPG_LONG' />
 									</textarea>
-									<!--<br/><input class="txtNormal" type="button" value="Editar" onclick="editar()" />-->
+									<br/><input class="txtNormal" type="button" value="Editar" onclick="editar()" />
 								</td>
 							</tr>
 						</table>
