@@ -13,6 +13,7 @@ source ../www-setup.shi
 source ../fweb.shi
 STICK_PARTITION=(`df 2> /dev/null | grep SWAP`)
 get_modo_video
+get_modo_grabacion
 if [ "$ModoVideo" = "Apagado" ] ; then
 	accion_power="Encender"
 	img_power="on.gif"
@@ -260,10 +261,11 @@ echo "				<br>
 	esac
 
 # Estado y uptime
+STgrabacion=([0]="Desconocido" [1]="Apagado-Sin grabaciones" [2]="Apagado-Una grabación " [3]="Apagado-Dos grabaciones" [4]="Encendido-Sin grabaciones" [5]="Encendido-Una grabación" [6]="Encendido-Dos grabaciones")
 echo "					<tr><td class=\"titTabla\" bgcolor=\"#ffb310\" height=\"4\"></td></tr>
 					<tr>
 						<td class=\"fila titTabla\" bgcolor=\"#ffb310\" align=\"center\">
-							Estado: $ModoVideo
+							Estado: Video $ModoVideo / ${STgrabacion[$ModoGrabacion]}
 							<br>
 							<br>
 							Carga del sistema (uptime)

@@ -3,7 +3,7 @@
 #
 # Genera cache de sincroguía en XML de 1 canal
 # $1 Fichero sincroguia (.db)
-# $2 Actualizacion = 0 / Generacion completa = 1
+# $2 Actualizacion = 0 / Generacion completa = 1/2
 # $3 horaUTCparrilla
 
 # Ejecutamos el script con baja prioridad
@@ -38,7 +38,7 @@ if [ -f $1 ]; then
 	printf "`date` Canal [%3s]: " "$chID" >> $LOG
 
 	# Comprobar si debemos actualizar el canal
-	if [ $full_cache -eq 1 ]; then
+	if [ $full_cache -ne 0 ]; then
 		found=1
 	else
 		if [ $1 -nt ${CACHE_FILE}.text ]; then
