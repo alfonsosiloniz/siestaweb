@@ -19,7 +19,7 @@ case $1 in
 	*:* )
 		full_cache=0;lst_ch=$1;;
 	* )
-		full_cache=1;lst_ch="";;
+		full_cache=2;lst_ch="";;
 esac
 
 # Configurar entorno
@@ -43,7 +43,7 @@ if [ $full_cache -eq 0 -a ! -f ${Cache}/horaUTCparrilla.txt ]; then
 fi
 
 # Guardar horaUTCparrilla de generacion de la parrilla
-if [ $full_cache -eq 1 ]; then
+if [ $full_cache -ne 0 ]; then
 	echo "$horaUTCparrilla" > ${Cache}/horaUTCparrilla.txt
 else
 	[ -f ${Cache}/horaUTCparrilla.txt ] && horaUTCparrilla=`cat ${Cache}/horaUTCparrilla.txt`
@@ -51,7 +51,7 @@ fi
 
 # Log del proceso
 utc_inicio=`date +%s`
-if [ $full_cache -eq 1 ]; then
+if [ $full_cache -ne 0 ]; then
 	echo "`date` Inicio generación XML de Sincroguía [host: `hostname`], [Hora UTC parrilla: $horaUTCparrilla]" > $LOG
 else
 	echo "`date` Inicio actualización XML de Sincroguía [host: `hostname`], [$*]" >> $LOG
@@ -71,7 +71,7 @@ if [ -f $SORT_CHANNELS ]; then
 		chID=`echo "$Sincrofile" | cut -d"_" -f2 | cut -d"." -f1`
 
 		# Comprobar si canal esta en la lista de canales a generar
-		if [ $full_cache -eq 1 ]; then
+		if [ $full_cache -ne 0 ]; then
 			found=1
 		else
 			if [ ${#lst_ch} -eq 0 ]; then
@@ -90,6 +90,12 @@ fi
 
 # Eliminar marca de generacion de cache XML
 rm -f ${LCK_SINCRO}
+
+# Descarga de imagenes de sincroguia si full explicito y no venimos de apagado completo
+if [ $full_cache -eq 1 -a "Z$DESCARGA_IMG" = "Zsi" -a ! -f /data/.STOP ]; then
+	echo "`date` Lanzado proceso de descarga de imágenes de Sincroguía" >> $LOG
+	run-http.sh /cgi-bin/box/getsincroimg &
+fi
 
 # Log del proceso
 utc_final=`date +%s`
