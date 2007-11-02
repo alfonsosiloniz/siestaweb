@@ -261,13 +261,16 @@ echo "				<br>
 	esac
 
 # Estado y uptime
+source /usr/local/bin/siesta-version.sh
 STgrabacion=([0]="Desconocido" [1]="Apagado-Sin grabaciones" [2]="Apagado-Una grabación " [3]="Apagado-Dos grabaciones" [4]="Encendido-Sin grabaciones" [5]="Encendido-Una grabación" [6]="Encendido-Dos grabaciones")
 echo "					<tr><td class=\"titTabla\" bgcolor=\"#ffb310\" height=\"4\"></td></tr>
 					<tr>
 						<td class=\"fila titTabla\" bgcolor=\"#ffb310\" align=\"center\">
 							Estado: Video $ModoVideo / ${STgrabacion[$ModoGrabacion]}
-							<br>
-							<br>
+							<br><br>
+							Versión Firmware: $FIRMWARE_VERSION<br>
+							Versión Firmware SIESTA: $SIESTA_FIRMWARE_VERSION
+							<br><br>
 							Carga del sistema (uptime)
 							<pre>`uptime`</pre>
 						</td>
