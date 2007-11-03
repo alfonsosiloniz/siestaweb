@@ -24,6 +24,7 @@ function barra_botones() {
 	poner_boton("Parrilla",   "/img/parrilla.gif",    "Parrilla de programas",        "/cgi-bin/sincro/parrilla"           );
 	poner_boton("Pendientes", "/img/pendientes.gif",  "Grabaciones Pendientes",       "/cgi-bin/crid/ver-lista-timer"      );
 	poner_boton("Grabaciones","/img/grabaciones.gif", "Grabaciones Realizadas",       "/cgi-bin/crid/ver-lista-grabaciones");
+	poner_boton("Archivo",    "/img/archivo.gif",     "Archivo de Grabaciones",       "/cgi-bin/crid/ver-lista-archivo"    );
 	poner_boton("OSD",        "/img/osd.gif",         "Control OSD",                  "/html/osd2tcp.html"                 );
 	poner_boton("Explorador", "/img/explorador.gif",  "Editor/Explorador de Archivos","/cgi-bin/box/show/var/etc"          );
 	poner_boton("Comandos",   "/img/comandos.gif",    "Ejecución de comandos Linux",  "/cgi-bin/box/cmd"                   );

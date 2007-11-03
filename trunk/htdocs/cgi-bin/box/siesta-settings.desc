@@ -310,6 +310,17 @@ SIESTA_CANALES_PARRILLA = :TV1:La2:A3:C4:T5:La6:
 Lista de canales que se mostrarán en la parrilla.
 
 
+#PARAMETRO: SIESTA_RUTA_ARCHIVO str /usb/Archivo
+SIESTA_RUTA_ARCHIVO = /usb/Archivo
+
+Ruta de la carpeta que se usará como archivo de grabaciones.
+Desde la lista de grabaciones realizadas podemos enviar las
+grabaciones a esta zona de archivo para agilizar el
+funcionamiento del gigaset. Desde la lista de grabaciones
+archivadas podemos devolver las grabaciones a la carpeta normal
+de grabaciones realizadas.
+
+
 #PARAMETRO: SIESTA_ACTIVAR_CROND key no si
 SIESTA_ACTIVAR_CROND = no
 

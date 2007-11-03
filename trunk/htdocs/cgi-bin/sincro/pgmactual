@@ -30,13 +30,14 @@ if [ ! -f ${LOG_SINCRO} ]; then
 	info="No se puede mostrar la información sobre el programa actual porque no se ha generado todavia el caché.
 	<br><br>
 	Puede ir a la pagina de <a href=\"/cgi-bin/box/estado\">estado</a> para generarlo ahora"
+# Comprobar marca de generacion de cache XML
 elif [ -f ${LCK_SINCRO} ]; then
 	info="No se puede mostrar la información sobre el programa actual porque en este momento se está generando el caché.
 	<br><br>
 	Puede ir a la pagina de <a href=\"/cgi-bin/box/estado\">estado</a> para comprobar el proceso"
 fi
 
-# Comprobar marca de generacion de cache XML
+# Mostrar error o procesar carpeta
 if [ ${#info} -ne 0 ]; then
 	# Enviar documento html
 	html_doc_start "M750T - Sincroguía" "" "------b-"

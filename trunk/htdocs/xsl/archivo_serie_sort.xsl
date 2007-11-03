@@ -14,7 +14,7 @@
 	<script type="text/javascript" src="/js/controlenviar.js" charset="ISO-8859-1"></script>
 	<script type="text/javascript" src="/js/botones.js" charset="ISO-8859-1"></script>
 	<script type="text/javascript" src="/js/m750.js" charset="ISO-8859-1"></script>
-	<title>M750T - Grabaciones Realizadas</title>
+	<title>M750T - Archivo de Grabaciones</title>
 </head>
 <body bgcolor="#FFFFFF">
 	<form name="form_m750">
@@ -23,7 +23,7 @@
 			<td align="center">
 				<font class="titPag">M750T EPG</font>
 				<br/>
-				<font class="subTitPag">Grabaciones Realizadas</font>
+				<font class="subTitPag">Archivo de Grabaciones</font>
 			</td>
 		</tr>
 		<tr>
@@ -49,9 +49,9 @@
 				<br/>
 				<table width="100%" border="0" cellspacing="0" cellpadding="2" align="center" class="borderTabla2">
 					<tr bgcolor="#ffb310">
-						<th class="fila" align="right">B&#160;&#160;&#160;A&#160;&#160;&#160;D&#160;&#160;&#160;V&#160;</th>
+						<th class="fila" align="right">B&#160;&#160;&#160;R&#160;&#160;&#160;D&#160;&#160;&#160;V&#160;</th>
 						<th class="fila" align="left">Título</th>
-						<th class="fila" align="left"><a href="/cgi-bin/crid/ver-lista-grabaciones?time" title="Ordenar por Fecha">Inicio</a></th>
+						<th class="fila" align="left"><a href="/cgi-bin/crid/ver-lista-archivo?time" title="Ordenar por Fecha">Inicio</a></th>
 						<th class="fila" align="left">Final</th>
 						<th class="fila" align="left">Duración (min)</th>
 						<th class="fila" align="right">&#160;</th>
@@ -84,9 +84,9 @@
 										</xsl:element>
 										<xsl:text> </xsl:text>
 										<xsl:element name="a">
-											<xsl:attribute name="title">Archivar Grabación</xsl:attribute>
-											<xsl:attribute name="href">javascript:archivarGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
-											<img src="/img/rec2arch.gif" alt="Archivar Grabación" width="16" height="16" border="0" />
+											<xsl:attribute name="title">Restaurar Grabación</xsl:attribute>
+											<xsl:attribute name="href">javascript:restaurarGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
+											<img src="/img/arch2rec.gif" alt="Restaurar Grabación" width="16" height="16" border="0" />
 										</xsl:element>
 										<xsl:text> </xsl:text>
 										<xsl:element name="a">

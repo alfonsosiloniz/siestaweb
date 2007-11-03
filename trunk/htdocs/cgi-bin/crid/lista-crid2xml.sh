@@ -41,14 +41,13 @@ echo -n "" > $CachefileTemp
 # Clase ficheros .crid
 echo "	<${crid_class} now=\"`date +%s`\">"
 
-# Comprobar carpeta
-if [ -d $Recordings ]; then
+# Comprobar carpeta, contar nº de ficheros .crid
+numCrids=`ls -la $Recordings/*.crid 2>/dev/null | wc -l`
+if [ $numCrids -ne 0 ]; then
 	IDserieActual=""
 	# Recorrer ficheros .crid
 	for Cridfile in $Recordings/*.crid; do
-# 	for Cridfile in $Recordings/*.refXML; do
 		# Comprobar cache de fichero crid
-# 		Cachefile=${Cridfile}
 		Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
 		if [ $Cridfile -nt $Cachefile ] ; then
 			# Procesar fichero crid

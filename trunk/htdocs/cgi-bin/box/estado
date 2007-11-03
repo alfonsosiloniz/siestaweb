@@ -58,9 +58,10 @@ echo "				<br>
 								<option value=\"log_record\">Grabaciones programadas/canceladas desde la aplicación</option>
 								<option value=\"log_login\">Login en la aplicación</option>
 								<option value=\"log_search\">Búsquedas realizadas</option>
+								<option value=\"log_archivo\">Archivo de grabaciones</option>
 								<option value=\"log_download\">Descargas de grabaciones realizadas a local</option>
 								<option value=\"log_view_video\">Visualizaciones de grabaciones en PC local</option>
-								<option value=\"log_delete\">Borrado de grabaciones realizadas</option>
+								<option value=\"log_delete\">Borrado de grabaciones</option>
 								<option value=\"log_checkdisk\">Chequeo de particiones del disco</option>
 								<option value=\"log_cmd\">Comandos ejecutados</option>
 								<option value=\"log_RECORDER_LOG\">Log del grabador</option>
@@ -127,12 +128,14 @@ echo "				<br>
 			print_log_file "Login en la aplicación"                                    "/tmp/login.log";;
 		log_search )
 			print_log_file "Búsquedas realizadas"                                      "/tmp/search.log";;
+		log_archivo )
+			print_log_file "Archivo de grabaciones"                                    "/tmp/archivo_crid.log";;
 		log_download )
 			print_log_file "Descargas de grabaciones realizadas a local"               "/tmp/download.log";;
 		log_view_video )
 			print_log_file "Visualizaciones de grabaciones en PC local"                "/tmp/view_video.log";;
 		log_delete )
-			print_log_file "Borrado de grabaciones realizadas"                         "/tmp/delete_recording.log";;
+			print_log_file "Borrado de grabaciones"                                    "/tmp/delete_recording.log";;
 		log_checkdisk )
 			print_log_file "Chequeo de particiones del disco"                          "/tmp/checkdisk.log"
 			if [ -s /tmp/checkdisk.err ]; then
