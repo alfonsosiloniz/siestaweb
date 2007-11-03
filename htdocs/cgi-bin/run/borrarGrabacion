@@ -1,7 +1,7 @@
 #!/bin/bash
 # pepper, (c) Grupo SIESTA, 26-04-2007
 #
-# Script que elimina una grabación a partir del fichero .crid, retorna el resultado en XML
+# Borrar grabacion(fichero .crid, el resto se elimina en proceso de limpieza)
 
 # Obtener parametros
 if [ $# = 1 ]; then
@@ -14,22 +14,34 @@ fi
 # Configurar entorno
 source ../www-setup.shi
 source ../fweb.shi
+LOG=/tmp/delete_recording.log
+SCRIPT=/tmp/delete_recording.sh
 Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
 
 # Log del proceso
-echo "`date` Borrar grabación de Crid: $Cridfile" >> /tmp/delete_recording.log
+echo "`date` Borrar grabación, fichero crid: $Cridfile" >> $LOG
+echo -n "" > $SCRIPT
 
-# Obtenemos carpeta de grabaciones
-recordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
+# Comprobar y fichero
+# if [ -d $RecordingFolder ]; then
+if [ -f $Cridfile ]; then
+	# Procesar fichero crid
+	eval `www-tools crid2var ${Cridfile}`
+	echo "Fichero: `basename ${Cridfile}` -> $Titulo ($num_fmpg)" >> $LOG
 
-# Comprobar carpeta
-if [ -d $RecordingFolder ]; then
-	# Log
-	echo "rm -f $Cridfile" >> /tmp/delete_recording.log
-	echo "rm -f $Cachefile" >> /tmp/delete_recording.log
+	# Borrar crid
+	echo "rm -f $Cridfile" >> $SCRIPT
+
+	# Borrar fichero .refXML
+	echo "rm -f $Cachefile" >> $SCRIPT
+
 	# Borrar ficheros
-	rm -f $Cridfile >> /tmp/delete_recording.log 2>> /tmp/delete_recording.log
-	rm -f $Cachefile
+	cat $SCRIPT >> $LOG
+	eval "(`cat $SCRIPT`) >> $LOG 2>> $LOG"
+
+	# Eliminar ficheros temporales
+	rm -f $SCRIPT
+
 	# Resultado OK
 	enviar_xml_ok
 else

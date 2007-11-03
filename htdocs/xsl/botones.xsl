@@ -20,6 +20,9 @@
 				<a href="/cgi-bin/crid/ver-lista-grabaciones" title="Grabaciones Realizadas"        style="text-decoration:none;"><img src="/img/grabaciones.gif"  width="32" height="32" border="0" alt="Grabaciones Realizadas"/>       <br/>Grabaciones</a>
 			</td>
 			<td class="borderBotones" align="center">
+				<a href="/cgi-bin/crid/ver-lista-archivo"     title="Archivo de Grabaciones"        style="text-decoration:none;"><img src="/img/archivo.gif"      width="32" height="32" border="0" alt="Archivo de Grabaciones"/>       <br/>Archivo</a>
+			</td>
+			<td class="borderBotones" align="center">
 				<a href="/html/osd2tcp.html"                  title="Control OSD"                   style="text-decoration:none;"><img src="/img/osd.gif"          width="32" height="32" border="0" alt="Control OSD"/>                  <br/>OSD</a>
 			</td>
 			<td class="borderBotones" align="center">

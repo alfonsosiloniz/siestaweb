@@ -49,7 +49,7 @@
 				<br/>
 				<table width="100%" border="0" cellspacing="0" cellpadding="2" align="center" class="borderTabla2">
 					<tr bgcolor="#ffb310">
-						<th class="fila" align="right">B&#160;&#160;&#160;D&#160;&#160;&#160;V&#160;</th>
+						<th class="fila" align="right">B&#160;&#160;&#160;A&#160;&#160;&#160;D&#160;&#160;&#160;V&#160;</th>
 						<th class="fila" align="left"><a href="/cgi-bin/crid/ver-lista-grabaciones?serie" title="Ordenar por Series">Título</a></th>
 						<th class="fila" align="left">Inicio</th>
 						<th class="fila" align="left">Final</th>
@@ -64,24 +64,36 @@
 					<xsl:for-each select="M750/RECORDINGS/RECORD">
 						<xsl:sort select="UTC_TIME" order="descending" />
 						<tr>
-							<td class="fila" align="right" width="65">
+							<td class="fila" align="right" width="85">
 								<xsl:choose>
 									<xsl:when test="REC_STATE!='2'">
 										<xsl:element name="a">
+											<xsl:attribute name="title">Eliminar Grabación</xsl:attribute>
 											<xsl:attribute name="href">javascript:borrarGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
 											<img src="/img/red_ball.jpg" alt="Eliminar Grabación" width="18" height="18" border="0" />
 										</xsl:element>
 										<xsl:text> </xsl:text>
-											<xsl:element name="a"><xsl:attribute name="href">/html/descargar-grabacion.html?crid=<xsl:value-of select="CRID_FILE"/></xsl:attribute>
+										<xsl:element name="a">
+											<xsl:attribute name="title">Archivar Grabación</xsl:attribute>
+											<xsl:attribute name="href">javascript:archivarGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
+											<img src="/img/rec2arch.gif" alt="Archivar Grabación" width="16" height="16" border="0" />
+										</xsl:element>
+										<xsl:text> </xsl:text>
+										<xsl:element name="a">
+											<xsl:attribute name="title">Descargar Grabación</xsl:attribute>
+											<xsl:attribute name="href">/html/descargar-grabacion.html?crid=<xsl:value-of select="CRID_FILE"/></xsl:attribute>
 											<img src="/img/icon-save.gif" alt="Descargar Grabación" width="16" height="16" border="0" />
 										</xsl:element>
 										<xsl:text> </xsl:text>
-											<xsl:element name="a"><xsl:attribute name="href">/cgi-bin/box/verCrid?crid=<xsl:value-of select="CRID_FILE"/>&#x26;recording=no</xsl:attribute>
+										<xsl:element name="a">
+											<xsl:attribute name="title">Visualizar Grabación</xsl:attribute>
+											<xsl:attribute name="href">/cgi-bin/box/verCrid?crid=<xsl:value-of select="CRID_FILE"/>&#x26;recording=no</xsl:attribute>
 											<img src="/img/muangelo.gif" alt="Visualizar Grabación" width="18" height="18" border="0" />
 										</xsl:element>
 									</xsl:when>
 									<xsl:otherwise>
 										<xsl:element name="a">
+											<xsl:attribute name="title">Visualizar Grabación</xsl:attribute>
 											<xsl:attribute name="href">/cgi-bin/box/verCrid?crid=<xsl:value-of select="CRID_FILE"/>&#x26;recording=yes</xsl:attribute>
 											<img src="/img/muangelo.gif" alt="Visualizar Grabación" width="18" height="18" border="0" />
 										</xsl:element>

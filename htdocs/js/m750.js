@@ -236,6 +236,30 @@ function borrarGrabacion(crid) {
 }
 
 //-------------------------------------------------
+// Archivar grabacion
+//-------------------------------------------------
+function archivarGrabacion(crid) {
+	if (confirm("¿Está seguro de querer archivar la grabación seleccionada?")) {
+		if (!isMobile)
+		    mostrarMensajeProceso();
+		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
+		makeRequest("/cgi-bin/run/archivarCrid?" + crid + "-" + new Date().getTime(), "RespuestaPeticionXML");
+	}
+}
+
+//-------------------------------------------------
+// Restaurar grabacion
+//-------------------------------------------------
+function restaurarGrabacion(crid) {
+	if (confirm("¿Está seguro de querer restaurar la grabación seleccionada?")) {
+		if (!isMobile)
+		    mostrarMensajeProceso();
+		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
+		makeRequest("/cgi-bin/run/restaurarCrid?" + crid + "-" + new Date().getTime(), "RespuestaPeticionXML");
+	}
+}
+
+//-------------------------------------------------
 // Respuesta a peticiones de grabacion/cancelacion/borrado
 //-------------------------------------------------
 function RespuestaPeticionXML(xmldoc) {

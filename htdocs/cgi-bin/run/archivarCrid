@@ -1,0 +1,72 @@
+#!/bin/bash
+# jotabe, (c) Grupo SIESTA, 02-11-2007
+#
+# Archivar grabacion (ficheros crid, fmpg, mpg, idx, midx)
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# Falta deteccion de ficheros de timeshift y de fragmentos compartidos
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+# Obtener parametros
+if [ $# = 1 ]; then
+	Cridfile=$1
+else
+	# Eliminar fecha/hora del parametro
+	Cridfile=${QUERY_STRING%-*}
+fi
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+LOG=/tmp/archivo_crid.log
+SCRIPT=/tmp/archivo_crid.sh
+Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
+
+# Log del proceso
+echo "`date` Archivar crid: $Cridfile" >> $LOG
+echo -n "" > $SCRIPT
+
+# Obtenemos carpeta de grabaciones
+RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
+
+# Comprobar carpetas y fichero
+if [ -d $RecordingFolder -a -d $ARCHIVO_GRABACIONES -a -f $Cridfile ]; then
+	# Procesar fichero crid
+	eval `www-tools crid2var ${Cridfile}`
+	echo "Fichero: `basename ${Cridfile}` -> $Titulo ($num_fmpg)" >> $LOG
+
+	# Nombres fragmentos
+	i=0
+	while [ $i -lt $num_fmpg ]; do
+		# Nombre fragmento
+		TMP='$fmpg'${i}
+		eval "TMP2=$TMP"
+
+		# Mover fragmento
+		echo "mv -f ${RecordingFolder}/${TMP2}* $ARCHIVO_GRABACIONES" >> $SCRIPT
+
+		# Siguiente fragmento
+		i=$(($i+1))
+	done
+
+	# Mover crid
+	echo "mv -f ${Cridfile} $ARCHIVO_GRABACIONES" >> $SCRIPT
+
+	# Borrar fichero .refXML
+	echo "rm -f $Cachefile" >> $SCRIPT
+
+	# Comprobar fragmentos compartidos
+
+	# Mover ficheros
+	cat $SCRIPT >> $LOG
+	eval "(`cat $SCRIPT`) >> $LOG 2>> $LOG"
+
+	# Eliminar ficheros temporales
+	rm -f $SCRIPT
+
+	# Resultado OK
+	enviar_xml_ok
+else
+	# Resultado NO OK
+	enviar_xml_err
+fi

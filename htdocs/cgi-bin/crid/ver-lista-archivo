@@ -1,7 +1,7 @@
 #!/bin/bash
 # (c) Grupo SIESTA, 03-11-2007
 #
-# Devolver lista de grabaciones realizadas
+# Devolver lista de grabaciones archivadas
 
 # Configurar entorno
 source ../www-setup.shi
@@ -13,38 +13,35 @@ if [ "$QUERY_STRING" != "" ] ; then
 	if [ "$QUERY_STRING" = "serie" ]; then
 		rm -f ${Cache}/.time_sort
 		touch ${Cache}/.serie_sort
-		xsl=record_serie_sort.xsl
+		xsl=archivo_serie_sort.xsl
 	else
 		rm -f ${Cache}/.serie_sort
 		touch ${Cache}/.time_sort
-		xsl=record_time_sort.xsl
+		xsl=archivo_time_sort.xsl
 	fi
 else
 	if [ -f ${Cache}/.serie_sort ]; then
-		xsl=record_serie_sort.xsl
+		xsl=archivo_serie_sort.xsl
 	else
-		xsl=record_time_sort.xsl
+		xsl=archivo_time_sort.xsl
 	fi
 fi
-
-# Obtenemos carpeta de grabaciones
-RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
 
 # Comprobacion USB-HDD montado
 info=""
 USB_MOUNTED=`grep ${USB_DISK} /proc/mounts | wc -l`
 if [ ${USB_MOUNTED} -eq 0 ]; then
-	info="No se puede acceder a la carpeta de grabaciones realizadas porque no hay acceso al disco duro."
+	info="No se puede acceder a la carpeta de archivo de grabaciones porque no hay acceso al disco duro."
 # Comprobar carpeta de archivo grabaciones
-elif [ ! -d ${RecordingFolder} ]; then
-	info="No existe la carpeta $RecordingFolder
+elif [ ! -d ${ARCHIVO_GRABACIONES} ]; then
+	info="No existe la carpeta $ARCHIVO_GRABACIONES
 	<br><br>
-	Revise la configuración de la carpeta de grabaciones de su gigaset."
+	Revise la configuración <a href=\"/cgi-bin/box/configSIESTA\">SIESTA</a> o cree esta carpeta para tener acceso a la función de archivo de grabaciones."
 # Contar nº de grabaciones
 else
-	numCrids=`ls -la $RecordingFolder/*.crid 2>/dev/null | wc -l`
+	numCrids=`ls -la $ARCHIVO_GRABACIONES/*.crid 2>/dev/null | wc -l`
 	if [ $numCrids -eq 0 ]; then
-		info="No existe ninguna grabación en la carpeta $RecordingFolder"
+		info="No existe ninguna grabación archivada en la carpeta $ARCHIVO_GRABACIONES"
 		####Meter boton de vaciado de fragmentos
 	fi
 fi
@@ -52,8 +49,8 @@ fi
 # Mostrar error o procesar carpeta
 if [ ${#info} -ne 0 ]; then
 	# Enviar documento html
-	html_doc_start "M750T - Grabaciones Realizadas" "" "------b-"
-	html_top "Grabaciones Realizadas" "" "" ""
+	html_doc_start "M750T - Archivo de Grabaciones" "" "------b-"
+	html_top "Archivo de Grabaciones" "" "" ""
 	echo "			<br>
 			<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">
 				<tr>
@@ -64,6 +61,6 @@ if [ ${#info} -ne 0 ]; then
 			</table>"
 	html_doc_end no
 else
-	# Procesar carpeta de grabaciones
-	./lista-crid2xml.sh $RecordingFolder RECORDINGS $xsl
+	# Procesar carpeta de archivo grabaciones
+	./lista-crid2xml.sh $ARCHIVO_GRABACIONES RECORDINGS $xsl
 fi
