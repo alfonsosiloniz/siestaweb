@@ -60,7 +60,18 @@ if [ -d $DIR_ORIGEN -a -d $DIR_DESTINO -a -f $Cridfile ]; then
 		# Mover fragmento. Lo pongo fichero a fichero para poder sacarlo por el log e ir informando al usuario del proceso de copia
 		for recordFile in ${DIR_ORIGEN}/${TMP2}* ; do
 		   echo "echo Copiando $recordFile a $DIR_DESTINO >> $LOGPROC" >> $SCRIPT
+		   echo "inicio=\`date +%s\`" >> $SCRIPT
 		   echo "cp $recordFile $DIR_DESTINO 2>> $LOGPROC" >> $SCRIPT
+		   echo "final=\`date +%s\`" >> $SCRIPT
+		   echo "du=(\`du -ch ${recordFile} | tail -1\`)" >> $SCRIPT
+		   echo "dunum=(\`du -k ${recordFile} | tail -1\`)" >> $SCRIPT
+		   echo "secs=\$((final-inicio))" >> $SCRIPT
+		   echo "echo -n \"  Fichero \`basename $recordFile\` copiado: \$du en \$((final-inicio)) segundos\" >> $LOGPROC" >> $SCRIPT
+		   echo "if [ \$secs -gt 0 ]; then" >> $SCRIPT
+		   echo "   echo \" --> \$((dunum/secs)) KBytes/sec.\" >> $LOGPROC" >> $SCRIPT
+		   echo "else" >> $SCRIPT
+		   echo "   echo \".\" >> $LOGPROC" >> $SCRIPT
+		   echo "fi" >> $SCRIPT
       done
       
 		# Siguiente fragmento
