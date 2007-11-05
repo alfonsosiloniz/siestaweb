@@ -239,13 +239,13 @@ function get_modo_grabacion() {
 	# Buscar nº de modulos que estan grabando 
 	M_G=(`lsmod | grep ^demux`) 
 	case ${M_G[2]} in
-		1)				ModoGrabacion=1;;	# Apagado-Sin grabacion 
-		4|5|6)			ModoGrabacion=2;;	# Apagado-Una grabacion 
-		9)				ModoGrabacion=3;;	# Apagado-Dos grabaciones 
-		7)				ModoGrabacion=4;;	# Encendido-Sin grabacion
-		10|11|12)		ModoGrabacion=5;;	# Encendido-Una grabacion 
-		14|15|16|17|18)	ModoGrabacion=6;;	# Encendido-Dos grabaciones 
-		*)				ModoGrabacion=0;;	# Desconocido
+		1)              ModoGrabacion=1;;   # Apagado-Sin grabacion 
+      4|5|6)          ModoGrabacion=2;;   # Apagado-Una grabacion 
+      9)              ModoGrabacion=3;;   # Apagado-Dos grabaciones 
+      7)              ModoGrabacion=4;;   # Encendido-Sin grabacion
+      10|11|12|14|15) ModoGrabacion=5;;   # Encendido-Una grabacion 
+      16|17|18|19)    ModoGrabacion=6;;   # Encendido-Dos grabaciones
+		*)				    ModoGrabacion=0;;   # Desconocido
 	esac
 }
 

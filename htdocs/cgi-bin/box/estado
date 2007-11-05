@@ -268,7 +268,7 @@ echo "				<br>
 
 # Estado y uptime
 source /usr/local/bin/siesta-version.sh
-STgrabacion=([0]="Desconocido" [1]="Apagado-Sin grabaciones" [2]="Apagado-Una grabación " [3]="Apagado-Dos grabaciones" [4]="Encendido-Sin grabaciones" [5]="Encendido-Una grabación" [6]="Encendido-Dos grabaciones")
+STgrabacion=([0]="Desconocido" [1]="Sin grabaciones" [2]="Una grabación " [3]="Dos grabaciones" [4]="Sin grabaciones" [5]="Una grabación" [6]="Dos grabaciones")
 echo "					<tr><td class=\"titTabla\" bgcolor=\"#ffb310\" height=\"4\"></td></tr>
 					<tr>
 						<td class=\"fila titTabla\" bgcolor=\"#ffb310\" align=\"center\">
