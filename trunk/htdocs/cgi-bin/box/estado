@@ -23,7 +23,7 @@ else
 fi
 
 # Enviar documento html
-html_doc_start "M750T - Estado del box" "" "-a----bm"
+html_doc_start "M750T - Estado del box" "300" "-a----bm"
 
 # Respuesta html
 html_top "Estado del box" "" "" ""
