@@ -235,6 +235,15 @@ function borrarGrabacion(crid) {
 	}
 }
 
+function borrarGrabacionCompleta(crid) {
+	if (confirm("¿Está seguro de querer eliminar definitivamente la grabación seleccionada?")) {
+		if (!isMobile)
+		    mostrarMensajeProceso();
+		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
+		makeRequest("/cgi-bin/run/borrarGrabacionCompleta?" + crid + "-" + new Date().getTime(), "RespuestaPeticionXML");
+	}
+}
+
 //-------------------------------------------------
 // Archivar grabacion
 //-------------------------------------------------
@@ -244,6 +253,41 @@ function archivarGrabacion(crid) {
 		    mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
 		makeRequest("/cgi-bin/run/archivarCrid?" + crid + "-" + new Date().getTime(), "RespuestaPeticionXML");
+	}
+}
+
+//-------------------------------------------------
+// Copiar/Mover grabacion
+//-------------------------------------------------
+function copiarGrabacion(crid) {
+	directorio = prompt('Introduce el Directorio Destino','/var/media/PC1/Video'); 
+	if (directorio == null) {
+	    alert("Debe permitir la ejecución de scripts");
+	    return;
+	}
+	if (confirm("¿Está seguro de querer copiar la grabación seleccionada al directorio " + directorio + "?")) {
+		if (!isMobile)
+		    mostrarMensajeProceso();
+		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
+		makeRequest("/cgi-bin/run/cpmvCrid?" + crid + "&" + directorio + "&0&" + new Date().getTime(), "noReply");
+		alert("Se ha mandado la orden de copia de la grabación. Siga el proceso en la pantalla de estado.");
+		document.location.href="/cgi-bin/box/estado?id_log=log_cpmv_record";
+	}
+}
+
+function moverGrabacion(crid) {
+	directorio = prompt('Introduce el Directorio Destino','/var/media/PC1/Video');
+	if (directorio == null) {
+	    alert("Debe permitir la ejecución de scripts");
+	    return;
+	}
+	if (confirm("¿Está seguro de querer mover la grabación seleccionada al directorio " + directorio + "?")) {
+		if (!isMobile)
+		    mostrarMensajeProceso();
+		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
+		makeRequest("/cgi-bin/run/cpmvCrid?" + crid + "&" + directorio + "&1&" + new Date().getTime(), "noReply");
+		alert("Se ha mandado la orden de copia de la grabación. Siga el proceso en la pantalla de estado.");
+		document.location.href="/cgi-bin/box/estado?id_log=log_cpmv_record";
 	}
 }
 

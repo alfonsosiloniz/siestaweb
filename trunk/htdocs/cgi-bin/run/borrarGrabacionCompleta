@@ -1,0 +1,65 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 26-04-2007
+#
+# Borrar grabacion
+
+# Obtener parametros
+if [ $# = 1 ]; then
+	Cridfile=$1
+else
+	# Eliminar fecha/hora del parametro
+	Cridfile=${QUERY_STRING%-*}
+fi
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+LOG=/tmp/delete_recording.log
+SCRIPT=/tmp/delete_recording.sh
+Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
+
+# Log del proceso
+echo "`date` Borrar grabación, fichero crid: $Cridfile" >> $LOG
+echo -n "" > $SCRIPT
+
+# Comprobar y fichero
+# if [ -d $RecordingFolder ]; then
+if [ -f $Cridfile ]; then
+	# Procesar fichero crid
+	eval `www-tools crid2var ${Cridfile}`
+	echo "Fichero: `basename ${Cridfile}` -> $Titulo ($num_fmpg)" >> $LOG
+
+	# Borrar crid
+	echo "rm -f $Cridfile" >> $SCRIPT
+	
+	if [ "${fmpg0}" != "" ]; then
+	    i=0
+	    while [ $i -lt $num_fmpg ]; do
+    		# Nombre fragmento
+    		TMP='$fmpg'${i}
+    		eval "TMP2=$TMP"
+    
+    		# Mover fragmento
+    		echo "rm -f `dirname $Cridfile`/${TMP2}*" >> $SCRIPT
+    
+    		# Siguiente fragmento
+    		i=$(($i+1))
+    	done
+	fi
+
+	# Borrar fichero .refXML
+	echo "rm -f $Cachefile" >> $SCRIPT
+
+	# Borrar ficheros
+	cat $SCRIPT >> $LOG
+	eval "(`cat $SCRIPT`) >> $LOG 2>> $LOG"
+
+	# Eliminar ficheros temporales
+	rm -f $SCRIPT
+
+	# Resultado OK
+	enviar_xml_ok
+else
+	# Resultado NO OK
+	enviar_xml_err
+fi
