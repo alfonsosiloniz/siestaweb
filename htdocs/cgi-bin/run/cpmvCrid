@@ -43,8 +43,8 @@ if [ -d $DIR_ORIGEN -a -d $DIR_DESTINO -a -f $Cridfile ]; then
 	
 	# Copiar crid: Lo duplico con otro nombre para que el fichero de caché no sea el mismo que el original
 	CridfileCopy=`dirname ${Cridfile}`/`hostname`_`basename ${Cridfile}`
-	echo "cp ${Cridfile} ${CridfileCopy} " >> $SCRIPT
-	echo "mv ${CridfileCopy} $DIR_DESTINO" >> $SCRIPT
+	echo "cp ${Cridfile} ${CridfileCopy} 2>> $LOGPROC" >> $SCRIPT
+	echo "mv ${CridfileCopy} $DIR_DESTINO 2>> $LOGPROC" >> $SCRIPT
 	echo "echo Copiando ${CridfileCopy} a $DIR_DESTINO >> $LOGPROC" >> $SCRIPT
 	
 	# Borrar fichero .refXML
@@ -60,7 +60,7 @@ if [ -d $DIR_ORIGEN -a -d $DIR_DESTINO -a -f $Cridfile ]; then
 		# Mover fragmento. Lo pongo fichero a fichero para poder sacarlo por el log e ir informando al usuario del proceso de copia
 		for recordFile in ${DIR_ORIGEN}/${TMP2}* ; do
 		   echo "echo Copiando $recordFile a $DIR_DESTINO >> $LOGPROC" >> $SCRIPT
-		   echo "cp $recordFile $DIR_DESTINO" >> $SCRIPT
+		   echo "cp $recordFile $DIR_DESTINO 2>> $LOGPROC" >> $SCRIPT
       done
       
 		# Siguiente fragmento
