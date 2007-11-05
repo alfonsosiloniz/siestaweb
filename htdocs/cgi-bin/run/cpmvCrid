@@ -66,11 +66,11 @@ if [ -d $DIR_ORIGEN -a -d $DIR_DESTINO -a -f $Cridfile ]; then
 		   echo "du=(\`du -ch ${recordFile} | tail -1\`)" >> $SCRIPT
 		   echo "dunum=(\`du -k ${recordFile} | tail -1\`)" >> $SCRIPT
 		   echo "secs=\$((final-inicio))" >> $SCRIPT
-		   echo "echo -n \"  Fichero \`basename $recordFile\` copiado: \$du en \$((final-inicio)) segundos\" >> $LOGPROC" >> $SCRIPT
+		   echo "echo -n \"  <i>Fichero \`basename $recordFile\` copiado: \$du en \$((final-inicio)) segundos\" >> $LOGPROC" >> $SCRIPT
 		   echo "if [ \$secs -gt 0 ]; then" >> $SCRIPT
-		   echo "   echo \" --> \$((dunum/secs)) KBytes/sec.\" >> $LOGPROC" >> $SCRIPT
+		   echo "   echo \" --> \$((dunum/secs)) KBytes/sec.</i>\" >> $LOGPROC" >> $SCRIPT
 		   echo "else" >> $SCRIPT
-		   echo "   echo \".\" >> $LOGPROC" >> $SCRIPT
+		   echo "   echo \".</i>\" >> $LOGPROC" >> $SCRIPT
 		   echo "fi" >> $SCRIPT
       done
       
