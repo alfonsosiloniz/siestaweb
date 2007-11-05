@@ -45,7 +45,7 @@ echo "				<br>
 								</tr>
 							</table>
 						</td>
-						<td width=\"50%\" align=\"center\">
+						<td width=\"50%\" align=\"center\" class=\"txtNormal\">
 							Ver estado: <select name=\"id_log\" id=\"id_log\">
 								<option value=\"log_cache_sincro\">Generación de caché de Sincroguía</option>
 								<option value=\"log_getsincroimg\">Descargas de imágenes de Sincroguía</option>
@@ -73,6 +73,7 @@ echo "				<br>
 								<option value=\"log_ps\">Procesos en ejecución (ps)</option>
 								<option value=\"log_mount\">Puntos de montaje (cat /proc/mounts)</option>
 								<option value=\"log_act_sincro\">Actualización de la Sincroguía</option>
+								<option value=\"log_cpmv_record\">Copiar/Mover Grabación</option>
 							</select>
 							<script type=\"text/javascript\">document.getElementById('id_log').value=\"$id_accion\";</script>
 							&nbsp;&nbsp;
@@ -158,6 +159,8 @@ echo "				<br>
 			print_log_file "Configuración de Red (ifconfig)"                           "/dev/null"                "ifconfig";;
 		log_ps )
 			print_log_file "Procesos en ejecución (ps)"                                "/dev/null"                "./verProcesos";;
+		log_cpmv_record )
+			print_log_file "Copiar/Mover Grabación"                                    "/tmp/copiar-crid-proc.log";;
 		log_mount )
 			# Encabezado puntos de montaje
 			echo "				<tr>

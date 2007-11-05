@@ -49,7 +49,7 @@
 				<br/>
 				<table width="100%" border="0" cellspacing="0" cellpadding="2" align="center" class="borderTabla2">
 					<tr bgcolor="#ffb310">
-						<th class="fila" align="right">B&#160;&#160;&#160;A&#160;&#160;&#160;D&#160;&#160;&#160;V&#160;</th>
+						<th class="fila" align="right">B&#160;&#160;&#160;A&#160;&#160;&#160;C&#160;&#160;&#160;M&#160;&#160;&#160;D&#160;&#160;&#160;V&#160;</th>
 						<th class="fila" align="left">Título</th>
 						<th class="fila" align="left"><a href="/cgi-bin/crid/ver-lista-grabaciones?time" title="Ordenar por Fecha">Inicio</a></th>
 						<th class="fila" align="left">Final</th>
@@ -74,7 +74,7 @@
 							</xsl:when>
 						</xsl:choose>
 						<tr>
-							<td class="fila" align="right" width="85">
+							<td class="fila" align="right" width="120">
 								<xsl:choose>
 									<xsl:when test="REC_STATE!='2'">
 										<xsl:element name="a">
@@ -87,6 +87,18 @@
 											<xsl:attribute name="title">Archivar Grabación</xsl:attribute>
 											<xsl:attribute name="href">javascript:archivarGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
 											<img src="/img/rec2arch.gif" alt="Archivar Grabación" width="16" height="16" border="0" />
+										</xsl:element>
+										<xsl:text> </xsl:text>
+										<xsl:element name="a">
+											<xsl:attribute name="title">Copiar Grabación</xsl:attribute>
+											<xsl:attribute name="href">javascript:copiarGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
+											<img src="/img/copy-icon.gif" alt="Copiar Grabación" width="16" height="16" border="0" />
+										</xsl:element>
+										<xsl:text> </xsl:text>
+										<xsl:element name="a">
+											<xsl:attribute name="title">Mover Grabación</xsl:attribute>
+											<xsl:attribute name="href">javascript:moverGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
+											<img src="/img/cut-icon.gif" alt="Mover Grabación" width="16" height="16" border="0" />
 										</xsl:element>
 										<xsl:text> </xsl:text>
 										<xsl:element name="a">
@@ -184,6 +196,9 @@
 						</tr>
 					</xsl:for-each>
 				</table>
+				<br/><br/>
+				Ver grabaciones del directorio <input type="text" value="/var/media/PC1/Video" size="50" name="alt_dir" />&#160;
+				<input type="button" value="Ver" onclick="document.location.href='/cgi-bin/crid/ver-lista-grabaciones?serie&amp;' + document.forms[0].alt_dir.value" />
 			</td>
 		</tr>
 	</table>

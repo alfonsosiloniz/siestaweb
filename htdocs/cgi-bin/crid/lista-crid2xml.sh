@@ -16,7 +16,6 @@ crid_class=$2
 # Configurar entorno
 source ../www-setup.shi
 source ../fweb.shi
-video_dir=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
 fmpg0=""
 du=0
 
@@ -27,11 +26,11 @@ xml_doc "/xsl/${3}"
 echo "<M750>"
 
 # Calculo de espacio libre
-if [ -d $video_dir ]; then
-	disk_space=`df $video_dir |tail -1 | cut -b 42-50`
+if [ -d $Recordings ]; then
+	disk_space=`df $Recordings |tail -1 | cut -b 42-50`
 	disk_spaceMb=$((disk_space/1024))
 	disk_spaceGb=$((disk_spaceMb/1024))
-	echo "	<SPACE>$disk_spaceMb Mb ($disk_spaceGb Gb ~ $((disk_spaceGb/2)) horas)</SPACE>"
+	echo "	<SPACE>$disk_spaceMb Mb ($disk_spaceGb Gb ~ $((disk_spaceGb/2)) horas) en $Recordings</SPACE>"
 fi
 
 # Vaciar lista de ficheros para ordenacion
@@ -52,7 +51,6 @@ if [ $numCrids -ne 0 ]; then
 		if [ $Cridfile -nt $Cachefile ] ; then
 			# Procesar fichero crid
 			eval `www-tools crid2var ${Cridfile}`
-
 			# Calcular espacio usado en grabaciones
 			if [ "$crid_class" = "RECORDINGS" ]; then
 				# Nombres fragmentos
