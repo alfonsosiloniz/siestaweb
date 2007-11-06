@@ -106,8 +106,7 @@ if [ -d $DIR_ORIGEN -a -d $DIR_DESTINO -a -f $Cridfile ]; then
 	fi
 	
 	# Mover ficheros
-	echo "echo Copia/Traspaso de Grabacion Finalizada >> $LOGPROC" >> $SCRIPT
-	echo "date >> $LOGPROC" >> $SCRIPT
+	echo "echo \"\`date\` Copia/Traspaso de Grabacion Finalizada\" >> $LOGPROC" >> $SCRIPT
 	cat $SCRIPT >> $LOG
 	eval "(`cat $SCRIPT`) >> $LOG 2>> $LOG"
 	
