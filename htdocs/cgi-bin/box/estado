@@ -166,6 +166,7 @@ echo "				<br>
    			echo "<tr>
    						<td  align=\"center\">
    							<br>
+   							<input type=\"button\" value=\"Actualizar Estado\" class=\"txtInfo\" onclick=\"document.location.reload()\">&nbsp;
    							<input type=\"button\" value=\"Detener Copia/Traspaso\" class=\"txtInfo\" onclick=\"stopCpmv()\">
    							<br>&nbsp;<br>
    						</td>
