@@ -4,6 +4,20 @@
 # Copiar grabacion (ficheros crid, fmpg, mpg, idx, midx)
 #
 
+# Ejecutamos el script con baja prioridad
+renice 20 $$ > /dev/null
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+
+LOG=/tmp/copiar_crid.log
+LOGPROC=/tmp/copiar-crid-proc.log
+SCRIPT=/tmp/copiar_crid.sh
+
+echo -n "" > $SCRIPT
+echo "`date` Iniciando el proceso de Copia/Traspaso de grabación..." > $LOGPROC
+
 # Por defecto, copiamos la grabación, no la movemos
 mover=0
 
@@ -20,19 +34,11 @@ else
 	mover=`echo ${QUERY_STRING} | cut -d"&" -f3`
 fi
 
-# Configurar entorno
-source ../www-setup.shi
-source ../fweb.shi
-LOG=/tmp/copiar_crid.log
-LOGPROC=/tmp/copiar-crid-proc.log
-SCRIPT=/tmp/copiar_crid.sh
 Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
 DIR_ORIGEN=`dirname $Cridfile`
 
 # Log del proceso
 echo "`date` Copiar crid: $Cridfile" >> $LOG
-echo -n "" > $SCRIPT
-echo -n "" > $LOGPROC
 
 # Comprobar carpetas y fichero
 if [ -d $DIR_ORIGEN -a -d $DIR_DESTINO -a -f $Cridfile ]; then
