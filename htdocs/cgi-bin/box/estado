@@ -23,7 +23,7 @@ else
 fi
 
 # Enviar documento html
-html_doc_start "M750T - Estado del box" "300" "-a----bm"
+html_doc_start "M750T - Estado del box" "300" "-an-e-bm"
 
 # Respuesta html
 html_top "Estado del box" "" "" ""
@@ -160,7 +160,17 @@ echo "				<br>
 		log_ps )
 			print_log_file "Procesos en ejecución (ps)"                                "/dev/null"                "./verProcesos";;
 		log_cpmv_record )
-			print_log_file "Copiar/Mover Grabación"                                    "/tmp/copiar-crid-proc.log";;
+			print_log_file "Copiar/Mover Grabación"                                    "/tmp/copiar-crid-proc.log"
+			isRunning=`ps axfw | grep cpmvCrid | grep -v grep | wc -l`
+			if [ $isRunning -gt 0 ]; then
+   			echo "<tr>
+   						<td  align=\"center\">
+   							<br>
+   							<input type=\"button\" value=\"Detener Copia/Traspaso\" class=\"txtInfo\" onclick=\"stopCpmv()\">
+   							<br>&nbsp;<br>
+   						</td>
+   					</tr>"
+   		fi ;;
 		log_mount )
 			# Encabezado puntos de montaje
 			echo "				<tr>

@@ -304,6 +304,18 @@ function restaurarGrabacion(crid) {
 }
 
 //-------------------------------------------------
+// Restaurar grabacion
+//-------------------------------------------------
+function stopCpmv(crid) {
+   if (confirm("¿Está seguro de querer detener la copia/traspaso de la grabacion?")) {
+		if (!isMobile)
+		    mostrarMensajeProceso();
+		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
+		makeRequest("/cgi-bin/run/stopCpmv?" + new Date().getTime(), "RespuestaPeticionXML");
+	}
+}
+
+//-------------------------------------------------
 // Respuesta a peticiones de grabacion/cancelacion/borrado
 //-------------------------------------------------
 function RespuestaPeticionXML(xmldoc) {

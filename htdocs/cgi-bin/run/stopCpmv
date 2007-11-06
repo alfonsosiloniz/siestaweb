@@ -1,0 +1,37 @@
+#!/bin/bash
+# pepper, jotabe, (c) Grupo SIESTA, 06-11-2007
+#
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+LOGPROC=/tmp/copiar-crid-proc.log
+
+proc=`ps axfw | grep cpmvCrid | grep -v grep | tail -1`
+pid=(`echo $proc`)
+if [ "$pid" != "" ]; then
+   echo "Finalizando proceso ($proc) ..." >> $LOGPROC
+   echo "kill -9 $pid" >> $LOGPROC
+   kill -9 $pid >> $LOGPROC 2>> $LOGPROC
+   if [ $? -eq 0 ]; then
+      proc=`ps axfw | grep cp | grep fmpg | grep -v grep | tail -1`
+      pid=(`echo $proc`)
+      if [ "$pid" != "" ]; then
+         echo "Finalizando proceso ($proc) ..." >> $LOGPROC
+         echo "kill -9 $pid" >> $LOGPROC
+         kill -9 $pid >> $LOGPROC 2>> $LOGPROC
+      fi
+      
+      echo "`date` Proceso abortado por el usuario" >> $LOGPROC
+      
+      # Resultado OK
+      enviar_xml_ok   
+   else
+      # Resultado NO OK
+	   enviar_xml_err
+   fi 
+else
+   echo "Proceso de copia/traspaso no encontrado." >> $LOGPROC
+   # Resultado OK
+   enviar_xml_ok
+fi
