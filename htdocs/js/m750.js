@@ -1,5 +1,5 @@
 // Funciones generales m750
-// jotabe, (c) Grupo SIESTA, 06-08-2007
+// jotabe, pepper, (c) Grupo SIESTA, 06-08-2007
 
 
 //-------------------------------------------------
