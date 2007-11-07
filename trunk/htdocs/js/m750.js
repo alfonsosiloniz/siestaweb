@@ -1,5 +1,5 @@
 // Funciones generales m750
-// jotabe, pepper, (c) Grupo SIESTA, 06-08-2007
+// jotabe, (c) Grupo SIESTA, 06-08-2007
 
 
 //-------------------------------------------------
@@ -304,7 +304,7 @@ function restaurarGrabacion(crid) {
 }
 
 //-------------------------------------------------
-// Restaurar grabacion
+// Detener copia/traspaso de grabacion
 //-------------------------------------------------
 function stopCpmv(crid) {
    if (confirm("¿Está seguro de querer detener la copia/traspaso de la grabacion?")) {
@@ -312,6 +312,18 @@ function stopCpmv(crid) {
 		    mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
 		makeRequest("/cgi-bin/run/stopCpmv?" + new Date().getTime(), "RespuestaPeticionXML");
+	}
+}
+
+//-------------------------------------------------
+// Montaje/desmontaje de USB2
+//-------------------------------------------------
+function montarUSB2(accion) {
+   if (confirm("¿Está seguro de querer " + accion + " el dispositivo USB2 en el directorio /var/media/SWAP?")) {
+		if (!isMobile)
+		    mostrarMensajeProceso();
+		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
+		makeRequest("/cgi-bin/box/mount-usb2?id=" + accion + "&time=" + new Date().getTime(), "RespuestaPeticionXML");
 	}
 }
 

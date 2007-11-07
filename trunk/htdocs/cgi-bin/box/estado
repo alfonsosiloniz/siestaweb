@@ -171,7 +171,8 @@ echo "				<br>
    							<br>&nbsp;<br>
    						</td>
    					</tr>"
-   		fi ;;
+   		fi
+   		;;
 		log_mount )
 			# Encabezado puntos de montaje
 			echo "				<tr>
@@ -225,6 +226,24 @@ echo "				<br>
 			if [ $dump -ne 0 ]; then
 				print_log_file "Volcado partición (dumpe2fs -h $id_part)"              "/dev/null"                "dumpe2fs -h $id_part"
 			fi
+			
+			echo "<tr>
+   						<td  align=\"center\">
+   							<br>"
+			isUSB2mounted=`df 2> /dev/null | grep /var/media/SWAP | wc -l`
+			if [ $isUSB2mounted -gt 0 ]; then
+			   echo "<input type=\"button\" value=\"Desmontar USB2 (/var/media/SWAP)\" class=\"txtInfo\" onclick=\"montarUSB2('desmontar')\">&nbsp;"
+			else
+			   echo "<input type=\"button\" value=\"Montar USB2 en /var/media/SWAP\" class=\"txtInfo\" onclick=\"montarUSB2('montar')\">&nbsp;"
+			fi
+   		echo "			<br>&nbsp;<br>
+   						</td>
+   					</tr>"
+   		
+   		if [ -f /tmp/mount_usb2.log ]; then
+   		   print_log_file "Montaje / Desmontaje USB2"              "/tmp/mount_usb2.log"                ""
+   		fi
+   		
 			;;
 
 		log_act_sincro )

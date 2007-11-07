@@ -1,0 +1,119 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 07-12-2007
+#
+# Montaje/desmontaje del USB2
+
+if [ $# = 1 ]; then
+   id_accion=$1
+else
+   # Obtener parametro
+   id_accion=`echo "$QUERY_STRING" | cut -d"&" -f1 | cut -d"=" -f2`
+fi
+
+LOG=/tmp/mount_usb2.log
+STICK_MOUNT=/var/media/SWAP
+HDD_MOUNT=/var/media/USB-HDD
+echo "`date` Iniciando accion \"$id_accion\" para el dispositivo USB2" > $LOG
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+get_modo_video
+
+if [ "$id_accion" = "montar" ]; then
+   if [ "$ModoVideo" = "Apagado" ]; then
+      echo "`date` El Gigaset está apagado. Encendiendo Gigaset..." >> $LOG
+      /data/scripts/irsim.sh POWER
+      sleep 15
+   fi
+   dispHDD=(`cat /proc/mounts | grep ${HDD_MOUNT} | grep -v grep`)
+   if [ "$dispHDD" = "/dev/sda1" ]; then
+      disp="/dev/sdb1"
+   else
+      disp="/dev/sda1"
+   fi
+   echo "`date` El dispositivo USB-HDD es ${dispHDD}. Por tanto, el USB2 es ${disp}." >> $LOG
+   foundDisp=`fdisk -l | grep ${disp} 2>/dev/null | wc -l`
+   if [ $foundDisp -gt 0 ]; then
+      TIPO_PART=`fdisk -l | grep ${disp} 2>/dev/null`
+      set -f
+      FS_EXT=`echo ${TIPO_PART} | grep "83 Linux" | wc -l`
+      set +f
+      if [ ${FS_EXT} -gt 0 ]; then
+         echo "`date` El dispositivo ${disp} esta formateado con File System ext3." >> $LOG
+         mount ${disp} ${STICK_MOUNT}
+      else
+         echo "`date` El dispositivo ${disp} esta formateado con File System FAT32." >> $LOG
+         mount -t vfat ${disp} ${STICK_MOUNT}
+      fi
+      
+      PART_MOUNTED=`df 2> /dev/null | grep ${STICK_MOUNT} | wc -l`
+      if [ $PART_MOUNTED -eq 0 ]; then
+         echo "`date` Se ha producido algun error montando el dispositivo $disp en el directorio ${STICK_MOUNT}." >> $LOG
+         # Resultado ERROR
+         enviar_xml_err
+      else
+         echo "`date` El dispositivo USB2 (/var/media/SWAP) se ha montado correctamente." >> $LOG
+         # Resultado OK
+   	   enviar_xml_ok
+      fi
+   else
+      echo "`date` No se ha encontrado el dispositivo ${disp} en la tabla de particiones" >> $LOG
+      # Resultado ERROR
+      enviar_xml_err
+   fi
+elif [ "$id_accion" = "desmontar" ]; then
+   STICK_DIR=${STICK_MOUNT}/swapfiles
+   FLAGSWAP=${STICK_DIR}/flag
+   SWAPFILE=${STICK_DIR}/file
+   STICK_EPG=${STICK_MOUNT}/epg
+   EPG_DIR=/data/EPG
+   
+   # Desactivamos la SWAP si está en el pendrive
+   SWP_SIZE=(`grep ^SwapTotal /proc/meminfo`)
+   if [ ${SWP_SIZE[1]} != 0 ]; then
+   	if [ -f $FLAGSWAP ]; then
+   		echo "`date` Desactivando la Swap del pendrive..." >> $LOG
+   		swapoff ${SWAPFILE} >> $LOG 2>> $LOG
+      fi
+   fi
+   
+   # Movemos la Sincro a /data/EPG si está en el pendrive
+   if [ -L ${EPG_DIR} ]; then
+      echo "`date` Moviendo la Sincroguia a /data/EPG..." >> $LOG
+      mv ${EPG_DIR} ${EPG_DIR}Old
+      mkdir ${EPG_DIR}
+      mv ${EPG_DIR}Old/* ${EPG_DIR}
+      rm -rf ${STICK_EPG}
+      rm ${EPG_DIR}Old
+   fi
+   
+   sleep 2
+   disp=(`cat /proc/mounts | grep ${STICK_MOUNT} | grep -v grep`)
+   echo "`date` Desmontando dispositivo USB2 (${disp})..." >> $LOG
+   umount ${disp} >> $LOG 2>> $LOG
+   
+   # Comprobar particion no esta montada
+   PART_MOUNTED=`df 2> /dev/null | grep ${STICK_MOUNT} | wc -l`
+   cont=0
+   while [ ${PART_MOUNTED} -gt 0 -a $cont -lt 10 ]; do
+   	echo "`date` Particion ${STICK_MOUNT} todavía montada. Esperamos otros 5 segundos..." >> $LOG
+   	# Si el gigaset no ha desmontado automaticamente la unidad con el apagado rapido, la intentamos desmontar nosotros.
+   	umount ${disp} >> $LOG 2>> $LOG
+   	sleep 5
+   	cont=$((cont+1))
+   	PART_MOUNTED=`df 2> /dev/null | grep ${STICK_MOUNT} | wc -l`
+   done
+
+   PART_MOUNTED=`df 2> /dev/null | grep ${STICK_MOUNT} | wc -l`
+   if [ $PART_MOUNTED -gt 0 ]; then
+      echo "`date` Algun proceso esta ocupando el dispositivo montado en USB2 y no se ha podido desmontar." >> $LOG
+      echo "`date` Revise los procesos y vuelva a intentarlo más tarde." >> $LOG
+      # Resultado ERROR
+      enviar_xml_err
+   else
+      echo "`date` El dispositivo USB2 se ha desmontado correctamente en /var/media/SWAP." >> $LOG
+      # Resultado OK
+	   enviar_xml_ok
+   fi
+fi
