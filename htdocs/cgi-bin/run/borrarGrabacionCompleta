@@ -4,11 +4,12 @@
 # Borrar grabacion
 
 # Obtener parametros
-if [ $# = 1 ]; then
-	Cridfile=$1
+Cridfile=${QUERY_STRING%-*}
+if [ ${Cridfile/*-force/OK} == OK ]; then
+	Cridfile=${Cridfile%-*}
+	force=1
 else
-	# Eliminar fecha/hora del parametro
-	Cridfile=${QUERY_STRING%-*}
+	force=0
 fi
 
 # Configurar entorno
@@ -16,6 +17,7 @@ source ../www-setup.shi
 source ../fweb.shi
 LOG=/tmp/delete_recording.log
 SCRIPT=/tmp/delete_recording.sh
+CRIDS_FMPG=/tmp/crids_fmpg.txt
 Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
 
 # Obtenemos carpeta de grabaciones
@@ -23,51 +25,76 @@ RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var
 CridFolder=`dirname $Cridfile`
 
 if [ "$CridFolder" = "$RecordingFolder" ]; then
-   # Si la carpeta del Crid es la carpeta de grabaciones, no borramos la grabacion completa, sino solo el Crid
-   ./borrarGrabacion $Cridfile
+	# Si la carpeta del Crid es la carpeta de grabaciones, no borramos la grabacion completa, sino solo el Crid
+	./borrarGrabacion $Cridfile
 else
-   # Log del proceso
-   echo "`date` Borrar grabación, fichero crid: $Cridfile" >> $LOG
-   echo -n "" > $SCRIPT
-   
-   # Comprobar y fichero
-   if [ -f $Cridfile ]; then
-   	# Procesar fichero crid
-   	eval `www-tools crid2var ${Cridfile}`
-   	echo "Fichero: `basename ${Cridfile}` -> $Titulo ($num_fmpg)" >> $LOG
-   
-   	# Borrar crid
-   	echo "rm -f $Cridfile" >> $SCRIPT
-   	
-   	if [ "${fmpg0}" != "" ]; then
-   	    i=0
-   	    while [ $i -lt $num_fmpg ]; do
-       		# Nombre fragmento
-       		TMP='$fmpg'${i}
-       		eval "TMP2=$TMP"
-       
-       		# Mover fragmento
-       		echo "rm -f `dirname $Cridfile`/${TMP2}*" >> $SCRIPT
-       
-       		# Siguiente fragmento
-       		i=$(($i+1))
-       	done
-   	fi
-   
-   	# Borrar fichero .refXML
-   	echo "rm -f $Cachefile" >> $SCRIPT
-   
-   	# Borrar ficheros
-   	cat $SCRIPT >> $LOG
-   	eval "(`cat $SCRIPT`) >> $LOG 2>> $LOG"
-   
-   	# Eliminar ficheros temporales
-   	rm -f $SCRIPT
-   
-   	# Resultado OK
-   	enviar_xml_ok
-   else
-   	# Resultado NO OK
-   	enviar_xml_err
-   fi
+	# Log del proceso
+	echo "`date` Borrar grabación, fichero crid: $Cridfile" >> $LOG
+	echo -n "" > $SCRIPT
+	echo -n "" > $CRIDS_FMPG
+
+	# Comprobar y fichero
+	if [ -f $Cridfile ]; then
+		# Procesar fichero crid
+		eval `www-tools crid2var ${Cridfile}`
+		echo "Fichero: `basename ${Cridfile}` -> $Titulo ($num_fmpg)" >> $LOG
+
+		# Borrar crid
+		echo "rm -f $Cridfile" >> $SCRIPT
+
+		if [ "${fmpg0}" != "" ]; then
+			i=0
+			while [ $i -lt $num_fmpg ]; do
+				# Nombre fragmento
+				TMP='$fmpg'${i}
+				eval "TMP2=$TMP"
+
+				# Mover fragmento
+				echo "rm -f `dirname $Cridfile`/${TMP2}*" >> $SCRIPT
+
+				# Comprobar fragmento compartido
+				cridsConFMPG.sh ${CridFolder} ${TMP2} 2>/dev/null >> $CRIDS_FMPG
+
+				# Siguiente fragmento
+				i=$(($i+1))
+			done
+		fi
+
+		# Borrar fichero .refXML
+		echo "rm -f $Cachefile" >> $SCRIPT
+
+		# Comprobar fragmentos compartidos
+		if [ `cat $CRIDS_FMPG | wc -l` -eq 1 ]; then
+			# Borrar ficheros
+			cat $SCRIPT >> $LOG
+			eval "(`cat $SCRIPT`) >> $LOG 2>> $LOG"
+
+			# Resultado OK
+			enviar_xml_ok
+		else
+			# Error: varios ficheros crid comparten fichero fmpg
+			echo "Ficheros .fmpg compartidos por varios .crid" >> $LOG
+			cat $CRIDS_FMPG >> $LOG
+
+			# Comprobar modo forzado
+			if [ $force -eq 1 ]; then
+				# Mover ficheros
+				echo "Modo force, borrar ficheros" >> $LOG
+				cat $SCRIPT >> $LOG
+				eval "(`cat $SCRIPT`) >> $LOG 2>> $LOG"
+
+				# Resultado OK
+				enviar_xml_ok
+			else
+				# Resultado FALLO
+				enviar_xml_fallo
+			fi
+		fi
+
+		# Eliminar ficheros temporales
+		rm -f $SCRIPT
+	else
+		# Resultado ERROR
+		enviar_xml_err
+	fi
 fi

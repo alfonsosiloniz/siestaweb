@@ -197,13 +197,23 @@ function enviar_xml_ok() {
 }
 
 #--------------------------------------------------
-# Enviar respuesta xml ERR
+# Enviar respuesta xml ERROR
 #--------------------------------------------------
 function enviar_xml_err() {
 	# Enviar documento xml
 	xml_doc
-	# Resultado xml ERR
-	echo "<M750><RESULT>ERR</RESULT></M750>"
+	# Resultado xml ERROR
+	echo "<M750><RESULT>ERROR</RESULT></M750>"
+}
+
+#--------------------------------------------------
+# Enviar respuesta xml FALLO
+#--------------------------------------------------
+function enviar_xml_fallo() {
+	# Enviar documento xml
+	xml_doc
+	# Resultado xml FALLO
+	echo "<M750><RESULT>FALLO</RESULT></M750>"
 }
 
 #--------------------------------------------------

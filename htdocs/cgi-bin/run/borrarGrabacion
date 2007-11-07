@@ -1,7 +1,7 @@
 #!/bin/bash
 # pepper, (c) Grupo SIESTA, 26-04-2007
 #
-# Borrar grabacion(fichero .crid, el resto se elimina en proceso de limpieza)
+# Borrar grabacion (fichero .crid, el resto se elimina en proceso de limpieza)
 
 # Obtener parametros
 if [ $# = 1 ]; then
@@ -23,7 +23,6 @@ echo "`date` Borrar grabación, fichero crid: $Cridfile" >> $LOG
 echo -n "" > $SCRIPT
 
 # Comprobar y fichero
-# if [ -d $RecordingFolder ]; then
 if [ -f $Cridfile ]; then
 	# Procesar fichero crid
 	eval `www-tools crid2var ${Cridfile}`
@@ -45,6 +44,6 @@ if [ -f $Cridfile ]; then
 	# Resultado OK
 	enviar_xml_ok
 else
-	# Resultado NO OK
+	# Resultado ERROR
 	enviar_xml_err
 fi

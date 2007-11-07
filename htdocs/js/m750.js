@@ -240,7 +240,7 @@ function borrarGrabacionCompleta(crid) {
 		if (!isMobile)
 		    mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
-		makeRequest("/cgi-bin/run/borrarGrabacionCompleta?" + crid + "-" + new Date().getTime(), "RespuestaPeticionXML");
+		makeRequest("/cgi-bin/run/borrarGrabacionCompleta?" + crid + "-" + new Date().getTime(), "RespuestaArchivoXML");
 	}
 }
 
@@ -252,7 +252,7 @@ function archivarGrabacion(crid) {
 		if (!isMobile)
 		    mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
-		makeRequest("/cgi-bin/run/archivarCrid?" + crid + "-" + new Date().getTime(), "RespuestaPeticionXML");
+		makeRequest("/cgi-bin/run/archivarCrid?" + crid + "-" + new Date().getTime(), "RespuestaArchivoXML");
 	}
 }
 
@@ -299,7 +299,7 @@ function restaurarGrabacion(crid) {
 		if (!isMobile)
 		    mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
-		makeRequest("/cgi-bin/run/restaurarCrid?" + crid + "-" + new Date().getTime(), "RespuestaPeticionXML");
+		makeRequest("/cgi-bin/run/restaurarCrid?" + crid + "-" + new Date().getTime(), "RespuestaArchivoXML");
 	}
 }
 
@@ -336,6 +336,23 @@ function RespuestaPeticionXML(xmldoc) {
 		alert("Petición aceptada por el M750");
 		document.location.reload();
 	} else {
+		alert("Petición NO aceptada por el M750");
+	}
+	if (!isMobile)
+	    eliminarMensajeProceso();
+}
+
+function RespuestaArchivoXML(xmldoc) {
+	result = xmldoc.getElementsByTagName("RESULT");
+	switch(result[0].firstChild.data) {
+	case "OK":
+		alert("Petición aceptada por el M750");
+		document.location.reload();
+		break    
+	case "FALLO":
+		alert("Petición NO aceptada por el M750.\n\nLos ficheros .fmpg son compartidos por varios .crid.")
+		break
+	default:
 		alert("Petición NO aceptada por el M750");
 	}
 	if (!isMobile)

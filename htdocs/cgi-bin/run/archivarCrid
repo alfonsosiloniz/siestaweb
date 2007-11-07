@@ -1,18 +1,19 @@
 #!/bin/bash
-# jotabe, (c) Grupo SIESTA, 02-11-2007
+# jotabe, (c) Grupo SIESTA, 07-11-2007
 #
 # Archivar grabacion (ficheros crid, fmpg, mpg, idx, midx)
 #
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# Falta deteccion de ficheros de timeshift y de fragmentos compartidos
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# Falta deteccion de ficheros de timeshift
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # Obtener parametros
-if [ $# = 1 ]; then
-	Cridfile=$1
+Cridfile=${QUERY_STRING%-*}
+if [ ${Cridfile/*-force/OK} == OK ]; then
+	Cridfile=${Cridfile%-*}
+	force=1
 else
-	# Eliminar fecha/hora del parametro
-	Cridfile=${QUERY_STRING%-*}
+	force=0
 fi
 
 # Configurar entorno
@@ -20,11 +21,13 @@ source ../www-setup.shi
 source ../fweb.shi
 LOG=/tmp/archivo_crid.log
 SCRIPT=/tmp/archivo_crid.sh
+CRIDS_FMPG=/tmp/crids_fmpg.txt
 Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
 
 # Log del proceso
 echo "`date` Archivar crid: $Cridfile" >> $LOG
 echo -n "" > $SCRIPT
+echo -n "" > $CRIDS_FMPG
 
 # Obtenemos carpeta de grabaciones
 RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
@@ -45,6 +48,9 @@ if [ -d $RecordingFolder -a -d $ARCHIVO_GRABACIONES -a -f $Cridfile ]; then
 		# Mover fragmento
 		echo "mv -f ${RecordingFolder}/${TMP2}* $ARCHIVO_GRABACIONES" >> $SCRIPT
 
+		# Comprobar fragmento compartido
+		cridsConFMPG.sh ${RecordingFolder} ${TMP2} 2>/dev/null >> $CRIDS_FMPG
+
 		# Siguiente fragmento
 		i=$(($i+1))
 	done
@@ -56,17 +62,37 @@ if [ -d $RecordingFolder -a -d $ARCHIVO_GRABACIONES -a -f $Cridfile ]; then
 	echo "rm -f $Cachefile" >> $SCRIPT
 
 	# Comprobar fragmentos compartidos
+	if [ `cat $CRIDS_FMPG | wc -l` -eq 1 ]; then
+		# Mover ficheros
+		cat $SCRIPT >> $LOG
+		eval "(`cat $SCRIPT`) >> $LOG 2>> $LOG"
 
-	# Mover ficheros
-	cat $SCRIPT >> $LOG
-	eval "(`cat $SCRIPT`) >> $LOG 2>> $LOG"
+		# Resultado OK
+		enviar_xml_ok
+	else
+		# Error: varios ficheros crid comparten fichero fmpg
+		echo "Ficheros .fmpg compartidos por varios .crid" >> $LOG
+		cat $CRIDS_FMPG >> $LOG
+
+		# Comprobar modo forzado
+		if [ $force -eq 1 ]; then
+			# Mover ficheros
+			echo "Modo force, mover ficheros" >> $LOG
+			cat $SCRIPT >> $LOG
+			eval "(`cat $SCRIPT`) >> $LOG 2>> $LOG"
+
+			# Resultado OK
+			enviar_xml_ok
+		else
+			# Resultado FALLO
+			enviar_xml_fallo
+		fi
+	fi
 
 	# Eliminar ficheros temporales
 	rm -f $SCRIPT
-
-	# Resultado OK
-	enviar_xml_ok
+	rm -f $CRIDS_FMPG
 else
-	# Resultado NO OK
+	# Resultado ERROR
 	enviar_xml_err
 fi
