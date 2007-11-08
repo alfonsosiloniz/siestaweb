@@ -20,7 +20,7 @@ if [ "$QUERY_STRING" != "" ] ; then
   if [ "$serieTime" = "serie" ]; then
     rm -f ${Cache}/.time_sort
     touch ${Cache}/.serie_sort
-    if [ $RecordingFolder != "" ]; then
+    if [ "$RecordingFolder" != "" ]; then
         xsl=record2_serie_sort.xsl
     else
         xsl=record_serie_sort.xsl
@@ -28,7 +28,7 @@ if [ "$QUERY_STRING" != "" ] ; then
   elif [ "$serieTime" = "time" ]; then
     rm -f ${Cache}/.serie_sort
     touch ${Cache}/.time_sort
-    if [ $RecordingFolder != "" ]; then
+    if [ "$RecordingFolder" != "" ]; then
         xsl=record2_time_sort.xsl
     else
         xsl=record_time_sort.xsl
