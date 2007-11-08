@@ -14,24 +14,31 @@ source ../fweb.shi
 LOG=/tmp/copiar_crid.log
 LOGPROC=/tmp/copiar-crid-proc.log
 SCRIPT=/tmp/copiar_crid.sh
+CRIDS_FMPG=/tmp/crids_fmpg.txt
 
+echo -n "" > $CRIDS_FMPG
 echo -n "" > $SCRIPT
 echo "`date` Iniciando el proceso de Copia/Traspaso de grabación..." > $LOGPROC
 
 # Por defecto, copiamos la grabación, no la movemos
 mover=0
+force=0
 
 # Obtener parametros
 if [ $# -ge 2 ]; then
 	Cridfile=$1
 	DIR_DESTINO=$2
-	if [ $# -eq 3 ]; then
+	if [ $# -gt 2 ]; then
 	    mover=$3
+	fi
+	if [ $# -gt 3 ]; then
+	    force=$4
 	fi
 else
 	Cridfile=`echo ${QUERY_STRING} | cut -d"&" -f1`
 	DIR_DESTINO=`echo ${QUERY_STRING} | cut -d"&" -f2`
 	mover=`echo ${QUERY_STRING} | cut -d"&" -f3`
+	force=`echo ${QUERY_STRING} | cut -d"&" -f4`
 fi
 
 Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
@@ -62,12 +69,15 @@ if [ -d $DIR_ORIGEN -a -d $DIR_DESTINO -a -f $Cridfile ]; then
 		# Nombre fragmento
 		TMP='$fmpg'${i}
 		eval "TMP2=$TMP"
+		
+		# Comprobar fragmento compartido
+		cridsConFMPG.sh ${DIR_ORIGEN} ${TMP2} 2>/dev/null >> $CRIDS_FMPG
 
 		# Mover fragmento. Lo pongo fichero a fichero para poder sacarlo por el log e ir informando al usuario del proceso de copia
 		for recordFile in ${DIR_ORIGEN}/${TMP2}* ; do
 		   echo "echo Copiando $recordFile a $DIR_DESTINO >> $LOGPROC" >> $SCRIPT
 		   echo "inicio=\`date +%s\`" >> $SCRIPT
-		   echo "cp $recordFile $DIR_DESTINO 2>> $LOGPROC" >> $SCRIPT
+		   #echo "cp $recordFile $DIR_DESTINO 2>> $LOGPROC" >> $SCRIPT
 		   echo "final=\`date +%s\`" >> $SCRIPT
 		   echo "du=(\`du -ch ${recordFile} | tail -1\`)" >> $SCRIPT
 		   echo "dunum=(\`du -k ${recordFile} | tail -1\`)" >> $SCRIPT
@@ -84,25 +94,28 @@ if [ -d $DIR_ORIGEN -a -d $DIR_DESTINO -a -f $Cridfile ]; then
 		i=$(($i+1))
 	done
 	
-	# Comprobar fragmentos compartidos
-
 	# Eliminar ficheros temporales
    if [ $mover -eq 1 ]; then
-    	i=0
-    	while [ $i -lt $num_fmpg ]; do
-    		# Nombre fragmento
-    		TMP='$fmpg'${i}
-    		eval "TMP2=$TMP"
-    
-    		# Mover fragmento
-    		echo "rm -f ${DIR_ORIGEN}/${TMP2}*" >> $SCRIPT
-    		echo "echo Borrado de ${DIR_ORIGEN}/${TMP2}* >> $LOGPROC" >> $SCRIPT
-    
-    		# Siguiente fragmento
-    		i=$(($i+1))
-    	done
-    	echo "rm -f ${Cridfile}" >> $SCRIPT
-    	echo "echo Borrado de ${Cridfile} >> $LOGPROC" >> $SCRIPT
+      if [ `cat $CRIDS_FMPG | wc -l` -eq 1 -o $force -eq 1 ]; then
+       	i=0
+       	while [ $i -lt $num_fmpg ]; do
+       		# Nombre fragmento
+       		TMP='$fmpg'${i}
+       		eval "TMP2=$TMP"
+       
+       		# Mover fragmento
+       		echo "rm -f ${DIR_ORIGEN}/${TMP2}*" >> $SCRIPT
+       		echo "echo Borrado de ${DIR_ORIGEN}/${TMP2}* >> $LOGPROC" >> $SCRIPT
+       
+       		# Siguiente fragmento
+       		i=$(($i+1))
+       	done
+       	echo "rm -f ${Cridfile}" >> $SCRIPT
+       	echo "echo Borrado de ${Cridfile} >> $LOGPROC" >> $SCRIPT
+      else
+         echo "echo \"Los ficheros de la grabacion origen no se han borrado porque comparten archivos con otras grabaciones.\" >> $LOGPROC" >> $SCRIPT
+         echo "echo \"Borre la grabacion desde la pantalla de Grabaciones Realizadas o desde el propio Menú del Gigaset.\" >> $LOGPROC" >> $SCRIPT
+      fi
 	fi
 	
 	# Mover ficheros
