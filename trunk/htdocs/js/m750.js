@@ -260,6 +260,7 @@ function archivarGrabacion(crid) {
 // Copiar/Mover grabacion
 //-------------------------------------------------
 function copiarGrabacion(crid) {
+   var force=0;
 	directorio = prompt('Introduce el Directorio Destino','/var/media/PC1/Video'); 
 	if (directorio == null) {
 	    alert("Debe permitir la ejecución de scripts");
@@ -269,13 +270,14 @@ function copiarGrabacion(crid) {
 		if (!isMobile)
 		    mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
-		makeRequest("/cgi-bin/run/cpmvCrid?" + crid + "&" + directorio + "&0&" + new Date().getTime(), "noReply");
+		makeRequest("/cgi-bin/run/cpmvCrid?" + crid + "&" + directorio + "&0&"+force+"&" + new Date().getTime(), "noReply");
 		alert("Se ha mandado la orden de copia de la grabación. Siga el proceso en la pantalla de estado.");
 		document.location.href="/cgi-bin/box/estado?id_log=log_cpmv_record";
 	}
 }
 
 function moverGrabacion(crid) {
+   var force=0;
 	directorio = prompt('Introduce el Directorio Destino','/var/media/PC1/Video');
 	if (directorio == null) {
 	    alert("Debe permitir la ejecución de scripts");
@@ -285,7 +287,7 @@ function moverGrabacion(crid) {
 		if (!isMobile)
 		    mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
-		makeRequest("/cgi-bin/run/cpmvCrid?" + crid + "&" + directorio + "&1&" + new Date().getTime(), "noReply");
+		makeRequest("/cgi-bin/run/cpmvCrid?" + crid + "&" + directorio + "&1&"+force+"&" + new Date().getTime(), "noReply");
 		alert("Se ha mandado la orden de copia de la grabación. Siga el proceso en la pantalla de estado.");
 		document.location.href="/cgi-bin/box/estado?id_log=log_cpmv_record";
 	}
