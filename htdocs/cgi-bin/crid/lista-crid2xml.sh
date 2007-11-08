@@ -23,7 +23,8 @@ du=0
 xml_doc "/xsl/${3}"
 
 # Inicio resultado xml
-echo "<M750>"
+echo "<M750>
+	<CARPETA>$Recordings</CARPETA>"
 
 # Calculo de espacio libre
 if [ -d $Recordings ]; then
@@ -38,7 +39,7 @@ CachefileTemp=${Cache}/lista-grabaciones.xml.tmp
 echo -n "" > $CachefileTemp
 
 # Clase ficheros .crid
-echo "	<${crid_class} now=\"`date +%s`\">"
+echo "	<${crid_class} now=\"`date +%s`\" >"
 
 # Comprobar carpeta, contar nº de ficheros .crid
 numCrids=`ls -la $Recordings/*.crid 2>/dev/null | wc -l`

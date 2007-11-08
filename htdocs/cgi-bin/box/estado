@@ -59,9 +59,11 @@ echo "				<br>
 								<option value=\"log_login\">Login en la aplicación</option>
 								<option value=\"log_search\">Búsquedas realizadas</option>
 								<option value=\"log_archivo\">Archivo de grabaciones</option>
+								<option value=\"log_cpmv_record\">Copiar/Mover Grabación</option>
 								<option value=\"log_download\">Descargas de grabaciones realizadas a local</option>
 								<option value=\"log_view_video\">Visualizaciones de grabaciones en PC local</option>
 								<option value=\"log_delete\">Borrado de grabaciones</option>
+								<option value=\"log_fmpg_huerfanos\">Borrado de ficheros de grabación huerfanos</option>
 								<option value=\"log_checkdisk\">Chequeo de particiones del disco</option>
 								<option value=\"log_cmd\">Comandos ejecutados</option>
 								<option value=\"log_RECORDER_LOG\">Log del grabador</option>
@@ -73,7 +75,6 @@ echo "				<br>
 								<option value=\"log_ps\">Procesos en ejecución (ps)</option>
 								<option value=\"log_mount\">Puntos de montaje (cat /proc/mounts)</option>
 								<option value=\"log_act_sincro\">Actualización de la Sincroguía</option>
-								<option value=\"log_cpmv_record\">Copiar/Mover Grabación</option>
 							</select>
 							<script type=\"text/javascript\">document.getElementById('id_log').value=\"$id_accion\";</script>
 							&nbsp;&nbsp;
@@ -131,12 +132,28 @@ echo "				<br>
 			print_log_file "Búsquedas realizadas"                                      "/tmp/search.log";;
 		log_archivo )
 			print_log_file "Archivo de grabaciones"                                    "/tmp/archivo_crid.log";;
+		log_cpmv_record )
+			print_log_file "Copiar/Mover Grabación"                                    "/tmp/copiar-crid-proc.log"
+			isRunning=`ps axfw | grep cpmvCrid | grep -v grep | wc -l`
+			if [ $isRunning -gt 0 ]; then
+				echo "<tr>
+						<td  align=\"center\">
+							<br>
+							<input type=\"button\" value=\"Actualizar Estado\" class=\"txtInfo\" onclick=\"document.location.reload()\">&nbsp;
+							<input type=\"button\" value=\"Detener Copia/Traspaso\" class=\"txtInfo\" onclick=\"stopCpmv()\">
+							<br>&nbsp;<br>
+						</td>
+					</tr>"
+			fi
+			;;
 		log_download )
 			print_log_file "Descargas de grabaciones realizadas a local"               "/tmp/download.log";;
 		log_view_video )
 			print_log_file "Visualizaciones de grabaciones en PC local"                "/tmp/view_video.log";;
 		log_delete )
 			print_log_file "Borrado de grabaciones"                                    "/tmp/delete_recording.log";;
+		log_fmpg_huerfanos )
+			print_log_file "Borrado de ficheros de grabación huerfanos"                "/tmp/fmpg_huerfanos.log";;
 		log_checkdisk )
 			print_log_file "Chequeo de particiones del disco"                          "/tmp/checkdisk.log"
 			if [ -s /tmp/checkdisk.err ]; then
@@ -159,20 +176,6 @@ echo "				<br>
 			print_log_file "Configuración de Red (ifconfig)"                           "/dev/null"                "ifconfig";;
 		log_ps )
 			print_log_file "Procesos en ejecución (ps)"                                "/dev/null"                "./verProcesos";;
-		log_cpmv_record )
-			print_log_file "Copiar/Mover Grabación"                                    "/tmp/copiar-crid-proc.log"
-			isRunning=`ps axfw | grep cpmvCrid | grep -v grep | wc -l`
-			if [ $isRunning -gt 0 ]; then
-   			echo "<tr>
-   						<td  align=\"center\">
-   							<br>
-   							<input type=\"button\" value=\"Actualizar Estado\" class=\"txtInfo\" onclick=\"document.location.reload()\">&nbsp;
-   							<input type=\"button\" value=\"Detener Copia/Traspaso\" class=\"txtInfo\" onclick=\"stopCpmv()\">
-   							<br>&nbsp;<br>
-   						</td>
-   					</tr>"
-   		fi
-   		;;
 		log_mount )
 			# Encabezado puntos de montaje
 			echo "				<tr>
@@ -228,22 +231,20 @@ echo "				<br>
 			fi
 			
 			echo "<tr>
-   						<td  align=\"center\">
-   							<br>"
+						<td  align=\"center\">
+							<br>"
 			isUSB2mounted=`df 2> /dev/null | grep /var/media/SWAP | wc -l`
 			if [ $isUSB2mounted -gt 0 ]; then
-			   echo "<input type=\"button\" value=\"Desmontar USB2 (/var/media/SWAP)\" class=\"txtInfo\" onclick=\"montarUSB2('desmontar')\">&nbsp;"
+				echo "<input type=\"button\" value=\"Desmontar USB2 (/var/media/SWAP)\" class=\"txtInfo\" onclick=\"montarUSB2('desmontar')\">&nbsp;"
 			else
-			   echo "<input type=\"button\" value=\"Montar USB2 en /var/media/SWAP\" class=\"txtInfo\" onclick=\"montarUSB2('montar')\">&nbsp;"
+				echo "<input type=\"button\" value=\"Montar USB2 en /var/media/SWAP\" class=\"txtInfo\" onclick=\"montarUSB2('montar')\">&nbsp;"
 			fi
-   		echo "			<br>&nbsp;<br>
-   						</td>
-   					</tr>"
-   		
-   		if [ -f /tmp/mount_usb2.log ]; then
-   		   print_log_file "Montaje / Desmontaje USB2"              "/tmp/mount_usb2.log"                ""
-   		fi
-   		
+			echo "			<br>&nbsp;<br>
+						</td>
+					</tr>"
+			if [ -f /tmp/mount_usb2.log ]; then
+				print_log_file "Montaje / Desmontaje USB2"                             "/tmp/mount_usb2.log"
+			fi
 			;;
 
 		log_act_sincro )

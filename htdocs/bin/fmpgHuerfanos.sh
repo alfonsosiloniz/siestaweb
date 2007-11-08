@@ -1,17 +1,19 @@
 #!/bin/bash
-# jotabe, (c) Grupo SIESTA, 07-11-2007
+# (c) Grupo SIESTA, 08-11-2007
 #
-# Genera lista de ficheros crid que incluyen un fichero fmpg
+# Genera lista de ficheros fmpg sin utilizar
 # $1 Carpeta de grabaciones
-# $2 Fichero fmpg
 
 # Ejecutamos el script con baja prioridad
 # renice 20 $$ > /dev/null
 
-# Comprobar parametros
-if [ $# -eq 2 ]; then
+# Obtener parametros
+if [ $# -eq 1 ]; then
 	DIR=`echo $1 | sed 's/\/$//'`
-	FMPG=`basename $2`
+	LST=/tmp/fmpg_huerfanos-$$.txt
+
+	# Obtener lista de todos los ficheros fmpg
+	ls $DIR/*.fmpg > $LST
 
 	# Comprobar nº ficheros .crid
 	numCrids=`ls -la $DIR/*.crid 2>/dev/null | wc -l`
@@ -28,12 +30,19 @@ if [ $# -eq 2 ]; then
 				TMP='$fmpg'${i}
 				eval "TMP2=$TMP"
 
-				# Comprobar fichero fmpg
-				[ "Z$FMPG" = "Z$TMP2" ] && echo ${Cridfile}
+				# Quitar fmpg
+				grep -v $TMP2 $LST > $LST.tmp
+				mv -f $LST.tmp $LST
 
 				# Siguiente fragmento
 				i=$(($i+1))
 			done
 		done
 	fi
+
+	# Resultado
+	cat $LST
+
+	# Eliminar ficheros temporales
+	rm -f $LST
 fi

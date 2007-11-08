@@ -1,0 +1,62 @@
+#!/bin/bash
+# jotabe, (c) Grupo SIESTA, 08-11-2007
+#
+# Borrar fragmentos de grabacion huerfanos (ficheros fmpg, mpg, idx, midx)
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# Falta deteccion de ficheros de timeshift
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+# Obtener parametros
+CridFolder=${QUERY_STRING%-*}
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+LOG=/tmp/fmpg_huerfanos.log
+SCRIPT=/tmp/fmpg_huerfanos.sh
+FMPG_HUERFANOS=/tmp/fmpg_huerfanos.txt
+
+# Log del proceso
+echo "`date` Borrado .fmpg huerfanos: $CridFolder" >> $LOG
+echo -n "" > $SCRIPT
+
+# Comprobar carpeta
+if [ -d $CridFolder ]; then
+	# Obtener fmpg huerfanos
+	fmpgHuerfanos.sh ${CridFolder} 2>/dev/null > $FMPG_HUERFANOS
+
+	# Recorrer lista ficheros
+	files=""
+	for FMPGfile in `cat $FMPG_HUERFANOS`; do
+		# Borrar fichero .fmpg
+		echo "rm -f ${FMPGfile}*" >> $SCRIPT
+		# Lista de ficheros para calcular espacio usado
+		files="${files} ${FMPGfile}*"
+	done
+
+	# Comprobar ficheros a borrar
+	if [ ${#files} -ne 0 ]; then
+		# Borrar ficheros
+		cat $SCRIPT >> $LOG
+		eval "(`cat $SCRIPT`) >> $LOG 2>> $LOG"
+
+		# Calcular espacio usado
+		du=(`du -ch ${files} | tail -1`)
+	else
+		du="0 bytes"
+	fi
+
+	# Log
+	echo "`date` Fin borrado .fmpg huerfanos (`cat $FMPG_HUERFANOS | wc -l` ficheros, $du)" >> $LOG
+
+	# Resultado OK
+	enviar_xml_ok
+
+	# Eliminar ficheros temporales
+	rm -f $SCRIPT
+	rm -f $FMPG_HUERFANOS
+else
+	# Resultado ERROR
+	enviar_xml_err
+fi

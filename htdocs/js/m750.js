@@ -248,11 +248,18 @@ function borrarGrabacionCompleta(crid) {
 // Archivar grabacion
 //-------------------------------------------------
 function archivarGrabacion(crid) {
+	var force;
+	if (document.forms['form_m750'].ModoForce.value == 0) {
+		force="";
+	} else {
+		force="force-";
+	}
+
 	if (confirm("¿Está seguro de querer archivar la grabación seleccionada?")) {
 		if (!isMobile)
 		    mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
-		makeRequest("/cgi-bin/run/archivarCrid?" + crid + "-" + new Date().getTime(), "RespuestaArchivoXML");
+		makeRequest("/cgi-bin/run/archivarCrid?" + crid + "-" + force + new Date().getTime(), "RespuestaArchivoXML");
 	}
 }
 
@@ -297,11 +304,18 @@ function moverGrabacion(crid) {
 // Restaurar grabacion
 //-------------------------------------------------
 function restaurarGrabacion(crid) {
+	var force;
+	if (document.forms['form_m750'].ModoForce.value == 0) {
+		force="";
+	} else {
+		force="force-";
+	}
+
 	if (confirm("¿Está seguro de querer restaurar la grabación seleccionada?")) {
 		if (!isMobile)
 		    mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
-		makeRequest("/cgi-bin/run/restaurarCrid?" + crid + "-" + new Date().getTime(), "RespuestaArchivoXML");
+		makeRequest("/cgi-bin/run/restaurarCrid?" + crid + "-" + force + new Date().getTime(), "RespuestaArchivoXML");
 	}
 }
 
@@ -328,6 +342,19 @@ function montarUSB2(accion) {
 		makeRequest("/cgi-bin/box/mount-usb2?id=" + accion + "&time=" + new Date().getTime(), "RespuestaPeticionXML");
 	}
 }
+
+//-------------------------------------------------
+// Borrar ficheros fmpg huerfanos
+//-------------------------------------------------
+function borrarHuerfanos(carpeta) {
+	if (confirm("¿Está seguro de querer borrar los fragmentos de grabación huerfanos de la carpeta " + carpeta + " ?")) {
+		if (!isMobile)
+		    mostrarMensajeProceso();
+		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
+		makeRequest("/cgi-bin/run/borrarHuerfanos?" + carpeta + "-" + new Date().getTime(), "RespuestaPeticionXML");
+	}
+}
+
 
 //-------------------------------------------------
 // Respuesta a peticiones de grabacion/cancelacion/borrado
