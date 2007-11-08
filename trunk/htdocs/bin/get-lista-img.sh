@@ -9,7 +9,7 @@
 renice 20 $$ > /dev/null
 
 # Obtener parametros
-if [ $# -ne 2 ] ; then
+if [ $# -ne 2 ]; then
 	echo "Uso: $0 lista_imagenes dir_imagenes"
 	exit -1
 fi
