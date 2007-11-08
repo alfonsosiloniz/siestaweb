@@ -77,7 +77,7 @@ if [ -d $DIR_ORIGEN -a -d $DIR_DESTINO -a -f $Cridfile ]; then
 		for recordFile in ${DIR_ORIGEN}/${TMP2}* ; do
 		   echo "echo Copiando $recordFile a $DIR_DESTINO >> $LOGPROC" >> $SCRIPT
 		   echo "inicio=\`date +%s\`" >> $SCRIPT
-		   #echo "cp $recordFile $DIR_DESTINO 2>> $LOGPROC" >> $SCRIPT
+		   echo "cp $recordFile $DIR_DESTINO 2>> $LOGPROC" >> $SCRIPT
 		   echo "final=\`date +%s\`" >> $SCRIPT
 		   echo "du=(\`du -ch ${recordFile} | tail -1\`)" >> $SCRIPT
 		   echo "dunum=(\`du -k ${recordFile} | tail -1\`)" >> $SCRIPT
