@@ -50,7 +50,13 @@
 				<table width="100%" border="0" cellspacing="0" cellpadding="2" align="center" class="borderTabla2">
 					<tr bgcolor="#ffb310">
 						<th class="fila" align="right">B&#160;&#160;&#160;A&#160;&#160;&#160;C&#160;&#160;&#160;M&#160;&#160;&#160;D&#160;&#160;&#160;V&#160;</th>
-						<th class="fila" align="left"><a href="/cgi-bin/crid/ver-lista-grabaciones?serie" title="Ordenar por Series">Título</a></th>
+						<th class="fila" align="left">
+							<xsl:element name="a">
+								<xsl:attribute name="title">Ordenar por Series</xsl:attribute>
+								<xsl:attribute name="href">/cgi-bin/crid/ver-lista-grabaciones?serie&amp;<xsl:value-of select="/M750/CARPETA"/></xsl:attribute>
+								Título
+							</xsl:element>
+						</th>
 						<th class="fila" align="left">Inicio</th>
 						<th class="fila" align="left">Final</th>
 						<th class="fila" align="left">Duración (min)</th>
@@ -69,7 +75,14 @@
 									<xsl:when test="REC_STATE!='2'">
 										<xsl:element name="a">
 											<xsl:attribute name="title">Eliminar Grabación</xsl:attribute>
-											<xsl:attribute name="href">javascript:borrarGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
+												<xsl:choose>
+													<xsl:when test="/M750/CARPETA_REALPATH=/M750/CARPETA_GRABACIONES_REALPATH">
+														<xsl:attribute name="href">javascript:borrarGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
+													</xsl:when>
+													<xsl:otherwise>
+														<xsl:attribute name="href">javascript:borrarGrabacionCompleta("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
+													</xsl:otherwise>
+												</xsl:choose>
 											<img src="/img/red_ball.jpg" alt="Eliminar Grabación" width="18" height="18" border="0" />
 										</xsl:element>
 										<xsl:text> </xsl:text>
@@ -208,7 +221,7 @@
 			</td>
 			<td class="txtNormal" align="center">
 				Ver grabaciones del directorio <input type="text" value="/var/media/PC1/Video" size="35" name="alt_dir" />&#160;
-				<input type="button" value="Ver" onclick="document.location.href='/cgi-bin/crid/ver-lista-grabaciones?serie&amp;' + document.forms[0].alt_dir.value" />
+				<input type="button" value="Ver" onclick="document.location.href='/cgi-bin/crid/ver-lista-grabaciones?time&amp;' + document.forms[0].alt_dir.value" />
 			</td>
 		</tr>
 	</table>

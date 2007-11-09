@@ -25,7 +25,7 @@ CRIDS_FMPG=/tmp/crids_fmpg.txt
 Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
 
 # Log del proceso
-echo "`date` Archivar crid: $Cridfile" >> $LOG
+echo "`date` Archivar crid: $Cridfile, Force: $force" >> $LOG
 echo -n "" > $SCRIPT
 echo -n "" > $CRIDS_FMPG
 

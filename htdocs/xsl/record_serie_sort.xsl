@@ -23,7 +23,13 @@
 			<td align="center">
 				<font class="titPag">M750T EPG</font>
 				<br/>
-				<font class="subTitPag">Grabaciones Realizadas</font>
+				<font class="subTitPag">Grabaciones Realizadas
+					<xsl:choose>
+						<xsl:when test="/M750/CARPETA_REALPATH!=/M750/CARPETA_GRABACIONES_REALPATH">
+							- <xsl:value-of select="/M750/CARPETA"/>
+						</xsl:when>
+					</xsl:choose>
+				</font>
 			</td>
 		</tr>
 		<tr>
@@ -51,7 +57,13 @@
 					<tr bgcolor="#ffb310">
 						<th class="fila" align="right">B&#160;&#160;&#160;A&#160;&#160;&#160;C&#160;&#160;&#160;M&#160;&#160;&#160;D&#160;&#160;&#160;V&#160;</th>
 						<th class="fila" align="left">Título</th>
-						<th class="fila" align="left"><a href="/cgi-bin/crid/ver-lista-grabaciones?time" title="Ordenar por Fecha">Inicio</a></th>
+						<th class="fila" align="left">
+							<xsl:element name="a">
+								<xsl:attribute name="title">Ordenar por Fecha</xsl:attribute>
+								<xsl:attribute name="href">/cgi-bin/crid/ver-lista-grabaciones?time&amp;<xsl:value-of select="/M750/CARPETA"/></xsl:attribute>
+								Inicio
+							</xsl:element>
+						</th>
 						<th class="fila" align="left">Final</th>
 						<th class="fila" align="left">Duración (min)</th>
 						<th class="fila" align="right">&#160;</th>
@@ -79,7 +91,14 @@
 									<xsl:when test="REC_STATE!='2'">
 										<xsl:element name="a">
 											<xsl:attribute name="title">Eliminar Grabación</xsl:attribute>
-											<xsl:attribute name="href">javascript:borrarGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
+												<xsl:choose>
+													<xsl:when test="/M750/CARPETA_REALPATH=/M750/CARPETA_GRABACIONES_REALPATH">
+														<xsl:attribute name="href">javascript:borrarGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
+													</xsl:when>
+													<xsl:otherwise>
+														<xsl:attribute name="href">javascript:borrarGrabacionCompleta("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
+													</xsl:otherwise>
+												</xsl:choose>
 											<img src="/img/red_ball.jpg" alt="Eliminar Grabación" width="18" height="18" border="0" />
 										</xsl:element>
 										<xsl:text> </xsl:text>

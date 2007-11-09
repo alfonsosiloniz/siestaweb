@@ -29,7 +29,7 @@ if [ "$CridFolder" = "$RecordingFolder" ]; then
 	./borrarGrabacion $Cridfile
 else
 	# Log del proceso
-	echo "`date` Borrar grabación, fichero crid: $Cridfile" >> $LOG
+	echo "`date` Borrar grabación, fichero crid: $Cridfile, Force: $force" >> $LOG
 	echo -n "" > $SCRIPT
 	echo -n "" > $CRIDS_FMPG
 
