@@ -52,7 +52,7 @@ if [ -d $DIR_ORIGEN -a -d $DIR_DESTINO -a -f $Cridfile ]; then
 	# Procesar fichero crid
 	eval `www-tools crid2var ${Cridfile}`
 	echo "Fichero: `basename ${Cridfile}` -> $Titulo ($num_fmpg, $fmpg0)" >> $LOG
-	echo "`date` Fichero: `basename ${Cridfile}` -> $Titulo ($num_fmpg, $fmpg0)" >> $LOGPROC
+	echo "`date` Fichero: `basename ${Cridfile}` -> $Titulo ($num_fmpg, $fmpg0), Force: $force" >> $LOGPROC
 	
 	# Copiar crid: Lo duplico con otro nombre para que el fichero de caché no sea el mismo que el original
 	CridfileCopy=`dirname ${Cridfile}`/`hostname`_`basename ${Cridfile}`

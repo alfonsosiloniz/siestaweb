@@ -202,7 +202,7 @@
 	<table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
 		<tr><td width="20%" class="txtNormal" align="left"><br/></td></tr>
 		<tr>
-			<td width="20%" class="txtNormal" align="center">
+			<td width="30%" class="txtNormal" align="center">
 				Modo Transferencia:&#160;
 				<select name="ModoForce" id="ModoForce" class="txtNormal">
 					<option value="0">Normal</option>
@@ -217,7 +217,7 @@
 				</xsl:element>
 			</td>
 			<td class="txtNormal" align="center">
-				Ver grabaciones del directorio <input type="text" value="/var/media/PC1/Video" size="50" name="alt_dir" />&#160;
+				Ver grabaciones del directorio <input type="text" value="/var/media/PC1/Video" size="35" name="alt_dir" />&#160;
 				<input type="button" value="Ver" onclick="document.location.href='/cgi-bin/crid/ver-lista-grabaciones?serie&amp;' + document.forms[0].alt_dir.value" />
 			</td>
 		</tr>
