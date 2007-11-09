@@ -2,10 +2,7 @@
 # jotabe, (c) Grupo SIESTA, 08-11-2007
 #
 # Borrar fragmentos de grabacion huerfanos (ficheros fmpg, mpg, idx, midx)
-#
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# Falta deteccion de ficheros de timeshift
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# Tambien se borra el timeshift actual, al cambiar de canal se activa de nuevo.
 
 # Obtener parametros
 CridFolder=${QUERY_STRING%-*}

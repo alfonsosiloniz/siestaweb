@@ -10,8 +10,8 @@
 
 # Obtener parametros
 Recordings=$1
-# Recordings=/usb/old
 crid_class=$2
+RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
 
 # Configurar entorno
 source ../www-setup.shi
@@ -24,7 +24,10 @@ xml_doc "/xsl/${3}"
 
 # Inicio resultado xml
 echo "<M750>
-	<CARPETA>$Recordings</CARPETA>"
+	<CARPETA>$Recordings</CARPETA>
+	<CARPETA_REALPATH>`realpath $Recordings`</CARPETA_REALPATH>
+	<CARPETA_GRABACIONES>$RecordingFolder</CARPETA_GRABACIONES>
+	<CARPETA_GRABACIONES_REALPATH>`realpath $RecordingFolder`</CARPETA_GRABACIONES_REALPATH>"
 
 # Calculo de espacio libre
 if [ -d $Recordings ]; then

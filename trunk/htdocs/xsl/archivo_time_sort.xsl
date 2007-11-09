@@ -208,7 +208,7 @@
 			</td>
 			<td class="txtNormal" align="center">
 				Ver grabaciones del directorio <input type="text" value="/var/media/PC1/Video" size="35" name="alt_dir" />&#160;
-				<input type="button" value="Ver" onclick="document.location.href='/cgi-bin/crid/ver-lista-grabaciones?serie&amp;' + document.forms[0].alt_dir.value" />
+				<input type="button" value="Ver" onclick="document.location.href='/cgi-bin/crid/ver-lista-grabaciones?time&amp;' + document.forms[0].alt_dir.value" />
 			</td>
 		</tr>
 	</table>
