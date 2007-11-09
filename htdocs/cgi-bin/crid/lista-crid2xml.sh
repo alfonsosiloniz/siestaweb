@@ -25,9 +25,9 @@ xml_doc "/xsl/${3}"
 # Inicio resultado xml
 echo "<M750>
 	<CARPETA>$Recordings</CARPETA>
-	<CARPETA_REALPATH>`realpath $Recordings`</CARPETA_REALPATH>
+	<CARPETA_REALPATH>`realpath $Recordings 2>/dev/null`</CARPETA_REALPATH>
 	<CARPETA_GRABACIONES>$RecordingFolder</CARPETA_GRABACIONES>
-	<CARPETA_GRABACIONES_REALPATH>`realpath $RecordingFolder`</CARPETA_GRABACIONES_REALPATH>"
+	<CARPETA_GRABACIONES_REALPATH>`realpath $RecordingFolder 2>/dev/null`</CARPETA_GRABACIONES_REALPATH>"
 
 # Calculo de espacio libre
 if [ -d $Recordings ]; then
