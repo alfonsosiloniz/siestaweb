@@ -55,7 +55,7 @@ function detalleCrid(crid) {
 function buscarPrograma() {
 	f=document.forms['form_m750'];
 	if (!isMobile)
-	    mostrarMensajeProceso();
+		mostrarMensajeProceso();
 	document.location.href="/cgi-bin/sincro/buscarPrograma?" + f.querystr.value;
 }
 
@@ -65,7 +65,7 @@ function buscarPrograma() {
 function buscarProgramaFH() {
 	f=document.forms['form_m750'];
 	if (!isMobile)
-	    mostrarMensajeProceso();
+		mostrarMensajeProceso();
 	document.location.href="/cgi-bin/sincro/buscarPrograma?" + f.fecha.value + " " + f.hora.value;
 }
 
@@ -168,7 +168,6 @@ function checkHD(partition, fstype) {
 
 
 
-
 //-------------------------------------------------
 // Programar grabacion
 //-------------------------------------------------
@@ -178,7 +177,7 @@ function programarGrabacion(id, serie, titulo) {
 		enserie="en serie ";
 	if (confirm("¿Está seguro de querer grabar " + enserie + "el programa " + titulo + "?")) {
 		if (!isMobile)
-		    mostrarMensajeProceso();
+			mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
 		makeRequest("/cgi-bin/run/programarGrabacion?" + parseInt(id, 16) + "-" + serie + "-" + new Date().getTime(), "RespuestaPeticionXML");
 	}
@@ -193,7 +192,7 @@ function programarGrabacionPID(pid, serie) {
 		enserie="en serie ";
 	if (confirm("¿Está seguro de querer grabar " + enserie + "este programa?")) {
 		if (!isMobile)
-		    mostrarMensajeProceso();
+			mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
 		makeRequest("/cgi-bin/run/programarGrabacion?" + pid + "-" + serie + "-" + new Date().getTime(), "RespuestaPeticionXML");
 	}
@@ -205,7 +204,7 @@ function programarGrabacionPID(pid, serie) {
 function cancelarGrabacion(id) {
 	if (confirm("¿Está seguro de querer cancelar la grabación seleccionada?")) {
 		if (!isMobile)
-		    mostrarMensajeProceso();
+			mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
 		makeRequest("/cgi-bin/run/cancelarGrabacion?" + parseInt(id, 16) + "-" + new Date().getTime(), "RespuestaPeticionXML");
 	}
@@ -217,7 +216,7 @@ function cancelarGrabacion(id) {
 function cancelarGrabacionPID(pid) {
 	if (confirm("¿Está seguro de querer cancelar esta grabación?")) {
 		if (!isMobile)
-		    mostrarMensajeProceso();
+			mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
 		makeRequest("/cgi-bin/run/cancelarGrabacion?" + pid + "-" + new Date().getTime(), "RespuestaPeticionXML");
 	}
@@ -229,7 +228,7 @@ function cancelarGrabacionPID(pid) {
 function borrarGrabacion(crid) {
 	if (confirm("¿Está seguro de querer eliminar definitivamente la grabación seleccionada?")) {
 		if (!isMobile)
-		    mostrarMensajeProceso();
+			mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
 		makeRequest("/cgi-bin/run/borrarGrabacion?" + crid + "-" + new Date().getTime(), "RespuestaPeticionXML");
 	}
@@ -238,7 +237,7 @@ function borrarGrabacion(crid) {
 function borrarGrabacionCompleta(crid) {
 	if (confirm("¿Está seguro de querer eliminar definitivamente la grabación seleccionada?")) {
 		if (!isMobile)
-		    mostrarMensajeProceso();
+			mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
 		makeRequest("/cgi-bin/run/borrarGrabacionCompleta?" + crid + "-" + new Date().getTime(), "RespuestaArchivoXML");
 	}
@@ -257,7 +256,7 @@ function archivarGrabacion(crid) {
 
 	if (confirm("¿Está seguro de querer archivar la grabación seleccionada?")) {
 		if (!isMobile)
-		    mostrarMensajeProceso();
+			mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
 		makeRequest("/cgi-bin/run/archivarCrid?" + crid + "-" + force + new Date().getTime(), "RespuestaArchivoXML");
 	}
@@ -267,41 +266,41 @@ function archivarGrabacion(crid) {
 // Copiar/Mover grabacion
 //-------------------------------------------------
 function copiarGrabacion(crid) {
-   var force="0";
-   if (document.forms['form_m750'].ModoForce.value == 1) {
+	var force="0";
+	if (document.forms['form_m750'].ModoForce.value == 1) {
 		force="1";
 	}
 	directorio = prompt('Introduce el Directorio Destino','/var/media/PC1/Video'); 
 	if (directorio == null) {
-	    alert("Debe permitir la ejecución de scripts");
-	    return;
+		alert("Debe permitir la ejecución de scripts");
+		return;
 	}
 	if (confirm("¿Está seguro de querer copiar la grabación seleccionada al directorio " + directorio + "?")) {
 		if (!isMobile)
-		    mostrarMensajeProceso();
+			mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
 		makeRequest("/cgi-bin/run/cpmvCrid?" + crid + "&" + directorio + "&0&"+force+"&" + new Date().getTime(), "noReply");
-		alert("Se ha mandado la orden de copia de la grabación. Siga el proceso en la pantalla de estado.");
+		alert("Se ha mandado la orden de copia de la grabación.\n\nSigue el proceso en la página de estado.");
 		document.location.href="/cgi-bin/box/estado?id_log=log_cpmv_record";
 	}
 }
 
 function moverGrabacion(crid) {
-   var force="0";
-   if (document.forms['form_m750'].ModoForce.value == 1) {
+	var force="0";
+	if (document.forms['form_m750'].ModoForce.value == 1) {
 		force="1";
 	}
 	directorio = prompt('Introduce el Directorio Destino','/var/media/PC1/Video');
 	if (directorio == null) {
-	    alert("Debe permitir la ejecución de scripts");
-	    return;
+		alert("Debe permitir la ejecución de scripts");
+		return;
 	}
 	if (confirm("¿Está seguro de querer mover la grabación seleccionada al directorio " + directorio + "?")) {
 		if (!isMobile)
-		    mostrarMensajeProceso();
+			mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
 		makeRequest("/cgi-bin/run/cpmvCrid?" + crid + "&" + directorio + "&1&"+force+"&" + new Date().getTime(), "noReply");
-		alert("Se ha mandado la orden de copia de la grabación. Siga el proceso en la pantalla de estado.");
+		alert("Se ha mandado la orden de movimiento de la grabación.\n\nSigue el proceso en la página de estado.");
 		document.location.href="/cgi-bin/box/estado?id_log=log_cpmv_record";
 	}
 }
@@ -319,7 +318,7 @@ function restaurarGrabacion(crid) {
 
 	if (confirm("¿Está seguro de querer restaurar la grabación seleccionada?")) {
 		if (!isMobile)
-		    mostrarMensajeProceso();
+			mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
 		makeRequest("/cgi-bin/run/restaurarCrid?" + crid + "-" + force + new Date().getTime(), "RespuestaArchivoXML");
 	}
@@ -329,9 +328,9 @@ function restaurarGrabacion(crid) {
 // Detener copia/traspaso de grabacion
 //-------------------------------------------------
 function stopCpmv(crid) {
-   if (confirm("¿Está seguro de querer detener la copia/traspaso de la grabacion?")) {
+	if (confirm("¿Está seguro de querer detener la copia/traspaso de la grabacion?")) {
 		if (!isMobile)
-		    mostrarMensajeProceso();
+			mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
 		makeRequest("/cgi-bin/run/stopCpmv?" + new Date().getTime(), "RespuestaPeticionXML");
 	}
@@ -341,9 +340,9 @@ function stopCpmv(crid) {
 // Montaje/desmontaje de USB2 en /var/media/SWAP
 //-------------------------------------------------
 function montarUSB2(accion) {
-   if (confirm("¿Está seguro de querer " + accion + " el dispositivo USB2 en el directorio /var/media/SWAP?")) {
+	if (confirm("¿Está seguro de querer " + accion + " el dispositivo USB2 en el directorio /var/media/SWAP?")) {
 		if (!isMobile)
-		    mostrarMensajeProceso();
+			mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
 		makeRequest("/cgi-bin/box/mount-usb2?id=" + accion + "&time=" + new Date().getTime(), "RespuestaPeticionXML");
 	}
@@ -355,9 +354,11 @@ function montarUSB2(accion) {
 function borrarHuerfanos(carpeta) {
 	if (confirm("¿Está seguro de querer borrar los fragmentos de grabación huerfanos de la carpeta " + carpeta + " ?")) {
 		if (!isMobile)
-		    mostrarMensajeProceso();
+			mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
-		makeRequest("/cgi-bin/run/borrarHuerfanos?" + carpeta + "-" + new Date().getTime(), "RespuestaPeticionXML");
+		makeRequest("/cgi-bin/run/borrarHuerfanos?" + carpeta + "-" + new Date().getTime(), "noReply");
+		alert("Se ha mandado la orden de borrado de fragmentos de grabación huerfanos.\n\nSigue el proceso en la página de estado.");
+		document.location.href="/cgi-bin/box/estado?id_log=log_fmpg_huerfanos";
 	}
 }
 
@@ -374,7 +375,7 @@ function RespuestaPeticionXML(xmldoc) {
 		alert("Petición NO aceptada por el M750");
 	}
 	if (!isMobile)
-	    eliminarMensajeProceso();
+		eliminarMensajeProceso();
 }
 
 function RespuestaArchivoXML(xmldoc) {
@@ -391,7 +392,7 @@ function RespuestaArchivoXML(xmldoc) {
 		alert("Petición NO aceptada por el M750");
 	}
 	if (!isMobile)
-	    eliminarMensajeProceso();
+		eliminarMensajeProceso();
 }
 
 //-------------------------------------------------
