@@ -55,7 +55,14 @@
 				<br/>
 				<table width="100%" border="0" cellspacing="0" cellpadding="2" align="center" class="borderTabla2">
 					<tr bgcolor="#ffb310">
-						<th class="fila" align="right">B&#160;&#160;&#160;A&#160;&#160;&#160;C&#160;&#160;&#160;M&#160;&#160;&#160;D&#160;&#160;&#160;V&#160;</th>
+						<xsl:choose>
+							<xsl:when test="/M750/CARPETA_REALPATH=/M750/CARPETA_GRABACIONES_REALPATH">
+								<th class="fila" align="right">B&#160;&#160;&#160;A&#160;&#160;&#160;C&#160;&#160;&#160;M&#160;&#160;&#160;D&#160;&#160;&#160;V&#160;</th>
+							</xsl:when>
+							<xsl:otherwise>
+								<th class="fila" align="right">B&#160;&#160;&#160;C&#160;&#160;&#160;M&#160;&#160;&#160;D&#160;&#160;&#160;V&#160;</th>
+							</xsl:otherwise>
+						</xsl:choose>
 						<th class="fila" align="left">Título</th>
 						<th class="fila" align="left">
 							<xsl:element name="a">
@@ -101,12 +108,17 @@
 												</xsl:choose>
 											<img src="/img/red_ball.jpg" alt="Eliminar Grabación" width="18" height="18" border="0" />
 										</xsl:element>
-										<xsl:text> </xsl:text>
-										<xsl:element name="a">
-											<xsl:attribute name="title">Archivar Grabación</xsl:attribute>
-											<xsl:attribute name="href">javascript:archivarGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
-											<img src="/img/rec2arch.gif" alt="Archivar Grabación" width="16" height="16" border="0" />
-										</xsl:element>
+										<xsl:choose>
+											<xsl:when test="/M750/CARPETA_REALPATH=/M750/CARPETA_GRABACIONES_REALPATH">
+												<xsl:attribute name="href">javascript:borrarGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
+													<xsl:text> </xsl:text>
+													<xsl:element name="a">
+														<xsl:attribute name="title">Archivar Grabación</xsl:attribute>
+														<xsl:attribute name="href">javascript:archivarGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
+														<img src="/img/rec2arch.gif" alt="Archivar Grabación" width="16" height="16" border="0" />
+													</xsl:element>
+											</xsl:when>
+										</xsl:choose>
 										<xsl:text> </xsl:text>
 										<xsl:element name="a">
 											<xsl:attribute name="title">Copiar Grabación</xsl:attribute>
