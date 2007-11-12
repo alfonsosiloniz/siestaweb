@@ -73,6 +73,7 @@ echo "				<br>
 								<option value=\"log_crontab\">Procesos Planificados (crontab -l)</option>
 								<option value=\"log_ifconfig\">Configuración de Red (ifconfig)</option>
 								<option value=\"log_ps\">Procesos en ejecución (ps)</option>
+								<option value=\"log_partitions\">Particiones de disco (cat /proc/partitions)</option>
 								<option value=\"log_mount\">Puntos de montaje (cat /proc/mounts)</option>
 								<option value=\"log_act_sincro\">Actualización de la Sincroguía</option>
 							</select>
@@ -174,6 +175,8 @@ echo "				<br>
 			print_log_file "Procesos Planificados (crontab)"                           "/dev/null"                "crontab -l";;
 		log_ifconfig )
 			print_log_file "Configuración de Red (ifconfig)"                           "/dev/null"                "ifconfig";;
+		log_partitions )
+			print_log_file "Particiones de disco (cat /proc/partitions)"               "/dev/null"                "cat /proc/partitions";;
 		log_ps )
 			print_log_file "Procesos en ejecución (ps)"                                "/dev/null"                "./verProcesos";;
 		log_mount )

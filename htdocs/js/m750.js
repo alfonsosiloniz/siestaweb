@@ -265,12 +265,12 @@ function archivarGrabacion(crid) {
 //-------------------------------------------------
 // Copiar/Mover grabacion
 //-------------------------------------------------
-function copiarGrabacion(crid) {
+function copiarGrabacion(crid,nombre,carpeta) {
 	var force="0";
 	if (document.forms['form_m750'].ModoForce.value == 1) {
 		force="1";
 	}
-	directorio = prompt('Introduce el Directorio Destino','/var/media/PC1/Video'); 
+	directorio = prompt('Introduce la carpeta de Destino para la grabación '+nombre,carpeta); 
 	if (directorio == null) {
 		alert("Debe permitir la ejecución de scripts");
 		return;
@@ -285,12 +285,12 @@ function copiarGrabacion(crid) {
 	}
 }
 
-function moverGrabacion(crid) {
+function moverGrabacion(crid,nombre,carpeta) {
 	var force="0";
 	if (document.forms['form_m750'].ModoForce.value == 1) {
 		force="1";
 	}
-	directorio = prompt('Introduce el Directorio Destino','/var/media/PC1/Video');
+	directorio = prompt('Introduce la carpeta de Destino para la grabación '+nombre,carpeta); 
 	if (directorio == null) {
 		alert("Debe permitir la ejecución de scripts");
 		return;

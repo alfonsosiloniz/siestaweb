@@ -42,7 +42,6 @@ else
 	numCrids=`ls -la $ARCHIVO_GRABACIONES/*.crid 2>/dev/null | wc -l`
 	if [ $numCrids -eq 0 ]; then
 		info="No existe ninguna grabación archivada en la carpeta $ARCHIVO_GRABACIONES"
-		####Meter boton de vaciado de fragmentos
 	fi
 fi
 
