@@ -7,6 +7,7 @@
 source ../www-setup.shi
 source ../fweb.shi
 USB_DISK=/var/media/USB-HDD
+USB_VIDEO=/pvr/media/USB-HDD
 
 # Obtener parametros
 if [ "$QUERY_STRING" != "" ] ; then
@@ -40,7 +41,9 @@ fi
 # Comprobacion USB-HDD montado
 info=""
 USB_MOUNTED=`grep ${USB_DISK} /proc/mounts | wc -l`
-if [ ${USB_MOUNTED} -eq 0 ]; then
+REC_FOLDER_INUSB=`echo $RecordingFolder | grep $USB_VIDEO | wc -l`
+
+if [ ${USB_MOUNTED} -eq 0 -a ${REC_FOLDER_INUSB} -gt 0 ]; then
 	info="No se puede acceder a la carpeta de grabaciones realizadas porque no hay acceso al disco duro."
 # Comprobar carpeta de archivo grabaciones
 elif [ ! -d ${RecordingFolder} ]; then
