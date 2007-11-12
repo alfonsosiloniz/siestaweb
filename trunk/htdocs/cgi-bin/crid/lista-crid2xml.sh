@@ -7,17 +7,25 @@
 # $1 Carpeta con ficheros .crid
 # $2 Clase (TIMER o RECORDINGS)
 # $3 Plantilla .xsl
+# $4 Proxima carpeta a usar para lista de grabaciones
 
 # Obtener parametros
 Recordings=$1
 crid_class=$2
-RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
+carpeta_ver=$4
 
 # Configurar entorno
 source ../www-setup.shi
 source ../fweb.shi
 fmpg0=""
 du=0
+RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
+carpeta_cpmv=/var/media/PC1/Video
+if [ -f ${Cache}/.carpeta_cpmv.txt ]; then
+	carpeta_cpmv=`cat ${Cache}/.carpeta_cpmv.txt`
+else
+	echo "$carpeta_cpmv" > ${Cache}/.carpeta_cpmv.txt
+fi
 
 # Enviar documento xml
 xml_doc "/xsl/${3}"
@@ -27,7 +35,9 @@ echo "<M750>
 	<CARPETA>$Recordings</CARPETA>
 	<CARPETA_REALPATH>`realpath $Recordings 2>/dev/null`</CARPETA_REALPATH>
 	<CARPETA_GRABACIONES>$RecordingFolder</CARPETA_GRABACIONES>
-	<CARPETA_GRABACIONES_REALPATH>`realpath $RecordingFolder 2>/dev/null`</CARPETA_GRABACIONES_REALPATH>"
+	<CARPETA_GRABACIONES_REALPATH>`realpath $RecordingFolder 2>/dev/null`</CARPETA_GRABACIONES_REALPATH>
+	<CARPETA_VER>$carpeta_ver</CARPETA_VER>
+	<CARPETA_CPMV>$carpeta_cpmv</CARPETA_CPMV>"
 
 # Calculo de espacio libre
 if [ -d $Recordings ]; then

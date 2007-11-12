@@ -1,22 +1,22 @@
 #!/bin/bash
-# (c) Grupo SIESTA, 03-11-2007
+# (c) Grupo SIESTA, 12-11-2007
 #
 # Devolver lista de grabaciones realizadas
 
 # Configurar entorno
 source ../www-setup.shi
 source ../fweb.shi
-USB_DISK=/var/media/USB-HDD
-USB_VIDEO=/pvr/media/USB-HDD
+USB_DISK=/pvr/media/USB-HDD
+USB_DISK_REALPATH=/var/media/USB-HDD
 
 # Obtener parametros
 if [ "$QUERY_STRING" != "" ] ; then
 	serieTime=`echo ${QUERY_STRING} | cut -d"&" -f1`
 	isDir=`echo ${QUERY_STRING} | grep "\&" | wc -l`
 	if [ $isDir -gt 0 ]; then
-		RecordingFolder=`echo ${QUERY_STRING} | cut -d"&" -f2`
+		Recordings=`echo ${QUERY_STRING} | cut -d"&" -f2`
 	else
-		RecordingFolder=""
+		Recordings=""
 	fi
 	if [ "$serieTime" = "serie" ]; then
 		rm -f ${Cache}/.time_sort
@@ -36,26 +36,56 @@ else
 fi
 
 # Obtenemos carpeta de grabaciones
-[ "$RecordingFolder" = "" ] && RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
+RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
+[ "$Recordings" = "" ] && Recordings=$RecordingFolder
 
-# Comprobacion USB-HDD montado
+# Comprobacion USB-HDD/PCx montado
 info=""
-USB_MOUNTED=`grep ${USB_DISK} /proc/mounts | wc -l`
-REC_FOLDER_INUSB=`echo $RecordingFolder | grep $USB_VIDEO | wc -l`
+error_folder=""
+case ${Recordings} in
+	${USB_DISK}* )
+		USB_MOUNTED=`grep ${USB_DISK_REALPATH} /proc/mounts | wc -l`
+		[ ${USB_MOUNTED} -eq 0 ] && error_folder="al disco duro."
+		;;
+	/pvr/media/PC1/* | /var/media/PC1/* )
+		PC_MOUNTED=`grep /var/media/PC1 /proc/mounts | wc -l`
+		[ ${PC_MOUNTED} -eq 0 ] && error_folder="a la carpeta compartida /pvr/media/PC1"
+		;;
+	/pvr/media/PC2/* | /var/media/PC2/* )
+		PC_MOUNTED=`grep /var/media/PC2 /proc/mounts | wc -l`
+		[ ${PC_MOUNTED} -eq 0 ] && error_folder="a la carpeta compartida /pvr/media/PC2"
+		;;
+	/pvr/media/PC3/* | /var/media/PC3/* )
+		PC_MOUNTED=`grep /var/media/PC3 /proc/mounts | wc -l`
+		[ ${PC_MOUNTED} -eq 0 ] && error_folder="a la carpeta compartida /pvr/media/PC3"
+		;;
+	/pvr/media/PC4/* | /var/media/PC4/* )
+		PC_MOUNTED=`grep /var/media/PC4 /proc/mounts | wc -l`
+		[ ${PC_MOUNTED} -eq 0 ] && error_folder="a la carpeta compartida /pvr/media/PC4"
+		;;
+	/pvr/media/PC5/* | /var/media/PC5/* )
+		PC_MOUNTED=`grep /var/media/PC5 /proc/mounts | wc -l`
+		[ ${PC_MOUNTED} -eq 0 ] && error_folder="a la carpeta compartida /pvr/media/PC5"
+		;;
+	* ) 
+		[ $isDir -le 0 ] && info="No esta definida la carpeta de grabaciones."
+		;;
+esac
+[ ${#error_folder} -ne 0 ] && info="No se puede acceder a la carpeta de grabaciones realizadas porque no hay acceso ${error_folder}"
 
-if [ ${USB_MOUNTED} -eq 0 -a ${REC_FOLDER_INUSB} -gt 0 ]; then
-	info="No se puede acceder a la carpeta de grabaciones realizadas porque no hay acceso al disco duro."
-# Comprobar carpeta de archivo grabaciones
-elif [ ! -d ${RecordingFolder} ]; then
-	info="No existe la carpeta $RecordingFolder
-		<br><br>
-		Revise la configuración de la carpeta de grabaciones de su gigaset."
-# Contar nº de grabaciones
-else
-	numCrids=`ls -la $RecordingFolder/*.crid 2>/dev/null | wc -l`
-	if [ $numCrids -eq 0 ]; then
-		info="No existe ninguna grabación en la carpeta $RecordingFolder"
-		####Meter boton de vaciado de fragmentos
+# Comprobar carpeta y nº de grabaciones
+if [ ${#info} -eq 0 ]; then
+	# Comprobar carpeta de grabaciones
+	if [ ! -d ${Recordings} ]; then
+		info="No existe la carpeta $Recordings
+			<br><br>
+			Revise la configuración de la carpeta de grabaciones de su gigaset."
+	# Contar nº de grabaciones
+	else
+		numCrids=`ls -la $Recordings/*.crid 2>/dev/null | wc -l`
+		if [ $numCrids -eq 0 ]; then
+			info="No existe ninguna grabación en la carpeta $Recordings"
+		fi
 	fi
 fi
 
@@ -74,6 +104,14 @@ if [ ${#info} -ne 0 ]; then
 			</table>"
 	html_doc_end no
 else
+	# Proxima carpeta a usar para lista de grabaciones
+	carpeta_ver=/var/media/PC1/Video
+	[ -f ${Cache}/.carpeta_ver.txt ] && carpeta_ver=`cat ${Cache}/.carpeta_ver.txt`
+	[ "Z$Recordings" != "Z$RecordingFolder" -a "Z$Recordings" != "Z$carpeta_ver" ] && carpeta_ver=$Recordings
+
+	# Guardar proxima carpeta
+	echo "$carpeta_ver" > ${Cache}/.carpeta_ver.txt
+
 	# Procesar carpeta de grabaciones
-	./lista-crid2xml.sh $RecordingFolder RECORDINGS $xsl
+	./lista-crid2xml.sh $Recordings RECORDINGS $xsl $carpeta_ver
 fi

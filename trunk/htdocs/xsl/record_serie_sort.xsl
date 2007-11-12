@@ -122,13 +122,13 @@
 										<xsl:text> </xsl:text>
 										<xsl:element name="a">
 											<xsl:attribute name="title">Copiar Grabación</xsl:attribute>
-											<xsl:attribute name="href">javascript:copiarGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
+											<xsl:attribute name="href">javascript:copiarGrabacion('<xsl:value-of select="CRID_FILE"/>','<xsl:value-of select="TITLE"/>','<xsl:value-of select="/M750/CARPETA_CPMV"/>')</xsl:attribute>
 											<img src="/img/copy-icon.gif" alt="Copiar Grabación" width="16" height="16" border="0" />
 										</xsl:element>
 										<xsl:text> </xsl:text>
 										<xsl:element name="a">
 											<xsl:attribute name="title">Mover Grabación</xsl:attribute>
-											<xsl:attribute name="href">javascript:moverGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
+											<xsl:attribute name="href">javascript:moverGrabacion('<xsl:value-of select="CRID_FILE"/>','<xsl:value-of select="TITLE"/>','<xsl:value-of select="/M750/CARPETA_CPMV"/>')</xsl:attribute>
 											<img src="/img/cut-icon.gif" alt="Mover Grabación" width="16" height="16" border="0" />
 										</xsl:element>
 										<xsl:text> </xsl:text>
@@ -248,7 +248,14 @@
 				</xsl:element>
 			</td>
 			<td class="txtNormal" align="center">
-				Ver grabaciones del directorio <input type="text" value="/var/media/PC1/Video" size="35" name="alt_dir" />&#160;
+				Ver grabaciones del directorio&#160;
+				<xsl:element name="input">
+					<xsl:attribute name="type">text</xsl:attribute>
+					<xsl:attribute name="value"><xsl:value-of select="/M750/CARPETA_VER"/></xsl:attribute>
+					<xsl:attribute name="size">35</xsl:attribute>
+					<xsl:attribute name="name">alt_dir</xsl:attribute>
+				</xsl:element>
+				&#160;
 				<input type="button" value="Ver" onclick="document.location.href='/cgi-bin/crid/ver-lista-grabaciones?serie&amp;' + document.forms[0].alt_dir.value" />
 			</td>
 		</tr>
