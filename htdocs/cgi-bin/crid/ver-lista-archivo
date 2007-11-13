@@ -13,17 +13,17 @@ if [ "$QUERY_STRING" != "" ] ; then
 	if [ "$QUERY_STRING" = "serie" ]; then
 		rm -f ${Cache}/.time_sort
 		touch ${Cache}/.serie_sort
-		xsl=archivo_serie_sort.xsl
+		xsl=record_serie_sort.xsl
 	else
 		rm -f ${Cache}/.serie_sort
 		touch ${Cache}/.time_sort
-		xsl=archivo_time_sort.xsl
+		xsl=record_time_sort.xsl
 	fi
 else
 	if [ -f ${Cache}/.serie_sort ]; then
-		xsl=archivo_serie_sort.xsl
+		xsl=record_serie_sort.xsl
 	else
-		xsl=archivo_time_sort.xsl
+		xsl=record_time_sort.xsl
 	fi
 fi
 
@@ -60,6 +60,10 @@ if [ ${#info} -ne 0 ]; then
 			</table>"
 	html_doc_end no
 else
+	# Proxima carpeta a usar para lista de grabaciones
+	carpeta_ver=/var/media/PC1/Video
+	[ -f ${Cache}/.carpeta_ver.txt ] && carpeta_ver=`cat ${Cache}/.carpeta_ver.txt`
+
 	# Procesar carpeta de archivo grabaciones
-	./lista-crid2xml.sh $ARCHIVO_GRABACIONES RECORDINGS $xsl
+	./lista-crid2xml.sh $ARCHIVO_GRABACIONES RECORDINGS $xsl $carpeta_ver
 fi
