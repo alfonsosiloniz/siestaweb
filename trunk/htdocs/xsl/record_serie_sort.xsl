@@ -14,7 +14,14 @@
 	<script type="text/javascript" src="/js/controlenviar.js" charset="ISO-8859-1"></script>
 	<script type="text/javascript" src="/js/botones.js" charset="ISO-8859-1"></script>
 	<script type="text/javascript" src="/js/m750.js" charset="ISO-8859-1"></script>
-	<title>M750T - Grabaciones Realizadas</title>
+	<xsl:choose>
+		<xsl:when test="/M750/CARPETA_REALPATH=/M750/CARPETA_ARCHIVO_REALPATH">
+			<title>M750T - Archivo de Grabaciones</title>
+		</xsl:when>
+		<xsl:otherwise>
+			<title>M750T - Grabaciones Realizadas</title>
+		</xsl:otherwise>
+	</xsl:choose>
 </head>
 <body bgcolor="#FFFFFF">
 	<form name="form_m750">
@@ -23,13 +30,17 @@
 			<td align="center">
 				<font class="titPag">M750T EPG</font>
 				<br/>
-				<font class="subTitPag">Grabaciones Realizadas
-					<xsl:choose>
-						<xsl:when test="/M750/CARPETA_REALPATH!=/M750/CARPETA_GRABACIONES_REALPATH">
-							- <xsl:value-of select="/M750/CARPETA"/>
-						</xsl:when>
-					</xsl:choose>
-				</font>
+				<xsl:choose>
+					<xsl:when test="/M750/CARPETA_REALPATH=/M750/CARPETA_ARCHIVO_REALPATH">
+						<font class="subTitPag">Archivo de Grabaciones</font>
+					</xsl:when>
+					<xsl:when test="/M750/CARPETA_REALPATH=/M750/CARPETA_GRABACIONES_REALPATH">
+						<font class="subTitPag">Grabaciones Realizadas</font>
+					</xsl:when>
+					<xsl:otherwise>
+						<font class="subTitPag">Grabaciones Realizadas - <xsl:value-of select="/M750/CARPETA"/></font>
+					</xsl:otherwise>
+				</xsl:choose>
 			</td>
 		</tr>
 		<tr>
@@ -56,6 +67,9 @@
 				<table width="100%" border="0" cellspacing="0" cellpadding="2" align="center" class="borderTabla2">
 					<tr bgcolor="#ffb310">
 						<xsl:choose>
+							<xsl:when test="/M750/CARPETA_REALPATH=/M750/CARPETA_ARCHIVO_REALPATH">
+								<th class="fila" align="right">B&#160;&#160;&#160;R&#160;&#160;&#160;C&#160;&#160;&#160;M&#160;&#160;&#160;D&#160;&#160;&#160;V&#160;</th>
+							</xsl:when>
 							<xsl:when test="/M750/CARPETA_REALPATH=/M750/CARPETA_GRABACIONES_REALPATH">
 								<th class="fila" align="right">B&#160;&#160;&#160;A&#160;&#160;&#160;C&#160;&#160;&#160;M&#160;&#160;&#160;D&#160;&#160;&#160;V&#160;</th>
 							</xsl:when>
@@ -67,7 +81,14 @@
 						<th class="fila" align="left">
 							<xsl:element name="a">
 								<xsl:attribute name="title">Ordenar por Fecha</xsl:attribute>
-								<xsl:attribute name="href">/cgi-bin/crid/ver-lista-grabaciones?time&amp;<xsl:value-of select="/M750/CARPETA"/></xsl:attribute>
+								<xsl:choose>
+									<xsl:when test="/M750/CARPETA_REALPATH=/M750/CARPETA_ARCHIVO_REALPATH">
+										<xsl:attribute name="href">/cgi-bin/crid/ver-lista-archivo?time</xsl:attribute>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:attribute name="href">/cgi-bin/crid/ver-lista-grabaciones?time&amp;<xsl:value-of select="/M750/CARPETA"/></xsl:attribute>
+									</xsl:otherwise>
+								</xsl:choose>
 								Inicio
 							</xsl:element>
 						</th>
@@ -109,14 +130,21 @@
 											<img src="/img/red_ball.jpg" alt="Eliminar Grabación" width="18" height="18" border="0" />
 										</xsl:element>
 										<xsl:choose>
+											<xsl:when test="/M750/CARPETA_REALPATH=/M750/CARPETA_ARCHIVO_REALPATH">
+												<xsl:text> </xsl:text>
+												<xsl:element name="a">
+													<xsl:attribute name="title">Restaurar Grabación</xsl:attribute>
+													<xsl:attribute name="href">javascript:restaurarGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
+													<img src="/img/arch2rec.gif" alt="Restaurar Grabación" width="16" height="16" border="0" />
+												</xsl:element>
+											</xsl:when>
 											<xsl:when test="/M750/CARPETA_REALPATH=/M750/CARPETA_GRABACIONES_REALPATH">
-												<xsl:attribute name="href">javascript:borrarGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
-													<xsl:text> </xsl:text>
-													<xsl:element name="a">
-														<xsl:attribute name="title">Archivar Grabación</xsl:attribute>
-														<xsl:attribute name="href">javascript:archivarGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
-														<img src="/img/rec2arch.gif" alt="Archivar Grabación" width="16" height="16" border="0" />
-													</xsl:element>
+												<xsl:text> </xsl:text>
+												<xsl:element name="a">
+													<xsl:attribute name="title">Archivar Grabación</xsl:attribute>
+													<xsl:attribute name="href">javascript:archivarGrabacion("<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
+													<img src="/img/rec2arch.gif" alt="Archivar Grabación" width="16" height="16" border="0" />
+												</xsl:element>
 											</xsl:when>
 										</xsl:choose>
 										<xsl:text> </xsl:text>
