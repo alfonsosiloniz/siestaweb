@@ -186,7 +186,7 @@ int main(int argc, char *argv[]){
 
 /* Imprimir version aplicacion */
 void print_version(){
-	fprintf(stderr,"www-tools v1.12 (2007-10-10)\n\n");
+	fprintf(stderr,"www-tools v1.14b (2007-11-18)\n\n");
 }
 
 /* Imprimir uso de aplicacion */
@@ -207,7 +207,7 @@ LONG read_LONG(FILE *file){
 	/* Leer int */
 	fread(&tmp,1,4,file);
 
-	#ifdef MS_DOS
+	#ifdef BINi386
 	/* Convertir de mips a intel */
 	int b1,b2,b3,b4;
 
@@ -232,7 +232,7 @@ LONG x4(void *p){
 	/* Leer int */
 	tmp=*(LONG *)p;
 
-	#ifdef MS_DOS
+	#ifdef BINi386
 	/* Convertir de mips a intel */
 	int b1,b2,b3,b4;
 
@@ -253,7 +253,7 @@ WORD x2(void *p){
 	/* Leer short */
 	tmp=*(WORD *)p;
 
-	#ifdef MS_DOS
+	#ifdef BINi386
 	/* Convertir de mips a intel */
 	int b1,b2;
 
@@ -306,63 +306,66 @@ flags:
 void sanear_txt(const BYTE *in, BYTE *out, long max_lon, long flags){
 	int lon=0;
 
-	/* Comprobar primer caracter con codigo de tabla de caracteres */
-	if ( *in <= '\x1F' ) {
-		/* Comprobar si es codigo extendido para saltar 2 posiciones mas*/
-		if ( *in == '\x10' ) in+=2;
+	/* Comprobar si cadena de entrada es cadena vacia */
+	if ( *in != '\x00' ) {
+		/* Comprobar primer caracter con codigo de tabla de caracteres */
+		if ( *in <= '\x1F' ) {
+			/* Comprobar si es codigo extendido para saltar 2 posiciones mas*/
+			if ( *in == '\x10' ) in+=2;
 
-		/* Saltar codigo de tabla de caracteres */
-		in++;
-	}
-
-	/* Recorrer entrada */
-	do {
-		switch (*in) {
-		/* '&' -> '&amp;' */
-		case (BYTE)'&':
-			lon+=5;
+			/* Saltar codigo de tabla de caracteres */
 			in++;
-			*out++='&';
-			*out++='a';
-			*out++='m';
-			*out++='p';
-			*out++=';';
-			break;
-
-		/* '_' -> '-' */
-		case (BYTE)'_':
-			lon++,in++,*out++='-';
-			break;
-
-		/* Eliminar CR/LF */
-		case (BYTE)'\x0D':
-		case (BYTE)'\x0A':
-			if ( flags & FILTRO_CRLF ) {
-				in++;
-			} else {
-				lon++,*out++=*in++;
-			}
-			break;
-
-		/* 0x8A -> 0x0A */
-		case (BYTE)'\x8A':
-			if ( flags & FILTRO_8A ) {
-				lon++,in++,*out++='\x0A';
-			} else {
-				lon++,*out++=*in++;
-			}
-			break;
-
-		/* '"' -> '\"' */
-		case (BYTE)'"':
-			if ( flags & FILTRO_COMILLAS ) lon++,*out++='\\';
-			lon++,*out++=*in++;
-			break;
-
-		default:
-			lon++,*out++=*in++;
 		}
-	} while ( (*in != '\x00') && (lon < max_lon) );
+
+		/* Recorrer entrada */
+		do {
+			switch (*in) {
+			/* '&' -> '&amp;' */
+			case (BYTE)'&':
+				lon+=5;
+				in++;
+				*out++='&';
+				*out++='a';
+				*out++='m';
+				*out++='p';
+				*out++=';';
+				break;
+
+			/* '_' -> '-' */
+			case (BYTE)'_':
+				lon++,in++,*out++='-';
+				break;
+
+			/* Eliminar CR/LF */
+			case (BYTE)'\x0D':
+			case (BYTE)'\x0A':
+				if ( flags & FILTRO_CRLF ) {
+					in++;
+				} else {
+					lon++,*out++=*in++;
+				}
+				break;
+
+			/* 0x8A -> 0x0A */
+			case (BYTE)'\x8A':
+				if ( flags & FILTRO_8A ) {
+					lon++,in++,*out++='\x0A';
+				} else {
+					lon++,*out++=*in++;
+				}
+				break;
+
+			/* '"' -> '\"' */
+			case (BYTE)'"':
+				if ( flags & FILTRO_COMILLAS ) lon++,*out++='\\';
+				lon++,*out++=*in++;
+				break;
+
+			default:
+				lon++,*out++=*in++;
+			}
+		} while ( (*in != '\x00') && (lon < max_lon) );
+	}
 
 	/* Asegurar final string */
 	*out='\x00';
