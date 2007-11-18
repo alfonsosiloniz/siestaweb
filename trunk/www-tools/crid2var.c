@@ -157,7 +157,7 @@ int crid2var(char *file_crid){
 				strncpy(txt,bf_in+posCrid,crid.bytesEPG_short);
 				txt[crid.bytesEPG_short]='\x00';
 			}
-			sanear_txt(txt,crid.EPG_short,LBF_TXT,FILTRO_CRLF);
+			sanear_txt(txt,crid.EPG_short,LBF_TXT,FILTRO_CRLF|FILTRO_COMILLAS);
 			posCrid+=crid.bytesEPG_short;
 
 			/* Obtener EPG_long */
