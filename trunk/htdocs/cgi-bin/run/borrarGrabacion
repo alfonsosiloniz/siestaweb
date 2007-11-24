@@ -5,7 +5,7 @@
 
 # Obtener parametros
 if [ $# = 1 ]; then
-	Cridfile=$1
+	Cridfile=${1%-*}
 else
 	# Eliminar fecha/hora del parametro
 	Cridfile=${QUERY_STRING%-*}
@@ -45,5 +45,6 @@ if [ -f $Cridfile ]; then
 	enviar_xml_ok
 else
 	# Resultado ERROR
+	echo "Fichero $Cridfile no existe" >> /tmp/kk.txt
 	enviar_xml_err
 fi
