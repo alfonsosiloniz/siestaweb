@@ -1,0 +1,28 @@
+#!/bin/bash
+# by pepper 16/05/2007
+# Script que realiza un apagado rapido del gigaset
+
+QUICKOFF_FILE=/tmp/.quickOff
+
+function get_modo_video () {
+    # Buscar nº de modulos que estan usando el modulo video
+    M_V=(`lsmod | grep ^video`)
+    if [ ${M_V[2]} = 0 ] ; then
+        ModoVideo="Apagado"
+    else
+        ModoVideo="Encendido"
+    fi
+}
+
+sleep $1
+
+get_modo_video
+
+rm -f ${QUICKOFF_FILE}
+if [ "$ModoVideo" = "Encendido" ]; then
+    # Salimos de una posible visualización de grabacion para que quede la marca de "desde donde lo dejé"
+    /data/scripts/irsim.sh TV
+    sleep 4
+    # Apagado rápido
+    /data/scripts/irsim.sh POWER
+fi

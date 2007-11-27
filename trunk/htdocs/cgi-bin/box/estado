@@ -40,6 +40,7 @@ echo "				<br>
 										poner_boton(\"Imagenes<br>Sincroguía\",   \"/img/getsincroimg.gif\", \"Descargar imagenes de Sincroguía\",      \"javascript:downloadSincroImg();\"    );
 										poner_boton(\"Reload<br>root.crontab\",   \"/img/crontab.gif\",      \"Recargar root.crontab\",                 \"javascript:reloadCrontab();\"        );
 										poner_boton(\"Reiniciar<br>Gigaset\",     \"/img/reboot.gif\",       \"Reiniciar Gigaset\",                     \"javascript:reboot();\"               );
+										poner_boton(\"Programar<br>Apagado\",     \"/img/sleep.gif\",       \"Programar Apagado (sleep)\",              \"/cgi-bin/box/sleep\"               );
 										poner_boton(\"$accion_power<br>Gigaset\", \"/img/$img_power\",       \"$accion_power Gigaset\",                 \"javascript:enviarTecla('POWER'); reloadDelayed();\" ,\"si\");
 									</script>
 								</tr>
