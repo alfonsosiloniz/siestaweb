@@ -1,0 +1,134 @@
+#!/bin/bash
+# pepper, (c) Grupo SIESTA, 26-11-2007
+#
+# Programar apagados (sleep) en gigaset
+
+# Configurar entorno
+source ../www-setup.shi
+source ../fweb.shi
+LOG=/tmp/sleep.log
+QUICKOFF_FILE=/tmp/.quickOff
+TOTALOFF_FILE=/tmp/.totalOff
+
+if [ "${QUERY_STRING}" != "" ]; then
+    if [ "${QUERY_STRING}" = "cancelar" ]; then
+        if [ -f ${QUICKOFF_FILE} ]; then
+            segundos=`cat ${QUICKOFF_FILE} | cut -d"&" -f 4`
+            proc=`ps axw | grep "/run/quickOff" | grep -v grep | head -1`
+            rm -f ${QUICKOFF_FILE}
+        elif [ -f ${TOTALOFF_FILE} ]; then
+            segundos=`cat ${TOTALOFF_FILE} | cut -d"&" -f 4`
+            proc=`ps axw | grep "/run/totalOff" | grep -v grep | head -1`
+            rm -f ${TOTALOFF_FILE}
+        fi
+		pid=(`echo $proc`)
+		if [ "$pid" != "" ]; then
+			echo "Finalizando proceso ($proc) ..." >> $LOG
+			echo "kill -9 $pid" >> $LOG
+			kill -9 $pid >> $LOG 2>> $LOG
+		fi
+		proc=`ps axw | grep "sleep ${segundos}" | grep -v grep | head -1`
+		pid=(`echo $proc`)
+		if [ "$pid" != "" ]; then
+			echo "Finalizando proceso ($proc) ..." >> $LOG
+			echo "kill -9 $pid" >> $LOG
+			kill -9 $pid >> $LOG 2>> $LOG
+		fi
+    else
+        tipo=`echo ${QUERY_STRING} | cut -d"&" -f 1 | cut -d"=" -f 2`
+        horas=`echo ${QUERY_STRING} | cut -d"&" -f 2 | cut -d"=" -f 2`
+        minutos=`echo ${QUERY_STRING} | cut -d"&" -f 3 | cut -d"=" -f 2`
+        
+        segundosM=$((minutos * 60))
+        segundosH=$((horas * 60 * 60))
+        segundos=$((segundosM+segundosH))
+        echo "Programado apagado $tipo de aquí a $horas horas y $minutos minutos ==> $segundos segundos" >> $LOG
+        now=`date +%s`
+        dateFormat=`awk "BEGIN {print strftime( \"%d/%m/%Y %H:%M %Z\", ${now}) }"`
+        if [ "${tipo}" = "rapido" ]; then
+            echo "${dateFormat}&${horas}&${minutos}&${segundos}" > ${QUICKOFF_FILE}
+            ../run/quickOff ${segundos} &
+        fi
+        if [ "${tipo}" = "total" ]; then
+            echo "${dateFormat}&${horas}&${minutos}&${segundos}" > ${TOTALOFF_FILE}
+            ../run/totalOff ${segundos} &
+        fi
+    fi
+fi
+# Enviar documento html
+html_doc_start "M750T - Programación de Apagado del box" "" "h-n-e-bm"
+
+# Respuesta html
+html_top "Programar Apagado del Box" "" "" ""
+echo "            <br>
+            <table width=\"90%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
+               <tr>
+                  <td class=\"titTabla\" width=\"30%\">Estado actual de programación:</td>
+                  <td class=\"txtNormal\">"
+
+if [ -f ${QUICKOFF_FILE} ]; then
+    echo "Hay programado un apagado rapido<br><br>"
+    echo -n "El apagado se programó a las `cat ${QUICKOFF_FILE} | cut -d"&" -f 1`"
+    echo -n " para dentro de `cat ${QUICKOFF_FILE} | cut -d"&" -f 2` horas y "
+    echo "`cat ${QUICKOFF_FILE} | cut -d"&" -f 3` minutos"
+elif [ -f ${TOTALOFF_FILE} ]; then
+    echo "Hay programado un apagado total"
+    echo -n "El apagado se programó a las `cat ${TOTALOFF_FILE} | cut -d"&" -f 1`"
+    echo -n " para dentro de `cat ${TOTALOFF_FILE} | cut -d"&" -f 2` horas y "
+    echo "`cat ${TOTALOFF_FILE} | cut -d"&" -f 3` minutos"
+else
+    echo "Ningún apagado programado"
+fi
+   echo "                  </td>
+                  </tr>"
+if [ ! -f ${QUICKOFF_FILE} -a ! -f ${TOTALOFF_FILE} ]; then
+   echo "            <tr>
+                     <td colspan=\"2\" class=\"titTabla\" height=\"30\"></td>
+                  </tr>
+                  <tr>
+                     <td class=\"titChannel\" colspan=\"2\" width=\"30%\">Programar apagado:</td>
+                  </tr>
+                  <tr>
+                     <td colspan=\"2\" class=\"titTabla\" height=\"10\"></td>
+                  </tr>
+                  <tr>
+                     <td class=\"titTabla\">Tipo de apagado:</td>
+                     <td class=\"txtNormal\">
+                         <select name=\"tipo_apagado\" class=\"txtNormal\">
+                             <option value=\"rapido\">Apagado Rápido
+                             <option value=\"total\">Apagado Total
+                         </select
+                     </td>
+                  </tr>
+                  <tr>
+                     <td colspan=\"2\" class=\"titTabla\" height=\"10\"></td>
+                  </tr>
+                  <tr>
+                     <td class=\"titTabla\">Tiempo hasta el Apagado:</td>
+                     <td class=\"txtNormal\">
+                         Horas: <input class=\"txtNormal\" name=\"horas\" type=\"text\" value=\"00\" size=\"2\" maxsize=\"2\">&nbsp;&nbsp;
+                         Minutos: <input class=\"txtNormal\" name=\"minutos\" type=\"text\" value=\"00\" size=\"2\" maxsize=\"2\">
+                     </td>
+                  </tr>
+                  <tr>
+                     <td colspan=\"2\" class=\"titTabla\" height=\"30\"></td>
+                  </tr>
+                  <tr>
+                     <td colspan=\"2\" class=\"titTabla\"><center><input class=\"txtNormal\" type=\"button\" value=\"Programar Apagado\" onclick=\"sleep()\"></center></td>
+                  </tr>
+               </table>"
+else
+    echo "           <tr>
+                     <td colspan=\"2\" class=\"titTabla\" height=\"30\"></td>
+                  </tr>
+                  <tr>
+                     <td colspan=\"2\" class=\"titTabla\"><center><input class=\"txtNormal\" type=\"button\" value=\"Cancelar Apagado\" onclick=\"cancelarApagado()\"></center></td>
+                  </tr>"
+fi
+
+# Final html 
+html_doc_end $pie_botones
+
+proc=`ps axw | grep "httpd -h /data/htdocs" | grep -v grep | head -1`
+pid=(`echo $proc`)
+[ "$pid" != "" ] &&	kill -9 $pid >> $LOG 2>> $LOG

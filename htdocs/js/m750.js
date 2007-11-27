@@ -165,9 +165,6 @@ function checkHD(partition, fstype) {
 	}
 }
 
-
-
-
 //-------------------------------------------------
 // Programar grabacion
 //-------------------------------------------------
@@ -235,12 +232,47 @@ function borrarGrabacion(crid) {
 }
 
 function borrarGrabacionCompleta(crid) {
+	var force;
+	if (document.forms['form_m750'].ModoForce.value == 0) {
+		force="";
+	} else {
+		force="force-";
+	}
+
 	if (confirm("¿Está seguro de querer eliminar definitivamente la grabación seleccionada?")) {
 		if (!isMobile)
 			mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
-		makeRequest("/cgi-bin/run/borrarGrabacionCompleta?" + crid + "-" + new Date().getTime(), "RespuestaArchivoXML");
+		makeRequest("/cgi-bin/run/borrarGrabacionCompleta?" + crid + "-" + force + new Date().getTime(), "RespuestaArchivoXML");
 	}
+}
+
+//-------------------------------------------------
+// Programar apagado
+//-------------------------------------------------
+function sleep() {
+    f=document.forms[0];
+    if (parseInt(f.horas.value) == 0 && parseInt(f.minutos.value) == 0) {
+        alert("Debe introducir un valor de Horas o Minutos");
+        return;
+    }
+    if (parseInt(f.minutos.value) > 59) {
+        alert("El valor de minutos supera el máximo permitido (59)");
+        return;
+    }
+    //document.location.href="/cgi-bin/box/sleep?" + getFormParameters(f);
+    if (!isMobile)
+		mostrarMensajeProceso();
+    f.action="/cgi-bin/box/sleep";
+    f.submit();
+}
+
+function cancelarApagado() {
+    if (confirm("¿Está seguro de querer cancelar el Apagado?")) {
+        if (!isMobile)
+		    mostrarMensajeProceso();
+        document.location.href="/cgi-bin/box/sleep?cancelar";
+    }
 }
 
 //-------------------------------------------------
