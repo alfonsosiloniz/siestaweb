@@ -15,24 +15,18 @@ LOG=/tmp/login.log
 case $REQUEST_METHOD in
 	GET)
 		# CGI Arguments are in QUERY_STRING
+		# Obtener usuario y contraseña para validar
+        userlogin=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2`
+        pwdlogin=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2 | sed 's/%40/@/g'`
 		;;
 
 	POST)
 		# First line from standard input contains CGI arguments
-		read -r query_string
-		# If QUERY_STRING is non-empty, append the string read from
-		# standard input. This is useful for debugging purposes
-		if [ "${QUERY_STRING}" != "" ]; then
-			QUERY_STRING="${QUERY_STRING}&${query_string}"
-		else
-			QUERY_STRING=${query_string}
-		fi
+		cadena=`head -c $CONTENT_LENGTH`
+		userlogin=`echo $cadena  | awk -F "&" '{ print $1 }' | awk -F "=" '{ print $2 }'`
+    	pwdlogin=`echo $cadena  | awk -F "&" '{ print $2 }' | awk -F "=" '{ print $2 }' | sed 's/%40/@/g'`
 		;;
 esac
-
-# Obtener usuario y contraseña para validar
-userlogin=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2`
-pwdlogin=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2 | sed 's/%40/@/g'`
 
 # Enviar cabecera http
 http_header
