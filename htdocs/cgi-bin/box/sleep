@@ -47,11 +47,10 @@ if [ "${QUERY_STRING}" != "" ]; then
         dateFormat=`awk "BEGIN {print strftime( \"%d/%m/%Y %H:%M %Z\", ${now}) }"`
         if [ "${tipo}" = "rapido" ]; then
             echo "${dateFormat}&${horas}&${minutos}&${segundos}" > ${QUICKOFF_FILE}
-            ../run/quickOff ${segundos} &
-        fi
-        if [ "${tipo}" = "total" ]; then
+            ../run/quickOff ${segundos} >> $LOG 2>> $LOG &
+        elif [ "${tipo}" = "total" ]; then
             echo "${dateFormat}&${horas}&${minutos}&${segundos}" > ${TOTALOFF_FILE}
-            ../run/totalOff ${segundos} &
+            ../run/totalOff ${segundos} >> $LOG 2>> $LOG &
         fi
     fi
 fi
@@ -128,7 +127,3 @@ fi
 
 # Final html 
 html_doc_end $pie_botones
-
-proc=`ps axw | grep "httpd -h /data/htdocs" | grep -v grep | head -1`
-pid=(`echo $proc`)
-[ "$pid" != "" ] &&	kill -9 $pid >> $LOG 2>> $LOG
