@@ -19,16 +19,16 @@ if [ "$QUERY_STRING" != "" ] ; then
 		Recordings=""
 	fi
 	if [ "$serieTime" = "serie" ]; then
-		rm -f ${Cache}/.time_sort
-		touch ${Cache}/.serie_sort
+		rm -f ${SERVER_ROOT}/cfg/.time_sort
+		touch ${SERVER_ROOT}/cfg/.serie_sort
 		xsl=record_serie_sort.xsl
 	elif [ "$serieTime" = "time" ]; then
-		rm -f ${Cache}/.serie_sort
-		touch ${Cache}/.time_sort
+		touch ${SERVER_ROOT}/cfg/.time_sort
+		rm -f ${SERVER_ROOT}/cfg/.serie_sort
 		xsl=record_time_sort.xsl
 	fi
 else
-	if [ -f ${Cache}/.serie_sort ]; then
+	if [ -f ${SERVER_ROOT}/cfg/.serie_sort ]; then
 		xsl=record_serie_sort.xsl
 	else
 		xsl=record_time_sort.xsl
@@ -106,11 +106,11 @@ if [ ${#info} -ne 0 ]; then
 else
 	# Proxima carpeta a usar para lista de grabaciones
 	carpeta_ver=/var/media/PC1/Video
-	[ -f ${Cache}/.carpeta_ver.txt ] && carpeta_ver=`cat ${Cache}/.carpeta_ver.txt`
+	[ -f ${SERVER_ROOT}/cfg/.carpeta_ver.txt ] && carpeta_ver=`cat ${SERVER_ROOT}/cfg/.carpeta_ver.txt`
 	[ "Z$Recordings" != "Z$RecordingFolder" -a "Z$Recordings" != "Z$carpeta_ver" ] && carpeta_ver=$Recordings
 
 	# Guardar proxima carpeta
-	echo "$carpeta_ver" > ${Cache}/.carpeta_ver.txt
+	echo "$carpeta_ver" > ${SERVER_ROOT}/cfg/.carpeta_ver.txt
 
 	# Procesar carpeta de grabaciones
 	./lista-crid2xml.sh $Recordings RECORDINGS $xsl $carpeta_ver

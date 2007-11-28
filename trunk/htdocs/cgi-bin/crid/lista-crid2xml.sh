@@ -21,10 +21,10 @@ fmpg0=""
 du=0
 RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
 carpeta_cpmv=/var/media/PC1/Video
-if [ -f ${Cache}/.carpeta_cpmv.txt ]; then
-	carpeta_cpmv=`cat ${Cache}/.carpeta_cpmv.txt`
+if [ -f ${SERVER_ROOT}/cfg/.carpeta_cpmv.txt ]; then
+	carpeta_cpmv=`cat ${SERVER_ROOT}/cfg/.carpeta_cpmv.txt`
 else
-	echo "$carpeta_cpmv" > ${Cache}/.carpeta_cpmv.txt
+	echo "$carpeta_cpmv" > ${SERVER_ROOT}/cfg/.carpeta_cpmv.txt
 fi
 
 # Enviar documento xml

@@ -42,7 +42,7 @@ echo -n "" > $CRIDS_FMPG
 # Comprobar carpetas y fichero
 if [ -d $DIR_ORIGEN -a -d $DIR_DESTINO -a -f $Cridfile ]; then
 	# Guardar carpeta destino
-	echo "$DIR_DESTINO" > ${Cache}/.carpeta_cpmv.txt
+	echo "$DIR_DESTINO" > ${SERVER_ROOT}/cfg/.carpeta_cpmv.txt
 
 	# Procesar fichero crid
 	eval `www-tools crid2var ${Cridfile}`

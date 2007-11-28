@@ -14,9 +14,9 @@ case $SIESTA_ORDEN_GRABACIONES in
 	serie ) ORDEN_GRABACIONES=.serie_sort;;
 	* ) ORDEN_GRABACIONES=.time_sort;;
 esac
-rm -f $SIESTA_CACHE_HTTP/.time_sort
-rm -f $SIESTA_CACHE_HTTP/.serie_sort
-touch $SIESTA_CACHE_HTTP/$ORDEN_GRABACIONES
+rm -f $SIESTA_HOME_HTTP/cfg/.time_sort
+rm -f $SIESTA_HOME_HTTP/cfg/.serie_sort
+touch $SIESTA_HOME_HTTP/cfg/$ORDEN_GRABACIONES
 
 # Canales de parrilla por defecto
 if [ "Z$SIESTA_CANALES_PARRILLA" != "Z" ]; then
