@@ -4,7 +4,7 @@
 # Montaje/desmontaje del USB2
 
 if [ $# = 1 ]; then
-   id_accion=$1
+   id_accion=`echo "$1" | cut -d"&" -f1 | cut -d"=" -f2`
 else
    # Obtener parametro
    id_accion=`echo "$QUERY_STRING" | cut -d"&" -f1 | cut -d"=" -f2`
