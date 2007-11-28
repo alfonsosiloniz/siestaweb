@@ -3,7 +3,7 @@
 # Script que devuelve el tamaño en bytes de un fichero
 
 if [ $# != 0 ] ; then
-	file=$1
+	file=`echo $1 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g' | sed -e 's/%2F/\//g'`
 else
     file=`echo $QUERY_STRING | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g' | sed -e 's/%2F/\//g'`
 fi
