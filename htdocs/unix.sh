@@ -29,7 +29,7 @@ function ch_dir () {
 }
 
 # Configurar entorno
-SIESTA_HOME_HTTP=/data/htdocs
+SIESTA_HOME_HTTP=.
 
 # Regularizar permisos
 echo "--> Regularizar permisos $SIESTA_HOME_HTTP"
