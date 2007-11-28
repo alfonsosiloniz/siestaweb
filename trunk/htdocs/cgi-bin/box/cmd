@@ -1,11 +1,8 @@
 #!/bin/bash
 # Lemmi, 2006-07-11 -> GPL
-# pepper, (c) Grupo SIESTA, 27-07-2007
+# pepper, jotabe, (c) Grupo SIESTA, 28-11-2007
 #
 # Ejecucion de comandos linux en gigaset
-
-# Procesar parametros get/post
-##eval `./proccgi $*`
 
 # Configurar entorno
 source ../www-setup.shi
@@ -14,14 +11,11 @@ LOG=/tmp/cmd.log
 pie_botones="no"
 cmd_permitidos="cat df fdisk halt ls ps reboot grep wc touch echo cp crontab tar ln dos2unix kill pkill bunzip2 netstat traceroute unzip wget"
 
+# Procesar parametros get/post
+eval "`proccgi $*`"
+
 # Obtener comando para ejecutar
-##line=`echo "$FORM_command"`
-get_maquina
-if [ $MAQUINA = "GigaSet" ]; then
-	line=`httpd -d "$QUERY_STRING" | sed 's/^command=//g' | cut -d"&" -f1`
-else
-	line=`echo "$QUERY_STRING" | sed 's/^command=//g;s/%3A/:/g;s/+/ /g' | cut -d"&" -f1`
-fi
+line=$FORM_command
 cmd_print=`echo "$line" | sed 's/&/\&amp;/g;s/</\&lt;/g'`
 cmd=${line// *}
 

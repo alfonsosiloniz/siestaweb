@@ -81,7 +81,11 @@ function html_top() {
 	fi
 	# Funcion form action
 	if [ "Z$3" = "Z"  ]; then
-		echo "<form name=\"form_m750\" method=\"get\">"
+		if [ "Z$4" = "Zpost"  ]; then
+			echo "<form name=\"form_m750\" method=\"post\">"
+		else
+			echo "<form name=\"form_m750\" method=\"get\">"
+		fi
 	else
 		if [ "Z$4" = "Zpost"  ]; then
 			echo "<form name=\"form_m750\" method=\"post\" action=\"${3}\">"

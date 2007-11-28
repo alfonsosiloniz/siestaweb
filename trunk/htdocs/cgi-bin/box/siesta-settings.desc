@@ -166,28 +166,34 @@ No es necesario poner en esta lista la ip y el nombre del propio
 gigaset, esta información se incluye automaticamente.
 
 
-#PARAMETRO: SIESTA_ACTIVAR_FTP key si no
-SIESTA_ACTIVAR_FTP = si
+#PARAMETRO: SIESTA_ACTIVAR_FTP key inetd daemon off
+SIESTA_ACTIVAR_FTP = inetd
 
-Controla la ejecución del servicio FTP.
-
-
-#PARAMETRO: SIESTA_ACTIVAR_TELNET key si no
-SIESTA_ACTIVAR_TELNET = si
-
-Controla la ejecución del servicio TELNET.
+Controla la ejecución del servicio FTP. Puede activarse como
+servicio de inetd, como servidor independiente o dejarlo
+desactivado.
 
 
-#PARAMETRO: SIESTA_ACTIVAR_SSH key si no
-SIESTA_ACTIVAR_SSH = si
+#PARAMETRO: SIESTA_ACTIVAR_TELNET key inetd off
+SIESTA_ACTIVAR_TELNET = inetd
 
-Controla la ejecución del servicio SSH.
+Controla la ejecución del servicio TELNET. Puede activarse como
+servicio de inetd o dejarlo desactivado.
 
 
-#PARAMETRO: SIESTA_ACTIVAR_HTTP key no si
-SIESTA_ACTIVAR_HTTP = no
+#PARAMETRO: SIESTA_ACTIVAR_SSH key inetd daemon off
+SIESTA_ACTIVAR_SSH = inetd
 
-Controla la ejecución del servidor web.
+Controla la ejecución del servicio SSH. Puede activarse como
+servicio de inetd, como servidor independiente o dejarlo
+desactivado.
+
+
+#PARAMETRO: SIESTA_ACTIVAR_HTTP key daemon off
+SIESTA_ACTIVAR_HTTP = daemon
+
+Controla la ejecución del servidor web. Puede activarse como
+servidor independiente o dejarlo desactivado.
 
 
 #PARAMETRO: SIESTA_PORT_HTTP num 80 1 65535
