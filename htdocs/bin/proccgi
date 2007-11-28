@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Process input to a CGI script. Written and Copyright 1995 Frank Pilhofer
 # You may freely use and distribute this code free of charge provided that

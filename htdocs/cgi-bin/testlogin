@@ -11,30 +11,16 @@ user=`echo ${USUARIO} | cut -d":" -f1`
 pwd=`echo ${USUARIO} | cut -d":" -f2`
 LOG=/tmp/login.log
 
-# check input data : GET or POST
-case $REQUEST_METHOD in
-	GET)
-		# CGI Arguments are in QUERY_STRING
-		# Obtener usuario y contraseña para validar
-        userlogin=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2`
-        pwdlogin=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2 | sed 's/%40/@/g'`
-		;;
-
-	POST)
-		# First line from standard input contains CGI arguments
-		cadena=`head -c $CONTENT_LENGTH`
-		userlogin=`echo $cadena  | awk -F "&" '{ print $1 }' | awk -F "=" '{ print $2 }'`
-    	pwdlogin=`echo $cadena  | awk -F "&" '{ print $2 }' | awk -F "=" '{ print $2 }' | sed 's/%40/@/g'`
-		;;
-esac
+# Procesar parametros get/post
+eval "`proccgi $*`"
 
 # Enviar cabecera http
 http_header
 
 # Comprobar login
-if [ "$user" = "$userlogin" -a "$pwd" = "$pwdlogin" ]; then
+if [ "$user" = "$FORM_uid" -a "$pwd" = "$FORM_pwd" ]; then
 	# Login correcto
-	echo "`date` Login OK: $userlogin / $pwdlogin" >> $LOG
+	echo "`date` Login OK: $FORM_uid / $FORM_pwd" >> $LOG
 	# Respuesta html
 	echo "<html>
 	<head>
@@ -53,7 +39,7 @@ if [ "$user" = "$userlogin" -a "$pwd" = "$pwdlogin" ]; then
 </html>"
 else
 	# Login incorrecto
-	echo "`date` Login NOK: $userlogin / $pwdlogin" >> $LOG
+	echo "`date` Login NOK: $FORM_uid / $FORM_pwd" >> $LOG
 	# Respuesta html
 	echo "<html>
 	<head>
