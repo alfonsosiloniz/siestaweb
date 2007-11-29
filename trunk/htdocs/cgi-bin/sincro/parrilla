@@ -11,7 +11,7 @@ source ../www-setup.shi
 source ../fweb.shi
 SORT_CHIDS=${Cache}/sort_chIDs.txt
 INFO_CHANNELS=${Cache}/info_channels.txt
-PARRILLA_CHANNELS=${Cache}/parrilla_channels.txt
+PARRILLA_CHANNELS=${SERVER_ROOT}/cfg/parrilla_channels.txt
 CFG_PARRILLA=""
 [ -f $PARRILLA_CHANNELS ] && CFG_PARRILLA=`cat $PARRILLA_CHANNELS`
 

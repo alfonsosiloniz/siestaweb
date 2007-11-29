@@ -1,29 +1,25 @@
 #!/bin/bash
-# pepper, (c) Grupo SIESTA, 02-07-2007
+# pepper, jotabe, (c) Grupo SIESTA, 29-11-2007
 #
 # Guarda la configuración de los canales que se visualizan en la parrilla
 
 # Configurar entorno
 source ../www-setup.shi
 source ../fweb.shi
-PARRILLA_CHANNELS=${Cache}/parrilla_channels.txt
+PARRILLA_CHANNELS=${SERVER_ROOT}/cfg/parrilla_channels.txt
 
-# Generar fichero con campos de respuesta
-echo ${QUERY_STRING} | sed 's/&/\n/g' > ${PARRILLA_CHANNELS}.temp
+# Procesar parametros get/post
+eval "`proccgi $*`"
 
 # Recorrer campos de respuesta
 CH_TMP=":"
-while read line; do
-	if [ ${#line} -ne 0 ]; then
-		# Obtener identificador de canal
-		chID=`echo "${line}" | cut -d"=" -f1`
-		# Agregar a lista de canales
-		CH_TMP="${CH_TMP}${chID}:"
-	fi
-done < ${PARRILLA_CHANNELS}.temp
-
-# Eliminar ficheros temporales
-rm -f ${PARRILLA_CHANNELS}.temp
+for F_chID in ${!FORM_*}; do
+	# Obtener identificador de canal
+	TMP='$'${F_chID}
+	eval "TMP2=$TMP"
+	# Agregar a lista de canales
+	CH_TMP="${CH_TMP}${TMP2}:"
+done
 
 # Guardar datos en fichero de configuracion
 echo "${CH_TMP}" > $PARRILLA_CHANNELS

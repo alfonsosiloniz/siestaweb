@@ -68,7 +68,7 @@ function guardar() {
 }"
 
 # Respuesta html
-html_top "Configuración SIESTA" "" "/cgi-bin/box/saveConfigSIESTA" ""
+html_top "Configuración SIESTA" "" "/cgi-bin/box/saveConfigSIESTA" "post"
 
 #Obtener fecha configuracion
 FECHA_CFG=`grep "Fecha configuracion:" $SIESTA_SETTINGS_FILE`

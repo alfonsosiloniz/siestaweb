@@ -8,21 +8,6 @@ LocalBin=/usr/local/bin
 source $LocalBin/siesta-setup.sh
 FICHERO_WWW_SETTINGS=/var/etc/www-settings.txt
 
-# Flag orden de grabaciones
-case $SIESTA_ORDEN_GRABACIONES in
-	time ) ORDEN_GRABACIONES=.time_sort;;
-	serie ) ORDEN_GRABACIONES=.serie_sort;;
-	* ) ORDEN_GRABACIONES=.time_sort;;
-esac
-rm -f $SIESTA_HOME_HTTP/cfg/.time_sort
-rm -f $SIESTA_HOME_HTTP/cfg/.serie_sort
-touch $SIESTA_HOME_HTTP/cfg/$ORDEN_GRABACIONES
-
-# Canales de parrilla por defecto
-if [ "Z$SIESTA_CANALES_PARRILLA" != "Z" ]; then
-	echo $SIESTA_CANALES_PARRILLA > $SIESTA_CACHE_HTTP/parrilla_channels.txt
-fi
-
 # Crear fichero www-settings.txt
 cat <<- ---EOT--- >$FICHERO_WWW_SETTINGS
 Cache=$SIESTA_CACHE_HTTP
