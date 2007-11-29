@@ -1,5 +1,5 @@
 #!/bin/bash
-# jotabe, (c) Grupo SIESTA, 24-08-2007
+# jotabe, (c) Grupo SIESTA, 29-11-2007
 #
 # Guarda la configuración de SIESTA
 
@@ -8,19 +8,18 @@ LocalBin=/usr/local/bin
 source $LocalBin/siesta-setup.sh
 source ../www-setup.shi
 source ../fweb.shi
-TMP1=${SIESTA_SETTINGS_FILE}.temp
-TMP2=/var/tmp/siesta-$$.tmp
 
-# Generar fichero con valores de parametros
-httpd -d "${QUERY_STRING}" | sed 's/&/\n/g' > $TMP1
+# Procesar parametros get/post
+eval "`proccgi $*`"
 
-# Leer valores parametros nuevos
-scan-param $SIESTA_SETTINGS_CONF_FILE < $TMP1 > $TMP2
-source $TMP2
-
-# Eliminar ficheros temporales
-rm -f $TMP1
-rm -f $TMP2
+# Recorrer parametros de respuesta
+for PARAM_SIESTA in ${!FORM_*}; do
+	# Obtener valor de parametro
+	TMP='$'${PARAM_SIESTA}
+	eval "TMP2=$TMP"
+	# Modificar parametro
+	eval "${PARAM_SIESTA:5}=\"${TMP2}\""
+done
 
 # Volcado nuevos parametros
 source $LocalBin/siesta-dump-settings.shi

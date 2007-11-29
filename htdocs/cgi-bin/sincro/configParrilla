@@ -8,7 +8,7 @@ source ../www-setup.shi
 source ../fweb.shi
 SORT_CHIDS=${Cache}/sort_chIDs.txt
 INFO_CHANNELS=${Cache}/info_channels.txt
-PARRILLA_CHANNELS=${Cache}/parrilla_channels.txt
+PARRILLA_CHANNELS=${SERVER_ROOT}/cfg/parrilla_channels.txt
 CFG_PARRILLA=""
 [ -f $PARRILLA_CHANNELS ] && CFG_PARRILLA=`cat $PARRILLA_CHANNELS`
 
@@ -20,7 +20,7 @@ function guardar() {
 }"
 
 # Respuesta html
-html_top "Configuración de Parrilla de Sincroguía" "" "/cgi-bin/sincro/saveConfigParrilla" ""
+html_top "Configuración de Parrilla de Sincroguía" "" "/cgi-bin/sincro/saveConfigParrilla" "post"
 echo "			<br>
 			<table width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"0\" align=\"center\">
 				<tr>
@@ -55,7 +55,7 @@ if [ -f $SORT_CHIDS ]; then
 					<td width=\"35%\">&nbsp;</td>
 					<td width=\"5%\" bgcolor=\"$bgcolor\" class=\"txtNormal\" align=\"center\">[ $numChannel ]</td>
 					<td bgcolor=\"$bgcolor\" class=\"txtNormal\" align=\"left\">
-						<input type=\"checkbox\" name=\"$chID\" value=\"$chID\" $checked>$chName
+						<input type=\"checkbox\" name=\"CH_$chID\" value=\"$chID\" $checked>$chName
 					</td>
 					<td width=\"35%\">&nbsp;</td>
 				</tr>"

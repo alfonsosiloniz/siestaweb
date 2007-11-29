@@ -20,7 +20,7 @@ http_header
 # Comprobar login
 if [ "$user" = "$FORM_uid" -a "$pwd" = "$FORM_pwd" ]; then
 	# Login correcto
-	echo "`date` Login OK: $FORM_uid / $FORM_pwd" >> $LOG
+	echo "`date` Login OK: $FORM_uid / $FORM_pwd / $REMOTE_ADDR / $HTTP_USER_AGENT" >> $LOG
 	# Respuesta html
 	echo "<html>
 	<head>
@@ -39,7 +39,7 @@ if [ "$user" = "$FORM_uid" -a "$pwd" = "$FORM_pwd" ]; then
 </html>"
 else
 	# Login incorrecto
-	echo "`date` Login NOK: $FORM_uid / $FORM_pwd" >> $LOG
+	echo "`date` Login NOK: $FORM_uid / $FORM_pwd / $REMOTE_ADDR / $HTTP_USER_AGENT" >> $LOG
 	# Respuesta html
 	echo "<html>
 	<head>

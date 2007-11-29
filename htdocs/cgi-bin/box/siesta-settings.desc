@@ -303,19 +303,6 @@ la generación del caché, bien en el arranque o en la generación
 nocturna.
 
 
-#PARAMETRO: SIESTA_ORDEN_GRABACIONES key time serie
-SIESTA_ORDEN_GRABACIONES = time
-
-Determina el orden en el que aparecen por defecto las
-grabaciones realizadas.
-
-
-#PARAMETRO: SIESTA_CANALES_PARRILLA str :TV1:La2:A3:C4:T5:La6:
-SIESTA_CANALES_PARRILLA = :TV1:La2:A3:C4:T5:La6:
-
-Lista de canales que se mostrarán en la parrilla.
-
-
 #PARAMETRO: SIESTA_RUTA_ARCHIVO str /usb/Archivo
 SIESTA_RUTA_ARCHIVO = /usb/Archivo
 

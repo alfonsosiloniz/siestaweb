@@ -64,7 +64,7 @@ else
 					else
 						# Descargar imágen
 						echo -n "wget -P $DIR_IMG $URL_INOUT/$line -> "
-						wget -q -P $DIR_IMG $URL_INOUT/$line
+						wget -q -U "Mozilla/5.0" -P $DIR_IMG $URL_INOUT/$line
 						# Comprobar descarga
 						if [ -s $DIR_IMG/$line ]; then
 							echo "OK"
