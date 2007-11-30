@@ -42,11 +42,20 @@ echo "<M750>
 	<CARPETA_CPMV>$carpeta_cpmv</CARPETA_CPMV>"
 
 # Calculo de espacio libre
-if [ -d $Recordings ]; then
-	disk_space=`df $Recordings |tail -1 | cut -b 42-50`
-	disk_spaceMb=$((disk_space/1024))
-	disk_spaceGb=$((disk_spaceMb/1024))
-	echo "	<SPACE>$disk_spaceMb Mb ($disk_spaceGb Gb ~ $((disk_spaceGb/2)) horas) en $Recordings</SPACE>"
+if [ "$crid_class" = "RECORDINGS" ]; then
+	if [ -d $Recordings ]; then
+		disk_space=`df $Recordings |tail -1 | cut -b 42-50`
+		disk_spaceMb=$((disk_space/1024))
+		disk_spaceGb=$((disk_spaceMb/1024))
+		echo "	<SPACE>$disk_spaceMb Mb ($disk_spaceGb Gb ~ $((disk_spaceGb/2)) horas) en $Recordings</SPACE>"
+	fi
+else
+	if [ -d $RecordingFolder ]; then
+		disk_space=`df $RecordingFolder |tail -1 | cut -b 42-50`
+		disk_spaceMb=$((disk_space/1024))
+		disk_spaceGb=$((disk_spaceMb/1024))
+		echo "	<SPACE>$disk_spaceMb Mb ($disk_spaceGb Gb ~ $((disk_spaceGb/2)) horas) en $RecordingFolder</SPACE>"
+	fi
 fi
 
 # Vaciar lista de ficheros para ordenacion
@@ -83,7 +92,7 @@ if [ $numCrids -ne 0 ]; then
 
 				# Calcular espacio usado
 				du=(`du -ch ${files} | tail -1`)
-			 fi
+			fi
 
 			# Volcar datos a fichero cache
 			# Es muy importante que cada grabacion vaya en una sola linea, y ademas que el SERIE_ID sea el primer tag del XML
