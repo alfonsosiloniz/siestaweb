@@ -4,6 +4,7 @@
 # Script que genera un fichero de comandos con las instrucciones necesarias para
 # visualizar el timeshift en el PC local mediante MPlayer
 
+# Obtener parametros
 host=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2 | sed -e 's/%3A/:/g'`
 port=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2`
 user=`echo $QUERY_STRING | cut -d"&" -f3 | cut -d"=" -f2`
@@ -13,7 +14,7 @@ tmpdir=`echo $QUERY_STRING | cut -d"&" -f6 | cut -d"=" -f2 | sed -e 's/%20/ /g' 
 aspect=`echo $QUERY_STRING | cut -d"&" -f7 | cut -d"=" -f2`
 #so=`echo $QUERY_STRING | cut -d"&" -f8 | cut -d"=" -f2`
 
-#Por si el host viene con puerto, lo quitamos para el ftp y lo dejamos para el http
+# Por si el host viene con puerto, lo quitamos para el ftp y lo dejamos para el http
 ftphost=`echo $host | cut -d":" -f1`
 
 mplayerOptions="-cache 4096 -quiet -noaspect -aspect $aspect -autosync 30 -framedrop"

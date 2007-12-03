@@ -1,5 +1,5 @@
 #!/bin/bash
-# jotabe, (c) Grupo SIESTA, 28-08-2007
+# jotabe, (c) Grupo SIESTA, 03-12-2007
 #
 # Guarda la configuración de LCK
 
@@ -7,28 +7,23 @@
 source ../www-setup.shi
 source ../fweb.shi
 LCK_SETTINGS_FILE=/var/etc/LCK.cfg
-TMP1=${LCK_SETTINGS_FILE}.temp
-TMP2=${LCK_SETTINGS_FILE}.temp2
+LCK_SETTINGS_FILE_TMP=${LCK_SETTINGS_FILE}.temp
 
-# Generar fichero con valores de parametros
-get_maquina
-if [ $MAQUINA = "GigaSet" ]; then
-	httpd -d "${QUERY_STRING}" | sed 's/&/\n/g;s/=/ /g' > $TMP1
-else
-	echo "$QUERY_STRING" | sed 's/&/\n/g;s/%3A/:/g;s/=/ /g' > $TMP1
-fi
+# Procesar parametros get/post
+eval "`proccgi $*`"
 
 # Recorrer fichero
 sed_script=""
 while read line; do
 	if [ ${#line} -ne 0 ]; then
 		if [ ${line:0:1} != "#" ]; then
-			# Obtener nombre y valor parametro
+			# Obtener nombre y valor parametro actual
 			TMP=(`echo $line`)
 			NombreParametro=${TMP[0]}
 			ValorParametro0=${TMP[1]}
-			TMP3=(`grep ^${NombreParametro} $TMP1`)
-			ValorParametro=${TMP3[1]}
+			# Obtener nuevo valor de parametro
+			TMP='$'FORM_${NombreParametro}
+			eval "ValorParametro=$TMP"
 			if [ "Z$ValorParametro" != "Z$ValorParametro0" ]; then
 				# Generar script de sustitucion
 				[ ${#sed_script} -ne 0 ] && sed_script="${sed_script};"
@@ -40,12 +35,9 @@ done < $LCK_SETTINGS_FILE
 
 # Sustituir valores parametros y actualizar configuracion
 if [ ${#sed_script} -ne 0 ]; then
-	sed -e "$sed_script" $LCK_SETTINGS_FILE > $TMP2
-	mv -f $TMP2 $LCK_SETTINGS_FILE
+	sed -e "$sed_script" $LCK_SETTINGS_FILE > $LCK_SETTINGS_FILE_TMP
+	mv -f $LCK_SETTINGS_FILE_TMP $LCK_SETTINGS_FILE
 fi
-
-# Eliminar ficheros temporales
-rm -f $TMP1
 
 # Enviar redireccion html
 http_header
