@@ -16,9 +16,9 @@ eval "`proccgi $*`"
 for PARAM_SIESTA in ${!FORM_*}; do
 	# Obtener valor de parametro
 	TMP='$'${PARAM_SIESTA}
-	eval "TMP2=$TMP"
+	eval "ValorParametro=$TMP"
 	# Modificar parametro
-	eval "${PARAM_SIESTA:5}=\"${TMP2}\""
+	eval "${PARAM_SIESTA:5}=\"${ValorParametro}\""
 done
 
 # Volcado nuevos parametros

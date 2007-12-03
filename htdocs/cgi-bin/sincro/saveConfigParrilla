@@ -16,9 +16,9 @@ CH_TMP=":"
 for F_chID in ${!FORM_*}; do
 	# Obtener identificador de canal
 	TMP='$'${F_chID}
-	eval "TMP2=$TMP"
+	eval "ValorParametro=$TMP"
 	# Agregar a lista de canales
-	CH_TMP="${CH_TMP}${TMP2}:"
+	CH_TMP="${CH_TMP}${ValorParametro}:"
 done
 
 # Guardar datos en fichero de configuracion

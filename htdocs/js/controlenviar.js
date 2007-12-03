@@ -48,7 +48,7 @@ function capaTrans() {
 	mensajeTapa.style.position        = 'absolute';
 	mensajeTapa.style.width           = '100%';
 	mensajeTapa.style.height          = '100%';
-	//mensajeTapa.style.clip            = 'rect(0,200,300,0)';
+// 	mensajeTapa.style.clip            = 'rect(0,200,300,0)';
 	mensajeTapa.style.zIndex          = '99';
 	mensajeTapa.style.backgroundImage = 'url("/img/capa6.gif")';
 	mensajeTapa.innerHTML= "&nbsp;";

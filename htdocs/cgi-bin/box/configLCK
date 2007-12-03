@@ -73,7 +73,7 @@ function guardar() {
 }"
 
 # Respuesta html
-html_top "Configuración LCK" "" "/cgi-bin/box/saveConfigLCK" ""
+html_top "Configuración LCK" "" "/cgi-bin/box/saveConfigLCK" "post"
 
 # Generar indice de descripciones parametros
 [ $VER_DESCRIPCIONES -ne 0 -a $LCK_SETTINGS_DESC_PARAM -nt $LCK_SETTINGS_DESC_PARAM_IX ] && gen_ix_desc
