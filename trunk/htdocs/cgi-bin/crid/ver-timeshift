@@ -4,27 +4,30 @@
 # Script que genera un fichero de comandos con las instrucciones necesarias para
 # visualizar el timeshift en el PC local mediante MPlayer
 
+# Configurar entorno
+source ../www-setup.shi
+
+# Procesar parametros get/post
+eval "`proccgi $*`"
+
 # Obtener parametros
-host=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2 | sed -e 's/%3A/:/g'`
-port=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2`
-user=`echo $QUERY_STRING | cut -d"&" -f3 | cut -d"=" -f2`
-pwd=`echo $QUERY_STRING | cut -d"&" -f4 | cut -d"=" -f2`
-mplayer=`echo $QUERY_STRING | cut -d"&" -f5 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g' | sed -e 's/+/ /g' | sed -e 's/%2F/\//g'`
-tmpdir=`echo $QUERY_STRING | cut -d"&" -f6 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\\\/g' | sed -e 's/%2F/\//g'`
-aspect=`echo $QUERY_STRING | cut -d"&" -f7 | cut -d"=" -f2`
-#so=`echo $QUERY_STRING | cut -d"&" -f8 | cut -d"=" -f2`
+host=$FORM_host
+port=$FORM_port
+Cridfile=$FORM_cridfile
+user=$FORM_user
+pwd=$FORM_pwd
+mplayer=$FORM_mplayer
+tmpdir=$FORM_temp
+aspect=$FORM_aspect
+# so=$FORM_so
 
 # Por si el host viene con puerto, lo quitamos para el ftp y lo dejamos para el http
 ftphost=`echo $host | cut -d":" -f1`
 
 mplayerOptions="-cache 4096 -quiet -noaspect -aspect $aspect -autosync 30 -framedrop"
 
-function dos() {
-	echo $2
-}
-DIR_MPG=`dos \`grep "DeviceRecordingFolder" /var/etc/settings.txt\``
-#RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
-plsfile=$tmpdir/mplayer_temp_`date +%s`.pls
+DIR_MPG=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
+plsfile=$tmpdir\\mplayer_temp_`date +%s`.pls
 
 echo "Content-type: application/octet-stream"
 echo "Content-Disposition: attachment; filename=verts.cmd"
@@ -45,7 +48,8 @@ echo "echo @echo off > .\start_mplayer.cmd"
 echo "echo echo Llenando el buffer de MPlayer con wget. Espera unos segundos .... >> .\start_mplayer.cmd"
 # Damos tiempo a wget para que descargue el fichero antes de comenzar con la reproduccion
 echo "echo sleep 15 >> .\start_mplayer.cmd"
-ultmpg=`./getmpgts`
+# ultmpg=`./getmpgts`
+ultmpg=`basename \`ls -1 $DIR_MPG/*.mpg | tail -n1\``
 i=`echo $ultmpg | cut -d"." -f3`
 i=$((i+1-1))
 fmpg=`echo $ultmpg | cut -d"." -f1`.fmpg

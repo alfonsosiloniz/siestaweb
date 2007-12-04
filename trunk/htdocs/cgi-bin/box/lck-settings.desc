@@ -138,7 +138,20 @@ Coordenadas en pantalla para el cuadro de la mosca protectora.
 PARSE_EIT 2
 
 Controla la gestión de datos de EPG para aquellos canales que no
-tienen Sincroguia.
+tienen Sincroguía.
+
+
+#PARAMETRO: 2MPG2_IP str
+2MPG2_IP 192.168.68.5
+
+Direccion ip del servidor de conversión de video.
+
+
+#PARAMETRO: 2MPG2_PORT num
+2MPG2_PORT 2012
+
+Puerto de conexión del servidor de conversión de video. El valor
+es el puerto de conexión mas 1.
 
 
 #PARAMETRO: TIME_CHANNELS str

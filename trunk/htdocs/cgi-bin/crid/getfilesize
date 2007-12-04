@@ -1,13 +1,17 @@
-#!/bin/sh
-# pepper, (c) grupo SIESTA
+#!/bin/bash
+# pepper, (c) grupo SIESTA, 04-12-2007
+#
 # Script que devuelve el tamaño en bytes de un fichero
 
-if [ $# != 0 ] ; then
+# Obtener parametros
+if [ $# != 0 ]; then
 	file=`echo $1 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g' | sed -e 's/%2F/\//g'`
 else
     file=`echo $QUERY_STRING | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g' | sed -e 's/%2F/\//g'`
 fi
 
+# Devolver resultado
+echo ""
 if [ -f $file ]; then
     #totalBytes=(`wc -c $file`)
     declare -a totalBytes

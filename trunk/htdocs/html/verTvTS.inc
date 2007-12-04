@@ -34,7 +34,7 @@
 	<title>M750T - Ver LiveTV-TimeShift</title>
 </head>
 <body bgcolor="#FFFFFF" onload="init();">
-	<form name="form_m750" method="get" action="/cgi-bin/crid/ver-timeshift">
+	<form name="form_m750" method="post" action="/cgi-bin/crid/ver-timeshift">
 	<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
 		<tr>
 			<td align="center">
