@@ -1,0 +1,9 @@
+PUERTO=2011
+EXTENSIONES=avi,divx
+SCRIPT_NAME=vlc.cmd
+PC1=C:/compartido
+PC2=
+PC3=
+PC4=
+PC5=
+USB-HDD=
