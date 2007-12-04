@@ -1,9 +1,0 @@
-#!/bin/bash
-
-ETC_DIR=/var/etc
-
-function ult () {
-    ls -1 $2/*.mpg | tail -n 1
-}
-
-ult `grep "DeviceRecordingFolder" $ETC_DIR/settings.txt`

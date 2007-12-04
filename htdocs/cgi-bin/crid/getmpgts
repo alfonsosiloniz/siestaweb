@@ -1,2 +1,11 @@
 #!/bin/bash
-basename `./ultmpg`
+# (c) Grupo SIESTA, 04-12-2007
+#
+# Script que devuelve el ultimo fichero correspondiente al timeshift
+
+# Configurar entorno
+DIR_MPG=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
+
+# Devolver resultado
+echo ""
+basename `ls -1 $DIR_MPG/*.mpg 2>/dev/null | tail -n1` 2>/dev/null
