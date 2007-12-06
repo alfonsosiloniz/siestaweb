@@ -1,7 +1,7 @@
 PUERTO=2011
-EXTENSIONES=avi,divx
+EXTENSIONES=avi,divx bat,cmd,sh
 SCRIPT_NAME=vlc.cmd
-PC1=C:/compartido
+PC1=Z:\\
 PC2=
 PC3=
 PC4=
