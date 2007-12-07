@@ -17,7 +17,8 @@ Cridfile=$FORM_cridfile
 user=$FORM_user
 pwd=$FORM_pwd
 mplayer=$FORM_mplayer
-tmpdir=$FORM_temp
+tmpdir_linux=`echo $FORM_temp | sed 's/\/$//'`
+tmpdir_windows=`echo $FORM_temp | sed 's/\\\\$//'`
 aspect=$FORM_aspect
 so=$FORM_so
 encurso=$FORM_encurso
@@ -25,14 +26,18 @@ encurso=$FORM_encurso
 # Por si el host viene con puerto, lo quitamos para el ftp y lo dejamos para el http
 ftphost=`echo $host | cut -d":" -f1`
 
-# Procesar fichero crid
-eval `www-tools crid2var ${Cridfile}`
-
 # Opciones de mplayer
 mplayerOptions="-cache 2048 -quiet -noaspect -aspect $aspect -autosync 30 -framedrop -ni"
 
 # Obtener carpeta de almacenamiento
 recordingDir=`dirname $Cridfile`
+
+# Guardar configuracion
+echo "$mplayer" > ${SERVER_ROOT}/cfg/.path_mplayer.txt
+echo "$tmpdir" > ${SERVER_ROOT}/cfg/.path_temp.txt
+
+# Procesar fichero crid
+eval `www-tools crid2var ${Cridfile}`
 
 # Log del proceso
 echo "`date` Peticion visualizacion grabacion:
@@ -42,7 +47,7 @@ echo "`date` Peticion visualizacion grabacion:
 echo "Content-type: application/octet-stream"
 if [ $so -eq 0 ] ; then
 	# Fichero playlist
-	plsfile=$tmpdir/mplayer_temp_`date +%s`.pls
+	plsfile=$tmpdir_linux/mplayer_temp_`date +%s`.pls
 
 	#echo Linux/Unix
 	echo "Content-Disposition: attachment; filename=ver_grabacion.sh"
@@ -68,23 +73,23 @@ if [ $so -eq 0 ] ; then
 	echo "$mplayer $mplayerOptions -playlist $plsfile"
 else
 	# Fichero playlist
-	plsfile=$tmpdir\\mplayer_temp_`date +%s`.pls
+	plsfile=$tmpdir_windows\\mplayer_temp_`date +%s`.pls
 
 	#echo Windows
 	echo "Content-Disposition: attachment; filename=visualizar_grabacion.cmd"
 	echo ""
-	echo "@echo off > $plsfile"
+	echo "@ECHO OFF > $plsfile"
 	if [ "$encurso" = "NO" ]; then
 		for mpg in ${recordingDir}/${fmpg0}*.mpg; do
-			echo "echo ftp://${user}:${pwd}@${ftphost}:${port}$mpg >> $plsfile"
+			echo "ECHO ftp://${user}:${pwd}@${ftphost}:${port}$mpg >> $plsfile"
 		done
 	else
 		i=0
 		while [ $i -lt 40 ]; do
 			if [ $i -lt 10 ]; then
-				echo "echo ftp://${user}:${pwd}@${ftphost}:${port}${recordingDir}/${fmpg0}.00$i.mpg >> $plsfile"
+				echo "ECHO ftp://${user}:${pwd}@${ftphost}:${port}${recordingDir}/${fmpg0}.00$i.mpg >> $plsfile"
 			else
-				echo "echo ftp://${user}:${pwd}@${ftphost}:${port}${recordingDir}/${fmpg0}.0$i.mpg >> $plsfile"
+				echo "ECHO ftp://${user}:${pwd}@${ftphost}:${port}${recordingDir}/${fmpg0}.0$i.mpg >> $plsfile"
 			fi
 			i=$((i+1))
 		done

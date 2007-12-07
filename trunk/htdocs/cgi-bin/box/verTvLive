@@ -6,6 +6,8 @@
 # Configurar entorno
 source ../www-setup.shi
 source ../fweb.shi
+path_mplayer="C:\\Archivos de programa\\mplayer\\mplayer.exe"
+[ -f ${SERVER_ROOT}/cfg/.path_mplayer.txt ] && path_mplayer=`cat ${SERVER_ROOT}/cfg/.path_mplayer.txt`
 CACHE_FILE=${Cache}/verTvLive.cache
 
 # Generar fichero cache de canales si no existe
@@ -108,7 +110,7 @@ echo "		<br>
 		</tr>
 		<tr>
 			<td class=\"txtNormal\">Path de MPlayer en el PC local:</td>
-			<td class=\"txtNormal\"><input type=\"text\" name=\"mplayer\" value=\"C:\Archivos de programa\mplayer\mplayer.exe\" size=\"70\" maxlength=\"200\" class=\"cajaplana\"></td>
+			<td class=\"txtNormal\"><input type=\"text\" name=\"mplayer\" value=\"${path_mplayer}\" size=\"70\" maxlength=\"200\" class=\"cajaplana\"></td>
 		</tr>
 		<tr>
 			<td class=\"txtNormal\">Relación de Aspecto:</td>
@@ -157,3 +159,5 @@ echo "		<br>
 		<input type=\"hidden\" name=\"p2\" value=\"\">
 		<input type=\"hidden\" name=\"p3\" value=\"\">"
 html_doc_end
+
+# 			<td class=\"txtNormal\"><input type=\"text\" name=\"mplayer\" value=\"C:\Archivos de programa\mplayer\mplayer.exe\" size=\"70\" maxlength=\"200\" class=\"cajaplana\"></td>

@@ -1,15 +1,18 @@
 #!/bin/bash
-# (c) Grupo SIESTA, 14-08-2007
+# (c) Grupo SIESTA, 07-12-2007
 #
 # Ver grabacion (fichero .crid)
 
 # Configurar entorno
+source ../www-setup.shi
 source ../fweb.shi
-
-# Enviar cabecera http
-http_header
+path_mplayer="C:\\\\Archivos de programa\\\\mplayer\\\\mplayer.exe"
+[ -f ${SERVER_ROOT}/cfg/.path_mplayer.txt ] && path_mplayer=`sed -e 's/\\\\/\\\\\\\\/g' ${SERVER_ROOT}/cfg/.path_mplayer.txt`
+path_temp="C:\\\\Temp"
+[ -f ${SERVER_ROOT}/cfg/.path_temp.txt ] && path_temp=`sed -e 's/\\\\/\\\\\\\\/g' ${SERVER_ROOT}/cfg/.path_temp.txt`
 
 # Enviar documento html
-cat ../../html/verGrabacion.inc
+http_header
+cat ../../html/verGrabacion.inc | sed "s/##MPLAYER##/${path_mplayer}/g;s/##TEMP##/${path_temp}/g"
 cat ../../html/mplayer.inc
 html_doc_end

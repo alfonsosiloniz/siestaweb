@@ -26,8 +26,8 @@
 				document.forms[0].temp.value="\/tmp";
 			}
 			else {
-				document.forms[0].mplayer.value="C:\\Archivos de programa\\mplayer\\mplayer.exe";
-				document.forms[0].temp.value="C:\\Temp";
+				document.forms[0].mplayer.value="##MPLAYER##";
+				document.forms[0].temp.value="##TEMP##";
 			}
 		}
 	</script>
@@ -78,11 +78,11 @@
 					</tr>
 					<tr>
 						<td class="txtNormal">Path de MPlayer:</td>
-						<td class="txtNormal"><input type="text" name="mplayer" value="C:\Archivos de programa\mplayer\mplayer.exe" size="70" maxlength="200" class="cajaplana"></td>
+						<td class="txtNormal"><input type="text" name="mplayer" value="##MPLAYER##" size="70" maxlength="200" class="cajaplana"></td>
 					</tr>
 					<tr>
 						<td class="txtNormal">Directorio Temporal:</td>
-						<td class="txtNormal"><input type="text" name="temp" value="C:\Temp" size="70" maxlength="200" class="cajaplana"></td>
+						<td class="txtNormal"><input type="text" name="temp" value="##TEMP##" size="70" maxlength="200" class="cajaplana"></td>
 					</tr>
 					<tr>
 						<td class="txtNormal">Relación de Aspecto:</td>
