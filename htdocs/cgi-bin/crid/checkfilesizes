@@ -1,10 +1,19 @@
-#!/bin/sh
+#!/bin/bash
+# pepper, (c) grupo SIESTA, 04-12-2007
+#
+# Script que compara el tamaño en bytes de dos ficheros
+
+# Obtener parametros
 size1=`echo $QUERY_STRING | cut -d"-" -f1`
 size2=`echo $QUERY_STRING | cut -d"-" -f2`
 
+# Log
 echo "if [ $size1 -gt $size2 ]; then" >> /tmp/checksizes.txt
+
+# Devolver resultado
+echo ""
 if [ $size1 -gt $size2 ]; then
-    echo "NO"
+	echo "NO"
 else
-    echo "SI"
+	echo "SI"
 fi

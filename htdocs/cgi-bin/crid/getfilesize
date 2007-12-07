@@ -12,11 +12,15 @@ fi
 
 # Devolver resultado
 echo ""
-if [ -f $file ]; then
-    #totalBytes=(`wc -c $file`)
-    declare -a totalBytes
-    totalBytes=(`ls -l $file`)
-    echo ${totalBytes[4]}
+if [ "Z$file" != "Z"  ]; then
+	if [ -f $file ]; then
+	    #totalBytes=(`wc -c $file`)
+	    declare -a totalBytes
+	    totalBytes=(`ls -l $file`)
+	    echo ${totalBytes[4]}
+	else
+	    echo "0"
+	fi
 else
     echo "0"
 fi
