@@ -34,7 +34,11 @@ recordingDir=`dirname $Cridfile`
 
 # Guardar configuracion
 echo "$mplayer" > ${SERVER_ROOT}/cfg/.path_mplayer.txt
-echo "$tmpdir" > ${SERVER_ROOT}/cfg/.path_temp.txt
+if [ $so -eq 0 ]; then
+	echo "$tmpdir_linux" > ${SERVER_ROOT}/cfg/.path_temp.txt
+else
+	echo "$tmpdir_windows" > ${SERVER_ROOT}/cfg/.path_temp.txt
+fi
 
 # Procesar fichero crid
 eval `www-tools crid2var ${Cridfile}`
@@ -45,7 +49,7 @@ echo "`date` Peticion visualizacion grabacion:
 
 # Descargar fichero de visualizacion
 echo "Content-type: application/octet-stream"
-if [ $so -eq 0 ] ; then
+if [ $so -eq 0 ]; then
 	# Fichero playlist
 	plsfile=$tmpdir_linux/mplayer_temp_`date +%s`.pls
 
