@@ -38,7 +38,7 @@ public class AgenteReceptor
         }
         try {
             ServerSocket conexion = new ServerSocket(serverPort);
-            UtilsReceptor.escribirLog("Socket abierto en " + conexion.getInetAddress().getHostAddress() + ":" + conexion.getLocalPort());
+            UtilsReceptor.escribirLog("Socket abierto en puerto = " + conexion.getLocalPort());
             do {
                 Socket peticion = conexion.accept();
                 java.io.OutputStream out = peticion.getOutputStream();
