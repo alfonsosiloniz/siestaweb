@@ -165,7 +165,7 @@ public class EjecutorAgenteReceptor extends Thread
                     try {
                         UtilsReceptor.escribirLog("[CMD]; Script = " + sourceFilePC);
 
-                        ScriptLauncher scriptLauncher = new ScriptLauncher(sourceFilePC, "");
+                        ScriptLauncher scriptLauncher = new ScriptLauncher("\"" + sourceFilePC + "\"", "");
                         scriptLauncher.start();
                         Thread.sleep(1000);
                         if (scriptLauncher.getEstado() == ScriptLauncher.ESTADO_RUNNING)
