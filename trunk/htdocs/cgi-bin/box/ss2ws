@@ -1,5 +1,5 @@
 #!/bin/bash
-# jotabe, (c) Grupo SIESTA, 04-09-2007
+# jotabe, (c) Grupo SIESTA, 11-12-2007
 #
 # Pasar configuracion de siesta-settings.txt a www-settings.txt
 
@@ -7,6 +7,15 @@
 LocalBin=/usr/local/bin
 source $LocalBin/siesta-setup.sh
 FICHERO_WWW_SETTINGS=/var/etc/www-settings.txt
+
+# Enlaces de botones
+if [ "Z${SIESTA_USUARIO_HTTP}" = "Zno:no" ]; then
+	TIPO_BOTONES="botonesSinSalir"
+else
+	TIPO_BOTONES="botonesConSalir"
+fi
+ln -sf ${TIPO_BOTONES}.js $SIESTA_HOME_HTTP/js/botones.js
+ln -sf ${TIPO_BOTONES}.xsl $SIESTA_HOME_HTTP/xsl/botones.xsl
 
 # Crear fichero www-settings.txt
 cat <<- ---EOT--- >$FICHERO_WWW_SETTINGS
