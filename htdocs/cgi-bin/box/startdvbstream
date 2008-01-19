@@ -4,7 +4,9 @@
 # Script para la visualización de la TV en directo (necesita matar el wavebox)
 
 # Configurar entorno
-source ../fweb.shi
+source ../www-setup.shi
+source fweb.shi
+validate_login "xml"
 host=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2`
 port=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2`
 localPC=`echo $QUERY_STRING | cut -d"&" -f3 | cut -d"=" -f2`

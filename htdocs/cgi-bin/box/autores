@@ -1,0 +1,66 @@
+#!/bin/bash
+# (c) Grupo SIESTA, 15-01-2008
+#
+# Autores
+
+# Configurar entorno
+source ../www-setup.shi
+source fweb.shi
+validate_login
+
+# Enviar documento html
+html_doc_start "Autores" "" "------b-" ""
+cat <<- --EOF--
+<body bgcolor="#FFFFFF">
+	<form name="form_m750">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+		<tr>
+			<td align="center">
+				<a href="http://www.todopvr.com/" target="_blank"><img src="/img/sitelogo_small.png" alt="todoPVR.com" width="291" height="94" border="0"></a>
+			</td>
+		</tr>
+		<tr>
+			<td><script type="text/javascript">barra_botones();</script></td>
+		</tr>
+	</table>
+	<table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
+		<tr>
+			<td>
+				<br>
+				<font class="titChannel">AUTORES</font>
+				<br>
+				<br>
+				<a class="titTabla" href="http://www.todopvr.com/foro/profile.php?mode=viewprofile&u=1413" target="_blank">pepper</a>
+				<br>
+				<a class="titTabla" href="http://www.todopvr.com/foro/profile.php?mode=viewprofile&u=1325" target="_blank">jotabe</a>
+				<br>
+				<br>
+				<font class="titTabla">Servidor web: <a class="titTabla" href="http://www.acme.com/software/thttpd/" target="_blank">thttpd/2.25b 29dec2003</a></font>
+				<br>
+				<br>
+				<font class="titTabla">Procesado parámetros GET/POST: <a class="titTabla" href="http://www.fpx.de/fp/Software/ProcCGI.html" target="_blank">Frank Pilhofer</a></font>
+				<br>
+				<br>
+				<font class="titTabla">La operativa del Explorador/Editor de archivos ha sido adaptada del servidor web de los firmwares de <a class="titTabla" href="http://www.m740.de/forum/member.php?userid=17" target="_blank">Lemmi</a></font>
+				<br>
+				<br>
+				<br>
+				<font class="titChannel">AGRADECIMIENTOS</font>
+				<br>
+				<br>
+				<font class="txtNormal">
+				A <a class="titTabla" href="http://www.todopvr.com/foro/profile.php?mode=viewprofile&u=4424" target="_blank">Shark</a>, por la multitud de pruebas que ha realizado.
+				<br>
+				A <a class="titTabla" href="http://www.todopvr.com/foro/profile.php?mode=viewprofile&u=21" target="_blank">Locko</a>, por crear el firmware LCK, que nos permite, entre otras cosas, la programación remota.
+				<br>
+				A <a class="titTabla" href="http://www.todopvr.com/" target="_blank">www.todopvr.com</a> y a sus administradores 
+				<a class="titTabla" href="http://www.todopvr.com/foro/profile.php?mode=viewprofile&u=2" target="_blank">m740</a> y
+				<a class="titTabla" href="http://www.todopvr.com/foro/profile.php?mode=viewprofile&u=36" target="_blank">David</a>, 
+				por su toda su dedicación al foro y todo su dinero invertido, y por permitir publicar nuestro trabajo.</font>
+			</td>
+		</tr>
+	</table>
+	</form>
+</body>
+</html>
+--EOF--

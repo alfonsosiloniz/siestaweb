@@ -117,7 +117,7 @@
 					</tr>
 					<tr>
 						<td class="txtNormal" colspan="2">
-							Para el funcionamiento de esta opción, necesitas tener instalado el reproductor <a href="http://www.mplayerhq.hu/">MPlayer</a>, la aplicación <a href="http://isidorocr.googlepages.com/wget.zip">wget</a> y este <a href="http://isidorocr.googlepages.com/utilities.zip">pack de utilidades</a>.<br>
+							Para el funcionamiento de esta opción, necesitas tener instalado el reproductor <a href="http://www.mplayerhq.hu/" target="_blank">MPlayer</a>, la aplicación <a href="http://isidorocr.googlepages.com/wget.zip">wget</a> y este <a href="http://isidorocr.googlepages.com/utilities.zip">pack de utilidades</a>.<br>
 							El pack de utilidades está compuesto por varios ejecutables, que al igual que wget, deben están en un directorio que esté en el path (por ejemplo c:\windows).
 						</td>
 					</tr>
@@ -129,7 +129,7 @@
 						    <font class="titTabla">Atención:</font><br>
 						    Al hacer click sobre el botón <img src="/img/aceptar.gif" alt="Visualizar LiveTV-TimeShift" width="28" height="25" border="0" />, verá una ventana como ésta:<br><br>
 						    <img src="/img/visualizar_cmd.jpg" alt="Visualizar LiveTV-TimeShift" width="455" height="266" border="0" /><br><br>
-						    Haciendo click sobre el botón "Ejecutar", descargará el fichero "verts.cmd" en un directorio temporal y éste generará la lista de reproducción llamando a su vez al reproductor <a href="http://www.mplayerhq.hu/">MPlayer</a>.
+						    Haciendo click sobre el botón "Ejecutar", descargará el fichero "verts.cmd" en un directorio temporal y éste generará la lista de reproducción llamando a su vez al reproductor <a href="http://www.mplayerhq.hu/" target="_blank">MPlayer</a>.
 						</td>
 					</tr>
 				</table>

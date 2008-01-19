@@ -1,5 +1,5 @@
 #!/bin/bash
-# pepper, (c) Grupo SIESTA, 25-07-2007
+# pepper, jotabe, (c) Grupo SIESTA, 09-01-2008
 #
 # Validacion de login de usuario
 # Formato de $USUARIO -> usuario:password
@@ -23,34 +23,35 @@ if [ "$user" = "$FORM_uid" -a "$pwd" = "$FORM_pwd" ]; then
 	echo "`date` Login OK: $FORM_uid / $FORM_pwd / $REMOTE_ADDR / $HTTP_USER_AGENT" >> $LOG
 	# Respuesta html
 	echo "<html>
-	<head>
-		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/>
-		<script type=\"text/javascript\" src=\"/js/cookies.js\"></script>
-		<script type=\"text/javascript\">
-			setCookie(\"LOGGED\", new Date().getTime(), getExpire());
-		</script>
-		<title>Login OK</title>
-	</head>
-	<body>
-		<script type=\"text/javascript\">
-			document.location.href=\"/cgi-bin/sincro/pgmactual\";
-		</script>
-	</body>
+<head>
+	<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/>
+	<script type=\"text/javascript\" src=\"/js/cookies.js\"></script>
+	<script type=\"text/javascript\">
+		setCookie(\"M750_LOGIN\", \"${LOGIN_COOKIE}\", null, \"/\");
+	</script>
+	<title>Login OK</title>
+</head>
+<body>
+	<script type=\"text/javascript\">
+		document.location.href=\"/cgi-bin/sincro/pgmactual\";
+	</script>
+</body>
 </html>"
+
 else
 	# Login incorrecto
 	echo "`date` Login NOK: $FORM_uid / $FORM_pwd / $REMOTE_ADDR / $HTTP_USER_AGENT" >> $LOG
 	# Respuesta html
 	echo "<html>
-	<head>
-		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/>
-		<title>Login incorrecto</title>
-	</head>
-	<body>
-		<script type=\"text/javascript\">
-			alert(\"Usuario/contraseña incorrecto\");
-			document.location.href=\"/index.html\";
-		</script>
-	</body>
+<head>
+	<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/>
+	<title>Login incorrecto</title>
+</head>
+<body>
+	<script type=\"text/javascript\">
+		alert(\"Usuario/contraseña incorrecto\");
+		document.location.href=\"/index.html\";
+	</script>
+</body>
 </html>"
 fi

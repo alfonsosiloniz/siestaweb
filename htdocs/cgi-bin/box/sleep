@@ -5,7 +5,8 @@
 
 # Configurar entorno
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login
 LOG=/tmp/sleep.log
 QUICKOFF_FILE=/tmp/.quickOff
 TOTALOFF_FILE=/tmp/.totalOff
@@ -34,25 +35,25 @@ if [ "${QUERY_STRING}" != "" ]; then
 			echo "kill -9 $pid" >> $LOG
 			kill -9 $pid >> $LOG 2>> $LOG
 		fi
-    else
-        tipo=`echo ${QUERY_STRING} | cut -d"&" -f 1 | cut -d"=" -f 2`
-        horas=`echo ${QUERY_STRING} | cut -d"&" -f 2 | cut -d"=" -f 2`
-        minutos=`echo ${QUERY_STRING} | cut -d"&" -f 3 | cut -d"=" -f 2`
-        
-        segundosM=$((minutos * 60))
-        segundosH=$((horas * 60 * 60))
-        segundos=$((segundosM+segundosH))
-        echo "Programado apagado $tipo de aquí a $horas horas y $minutos minutos ==> $segundos segundos" >> $LOG
-        now=`date +%s`
-        dateFormat=`awk "BEGIN {print strftime( \"%d/%m/%Y %H:%M %Z\", ${now}) }"`
-        if [ "${tipo}" = "rapido" ]; then
-            echo "${dateFormat}&${horas}&${minutos}&${segundos}" > ${QUICKOFF_FILE}
-            ../run/quickOff ${segundos} >> $LOG 2>> $LOG &
-        elif [ "${tipo}" = "total" ]; then
-            echo "${dateFormat}&${horas}&${minutos}&${segundos}" > ${TOTALOFF_FILE}
-            ../run/totalOff ${segundos} >> $LOG 2>> $LOG &
-        fi
-    fi
+	else
+		tipo=`echo ${QUERY_STRING} | cut -d"&" -f 1 | cut -d"=" -f 2`
+		horas=`echo ${QUERY_STRING} | cut -d"&" -f 2 | cut -d"=" -f 2`
+		minutos=`echo ${QUERY_STRING} | cut -d"&" -f 3 | cut -d"=" -f 2`
+
+		segundosM=$((minutos * 60))
+		segundosH=$((horas * 60 * 60))
+		segundos=$((segundosM+segundosH))
+		echo "Programado apagado $tipo de aquí a $horas horas y $minutos minutos ==> $segundos segundos" >> $LOG
+		now=`date +%s`
+		dateFormat=`awk "BEGIN {print strftime( \"%d/%m/%Y %H:%M %Z\", ${now}) }"`
+		if [ "${tipo}" = "rapido" ]; then
+			echo "${dateFormat}&${horas}&${minutos}&${segundos}" > ${QUICKOFF_FILE}
+			../run/quickOff ${segundos} >> $LOG 2>> $LOG &
+		elif [ "${tipo}" = "total" ]; then
+			echo "${dateFormat}&${horas}&${minutos}&${segundos}" > ${TOTALOFF_FILE}
+			../run/totalOff ${segundos} >> $LOG 2>> $LOG &
+		fi
+	fi
 fi
 # Enviar documento html
 html_doc_start "M750T - Programación de Apagado del box" "" "h-n-e-bm"

@@ -10,6 +10,8 @@ Cridfile=$1
 
 # Configurar entorno
 source ../www-setup.shi
+source fweb.shi
+validate_login "xml"
 
 # Obtener datos canal (numChannel, cid, chID, chName)
 file=`basename $Cridfile .crid`

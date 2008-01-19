@@ -5,7 +5,8 @@
 
 # Configurar entorno
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login
 USB_DISK=/var/media/USB-HDD
 
 # Obtener parametros

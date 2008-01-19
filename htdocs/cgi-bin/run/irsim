@@ -4,7 +4,9 @@
 # Invocación remota de teclas
 
 # Configurar entorno
-source ../fweb.shi
+source ../www-setup.shi
+source fweb.shi
+validate_login "xml"
 
 # Obtener y enviar codigo tecla
 tecla=`echo $QUERY_STRING | cut -d"-" -f1`

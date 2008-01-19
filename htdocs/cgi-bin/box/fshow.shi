@@ -104,7 +104,7 @@ function print_bottom() {
 	echo "		</table>
 		<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">
 			<tr>
-				<td class=\"txtNormal\" align=\"right\">Explorador basado en código de <a href=\"http://www.open7x0.org/wiki/Benutzer:Lemmi\">Lemmi</a> bajo licencia <a href=\"http://www.gnu.de/gpl-ger.html\">GPL</a></td>
+				<td class=\"txtNormal\" align=\"right\">Explorador basado en código de <a href=\"http://www.open7x0.org/wiki/Benutzer:Lemmi\" target=\"_blank\">Lemmi</a> bajo licencia <a href=\"http://www.gnu.de/gpl-ger.html\" target=\"_blank\">GPL</a></td>
 			</tr>
 		</table>"
 	html_doc_end

@@ -4,8 +4,8 @@
 # Script que realiza la comprobacion de una particion del HD
 
 # Configurar entorno
-source ../www-setup.shi
-source ../fweb.shi
+source ../cgi-bin/www-setup.shi
+source fweb.shi
 partition=`echo $QUERY_STRING | cut -d"-" -f1`
 fstype=`echo $QUERY_STRING | cut -d"-" -f2`
 LOG=/tmp/checkdisk.log

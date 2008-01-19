@@ -19,7 +19,7 @@ else
 fi
 
 # Configurar entorno
-source ../www-setup.shi
+source ../cgi-bin/www-setup.shi
 LCK_FILE=${Cache}/cache.$chID.generating
 LOG=${Cache}/cache.sincro.log
 ERR=${Cache}/cache.sincro.err

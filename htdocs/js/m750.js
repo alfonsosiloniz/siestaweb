@@ -1,5 +1,5 @@
 // Funciones generales m750
-// jotabe, (c) Grupo SIESTA, 06-08-2007
+// jotabe, (c) Grupo SIESTA, 12-01-2008
 
 
 //-------------------------------------------------
@@ -7,7 +7,7 @@
 //-------------------------------------------------
 function enviarTecla(tecla) {
 	// Añadimos la fecha a la peticion para evitar la caché de los navegadores
-	makeRequest("/cgi-bin/run/irsim?" + tecla + "-" + new Date().getTime(), "noReply");
+	makeRequest("/cgi-bin/run/irsim?" + tecla + "-" + new Date().getTime(), "noReplyLogin");
 }
 
 //-------------------------------------------------
@@ -15,7 +15,7 @@ function enviarTecla(tecla) {
 //-------------------------------------------------
 function cambioCanal(num) {
 	// Añadimos la fecha a la peticion para evitar la caché de los navegadores
-	makeRequest("/cgi-bin/run/cambioCanal?" + num + "-" + new Date().getTime(), "noReply");
+	makeRequest("/cgi-bin/run/cambioCanal?" + num + "-" + new Date().getTime(), "noReplyLogin");
 }
 
 //-------------------------------------------------
@@ -108,7 +108,7 @@ function reloadDelayed() {
 //-------------------------------------------------
 function actCacheCanales() {
 	if (confirm("La generación de la caché de los canales tarda unos 2 minutos.\n\n¿Confirma la actualización de dicha caché?")) {
-		makeRequest("/cgi-bin/cache/bg-gc-sincro.sh?" + new Date().getTime(), "noReply");
+		makeRequest("/cgi-bin/run/bg-gc-sincro?" + new Date().getTime());
 		alert("Se ha mandado la petición de actualización de la caché de los canales.\n\nSigue el proceso en la página de estado de la aplicación.");
 		document.location.href="/cgi-bin/box/estado?id_log=log_cache_sincro";
 	}
@@ -119,8 +119,8 @@ function actCacheCanales() {
 //-------------------------------------------------
 function downloadSincroImg() {
 	if (confirm("El proceso de descarga de las imágenes tarda unos 5 minutos.\n\n¿Confirma la descarga de las imágenes de la sincroguia?")) {
-		makeRequest("/cgi-bin/box/bg-getsincroimg?" + new Date().getTime(), "noReply");
-		alert("Se ha mandado la petición de Descarga.\n\nSigue el proceso en la página de estado de la aplicación.");
+		makeRequest("/cgi-bin/run/bg-getsincroimg?" + new Date().getTime());
+		alert("Se ha mandado la petición de descarga.\n\nSigue el proceso en la página de estado de la aplicación.");
 		document.location.href="/cgi-bin/box/estado?id_log=log_getsincroimg";
 	}
 }
@@ -138,7 +138,17 @@ function descargarImages() {
 //-------------------------------------------------
 function reloadCrontab() {
 	if (confirm("¿Confirma la recarga de /var/etc/root.crontab?")) {
-		makeRequest("/cgi-bin/run/reloadCrontab?" + new Date().getTime(), "noReply");
+		makeRequest("/cgi-bin/run/reloadCrontab?" + new Date().getTime(), "RespuestaReloadCrontabXML");
+	}
+}
+
+// Respuesta ERROR_LOGIN -> Login incorrecto
+function RespuestaReloadCrontabXML(xmldoc) {
+	result = xmldoc.getElementsByTagName("RESULT");
+	if (result[0].firstChild.data == "ERROR_LOGIN") {
+		alert("Para tener acceso a esta aplicacion web antes debe validarse con su usuario y contraseña.\n\nAhora será redirigido a la página de login para introducir sus datos.");
+		document.location.href="/index.html";
+	} else {
 		alert("Se ha mandado la petición de recarga de root.crontab\n\nA continuación se mostraran los procesos planificados para comprobar el resultado.");
 		document.location.href="/cgi-bin/box/estado?id_log=log_crontab";
 	}
@@ -149,7 +159,7 @@ function reloadCrontab() {
 //-------------------------------------------------
 function reboot() {
 	if (confirm("¿Confirma el reboot del Gigaset?")) {
-		makeRequest("/cgi-bin/run/reboot?" + new Date().getTime(), "noReply");
+		makeRequest("/cgi-bin/run/reboot?" + new Date().getTime());
 		alert("Se ha mandado la petición de Reboot.\n\nEn unos segundos el sistema se reiniciará");
 	}
 }
@@ -159,7 +169,7 @@ function reboot() {
 //-------------------------------------------------
 function checkHD(partition, fstype) {
 	if (confirm("El chequeo del disco implica realizar un apagado del gigaset para desmontar la unidad.\n\n¿Confirma el chequeo de "+partition+"?")) {
-		makeRequest("/cgi-bin/box/bg-checkDisk?"+ partition + "-" + fstype + "-" + new Date().getTime(), "noReply");
+		makeRequest("/cgi-bin/box/bg-checkDisk?"+ partition + "-" + fstype + "-" + new Date().getTime());
 		alert("Se ha mandado la petición de chequeo de la unidad.\n\nSigue el proceso en la página de estado de la aplicación.");
 		document.location.href="/cgi-bin/box/estado?id_log=log_checkdisk";
 	}
@@ -311,7 +321,7 @@ function copiarGrabacion(crid,nombre,carpeta) {
 		if (!isMobile)
 			mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
-		makeRequest("/cgi-bin/run/cpmvCrid?" + crid + "&" + directorio + "&0&"+force+"&" + new Date().getTime(), "noReply");
+		makeRequest("/cgi-bin/run/cpmvCrid?" + crid + "&" + directorio + "&0&"+force+"&" + new Date().getTime());
 		alert("Se ha mandado la orden de copia de la grabación.\n\nSigue el proceso en la página de estado.");
 		document.location.href="/cgi-bin/box/estado?id_log=log_cpmv_record";
 	}
@@ -331,7 +341,7 @@ function moverGrabacion(crid,nombre,carpeta) {
 		if (!isMobile)
 			mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
-		makeRequest("/cgi-bin/run/cpmvCrid?" + crid + "&" + directorio + "&1&"+force+"&" + new Date().getTime(), "noReply");
+		makeRequest("/cgi-bin/run/cpmvCrid?" + crid + "&" + directorio + "&1&"+force+"&" + new Date().getTime());
 		alert("Se ha mandado la orden de movimiento de la grabación.\n\nSigue el proceso en la página de estado.");
 		document.location.href="/cgi-bin/box/estado?id_log=log_cpmv_record";
 	}
@@ -388,7 +398,7 @@ function borrarHuerfanos(carpeta) {
 		if (!isMobile)
 			mostrarMensajeProceso();
 		// Añadimos la fecha a la peticion para evitar la caché de los navegadores
-		makeRequest("/cgi-bin/run/borrarHuerfanos?" + carpeta + "-" + new Date().getTime(), "noReply");
+		makeRequest("/cgi-bin/run/borrarHuerfanos?" + carpeta + "-" + new Date().getTime());
 		alert("Se ha mandado la orden de borrado de fragmentos de grabación huerfanos.\n\nSigue el proceso en la página de estado.");
 		document.location.href="/cgi-bin/box/estado?id_log=log_fmpg_huerfanos";
 	}
@@ -400,10 +410,16 @@ function borrarHuerfanos(carpeta) {
 //-------------------------------------------------
 function RespuestaPeticionXML(xmldoc) {
 	result = xmldoc.getElementsByTagName("RESULT");
-	if (result[0].firstChild.data == "OK") {
+	switch(result[0].firstChild.data) {
+	case "OK":
 		alert("Petición aceptada por el M750");
 		document.location.reload();
-	} else {
+		break
+	case "ERROR_LOGIN":
+		alert("Para tener acceso a esta aplicacion web antes debe validarse con su usuario y contraseña.\n\nAhora será redirigido a la página de login para introducir sus datos.");
+		document.location.href="/index.html";
+		break
+	default:
 		alert("Petición NO aceptada por el M750");
 	}
 	if (!isMobile)
@@ -416,7 +432,11 @@ function RespuestaArchivoXML(xmldoc) {
 	case "OK":
 		alert("Petición aceptada por el M750");
 		document.location.reload();
-		break    
+		break
+	case "ERROR_LOGIN":
+		alert("Para tener acceso a esta aplicacion web antes debe validarse con su usuario y contraseña.\n\nAhora será redirigido a la página de login para introducir sus datos.");
+		document.location.href="/index.html";
+		break
 	case "FALLO":
 		alert("Petición NO aceptada por el M750.\n\nLos ficheros .fmpg son compartidos por varios .crid.")
 		break
@@ -428,8 +448,15 @@ function RespuestaArchivoXML(xmldoc) {
 }
 
 //-------------------------------------------------
-// No esperar respuesta a peticiones makeRequest
+// Respuestas a peticiones makeRequest
 //-------------------------------------------------
-function noReply(xmldoc) {}
+// Respuesta ERROR_LOGIN -> Login incorrecto
+function noReplyLogin(xmldoc) {
+	result = xmldoc.getElementsByTagName("RESULT");
+	if (result[0].firstChild.data == "ERROR_LOGIN") {
+		alert("Para tener acceso a esta aplicacion web antes debe validarse con su usuario y contraseña.\n\nAhora será redirigido a la página de login para introducir sus datos.");
+		document.location.href="/index.html";
+	}
+}
 
 //-------------------------------------------------

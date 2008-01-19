@@ -14,7 +14,8 @@ fi
 
 # Configurar entorno
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login "xml"
 LOG=/tmp/archivo_crid.log
 SCRIPT=/tmp/archivo_crid.sh
 CRIDS_FMPG=/tmp/crids_fmpg.txt

@@ -4,7 +4,9 @@
 # Script que realiza la recarga del fichero /var/etc/root.crontab
 
 # Configurar entorno
-source ../fweb.shi
+source ../www-setup.shi
+source fweb.shi
+validate_login "xml"
 FICHERO_CRONTAB_TMP=/tmp/crontab.root
 FICHERO_CRONTAB_SYS=/tmp/crontab.sys
 FICHERO_CRONTAB_USER=/var/etc/root.crontab

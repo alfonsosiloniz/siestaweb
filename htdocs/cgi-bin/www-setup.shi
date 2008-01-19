@@ -1,5 +1,5 @@
 #!/bin/bash
-# (c) Grupo SIESTA, 02-08-2007
+# (c) Grupo SIESTA, 10-01-2008
 #
 # Configuracion entorno www
 
@@ -25,6 +25,8 @@ export TZ=`cat /etc/TZ_jra`
 # Parametros por defecto
 Cache=/var/cache
 EPG_PATH=/data/EPG
+LOGIN_HTTP=cookie
+LOGIN_COOKIE=""
 USUARIO=root:root
 MOSTRAR_MINI_IMG=si
 OBTENER_IMG_INET=si
@@ -40,6 +42,8 @@ else
 	cat <<- EOT >$WWW_SETTINGS
 	Cache=$Cache
 	EPG_PATH=$EPG_PATH
+	LOGIN_HTTP=$LOGIN_HTTP
+	LOGIN_COOKIE=$LOGIN_COOKIE
 	USUARIO=$USUARIO
 	MOSTRAR_MINI_IMG=$MOSTRAR_MINI_IMG
 	OBTENER_IMG_INET=$OBTENER_IMG_INET

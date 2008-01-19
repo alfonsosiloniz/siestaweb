@@ -4,9 +4,12 @@
 # Script que lanza la generación de la caché de la sincroguia en background
 
 # Configurar entorno
-source ../fweb.shi
+source ../www-setup.shi
+source fweb.shi
+validate_login "xml"
 
-./gc-sincro.sh &
+# Ejecutar generacion cache XML
+run-http.sh /bin/gc-sincro.sh &
 
 # Resultado OK
 enviar_xml_ok

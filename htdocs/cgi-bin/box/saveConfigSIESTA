@@ -1,5 +1,5 @@
 #!/bin/bash
-# jotabe, (c) Grupo SIESTA, 29-11-2007
+# jotabe, (c) Grupo SIESTA, 11-01-2008
 #
 # Guarda la configuración de SIESTA
 
@@ -7,7 +7,8 @@
 LocalBin=/usr/local/bin
 source $LocalBin/siesta-setup.sh
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login
 
 # Procesar parametros get/post
 eval "`proccgi $*`"
@@ -18,21 +19,63 @@ for PARAM_SIESTA in ${!FORM_*}; do
 	TMP='$'${PARAM_SIESTA}
 	eval "ValorParametro=$TMP"
 	# Modificar parametro
-	eval "${PARAM_SIESTA:5}=\"${ValorParametro}\""
+	eval "${PARAM_SIESTA:9}=\"${ValorParametro}\""
 done
 
 # Volcado nuevos parametros
 source $LocalBin/siesta-dump-settings.shi
 
 # Pasar parametros configuracion a www-settings.txt
-./ss2ws
+ss2ws.sh
 
-# Enviar redireccion html
-http_header
-echo "<html>
+# Re-leer configuracion web
+source ../www-setup.shi
+
+# Eliminar fichero .htpasswd
+rm -f ${SERVER_ROOT}/.htpasswd
+
+# Comprobar tipo de login
+case $LOGIN_HTTP in
+	cookie)
+		# Login por cookie, modificar cookie y redireccion html
+		http_header
+		echo "<html>
+<head>
+	<script type=\"text/javascript\" src=\"/js/cookies.js\" charset=\"ISO-8859-1\"></script>
+	<script type=\"text/javascript\">
+		setCookie(\"M750_LOGIN\", \"${LOGIN_COOKIE}\", null, \"/\");
+		document.location.href=\"/cgi-bin/box/configSIESTA\"
+	</script>
+</head>
+</html>"
+		;;
+	htpasswd)
+		# Autentificacion por servidor web, generar fichero .htpasswd
+		user=`echo ${USUARIO} | cut -d":" -f1`
+		pwd=`echo ${USUARIO} | cut -d":" -f2`
+		htpasswd -c ${SERVER_ROOT}/.htpasswd $user <<- --EOF-- > /dev/null 2>&1
+		$pwd
+		$pwd
+		--EOF--
+		# Login sin cookie, enviar redireccion html
+		http_header
+		echo "<html>
 <head>
 	<script type=\"text/javascript\">
 		document.location.href=\"/cgi-bin/box/configSIESTA\"
 	</script>
 </head>
 </html>"
+		;;
+	nologin)
+		# Sin login, enviar redireccion html
+		http_header
+		echo "<html>
+<head>
+	<script type=\"text/javascript\">
+		document.location.href=\"/cgi-bin/box/configSIESTA\"
+	</script>
+</head>
+</html>"
+		;;
+esac

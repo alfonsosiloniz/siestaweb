@@ -1,5 +1,5 @@
 #!/bin/bash
-# jotabe, (c) Grupo SIESTA, 03-09-2007
+# jotabe, (c) Grupo SIESTA, 10-01-2008
 #
 # Comprobacion mostrar login de usuario
 
@@ -8,14 +8,23 @@ source www-setup.shi
 source fweb.shi
 LOG=/tmp/login.log
 
-# Comprobar si es necesario mostrar login
-if [ "Z${USUARIO}" = "Zno:no" ]; then
-	# Login directo
-	echo "`date` Login directo" >> $LOG
-	destino="/cgi-bin/sincro/pgmactual"
-else
-	destino="/html/login.html"
-fi
+# Comprobar tipo de login
+case $LOGIN_HTTP in
+	cookie)
+		# Login por cookie
+		destino="/html/login.html"
+		;;
+	htpasswd)
+		# Autentificacion por servidor web
+		echo "`date` Autentificación htpasswd" >> $LOG
+		destino="/cgi-bin/sincro/pgmactual"
+		;;
+	nologin)
+		# Login directo
+		echo "`date` Login directo" >> $LOG
+		destino="/cgi-bin/sincro/pgmactual"
+		;;
+esac
 
 # Enviar redireccion html
 http_header

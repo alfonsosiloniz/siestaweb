@@ -4,7 +4,9 @@
 # Hack de desactivacion de timeshift desde Mis Grabaciones
 
 # Configurar entorno
-source ../fweb.shi
+source ../www-setup.shi
+source fweb.shi
+validate_login "xml"
 
 /usr/bin/txt2osd -x -1 -y -1 -d 2000 -b 0x7F000000 -s 30 "Desactivando TimeShift"
 sleep 1

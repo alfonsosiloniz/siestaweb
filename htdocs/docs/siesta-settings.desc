@@ -41,6 +41,20 @@ Puede estar desactivado, sincronizar solo al arrancar o
 periodicamente cada hora en el minuto 25.
 
 
+#PARAMETRO: SIESTA_SKIN key clasico todopvr usuario
+SIESTA_SKIN = clasico
+
+Skin a utilizar. Por defecto se utiliza el skin clasico que tiene
+unos iconos mas conservadores.
+
+El skin LCK-SIESTA tiene unos iconos extraidos de nuestra página
+web www.todopvr.com (iconos amarillos).
+
+El valor 'usuario' se utilizará cuando se introduzcan cambios
+personales en los iconos a utilizar y no deseamos que sean
+sobre-escritos por alguna de las otras opciones.
+
+
 #PARAMETRO: SIESTA_ACTIVAR_KEYCONTROL key no si
 SIESTA_ACTIVAR_KEYCONTROL = no
 
@@ -108,6 +122,11 @@ una tecla.
 -w
 Ejecuta proceso de monitorización para reiniciar el proceso
 key-control si se modifica el proceso lircd.
+
+-n Nombre
+
+Nombre del GigaSet para mostrar en mensajes. Debe ir entre
+comillas simples si incluye espacios.
 
 -e
 Ejecutar siesta-key-control. Es obligatorio pasar este parametro
@@ -189,8 +208,8 @@ servicio de inetd, como servidor independiente o dejarlo
 desactivado.
 
 
-#PARAMETRO: SIESTA_ACTIVAR_HTTP key daemon off
-SIESTA_ACTIVAR_HTTP = daemon
+#PARAMETRO: SIESTA_ACTIVAR_HTTP key off daemon
+SIESTA_ACTIVAR_HTTP = off
 
 Controla la ejecución del servidor web. Puede activarse como
 servidor independiente o dejarlo desactivado.
@@ -206,6 +225,23 @@ Puerto de servicio del servidor web.
 SIESTA_HOME_HTTP = /data/htdocs
 
 Ruta de la carpeta que contiene el home del servidor web.
+
+
+#PARAMETRO: SIESTA_LOGIN_HTTP key cookie htpasswd nologin
+SIESTA_LOGIN_HTTP = cookie
+
+Tipo de autentificación necesaria para acceder a la aplicación
+web.
+
+Por defecto se utiliza la autentificación basada en una cookie
+que se envia al navegador.
+
+El valor 'htpasswd' indica que la autentificación se realiza
+por el servidor web mediante el fichero .htpasswd.
+
+El valor 'nologin' indica que no es necesario autentificarse
+para acceder a la aplicacion web. No debe usarse si tenemos
+configurado el acceso al gigaset desde internet.
 
 
 #PARAMETRO: SIESTA_USUARIO_HTTP str root:root

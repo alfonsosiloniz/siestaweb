@@ -4,9 +4,12 @@
 # Script que lanza la descarga de imagenes en background
 
 # Configurar entorno
-source ../fweb.shi
+source ../www-setup.shi
+source fweb.shi
+validate_login "xml"
 
-./getsincroimg &
+# Lanzar proceso de descarga
+run-http.sh /bin/getsincroimg.sh &
 
 # Resultado OK
 enviar_xml_ok

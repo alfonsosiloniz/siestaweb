@@ -8,7 +8,9 @@ Recording=`echo $QUERY_STRING | cut -d"-" -f1`
 Cridfile=`echo $QUERY_STRING | cut -d"-" -f2`
 
 # Configurar entorno
-source ../fweb.shi
+source ../www-setup.shi
+source fweb.shi
+validate_login
 RECS_FILE=/data/RA_FILE
 SERIES_FILE=/data/SM_FILE
 

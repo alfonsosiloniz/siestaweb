@@ -3,7 +3,7 @@
 # Modified by pepper to return XML, 25/04/2007
 
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
 
 if [ $# = 1 ]; then
 	Cridfile=$1

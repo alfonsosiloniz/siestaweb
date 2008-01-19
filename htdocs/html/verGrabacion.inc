@@ -138,7 +138,7 @@
 							<font class="titTabla">Atención:</font><br>
 							Al hacer click sobre el botón <img src="/img/aceptar.gif" alt="Visualizar Grabación" width="28" height="25" border="0">, verá una ventana como ésta:<br><br>
 							<img src="/img/visualizar_cmd.jpg" alt="Visualizar Grabación" width="455" height="266" border="0"><br><br>
-							Haciendo click sobre el botón "Ejecutar", descargará el fichero "visualizar_grabacion.cmd" en un directorio temporal y éste generará la lista de reproducción llamando a su vez al reproductor <a href="http://www.mplayerhq.hu/">MPlayer</a>.
+							Haciendo click sobre el botón "Ejecutar", descargará el fichero "visualizar_grabacion.cmd" en un directorio temporal y éste generará la lista de reproducción llamando a su vez al reproductor <a href="http://www.mplayerhq.hu/" target="_blank">MPlayer</a>.
 						</td>
 					</tr>
 				</table>

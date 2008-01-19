@@ -4,7 +4,9 @@
 # Envio de texto a OSD
 
 # Configurar entorno
-source ../fweb.shi
+source ../www-setup.shi
+source fweb.shi
+validate_login "xml"
 
 # Obtener y enviar texto
 texto=`echo $QUERY_STRING | cut -d"-" -f1`

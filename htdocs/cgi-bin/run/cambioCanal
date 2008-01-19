@@ -4,7 +4,9 @@
 # Script de cambio de canal. Válido para canales de 0..99
 
 # Configurar entorno
-source ../fweb.shi
+source ../www-setup.shi
+source fweb.shi
+validate_login "xml"
 
 # Enviar teclas a lircd
 if [ "$QUERY_STRING" != "" ]; then

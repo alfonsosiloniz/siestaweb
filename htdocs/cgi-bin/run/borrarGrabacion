@@ -13,7 +13,8 @@ fi
 
 # Configurar entorno
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login "xml"
 LOG=/tmp/delete_recording.log
 SCRIPT=/tmp/delete_recording.sh
 Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
@@ -45,6 +46,5 @@ if [ -f $Cridfile ]; then
 	enviar_xml_ok
 else
 	# Resultado ERROR
-	echo "Fichero $Cridfile no existe" >> /tmp/kk.txt
 	enviar_xml_err
 fi

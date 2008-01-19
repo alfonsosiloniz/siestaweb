@@ -3,7 +3,7 @@
 # Modified by pepper to work in the LCK-SIESTA firmware
 
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
 
 Cridfile="$PATH_INFO"
 Basename=`basename $Cridfile .crid`

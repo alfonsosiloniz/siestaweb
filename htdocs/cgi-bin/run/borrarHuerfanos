@@ -9,7 +9,8 @@ CridFolder=${QUERY_STRING%-*}
 
 # Configurar entorno
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login "xml"
 LOG=/tmp/fmpg_huerfanos.log
 SCRIPT=/tmp/fmpg_huerfanos.sh
 FMPG_HUERFANOS=/tmp/fmpg_huerfanos.txt
@@ -47,12 +48,12 @@ if [ -d $CridFolder ]; then
 	# Log
 	echo "`date` Fin borrado .fmpg huerfanos (`cat $FMPG_HUERFANOS | wc -l` ficheros, $du)" >> $LOG
 
-	# Resultado OK
-	enviar_xml_ok
-
 	# Eliminar ficheros temporales
 	rm -f $SCRIPT
 	rm -f $FMPG_HUERFANOS
+
+	# Resultado OK
+	enviar_xml_ok
 else
 	# Resultado ERROR
 	enviar_xml_err

@@ -4,7 +4,9 @@
 # Script para matar el servidor de streaming
 
 # Configurar entorno
-source ../fweb.shi
+source ../www-setup.shi
+source fweb.shi
+validate_login "xml"
 
 # Detener dvbstream
 pkill -HUP dvbstream 2> /dev/null

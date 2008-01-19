@@ -1,5 +1,5 @@
 #!/bin/bash
-# (c) Grupo SIESTA, 24-07-2007
+# (c) Grupo SIESTA, 10-01-2008
 #
 # Genera lista de imágenes para descargar desde internet
 # log en salida estandar
@@ -32,12 +32,12 @@ done
 sort -u $LST_IMG.tmp > $LST_IMG.tmp2
 
 # Eliminamos lineas vacias y lineas con imágen ya descargada
+num_img=0
 echo -n "" > $LST_IMG
 while read line; do
 	if [ ${#line} -ne 0 ]; then
-		if [ ! -s $DIR_IMG/$line ]; then
-			echo $line >> $LST_IMG
-		fi
+		num_img=$((num_img+1))
+		[ ! -s $DIR_IMG/$line ] && echo $line >> $LST_IMG
 	fi
 done < $LST_IMG.tmp2
 
@@ -45,4 +45,7 @@ done < $LST_IMG.tmp2
 rm -f $LST_IMG.tmp $LST_IMG.tmp2
 
 # Fin del proceso
-echo "`date` Fin listado imágenes de Sincroguía (`cat $LST_IMG | wc -l` imágenes)"
+printf "       Imágenes actuales: %4i\n" "`ls -la $DIR_IMG/*.jpg | wc -l`"
+printf "  Imágenes en Sincroguía: %4i\n" "$num_img"
+printf "    Imágenes a descargar: %4i\n" "`cat $LST_IMG | wc -l`"
+echo "`date` Fin listado imágenes de Sincroguía"

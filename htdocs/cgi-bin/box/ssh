@@ -1,0 +1,40 @@
+#!/bin/bash
+# (c) Grupo SIESTA, 15-01-2008
+#
+# SSH
+
+# Configurar entorno
+source ../www-setup.shi
+source fweb.shi
+validate_login
+
+# Enviar documento html
+html_doc_start "M750T - Conexión SSH" "" "------b-" ""
+html_top "Conexión SSH" "" "" ""
+cat << --EOF--
+				<applet
+					code="com.mindbright.application.MindTerm.class"
+					archive="/util/mindterm_ns.jar"
+					width="0" height="0">
+					<param name="cabinets" value="mindterm_ie.cab">
+					<param name="sepframe" value="true">
+					<param name="autoprops" value="both">
+					<param name="debug" value="true">
+					<param name="appletbg" value="black">
+					<param name="appletfg" value="green">
+					<param name="exit-on-logout" value="true">
+				</applet>
+				<font class="txtInfo" align="left">
+					<br>
+					1. Espera unos segundos a que el applet se abra en una nueva ventana.
+					<br>
+					<br>
+					2. Aparecerá la ventana del terminal SSH con el nombre de host ya introducido.
+					<br>
+					<br>
+					3. Si deseas ralizar la conexión SSH por un puerto diferente del estándar 22, introdúcelo manualmente, escribiendo ":puerto" a continuación del nombre del host.
+					<br>
+					<br>
+				</font>
+--EOF--
+html_doc_end no
