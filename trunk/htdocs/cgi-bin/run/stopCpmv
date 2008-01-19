@@ -4,7 +4,8 @@
 
 # Configurar entorno
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login "xml"
 LOGPROC=/tmp/copiar-crid-proc.log
 
 proc=`ps axfw | grep cpmvCrid | grep -v grep | tail -1`

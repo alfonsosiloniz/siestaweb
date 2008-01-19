@@ -1,12 +1,13 @@
 #!/bin/bash
 # Lemmi, 2006-07-11 -> GPL
-# pepper, jotabe, (c) Grupo SIESTA, 28-11-2007
+# pepper, jotabe, (c) Grupo SIESTA, 09-01-2008
 #
 # Ejecucion de comandos linux en gigaset
 
 # Configurar entorno
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login
 LOG=/tmp/cmd.log
 pie_botones="no"
 cmd_permitidos="cat df fdisk halt ls ps reboot grep wc touch echo cp crontab tar ln dos2unix kill pkill bunzip2 netstat traceroute unzip wget"

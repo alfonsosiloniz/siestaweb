@@ -5,9 +5,9 @@
 # Explorador de archivos para gigaset
 
 # Configurar entorno
-#source def-lemmi.inc
-#source ../www-setup
-source ../fweb.shi
+source ../www-setup.shi
+source fweb.shi
+validate_login
 source ./fshow.shi
 alert=""
 
@@ -115,7 +115,7 @@ function edit() {
 # Accion write, datos fichero en POST
 #--------------------------------------------------
 function write() {
-	sed -e 's/text=//;s/%0D//g' | ./post2iso > "${PATH_INFO}"
+	sed -e 's/text=//;s/%0D//g' | post2iso > "${PATH_INFO}"
 	# Si el fichero está bajo /var/etc, llamamos tambien a /sbin/flash_archive, para grabar los cambios en la flash
 	isFlash=`echo "${PATH_INFO}" | grep "/var/etc" | wc -l`
 	if [ $isFlash -gt 0 ]; then

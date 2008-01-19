@@ -1,15 +1,70 @@
 #!/bin/bash
-# (c) Grupo SIESTA, 27-07-2007
+# (c) Grupo SIESTA, 10-01-2008
 #
 # Definicion funciones web
 #
 # Este script es incluido desde otros, no debe invocarse directamente
 
 #--------------------------------------------------
+# Validacion login
+# $1			Respuesta html/xml (html por defecto)
+# $LOGIN_HTTP	Tipo de login (cookie/htpasswd/nologin)
+# $LOGIN_COOKIE	Valor necesario cookie de validacion
+# $HTTP_COOKIE	Cookie de validacion
+#--------------------------------------------------
+function validate_login() {
+	local USER_COOKIE
+
+	# Por defecto login NOK
+	LoginValido="No"
+
+	# Comprobar tipo de login
+	case ${LOGIN_HTTP} in
+		cookie)
+			# Login por cookie, cookie=md5sum(usuario:contraseña)
+			USER_COOKIE=`echo $HTTP_COOKIE | grep "M750_LOGIN" | cut -d"=" -f2`
+			if [ "Z${LOGIN_COOKIE}" = "Z${USER_COOKIE}" ]; then
+				# Login correcto
+				LoginValido="Si"
+			fi
+			;;
+		htpasswd)
+			# Autentificacion por servidor web
+			LoginValido="Si"
+			;;
+		nologin)
+			# Login directo
+			LoginValido="Si"
+			;;
+	esac
+
+	# Login incorrecto, pagina de error y final script
+	if [ "$LoginValido" = "No"  ]; then
+		# Tipo de respuesta
+		if [ "Z$1" = "Zxml"  ]; then
+			# Resultado ERROR_LOGIN
+			enviar_xml_err_login
+		else
+			# Enviar redireccion html
+			http_header
+			echo "<html>
+<head>
+	<script type=\"text/javascript\">
+		document.location.href=\"/html/no-login.html\"
+	</script>
+</head>
+</html>"
+		fi
+
+		# Final script
+		exit
+	fi
+}
+
+#--------------------------------------------------
 # Cabecera documento http
 #--------------------------------------------------
 function http_header() {
-#	echo "HTTP/1.0 200 OK"
 	echo "Content-Type: text/html; charset=iso-8859-1"
 	echo ""
 }
@@ -208,6 +263,16 @@ function enviar_xml_err() {
 	xml_doc
 	# Resultado xml ERROR
 	echo "<M750><RESULT>ERROR</RESULT></M750>"
+}
+
+#--------------------------------------------------
+# Enviar respuesta xml ERROR_LOGIN
+#--------------------------------------------------
+function enviar_xml_err_login() {
+	# Enviar documento xml
+	xml_doc
+	# Resultado xml ERROR
+	echo "<M750><RESULT>ERROR_LOGIN</RESULT></M750>"
 }
 
 #--------------------------------------------------

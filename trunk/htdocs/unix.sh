@@ -1,5 +1,5 @@
 #!/bin/bash
-# (c) Grupo SIESTA, 27-11-2007
+# (c) Grupo SIESTA, 11-01-2008
 #
 # Poner permisos correctos en servidor web
 
@@ -38,6 +38,7 @@ ch_exe $SIESTA_HOME_HTTP/bin
 ch_dir $SIESTA_HOME_HTTP/cfg
 ch_exe $SIESTA_HOME_HTTP/cgi-bin
 ch_dir $SIESTA_HOME_HTTP/css
+ch_dir $SIESTA_HOME_HTTP/docs
 ch_dir $SIESTA_HOME_HTTP/html
 ch_dir $SIESTA_HOME_HTTP/img
 ch_dir $SIESTA_HOME_HTTP/img/tv

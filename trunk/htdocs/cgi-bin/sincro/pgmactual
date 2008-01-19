@@ -1,5 +1,5 @@
 #!/bin/bash
-# pepper, jotabe, (c) Grupo SIESTA, 10-10-2007
+# pepper, jotabe, (c) Grupo SIESTA, 11-01-2008
 #
 # Retorna la sincroguia con el programa actual para todos los canales
 
@@ -8,7 +8,8 @@ renice 20 $$ > /dev/null
 
 # Configurar entorno
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login
 LCK_SINCRO=${Cache}/cache.sincro.generating
 LOG_SINCRO=${Cache}/cache.sincro.log
 LOG=${Cache}/cache.pgmactual.log
@@ -41,7 +42,7 @@ fi
 if [ ${#info} -ne 0 ]; then
 	# Enviar documento html
 	html_doc_start "M750T - Sincroguía" "" "------b-"
-	html_top "<a href=\"http://www.inout.tv/SincroGuia\"><img src=\"/img/sincro.gif\" border=\"0\"/></a>proporcionada por InOut TV" "" "" ""
+	html_top "<a href=\"http://www.inout.tv/SincroGuia\" target=\"_blank\"><img src=\"/img/sincro.gif\" border=\"0\"/></a>proporcionada por InOut TV" "" "" ""
 	echo "			<br>
 			<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">
 				<tr>

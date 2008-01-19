@@ -5,7 +5,8 @@
 
 # Configurar entorno
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login
 path_mplayer="C:\\Archivos de programa\\mplayer\\mplayer.exe"
 [ -f ${SERVER_ROOT}/cfg/.path_mplayer.txt ] && path_mplayer=`cat ${SERVER_ROOT}/cfg/.path_mplayer.txt`
 CACHE_FILE=${Cache}/verTvLive.cache
@@ -43,8 +44,8 @@ function verCanal(frq, p1, p2, p3) {
 		f.ip.focus();
 		return;
 	}
-	//if (is_ie)
-	//  mostrarMensajeProceso();
+	if (!isMobile)
+		mostrarMensajeProceso();
 	url=\"/cgi-bin/box/startdvbstream?host=\" + f.host.value;
 	url+=\"&port=\" + f.port.value;
 	url+=\"&ip=\" + f.ip.value;
@@ -65,25 +66,31 @@ function download() {
 }
 function reboot() {
 	if (confirm(\"¿Confirma el reboot del Gigaset?\")) {
-		makeRequest(\"/cgi-bin/box/reboot?\" + new Date().getTime(), \"noReply\");
+		makeRequest(\"/cgi-bin/box/reboot?\" + new Date().getTime());
 		alert(\"Se ha mandado la petición de Reboot.\nEn unos segundos el sistema se reiniciará\");
 	}
 }
 function stopServer() {
 	if (confirm(\"¿Confirma el Stop del Servidor de Streaming?\")) {
-		makeRequest(\"/cgi-bin/box/stopdvbstream?\" + new Date().getTime(), \"noReply\");
+		makeRequest(\"/cgi-bin/box/stopdvbstream?\" + new Date().getTime());
 		alert(\"Se ha mandado la petición de Stop del servidor de Streaming.\nYa puedes cambiar de canal\");
 	}
 }
-function noReply(xmldoc) {}
 function mostrarXMLRespuesta(xmldoc) {
-	/*if (is_ie)
-		eliminarMensajeProceso();
 	result = xmldoc.getElementsByTagName(\"RESULT\");
-	if (result[0].firstChild.data == \"OK\")
+	switch(result[0].firstChild.data) {
+	case \"OK\":
 		alert(\"Servidor DVBStream arrancado correctamente\");
-	else
-		alert(\"Se ha producido un error arrancando el servidor DVBStream.\nRevisa los datos del path y vuelve a probar.\");*/
+		break
+	case "ERROR_LOGIN":
+		alert(\"Para tener acceso a esta aplicacion web antes debe validarse con su usuario y contraseña.\n\nAhora será redirigido a la página de login para introducir sus datos.\");
+		document.location.href=\"/index.html\";
+		break
+	default:
+		alert(\"Se ha producido un error arrancando el servidor DVBStream.\nRevisa los datos del path y vuelve a probar.\");
+	}
+	if (!isMobile)
+		eliminarMensajeProceso();
 }"
 
 # Respuesta html

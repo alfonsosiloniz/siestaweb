@@ -23,7 +23,7 @@ case $1 in
 esac
 
 # Configurar entorno
-source ../www-setup.shi
+source ../cgi-bin/www-setup.shi
 LCK_SINCRO=${Cache}/cache.sincro.generating
 LOG=${Cache}/cache.sincro.log
 ERR=${Cache}/cache.sincro.err
@@ -82,7 +82,7 @@ if [ -f $SORT_CHANNELS ]; then
 		fi
 
 		# Generar cache
-		[ $found -eq 1 ] && ./gc-sincro-ch.sh $Sincrofile $full_cache $horaUTCparrilla >> $LOG 2>> $ERR
+		[ $found -eq 1 ] && gc-sincro-ch.sh $Sincrofile $full_cache $horaUTCparrilla >> $LOG 2>> $ERR
 	done
 else
 	echo "`date` Datos de canales no encontrados (${SORT_CHANNELS})" >> $LOG
@@ -94,7 +94,7 @@ rm -f ${LCK_SINCRO}
 # Descarga de imagenes de sincroguia si full explicito y no venimos de apagado completo
 if [ $full_cache -eq 1 -a "Z$DESCARGA_IMG" = "Zsi" -a ! -f /data/.STOP ]; then
 	echo "`date` Lanzado proceso de descarga de imágenes de Sincroguía" >> $LOG
-	run-http.sh /cgi-bin/box/getsincroimg &
+	run-http.sh /bin/getsincroimg.sh &
 fi
 
 # Log del proceso

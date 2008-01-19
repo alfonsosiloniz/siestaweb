@@ -5,7 +5,8 @@
 
 # Configurar entorno
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login
 path_mplayer="C:\\\\Archivos de programa\\\\mplayer\\\\mplayer.exe"
 [ -f ${SERVER_ROOT}/cfg/.path_mplayer.txt ] && path_mplayer=`sed -e 's/\\\\/\\\\\\\\/g' ${SERVER_ROOT}/cfg/.path_mplayer.txt`
 path_temp="C:\\\\Temp"

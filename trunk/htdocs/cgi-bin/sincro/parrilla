@@ -8,7 +8,8 @@ renice 20 $$ > /dev/null
 
 # Configurar entorno
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login
 SORT_CHIDS=${Cache}/sort_chIDs.txt
 INFO_CHANNELS=${Cache}/info_channels.txt
 PARRILLA_CHANNELS=${SERVER_ROOT}/cfg/parrilla_channels.txt

@@ -1,10 +1,11 @@
 #!/bin/bash
-# jotabe, (c) Grupo SIESTA, 28-08-2007
+# jotabe, (c) Grupo SIESTA, 11-01-2008
 #
 # Ver descripcion parametros SIESTA
 
 # Configurar entorno
-source ../fweb.shi
+source ../www-setup.shi
+source fweb.shi
 
 # Enviar documento html
 html_doc_start "M750T - Parámetros SIESTA" "" "--n---b-"
@@ -31,7 +32,7 @@ echo "<body bgcolor=\"#FFFFFF\">
 							<pre>"
 
 # Volcado descripciones parametros
-cat siesta-settings.desc
+cat $SERVER_ROOT/docs/siesta-settings.desc
 
 # Final html
 echo "							</pre>

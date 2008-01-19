@@ -25,7 +25,8 @@ fi
 
 # Configurar entorno
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login "xml"
 LOG=/tmp/copiar_crid.log
 LOGPROC=/tmp/copiar-crid-proc.log
 SCRIPT=/tmp/copiar_crid.sh

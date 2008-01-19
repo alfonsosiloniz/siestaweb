@@ -24,7 +24,7 @@
 			<td align="center">
 				<font class="titPag">M750T EPG</font>
 				<br/>
-				<a href="http://www.inout.tv/SincroGuia"><img src="/img/sincro.gif" border="0"/></a><font class="subTitPag">proporcionada por InOut TV</font>
+				<a href="http://www.inout.tv/SincroGuia" target="_blank"><img src="/img/sincro.gif" border="0"/></a><font class="subTitPag">proporcionada por InOut TV</font>
 			</td>
 		</tr>
 		<tr>

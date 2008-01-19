@@ -5,7 +5,8 @@
 
 # Configurar entorno
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login
 LCK_SETTINGS_FILE=/var/etc/LCK.cfg
 LCK_SETTINGS_FILE_TMP=${LCK_SETTINGS_FILE}.temp
 
@@ -22,7 +23,7 @@ while read line; do
 			NombreParametro=${TMP[0]}
 			ValorParametro0=${TMP[1]}
 			# Obtener nuevo valor de parametro
-			TMP='$'FORM_${NombreParametro}
+			TMP='$'FORM_PAR_${NombreParametro}
 			eval "ValorParametro=$TMP"
 			if [ "Z$ValorParametro" != "Z$ValorParametro0" ]; then
 				# Generar script de sustitucion

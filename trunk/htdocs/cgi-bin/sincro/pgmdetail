@@ -16,7 +16,8 @@ utc=`echo $QUERY_STRING | cut -d"-" -f5`
 
 # Configurar entorno
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login
 DiaSemana=([1]="Lun" [2]="Mar" [3]="Mie" [4]="Jue" [5]="Vie" [6]="Sab" [7]="Dom")
 
 # Comprobar imagen

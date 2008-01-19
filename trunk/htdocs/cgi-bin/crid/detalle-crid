@@ -7,7 +7,9 @@
 Cridfile=$QUERY_STRING
 
 # Configurar entorno
-source ../fweb.shi
+source ../www-setup.shi
+source fweb.shi
+validate_login
 
 # Enviar documento xml
 xml_doc "/xsl/criddetail.xsl"

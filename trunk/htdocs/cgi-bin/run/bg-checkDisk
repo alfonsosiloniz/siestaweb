@@ -4,9 +4,12 @@
 # Script que lanza la comprobacion de HD en background
 
 # Configurar entorno
-source ../fweb.shi
+source ../www-setup.shi
+source fweb.shi
+validate_login "xml"
 
-./checkDisk &
+# Ejecutar generacion cache XML
+run-http.sh /bin/checkDisk.sh &
 
 # Resultado OK
 enviar_xml_ok

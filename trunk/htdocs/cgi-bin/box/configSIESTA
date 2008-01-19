@@ -53,11 +53,12 @@ function desc_parametro() {
 
 # Configurar entorno
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login
 VER_DESCRIPCIONES=0
 SIESTA_SETTINGS_CONF_FILE=/etc/siesta-settings.conf
 SIESTA_SETTINGS_FILE=/var/etc/siesta-settings.txt
-SIESTA_SETTINGS_DESC_PARAM=siesta-settings.desc
+SIESTA_SETTINGS_DESC_PARAM=$SERVER_ROOT/docs/siesta-settings.desc
 SIESTA_SETTINGS_DESC_PARAM_IX=/tmp/siesta-settings.desc.ix
 
 # Enviar documento html
@@ -102,6 +103,7 @@ while read line; do
 			# Obtener datos y valor parametro
 			TMP=(`echo $line`)
 			NombreParametro=${TMP[0]}
+			IdParametro=PAR_${NombreParametro}
 			TipoParametro=${TMP[1]}
 			TMP2=`grep ^${NombreParametro} $SIESTA_SETTINGS_FILE | cut -d"=" -f2-`
 			ValorParametro=${TMP2# }
@@ -117,7 +119,7 @@ while read line; do
 			case $TipoParametro in
 				key )
 					# Parametro key, desplegable
-					echo "							<select name=\"${NombreParametro}\" id=\"${NombreParametro}\" class=\"cajaParam\">"
+					echo "							<select name=\"${IdParametro}\" id=\"${IdParametro}\" class=\"cajaParam\">"
 					# Recorrer opciones
 					i=2
 					TMP2=${TMP[$i]}
@@ -128,16 +130,16 @@ while read line; do
 					done
 					echo "							</select>"
 					# Valor de la opcion
-					echo "							<script type=\"text/javascript\">document.getElementById('${NombreParametro}').value=\"${ValorParametro}\";</script>"
+					echo "							<script type=\"text/javascript\">document.getElementById('${IdParametro}').value=\"${ValorParametro}\";</script>"
 					;;
 # 				list ) ;;
 				num )
 					# Parametro numerico, caja texto
-					echo "							<input type=\"num\" name=\"${NombreParametro}\" value=\"${ValorParametro}\" size=\"8\" maxlength=\"32\" class=\"cajaParam\">"
+					echo "							<input type=\"num\" name=\"${IdParametro}\" id=\"${IdParametro}\" value=\"${ValorParametro}\" size=\"8\" maxlength=\"32\" class=\"cajaParam\">"
 					;;
 				str )
 					# Parametro string, caja texto
-					echo "							<input type=\"text\" name=\"${NombreParametro}\" value=\"${ValorParametro}\" size=\"40\" maxlength=\"128\" class=\"cajaParam\">"
+					echo "							<input type=\"text\" name=\"${IdParametro}\" id=\"${IdParametro}\" value=\"${ValorParametro}\" size=\"40\" maxlength=\"128\" class=\"cajaParam\">"
 					;;
 				*)
 					echo "							$TipoParametro"

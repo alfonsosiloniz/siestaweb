@@ -1,4 +1,11 @@
-function getCookie (name) {
+// Funciones manejo cookies
+// (c) Grupo SIESTA, 09-01-2008
+
+
+//-------------------------------------------------
+// Leer valor cookie
+//-------------------------------------------------
+function getCookie(name) {
 	var arg = name + "=";
 	var alen = arg.length;
 	var clen = document.cookie.length;
@@ -20,32 +27,54 @@ function getCookieVal(offset) {
 	return unescape(document.cookie.substring(offset, endstr));
 }
 
-function setCookie(name, value) {
-	var argv = setCookie.arguments;
-	var argc = setCookie.arguments.length;
-	var expires = (argc > 2) ? argv[2] : null;
-	var path = (argc > 3) ? argv[3] : null;
-	var domain = (argc > 4) ? argv[4] : null;
-	var secure = (argc > 5) ? argv[5] : false;
-	document.cookie = name + "=" + escape (value) +
-	((expires == null) ? "" : ("; expires=" + expires.toGMTString())) +
-	((path == null) ? "" : ("; path=" + path)) +
-	((domain == null) ? "" : ("; domain=" + domain)) +
-	((secure == true) ? "; secure" : "");
+//-------------------------------------------------
+// Establecer cookie
+// name			nombre de la cookie
+// value		valor de la cookie
+// [expires]	fecha de caducidad de la cookie (por defecto, el final de la sesión)
+// [path]		ruta para el cual la cookie es válida (por defecto, el camino del
+//				documento que hace la llamada)
+// [domain]		dominio para el cual la cookie es válida (por defecto, el dominio del 
+//				documento que hace la llamada)
+// [secure]		valor booleano que indica si la trasnmisión de la cookie requiere una 
+//				transmisión segura
+//-------------------------------------------------
+function setCookie(name, value, expires, path, domain, secure) {
+	document.cookie = name + "=" + escape(value) + 
+	((expires == null) ? "" : "; expires=" + expires.toGMTString()) +
+	((path == null) ? "" : "; path=" + path) +
+	((domain == null) ? "" : "; domain=" + domain) +
+	((secure == null) ? "" : "; secure");
 }
 
-function deleteCookie(name) {
-	var exp = new Date();
-	exp.setTime (exp.getTime() - 1);
-	var cval = getCookie(name);
-	document.cookie = name + "=" + cval + "; expires=" +
-	exp.toGMTString();
+//-------------------------------------------------
+// Borrar cookie
+// name			nombre de la cookie
+// [path]		ruta de la cookie (debe ser el mismo camino que el 
+//				especificado al crear la cookie)
+// [domain]		dominio de la cookie (debe ser el mismo dominio que 
+//				el especificado al crear la cookie)
+//-------------------------------------------------
+function deleteCookie(name, path, domain) {
+	if (getCookie(name)) {
+		document.cookie = name + "=" +
+		"; expires=Thu, 01-Jan-70 00:00:01 GMT" +
+		((path == null) ? "" : "; path=" + path) +
+		((domain == null) ? "" : "; domain=" + domain);
+	}
 }
 
-function getExpire() {
-	// les damos 60 minutos de vida a las cookies
-	var validez = 60;
+//-------------------------------------------------
+// Calcular fecha validez cookie
+// [minutos]	minutos de validez (60 minutos por defecto)
+//-------------------------------------------------
+function getExpire(minutos) {
 	var caduca = new Date(); 
-	caduca.setTime(caduca.getTime() + (validez*60*1000));
+	if (minutos)
+		caduca.setTime(caduca.getTime() + (minutos*60*1000));
+	else
+		caduca.setTime(caduca.getTime() + (60*60*1000));
 	return caduca;
 }
+
+//-------------------------------------------------

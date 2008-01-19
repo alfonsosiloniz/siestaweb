@@ -17,7 +17,8 @@ echo "`date` Iniciando accion \"$id_accion\" para el dispositivo USB2" > $LOG
 
 # Configurar entorno
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login "xml"
 get_modo_video
 
 if [ "$id_accion" = "montar" ]; then

@@ -1,44 +1,27 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
-	<link rel="icon" href="/favicon.ico" type="image/x-icon"/>
-	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
-	<link rel="stylesheet" href="/css/estilos.css" type="text/css"/>
-	<script type="text/javascript" src="/js/ajax.js" charset="ISO-8859-1"></script>
-	<script type="text/javascript" src="/js/navigator.js" charset="ISO-8859-1"></script>
-	<script type="text/javascript" src="/js/botones.js" charset="ISO-8859-1"></script>
-	<script type="text/javascript" src="/js/m750.js" charset="ISO-8859-1"></script>
-	<script type="text/javascript">
-		function txt2osd() {
-			makeRequest("/cgi-bin/run/txt2osd?" + document.forms[0].texto.value + "-" + document.forms[0].size.value + "-" + document.forms[0].secs.value + "-" + new Date().getTime(), "noReply");
-		}
-		function timeshift_on() {
-			makeRequest("/cgi-bin/run/timeshift_on?" + new Date().getTime(), "noReply");
-		}
-		function timeshift_off() {
-			makeRequest("/cgi-bin/run/timeshift_off?" + new Date().getTime(), "noReply");
-		}
-	</script>
-	<title>M750T EPG - OSD</title>
-</head>
-<body bgcolor="#FFFFFF">
-	<form name="form_m750">
-	<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
-		<tr>
-			<td align="center">
-				<font class="titPag">M750T EPG</font>
-				<br>
-				<font class="subTitPag">Control OSD</font>
-			</td>
-		</tr>
-		<tr>
-			<td><br><script type="text/javascript">barra_botones();</script></td>
-		</tr>
-	</table>
-	<table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
-		<tr>
-			<td>
+#!/bin/bash
+# (c) Grupo SIESTA, 15-01-2008
+#
+# Control OSD
+
+# Configurar entorno
+source ../www-setup.shi
+source fweb.shi
+validate_login
+
+# Enviar documento html
+html_doc_start "M750T - OSD" "" "-an---bm" "
+function txt2osd() {
+	makeRequest(\"/cgi-bin/run/txt2osd?\" + document.forms[0].texto.value + \"-\" + document.forms[0].size.value + \"-\" + document.forms[0].secs.value + \"-\" + new Date().getTime(), \"noReplyLogin\");
+}
+function timeshift_on() {
+	makeRequest(\"/cgi-bin/run/timeshift_on?\" + new Date().getTime(), \"noReplyLogin\");
+}
+function timeshift_off() {
+	makeRequest(\"/cgi-bin/run/timeshift_off?\" + new Date().getTime(), \"noReplyLogin\");
+}
+"
+html_top "Control OSD" "" "" ""
+cat << --EOF--
 				<br>
 				<table width="80%" border="0" cellspacing="0" cellpadding="0" align="center">
 					<tr>
@@ -233,9 +216,5 @@
 						<td class="txtNormal" align="center"><a href="javascript:enviarTecla('BLUE')">Azul</a></td>
 					</tr>
 				</table>
-			</td>
-		</tr>
-	</table>
-	</form>
-</body>
-</html>
+--EOF--
+html_doc_end no

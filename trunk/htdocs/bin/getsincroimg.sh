@@ -1,5 +1,5 @@
 #!/bin/bash
-# pepper, (c) grupo SIESTA, 24-07-2007
+# pepper, (c) grupo SIESTA, 10-01-2008
 #
 # Listado y descarga de todas las imagenes de la sincro a la carpeta de grabaciones
 
@@ -7,8 +7,8 @@
 renice 20 $$ > /dev/null
 
 # Configurar entorno
-source ../www-setup.shi
-source ../fweb.shi
+source ../cgi-bin/www-setup.shi
+source fweb.shi
 LST=/tmp/images.txt
 LOG=/tmp/getsincroimg.log
 ERR=/tmp/getsincroimg.err
@@ -37,6 +37,9 @@ if [ -d $RecordingFolder/EPG ]; then
 
 	# Descargar lista de imágenes
 	get-lista-img.sh $LST $RecordingFolder/EPG >> $LOG 2>>$ERR
+
+	# Mostrar numero imagenes finales
+	printf "        Imágenes finales: %4i\n" "`ls -la $RecordingFolder/EPG/*.jpg | wc -l`" >> $LOG 2>>$ERR
 fi
 
 # Gestionar estado gigaset

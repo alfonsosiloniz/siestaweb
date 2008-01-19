@@ -53,11 +53,12 @@ function desc_parametro() {
 
 # Configurar entorno
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login
 VER_DESCRIPCIONES=0
 LCK_SETTINGS_FILE=/var/etc/LCK.cfg
-LCK_SETTINGS_CONF_FILE=lck-settings.conf
-LCK_SETTINGS_DESC_PARAM=lck-settings.desc
+LCK_SETTINGS_CONF_FILE=$SERVER_ROOT/docs/lck-settings.conf
+LCK_SETTINGS_DESC_PARAM=$SERVER_ROOT/docs/lck-settings.desc
 LCK_SETTINGS_DESC_PARAM_IX=/tmp/lck-settings.desc.ix
 
 # Enviar documento html
@@ -96,6 +97,7 @@ while read line; do
 			# Obtener datos, valor parametro y tipo de parametro (por defecto str)
 			TMP=(`echo $line`)
 			NombreParametro=${TMP[0]}
+			IdParametro=PAR_${NombreParametro}
 			ValorParametro=${TMP[1]}
 			if [ ${NombreParametro:0:5} = "DAYS_" ]; then
 				TipoParametro="days"
@@ -118,8 +120,8 @@ while read line; do
 					# Parametro time, desplegable hora:minutos
 					ValorParametro_hora=$(($ValorParametro/3600))
 					ValorParametro_minuto=$((($ValorParametro-$ValorParametro_hora*3600)/60))
-					echo "							<input type=\"hidden\" name=\"${NombreParametro}\" id=\"${NombreParametro}\" value=\"${ValorParametro}\" size=\"8\" maxlength=\"32\" class=\"cajaParam\">"
-					echo "							<select name=\"${NombreParametro}_hora\" id=\"${NombreParametro}_hora\" class=\"cajaParam\" onchange=\"calcular_time('${NombreParametro}');\">
+					echo "							<input type=\"hidden\" name=\"${IdParametro}\" id=\"${IdParametro}\" value=\"${ValorParametro}\" size=\"8\" maxlength=\"32\" class=\"cajaParam\">"
+					echo "							<select name=\"${IdParametro}_hora\" id=\"${IdParametro}_hora\" class=\"cajaParam\" onchange=\"calcular_time('${IdParametro}');\">
 								<option value=\"0\">00</option>
 								<option value=\"1\">01</option>
 								<option value=\"2\">02</option>
@@ -145,7 +147,7 @@ while read line; do
 								<option value=\"22\">22</option>
 								<option value=\"23\">23</option>
 							</select> :"
-					echo "							<select name=\"${NombreParametro}_minuto\" id=\"${NombreParametro}_minuto\" class=\"cajaParam\" onchange=\"calcular_time('${NombreParametro}');\">
+					echo "							<select name=\"${IdParametro}_minuto\" id=\"${IdParametro}_minuto\" class=\"cajaParam\" onchange=\"calcular_time('${IdParametro}');\">
 								<option value=\"0\">00</option>
 								<option value=\"5\">05</option>
 								<option value=\"10\">10</option>
@@ -160,12 +162,12 @@ while read line; do
 								<option value=\"55\">55</option>
 							</select>"
 					# Valor de la opcion
-					echo "							<script type=\"text/javascript\">document.getElementById('${NombreParametro}_hora').value=\"${ValorParametro_hora}\";</script>"
-					echo "							<script type=\"text/javascript\">document.getElementById('${NombreParametro}_minuto').value=\"${ValorParametro_minuto}\";</script>"
+					echo "							<script type=\"text/javascript\">document.getElementById('${IdParametro}_hora').value=\"${ValorParametro_hora}\";</script>"
+					echo "							<script type=\"text/javascript\">document.getElementById('${IdParametro}_minuto').value=\"${ValorParametro_minuto}\";</script>"
 					;;
 				days )
 					# Parametro days, desplegable nº dias
-					echo "							<select name=\"${NombreParametro}\" id=\"${NombreParametro}\" class=\"cajaParam\">
+					echo "							<select name=\"${IdParametro}\" id=\"${IdParametro}\" class=\"cajaParam\">
 								<option value=\"1\">Desactivado</option>
 								<option value=\"2\">1 día</option>
 								<option value=\"3\">2 días</option>
@@ -177,24 +179,24 @@ while read line; do
 								<option value=\"9\">8 días</option>
 							</select>"
 					# Valor de la opcion
-					echo "							<script type=\"text/javascript\">document.getElementById('${NombreParametro}').value=\"${ValorParametro}\";</script>"
+					echo "							<script type=\"text/javascript\">document.getElementById('${IdParametro}').value=\"${ValorParametro}\";</script>"
 					;;
 				bool )
 					# Parametro bool, desplegable Verdadero/Falso
-					echo "							<select name=\"${NombreParametro}\" id=\"${NombreParametro}\" class=\"cajaParam\">
+					echo "							<select name=\"${IdParametro}\" id=\"${IdParametro}\" class=\"cajaParam\">
 								<option value=\"1\">Falso</option>
 								<option value=\"2\">Verdadero</option>
 							</select>"
 					# Valor de la opcion
-					echo "							<script type=\"text/javascript\">document.getElementById('${NombreParametro}').value=\"${ValorParametro}\";</script>"
+					echo "							<script type=\"text/javascript\">document.getElementById('${IdParametro}').value=\"${ValorParametro}\";</script>"
 					;;
 				num )
 					# Parametro numerico, caja texto
-					echo "							<input type=\"num\" name=\"${NombreParametro}\" value=\"${ValorParametro}\" size=\"8\" maxlength=\"32\" class=\"cajaParam\">"
+					echo "							<input type=\"num\" name=\"${IdParametro}\" id=\"${IdParametro}\" value=\"${ValorParametro}\" size=\"8\" maxlength=\"32\" class=\"cajaParam\">"
 					;;
 				str )
 					# Parametro string, caja texto
-					echo "							<input type=\"text\" name=\"${NombreParametro}\" value=\"${ValorParametro}\" size=\"40\" maxlength=\"128\" class=\"cajaParam\">"
+					echo "							<input type=\"text\" name=\"${IdParametro}\" id=\"${IdParametro}\" value=\"${ValorParametro}\" size=\"40\" maxlength=\"128\" class=\"cajaParam\">"
 					;;
 				*)
 					echo "							$TipoParametro"

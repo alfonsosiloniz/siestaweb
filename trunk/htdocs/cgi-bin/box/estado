@@ -3,14 +3,15 @@
 #
 # Visualizacion de estado y log's del sistema
 
-# Obtener parametro
+# Obtener parametros
 id_accion=`echo "$QUERY_STRING" | sed 's/^id_log=//g' | cut -d"&" -f1`
 id_part=`echo "$QUERY_STRING" | sed 's/^id_log=//g' | cut -d"&" -f2`
 id_tipo_part=`echo "$QUERY_STRING" | sed 's/^id_log=//g' | cut -d"&" -f3`
 
 # Configurar entorno
 source ../www-setup.shi
-source ../fweb.shi
+source fweb.shi
+validate_login
 STICK_PARTITION=(`df 2> /dev/null | grep SWAP`)
 get_modo_video
 get_modo_grabacion
@@ -40,7 +41,7 @@ echo "				<br>
 										poner_boton(\"Imagenes<br>Sincroguía\",   \"/img/getsincroimg.gif\", \"Descargar imagenes de Sincroguía\",      \"javascript:downloadSincroImg();\"    );
 										poner_boton(\"Reload<br>root.crontab\",   \"/img/crontab.gif\",      \"Recargar root.crontab\",                 \"javascript:reloadCrontab();\"        );
 										poner_boton(\"Reiniciar<br>Gigaset\",     \"/img/reboot.gif\",       \"Reiniciar Gigaset\",                     \"javascript:reboot();\"               );
-										poner_boton(\"Programar<br>Apagado\",     \"/img/sleep.gif\",       \"Programar Apagado (sleep)\",              \"/cgi-bin/box/sleep\"               );
+										poner_boton(\"Programar<br>Apagado\",     \"/img/sleep.gif\",        \"Programar Apagado (sleep)\",             \"/cgi-bin/box/sleep\"                 );
 										poner_boton(\"$accion_power<br>Gigaset\", \"/img/$img_power\",       \"$accion_power Gigaset\",                 \"javascript:enviarTecla('POWER'); reloadDelayed();\" ,\"si\");
 									</script>
 								</tr>
@@ -55,6 +56,7 @@ echo "				<br>
 								<option value=\"log_keycontrol\">Log Key-control</option>
 								<option value=\"log_synctime\">Log de sincronización de hora</option>
 								<option value=\"log_run_httpd\">Ejecuciones de run-httpd.sh</option>
+								<option value=\"log_thttpd\">Log thttpd</option>
 								<option value=\"log_swap\">Log Swap</option>
 								<option value=\"log_record\">Grabaciones programadas/canceladas desde la aplicación</option>
 								<option value=\"log_login\">Login en la aplicación</option>
@@ -124,6 +126,8 @@ echo "				<br>
 			print_log_file "Log de sincronización de hora"                             "/var/log/time.log";;
 		log_run_httpd )
 			print_log_file "Ejecuciones de run-httpd.sh"                               "/var/log/run-http.log";;
+		log_thttpd )
+			print_log_file "Log thttpd"                                                "/var/log/thttpd.log";;
 		log_swap )
 			print_log_file "Log Swap"                                                  "/var/log/swap.log";;
 		log_record )

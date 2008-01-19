@@ -8,7 +8,9 @@ pid=`echo $QUERY_STRING | cut -d"-" -f1`
 serie=`echo $QUERY_STRING | cut -d"-" -f2`
 
 # Configurar entorno
-source ../fweb.shi
+source ../www-setup.shi
+source fweb.shi
+validate_login "xml"
 
 # Log del proceso
 echo "`date` Petición de grabación: $QUERY_STRING" >> /tmp/record.log

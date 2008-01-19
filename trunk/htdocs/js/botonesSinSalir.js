@@ -25,13 +25,13 @@ function barra_botones() {
 	poner_boton("Pendientes", "/img/pendientes.gif",  "Grabaciones Pendientes",       "/cgi-bin/crid/ver-lista-timer"      );
 	poner_boton("Grabaciones","/img/grabaciones.gif", "Grabaciones Realizadas",       "/cgi-bin/crid/ver-lista-grabaciones");
 	poner_boton("Archivo",    "/img/archivo.gif",     "Archivo de Grabaciones",       "/cgi-bin/crid/ver-lista-archivo"    );
-	poner_boton("OSD",        "/img/osd.gif",         "Control OSD",                  "/html/osd2tcp.html"                 );
+	poner_boton("OSD",        "/img/osd.gif",         "Control OSD",                  "/cgi-bin/box/osd2tcp"               );
 	poner_boton("Explorador", "/img/explorador.gif",  "Editor/Explorador de Archivos","/cgi-bin/box/show/var/etc"          );
 	poner_boton("Comandos",   "/img/comandos.gif",    "Ejecución de comandos Linux",  "/cgi-bin/box/cmd"                   );
 	poner_boton("Ver TV",     "/img/ver_tv.gif",      "Ver LiveTV",                   "/cgi-bin/box/verTvLive"             );
 	poner_boton("Ver TV-TS",  "/img/ver_tv_ts.gif",   "Ver LiveTV-TimeShift",         "/cgi-bin/box/verTvTS"               );
-	poner_boton("SSH",        "/img/ssh.gif",         "Conexión SSH",                 "/html/ssh.html"                     );
-	poner_boton("Autores",    "/img/autores.gif",     "Autores",                      "/html/autores.html"                 );
+	poner_boton("SSH",        "/img/ssh.gif",         "Conexión SSH",                 "/cgi-bin/box/ssh"                   );
+	poner_boton("Autores",    "/img/autores.gif",     "Autores",                      "/cgi-bin/box/autores"               );
 	poner_boton("LCK",        "/img/configLCK.gif",   "Configuración LCK",            "/cgi-bin/box/configLCK"             );
 	poner_boton("SIESTA",     "/img/configSIESTA.gif","Configuración SIESTA",         "/cgi-bin/box/configSIESTA"          );
 	poner_boton("Estado",     "/img/estado.gif",      "Ver Estado",                   "/cgi-bin/box/estado"           ,"si");
