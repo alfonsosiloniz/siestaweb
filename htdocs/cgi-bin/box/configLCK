@@ -67,10 +67,6 @@ function calcular_time(param) {
 	hh=parseInt(document.getElementById(param + '_hora').value);
 	mm=parseInt(document.getElementById(param + '_minuto').value);
 	document.getElementById(param).value=hh*3600+mm*60;
-}
-function guardar() {
-	mostrarMensajeProceso();
-	document.forms['form_m750'].submit();
 }"
 
 # Respuesta html
@@ -214,14 +210,14 @@ while read line; do
 	fi
 done < $LCK_SETTINGS_FILE
 
-# Boton guardar
+# Botones ayuda y guardar
 echo "					<tr>
 						<td align=\"center\">
 							<br><input type=\"button\" onclick=\"window.open('/cgi-bin/box/verParamLCK','paramLCK','menubar=no,toolbar=NO,scrollbars=yes,resizable=YES,width=800,height=600');\" value=\"Ayuda parámetros\">
 						</td>
 						<td colspan=\"2\">&nbsp;</td>
 						<td align=\"center\">
-							<br><input type=\"button\" onclick=\"guardar();\" value=\"Guardar\">
+							<br><input type=\"button\" onclick=\"guardarDatosForm();\" value=\"Guardar\">
 						</td>
 					</tr>
 				</table>"

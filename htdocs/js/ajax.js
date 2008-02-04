@@ -50,8 +50,20 @@ function makeRequest(p_url, p_f_respuestaXML, p_f_procesoXML) {
 	if (f_respuestaXML != null && f_respuestaXML.length > 0)
 		http_request.onreadystatechange = getXML;
 
+	// Añadimos la fecha a la peticion para evitar la caché de los navegadores
+	var url_peticion = p_url;
+	if (p_url.length > 0) {
+		index = p_url.indexOf("?");
+		if (index >= 0) {
+			url_peticion = p_url + "-" + new Date().getTime();
+		} else {
+			url_peticion = p_url + "?" + new Date().getTime();
+		}
+	}
+// 	alert(p_url + "\n" + url_peticion);
+
 	// Peticion GET asincrona
-	http_request.open('GET', p_url, true);
+	http_request.open('GET', url_peticion, true);
 	http_request.send(null);
 }
 

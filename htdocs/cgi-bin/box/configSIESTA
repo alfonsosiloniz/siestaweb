@@ -62,11 +62,7 @@ SIESTA_SETTINGS_DESC_PARAM=$SERVER_ROOT/docs/siesta-settings.desc
 SIESTA_SETTINGS_DESC_PARAM_IX=/tmp/siesta-settings.desc.ix
 
 # Enviar documento html
-html_doc_start "M750T - Configuración SIESTA" "" "-an-e-b-" "
-function guardar() {
-	mostrarMensajeProceso();
-	document.forms['form_m750'].submit();
-}"
+html_doc_start "M750T - Configuración SIESTA" "" "-an-e-b-"
 
 # Respuesta html
 html_top "Configuración SIESTA" "" "/cgi-bin/box/saveConfigSIESTA" "post"
@@ -164,7 +160,7 @@ echo "					<tr>
 						</td>
 						<td colspan=\"2\">&nbsp;</td>
 						<td align=\"center\">
-							<br><input type=\"button\" onclick=\"guardar();\" value=\"Guardar\">
+							<br><input type=\"button\" onclick=\"guardarDatosForm();\" value=\"Guardar\">
 						</td>
 					</tr>
 				</table>"

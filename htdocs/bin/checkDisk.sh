@@ -6,8 +6,8 @@
 # Configurar entorno
 source ../cgi-bin/www-setup.shi
 source fweb.shi
-partition=`echo $QUERY_STRING | cut -d"-" -f1`
-fstype=`echo $QUERY_STRING | cut -d"-" -f2`
+partition=$1
+fstype=$2
 LOG=/tmp/checkdisk.log
 ERR=/tmp/checkdisk.err
 

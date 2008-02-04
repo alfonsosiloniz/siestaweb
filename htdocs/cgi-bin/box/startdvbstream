@@ -7,16 +7,19 @@
 source ../www-setup.shi
 source fweb.shi
 validate_login "xml"
-host=`echo $QUERY_STRING | cut -d"&" -f1 | cut -d"=" -f2`
-port=`echo $QUERY_STRING | cut -d"&" -f2 | cut -d"=" -f2`
-localPC=`echo $QUERY_STRING | cut -d"&" -f3 | cut -d"=" -f2`
-dvbstream=`echo $QUERY_STRING | cut -d"&" -f4 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%2F/\//g' | sed -e 's/+/ /g'`
-mplayer=`echo $QUERY_STRING | cut -d"&" -f5 | cut -d"=" -f2 | sed -e 's/%20/ /g' | sed -e 's/%3A/\:/g' | sed -e 's/%5C/\//g' | sed -e 's/+/ /g'`
-aspect=`echo $QUERY_STRING | cut -d"&" -f6 | cut -d"=" -f2`
-freq=`echo $QUERY_STRING | cut -d"&" -f7 | cut -d"=" -f2`
-p1=`echo $QUERY_STRING | cut -d"&" -f8 | cut -d"=" -f2`
-p2=`echo $QUERY_STRING | cut -d"&" -f9 | cut -d"=" -f2`
-p3=`echo $QUERY_STRING | cut -d"&" -f10 | cut -d"=" -f2`
+
+# Procesar parametros get/post
+eval "`proccgi $*`"
+host=$FORM_host
+port=$FORM_port
+localPC=$FORM_ip
+dvbstream=$FORM_dvbstream
+mplayer=$FORM_mplayer
+aspect=$FORM_aspect
+freq=$FORM_freq
+p1=$FORM_p1
+p2=$FORM_p2
+p3=$FORM_p3
 
 # Detener procesos wavebox
 pkill -9 inout_wdg
