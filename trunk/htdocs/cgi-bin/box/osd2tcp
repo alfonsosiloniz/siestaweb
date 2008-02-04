@@ -11,13 +11,13 @@ validate_login
 # Enviar documento html
 html_doc_start "M750T - OSD" "" "-an---bm" "
 function txt2osd() {
-	makeRequest(\"/cgi-bin/run/txt2osd?\" + document.forms[0].texto.value + \"-\" + document.forms[0].size.value + \"-\" + document.forms[0].secs.value + \"-\" + new Date().getTime(), \"noReplyLogin\");
+	makeRequest(\"/cgi-bin/run/txt2osd?\" + document.forms[0].texto.value + \"-\" + document.forms[0].size.value + \"-\" + document.forms[0].secs.value, \"noReplyLogin\");
 }
 function timeshift_on() {
-	makeRequest(\"/cgi-bin/run/timeshift_on?\" + new Date().getTime(), \"noReplyLogin\");
+	makeRequest(\"/cgi-bin/run/timeshift_on\", \"noReplyLogin\");
 }
 function timeshift_off() {
-	makeRequest(\"/cgi-bin/run/timeshift_off?\" + new Date().getTime(), \"noReplyLogin\");
+	makeRequest(\"/cgi-bin/run/timeshift_off\", \"noReplyLogin\");
 }
 "
 html_top "Control OSD" "" "" ""

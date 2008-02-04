@@ -7,9 +7,11 @@
 source ../www-setup.shi
 source fweb.shi
 validate_login "xml"
+partition=`echo $QUERY_STRING | cut -d"-" -f1`
+fstype=`echo $QUERY_STRING | cut -d"-" -f2`
 
-# Ejecutar generacion cache XML
-run-http.sh /bin/checkDisk.sh &
+# Ejecutar comprobacion de disco duro
+run-http.sh /bin/checkDisk.sh "$partition" "$fstype" &
 
 # Resultado OK
 enviar_xml_ok

@@ -46,6 +46,7 @@ function verCanal(frq, p1, p2, p3) {
 	}
 	if (!isMobile)
 		mostrarMensajeProceso();
+	alert(\"Se ha enviado la petición.\nEjecuta M750_TVLive.cmd y si no se inicia la reproducción comprueba que los datos introducidos eran correctos\");
 	url=\"/cgi-bin/box/startdvbstream?host=\" + f.host.value;
 	url+=\"&port=\" + f.port.value;
 	url+=\"&ip=\" + f.ip.value;
@@ -56,8 +57,7 @@ function verCanal(frq, p1, p2, p3) {
 	url+=\"&p1=\" + p1;
 	url+=\"&p2=\" + p2;
 	url+=\"&p3=\" + p3;
-	makeRequest(url+\"&date=\"+new Date().getTime(), \"mostrarXMLRespuesta\");
-	alert(\"Se ha enviado la petición.\nEjecuta M750_TVLive.cmd y si no se inicia la reproducción comprueba que los datos introducidos eran correctos\");
+	makeRequest(url + \"&date=\", \"mostrarXMLRespuesta\");
 }
 function download() {
 	f=document.forms[0];
@@ -66,13 +66,13 @@ function download() {
 }
 function reboot() {
 	if (confirm(\"¿Confirma el reboot del Gigaset?\")) {
-		makeRequest(\"/cgi-bin/box/reboot?\" + new Date().getTime());
+		makeRequest(\"/cgi-bin/run/reboot\");
 		alert(\"Se ha mandado la petición de Reboot.\nEn unos segundos el sistema se reiniciará\");
 	}
 }
 function stopServer() {
 	if (confirm(\"¿Confirma el Stop del Servidor de Streaming?\")) {
-		makeRequest(\"/cgi-bin/box/stopdvbstream?\" + new Date().getTime());
+		makeRequest(\"/cgi-bin/box/stopdvbstream\");
 		alert(\"Se ha mandado la petición de Stop del servidor de Streaming.\nYa puedes cambiar de canal\");
 	}
 }
@@ -82,7 +82,7 @@ function mostrarXMLRespuesta(xmldoc) {
 	case \"OK\":
 		alert(\"Servidor DVBStream arrancado correctamente\");
 		break
-	case "ERROR_LOGIN":
+	case \"ERROR_LOGIN\":
 		alert(\"Para tener acceso a esta aplicacion web antes debe validarse con su usuario y contraseña.\n\nAhora será redirigido a la página de login para introducir sus datos.\");
 		document.location.href=\"/index.html\";
 		break
@@ -160,11 +160,5 @@ echo "		<br>
 		<tr>
 			<td class=\"txtNormal\" align=\"center\" colspan=\"2\"><input type=\"button\" value=\"Reiniciar Gigaset\" onclick=\"reboot();\"></td>
 		</tr>
-		</table>
-		<input type=\"hidden\" name=\"freq\" value=\"\">
-		<input type=\"hidden\" name=\"p1\" value=\"\">
-		<input type=\"hidden\" name=\"p2\" value=\"\">
-		<input type=\"hidden\" name=\"p3\" value=\"\">"
+		</table>"
 html_doc_end
-
-# 			<td class=\"txtNormal\"><input type=\"text\" name=\"mplayer\" value=\"C:\Archivos de programa\mplayer\mplayer.exe\" size=\"70\" maxlength=\"200\" class=\"cajaplana\"></td>

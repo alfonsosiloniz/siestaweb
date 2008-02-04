@@ -14,11 +14,7 @@ CFG_PARRILLA=""
 [ -f $PARRILLA_CHANNELS ] && CFG_PARRILLA=`cat $PARRILLA_CHANNELS`
 
 # Enviar documento html
-html_doc_start "M750T - Configuración de Parrilla de Sincroguía" "" "-an-e-b-" "
-function guardar() {
-	mostrarMensajeProceso();
-	document.forms['form_m750'].submit();
-}"
+html_doc_start "M750T - Configuración de Parrilla de Sincroguía" "" "-an-e-b-"
 
 # Respuesta html
 html_top "Configuración de Parrilla de Sincroguía" "" "/cgi-bin/sincro/saveConfigParrilla" "post"
@@ -66,7 +62,7 @@ fi
 # Final html
 echo "				<tr>
 					<td colspan=\"4\" align=\"center\">
-						<br><input type=\"button\" onclick=\"guardar();\" value=\"Guardar\">
+						<br><input type=\"button\" onclick=\"guardarDatosForm();\" value=\"Guardar\">
 					</td>
 				</tr>
 			</table>"

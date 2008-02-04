@@ -12,7 +12,6 @@ id_tipo_part=`echo "$QUERY_STRING" | sed 's/^id_log=//g' | cut -d"&" -f3`
 source ../www-setup.shi
 source fweb.shi
 validate_login
-STICK_PARTITION=(`df 2> /dev/null | grep SWAP`)
 get_modo_video
 get_modo_grabacion
 if [ "$ModoVideo" = "Apagado" ] ; then
@@ -203,6 +202,7 @@ echo "				<br>
 
 			# Volcado filesystems
 			declare -a devs
+			STICK_PARTITION=(`df 2> /dev/null | grep SWAP`)
 			cat /proc/mounts > /tmp/mounts.tmp
 			while read line; do
 				isdev=`echo $line | grep "/dev/sd" | wc -l`

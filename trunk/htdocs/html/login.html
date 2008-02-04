@@ -26,9 +26,9 @@
 				alert("Debe introducir usuario y contraseña");
 				return;
 			}
-			//if (is_ie)
-			mostrarMensajeProceso();
-			f.submit();
+			if (!isMobile)
+				mostrarMensajeProceso();
+			setTimeout("f.submit()", 200);
 		}
 	</script>
 	<title>M750T EPG - Login</title>
