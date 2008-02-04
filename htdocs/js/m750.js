@@ -31,7 +31,7 @@ function detallePrograma(id, img, long, channel, utc) {
 //-------------------------------------------------
 function detalleProgramaInOut(id) {
 	pid=id.substring(0, 7);
-	window.open("http://www.inout.tv/SincroGuia/ficha.php?id="+pid);
+	window.open("http://www.sincroguia.tv/?do=Programacion&accion=verficha&idevent="+pid);
 }
 
 //-------------------------------------------------
