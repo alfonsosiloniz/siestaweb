@@ -7,6 +7,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Properties;
 
+import javax.net.ServerSocketFactory;
+
 public class AgenteReceptor
 {
     public static final int AGENTE_OK = 0;
@@ -20,7 +22,7 @@ public class AgenteReceptor
     private static ScriptLauncher runningProcess = null;
 
     public static void main(String args[]) {
-        UtilsReceptor.escribirLog("ARRANQUE DEL AGENTE GIGASET M750 (c) Grupo SIESTA, ver. 1.0");
+        UtilsReceptor.escribirLog("ARRANQUE DEL AGENTE GIGASET M750 (c) Grupo SIESTA, ver. 1.1");
         UtilsReceptor.escribirLog("os.arch = " + System.getProperty("os.arch"));
         UtilsReceptor.escribirLog("os.name = " + System.getProperty("os.name"));
         UtilsReceptor.escribirLog("os.version = " + System.getProperty("os.version"));
