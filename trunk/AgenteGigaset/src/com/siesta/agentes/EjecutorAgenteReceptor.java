@@ -223,7 +223,16 @@ public class EjecutorAgenteReceptor extends Thread
                             // matamos.
                             finalizarProcesoActual();
 
-                            ScriptLauncher scriptLauncher = new ScriptLauncher(scriptName, "\"" + sourceFilePC + "\"");
+                            ScriptLauncher scriptLauncher = null;
+                            if (System.getProperty("os.name").startsWith("Windows")) {
+                                scriptLauncher = new ScriptLauncher(scriptName, "\"" + sourceFilePC + "\"");
+                            }
+                            else {
+                                if (System.getProperty("os.name").startsWith("Linux") || System.getProperty("os.name").startsWith("Unix")) {
+                                    sourceFilePC = UtilsReceptor.replaceString(sourceFilePC, " ", "\\ ");
+                                }
+                                scriptLauncher = new ScriptLauncher(scriptName, sourceFilePC);
+                            }
                             AgenteReceptor.setRunningProcess(scriptLauncher);
                             scriptLauncher.start();
                             Thread.sleep(1000);

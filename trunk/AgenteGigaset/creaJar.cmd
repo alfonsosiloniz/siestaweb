@@ -1,2 +1,3 @@
 @echo off
-C:\jdk1.5.0_09\bin\jar cvfm AgenteGigaset.jar MANIFEST.MF  -C bin .
+xcopy /s bin\*class sbin\
+C:\jdk1.5.0_09\bin\jar cvfm AgenteGigaset.jar MANIFEST.MF  -C sbin .

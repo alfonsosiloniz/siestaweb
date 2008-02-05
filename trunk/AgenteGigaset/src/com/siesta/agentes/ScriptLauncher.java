@@ -74,7 +74,7 @@ public class ScriptLauncher extends Thread
                 proc = runtime.exec(orden);
             }
             else {
-                String orden = "pkill -9 " + scriptName;
+                String orden = "killall vlc";
                 proc = runtime.exec(orden);
             }
             proc.waitFor();
