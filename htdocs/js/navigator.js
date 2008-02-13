@@ -27,3 +27,7 @@ var is_windowsCE = agt.indexOf('windows ce');
 var isMobile = false;
 if (is_windowsCE >= 0)
 	isMobile = true;
+var is_operaMini = agt.indexOf('opera mini');
+var operaMini = false;
+if (is_operaMini >= 0)
+	operaMini = true;
