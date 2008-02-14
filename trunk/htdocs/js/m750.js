@@ -176,14 +176,14 @@ function programarGrabacion(id, serie, titulo) {
 	if (serie == 1)
 		enserie="en serie ";
 	if (!operaMini) {
-	    if (confirm("¿Está seguro de querer grabar " + enserie + "el programa " + titulo + "?")) {
-    		if (!isMobile && !operaMini)
-    			mostrarMensajeProceso();
-    		makeRequest("/cgi-bin/run/programarGrabacion?" + parseInt(id, 16) + "-" + serie, "RespuestaPeticionXML");
-        }
+		if (confirm("¿Está seguro de querer grabar " + enserie + "el programa " + titulo + "?")) {
+			if (!isMobile && !operaMini)
+				mostrarMensajeProceso();
+			makeRequest("/cgi-bin/run/programarGrabacion?" + parseInt(id, 16) + "-" + serie, "RespuestaPeticionXML");
+		}
 	}
 	else {
-	    document.location.href="/cgi-bin/run/programarGrabacion?" + parseInt(id, 16) + "-" + serie;
+		document.location.href="/cgi-bin/run/programarGrabacion?" + parseInt(id, 16) + "-" + serie;
 	}
 }
 
@@ -194,16 +194,16 @@ function programarGrabacionPID(pid, serie) {
 	enserie="";
 	if (serie == 1)
 		enserie="en serie ";
-    if (!operaMini) {
-    	if (confirm("¿Está seguro de querer grabar " + enserie + "este programa?")) {
-    		if (!isMobile && !operaMini)
-    			mostrarMensajeProceso();
-    		makeRequest("/cgi-bin/run/programarGrabacion?" + pid + "-" + serie, "RespuestaPeticionXML");
-    	}
-    }
-    else {
-        document.location.href="/cgi-bin/run/programarGrabacion?" + pid + "-" + serie;
-    }
+	if (!operaMini) {
+		if (confirm("¿Está seguro de querer grabar " + enserie + "este programa?")) {
+			if (!isMobile && !operaMini)
+				mostrarMensajeProceso();
+			makeRequest("/cgi-bin/run/programarGrabacion?" + pid + "-" + serie, "RespuestaPeticionXML");
+		}
+	}
+	else {
+		document.location.href="/cgi-bin/run/programarGrabacion?" + pid + "-" + serie;
+	}
 }
 
 //-------------------------------------------------
@@ -211,31 +211,31 @@ function programarGrabacionPID(pid, serie) {
 //-------------------------------------------------
 function cancelarGrabacion(id) {
 	if (!operaMini) {
-    	if (confirm("¿Está seguro de querer cancelar la grabación seleccionada?")) {
-    		if (!isMobile && !operaMini)
-    			mostrarMensajeProceso();
-    		makeRequest("/cgi-bin/run/cancelarGrabacion?" + parseInt(id, 16), "RespuestaPeticionXML");
-    	}
-    }
-    else {
-        document.location.href="/cgi-bin/run/cancelarGrabacion?" + parseInt(id, 16);
-    }
+		if (confirm("¿Está seguro de querer cancelar la grabación seleccionada?")) {
+			if (!isMobile && !operaMini)
+				mostrarMensajeProceso();
+			makeRequest("/cgi-bin/run/cancelarGrabacion?" + parseInt(id, 16), "RespuestaPeticionXML");
+		}
+	}
+	else {
+		document.location.href="/cgi-bin/run/cancelarGrabacion?" + parseInt(id, 16);
+	}
 }
 
 //-------------------------------------------------
 // Cancelar grabacion pendiente por PID
 //-------------------------------------------------
 function cancelarGrabacionPID(pid) {
-    if (!operaMini) {
-    	if (confirm("¿Está seguro de querer cancelar esta grabación?")) {
-    		if (!isMobile && !operaMini)
-    			mostrarMensajeProceso();
-    		makeRequest("/cgi-bin/run/cancelarGrabacion?" + pid, "RespuestaPeticionXML");
-    	}
-    }
-    else {
-        document.location.href="/cgi-bin/run/cancelarGrabacion?" + pid;
-    }
+	if (!operaMini) {
+		if (confirm("¿Está seguro de querer cancelar esta grabación?")) {
+			if (!isMobile && !operaMini)
+				mostrarMensajeProceso();
+			makeRequest("/cgi-bin/run/cancelarGrabacion?" + pid, "RespuestaPeticionXML");
+		}
+	}
+	else {
+		document.location.href="/cgi-bin/run/cancelarGrabacion?" + pid;
+	}
 }
 
 //-------------------------------------------------
@@ -243,15 +243,15 @@ function cancelarGrabacionPID(pid) {
 //-------------------------------------------------
 function borrarGrabacion(crid) {
 	if (!operaMini) {
-    	if (confirm("¿Está seguro de querer eliminar definitivamente la grabación seleccionada?")) {
-    		if (!isMobile && !operaMini)
-    			mostrarMensajeProceso();
-    		makeRequest("/cgi-bin/run/borrarGrabacion?" + crid, "RespuestaPeticionXML");
-    	}
-    }
-    else {
-        document.location.href="/cgi-bin/run/borrarGrabacion?" + crid;
-    }
+		if (confirm("¿Está seguro de querer eliminar definitivamente la grabación seleccionada?")) {
+			if (!isMobile && !operaMini)
+				mostrarMensajeProceso();
+			makeRequest("/cgi-bin/run/borrarGrabacion?" + crid, "RespuestaPeticionXML");
+		}
+	}
+	else {
+		document.location.href="/cgi-bin/run/borrarGrabacion?" + crid;
+	}
 }
 
 function borrarGrabacionCompleta(crid) {
@@ -261,44 +261,44 @@ function borrarGrabacionCompleta(crid) {
 	} else {
 		force="-force";
 	}
-    if (!operaMini) {
-    	if (confirm("¿Está seguro de querer eliminar definitivamente la grabación seleccionada?")) {
-    		if (!isMobile && !operaMini)
-    			mostrarMensajeProceso();
-    		makeRequest("/cgi-bin/run/borrarGrabacionCompleta?" + crid + force, "RespuestaArchivoXML");
-    	}
-    }
-    else {
-        document.location.href="/cgi-bin/run/borrarGrabacionCompleta?" + crid + force;
-    }
+	if (!operaMini) {
+		if (confirm("¿Está seguro de querer eliminar definitivamente la grabación seleccionada?")) {
+			if (!isMobile && !operaMini)
+				mostrarMensajeProceso();
+			makeRequest("/cgi-bin/run/borrarGrabacionCompleta?" + crid + force, "RespuestaArchivoXML");
+		}
+	}
+	else {
+		document.location.href="/cgi-bin/run/borrarGrabacionCompleta?" + crid + force;
+	}
 }
 
 //-------------------------------------------------
 // Programar apagado
 //-------------------------------------------------
 function sleep() {
-    f=document.forms[0];
-    if (parseInt(f.horas.value) == 0 && parseInt(f.minutos.value) == 0) {
-        alert("Debe introducir un valor de Horas o Minutos");
-        return;
-    }
-    if (parseInt(f.minutos.value) > 59) {
-        alert("El valor de minutos supera el máximo permitido (59)");
-        return;
-    }
-    //document.location.href="/cgi-bin/box/sleep?" + getFormParameters(f);
-    if (!isMobile && !operaMini)
+	f=document.forms[0];
+	if (parseInt(f.horas.value) == 0 && parseInt(f.minutos.value) == 0) {
+		alert("Debe introducir un valor de Horas o Minutos");
+		return;
+	}
+	if (parseInt(f.minutos.value) > 59) {
+		alert("El valor de minutos supera el máximo permitido (59)");
+		return;
+	}
+	//document.location.href="/cgi-bin/box/sleep?" + getFormParameters(f);
+	if (!isMobile && !operaMini)
 		mostrarMensajeProceso();
-    f.action="/cgi-bin/box/sleep";
-    f.submit();
+	f.action="/cgi-bin/box/sleep";
+	f.submit();
 }
 
 function cancelarApagado() {
-    if (confirm("¿Está seguro de querer cancelar el Apagado?")) {
-        if (!isMobile && !operaMini)
-		    mostrarMensajeProceso();
-        document.location.href="/cgi-bin/box/sleep?cancelar";
-    }
+	if (confirm("¿Está seguro de querer cancelar el Apagado?")) {
+		if (!isMobile && !operaMini)
+			mostrarMensajeProceso();
+		document.location.href="/cgi-bin/box/sleep?cancelar";
+	}
 }
 
 //-------------------------------------------------

@@ -24,6 +24,7 @@ done
 
 # Volcado nuevos parametros
 source $LocalBin/siesta-dump-settings.shi
+flash_archive write $SIESTA_SETTINGS_FILE >> /tmp/flash_archive.log 2>&1
 
 # Pasar parametros configuracion a www-settings.txt
 ss2ws.sh

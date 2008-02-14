@@ -116,11 +116,11 @@ function edit() {
 #--------------------------------------------------
 function write() {
 	sed -e 's/text=//;s/%0D//g' | post2iso > "${PATH_INFO}"
-	# Si el fichero está bajo /var/etc, llamamos tambien a /sbin/flash_archive, para grabar los cambios en la flash
+	# Si el fichero está bajo /var/etc, llamamos tambien a flash_archive, para grabar los cambios en la flash
 	isFlash=`echo "${PATH_INFO}" | grep "/var/etc" | wc -l`
 	if [ $isFlash -gt 0 ]; then
-		echo "/sbin/flash_archive write ${PATH_INFO}" >> /tmp/flash_archive.log
-		/sbin/flash_archive write ${PATH_INFO} >> /tmp/flash_archive.log 2>> /tmp/flash_archive.log
+		echo "flash_archive write ${PATH_INFO}" >> /tmp/flash_archive.log
+		flash_archive write ${PATH_INFO} >> /tmp/flash_archive.log 2>&1
 		alert="Los cambios del fichero ${PATH_INFO} se han grabado de forma persistente en FlashRAM"
 	fi
 

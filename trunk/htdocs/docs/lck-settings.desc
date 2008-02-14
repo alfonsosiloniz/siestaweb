@@ -121,6 +121,13 @@ Puerto de control grabaciones externas. El valor es el puerto de
 comunicación mas 1.
 
 
+#PARAMETRO: PARSE_EIT bool
+PARSE_EIT 2
+
+Controla la gestión de datos de EPG para aquellos canales que no
+tienen Sincroguía.
+
+
 #PARAMETRO: MOSCA_SHOW bool
 MOSCA_SHOW 1
 
@@ -134,13 +141,6 @@ MOSCA_1 565:58:90:52
 Coordenadas en pantalla para el cuadro de la mosca protectora.
 
 
-#PARAMETRO: PARSE_EIT bool
-PARSE_EIT 2
-
-Controla la gestión de datos de EPG para aquellos canales que no
-tienen Sincroguía.
-
-
 #PARAMETRO: 2MPG2_IP str
 2MPG2_IP 192.168.68.5
 
@@ -152,6 +152,20 @@ Direccion ip del servidor de conversión de video.
 
 Puerto de conexión del servidor de conversión de video. El valor
 es el puerto de conexión mas 1.
+
+
+#PARAMETRO: 2MPG2_MINSIZE num
+2MPG2_MINSIZE 10001
+
+Tamaño mínimo en Kb del fichero .mpg resultante de la conversión
+de video para comenzar a reproducir.
+
+
+#PARAMETRO: POWERON_ASK bool
+POWERON_ASK 2
+
+Controla la pregunta de pulsación ON/OFF al arrancar el gigaset
+despues de quitar corriente.
 
 
 #PARAMETRO: TIME_CHANNELS str

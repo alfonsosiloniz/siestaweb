@@ -133,11 +133,7 @@ if [ -f $SORT_CHIDS ]; then
 			eval `www-tools infoID ${chID} ${INFO_CHANNELS}`
 
 			# Alternar colores
-			if [ "$bgcolor" = "#FFECD9" ]; then
-				bgcolor="#FFFFE8"
-			else
-				bgcolor="#FFECD9"
-			fi
+			[ "$bgcolor" = "#FFECD9" ] && bgcolor="#FFFFE8" || bgcolor="#FFECD9"
 
 			# Generar columna de parrilla
 			echo "						<td valign=\"top\" align=\"center\" width=\"140\" class=\"titChannel\" class=\"borderFila\" nowrap><a href=\"/cgi-bin/sincro/ver-sincro?$chID-0\">$chName</a>

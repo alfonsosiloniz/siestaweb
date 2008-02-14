@@ -57,8 +57,8 @@ fi
 [ "Z$CACHE_EPG_LONG" = "Zno" ] && rm -f $EPG_LONG_FILE_UNZIP
 
 # Obtener fecha
-ds=`awk "BEGIN {print strftime( \"%u\" , $utc) }"`
-dateFormat=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M\" , $utc) }"`
+ds=`awk "BEGIN {print strftime(\"%u\",$utc)}"`
+dateFormat=`awk "BEGIN {print strftime(\"%d.%m.%y %H:%M\",$utc)}"`
 dateFormat="$dateFormat, ${DiaSemana[ds]}"
 
 # Enviar documento xml

@@ -7,26 +7,8 @@
 source ../www-setup.shi
 logfile=/data/START_RECORDER_LOG
 
-# Comento este metodo porque es muy lento extrayendo el log
-#echo "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">"
-#while read line
-#do
-#    isStart=`echo $line | grep startRecorder | wc -l`
-#    if [ $isStart -gt 0 ]; then
-#        echo "<tr>"
-#        echo "  <td class=\"txtNormal\" align=\"left\" bgcolor=\"black\" height=\"1\"></td>"
-#        echo "</tr>"
-#    fi
-#    echo "<tr>"
-#    echo "  <td class=\"txtNormal\" align=\"left\">$line</td>"
-#    echo "</tr>"
-#done < $logfile
-#echo "</table>"
-
 # Volcado fichero
-cat $logfile | sed -e 's/startRecorder was calledResources have been set up !/<hr width="100%" size="2">startRecorder was calledResources have been set up !/g' \
-| sed -e 's/startRecorder was calledfound existing record backend./<hr width="100%" size="1">startRecorder was calledfound existing record backend./g' \
-| sed -e 's/Title:/<font color="red">Title:<\/font>/g' \
-| sed -e 's/SeriesID:/<font color="red">SeriesID:<\/font>/g' \
-| sed -e 's/Start:/<font color="blue">Start:<\/font>/g' \
-| sed -e 's/End:/<font color="blue">End:<\/font>/g'
+cat $logfile \
+| sed -e 's/startRecorder was called/<hr width="100%" size="2"><b>&<\/b>\n/g' \
+| sed -e 's/Title:\|SeriesID:/<font color="red">&<\/font>/g' \
+| sed -e 's/Start:\|End:/<font color="blue">&<\/font>/g'

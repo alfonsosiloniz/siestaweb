@@ -6,12 +6,12 @@
 # Obtener parametros
 id_accion=`echo "$QUERY_STRING" | sed 's/^id_log=//g' | cut -d"&" -f1`
 id_part=`echo "$QUERY_STRING" | sed 's/^id_log=//g' | cut -d"&" -f2`
-id_tipo_part=`echo "$QUERY_STRING" | sed 's/^id_log=//g' | cut -d"&" -f3`
 
 # Configurar entorno
 source ../www-setup.shi
 source fweb.shi
 validate_login
+get_maquina
 get_modo_video
 get_modo_grabacion
 if [ "$ModoVideo" = "Apagado" ] ; then
@@ -74,6 +74,7 @@ echo "				<br>
 								<option value=\"log_free\">Uso de memoria (free)</option>
 								<option value=\"log_crontab\">Procesos Planificados (crontab -l)</option>
 								<option value=\"log_ifconfig\">Configuración de Red (ifconfig)</option>
+								<option value=\"log_MAC\">Información MAC</option>
 								<option value=\"log_ps\">Procesos en ejecución (ps)</option>
 								<option value=\"log_partitions\">Particiones de disco (cat /proc/partitions)</option>
 								<option value=\"log_mount\">Puntos de montaje (cat /proc/mounts)</option>
@@ -179,10 +180,87 @@ echo "				<br>
 			print_log_file "Procesos Planificados (crontab)"                           "/dev/null"                "crontab -l";;
 		log_ifconfig )
 			print_log_file "Configuración de Red (ifconfig)"                           "/dev/null"                "ifconfig";;
-		log_partitions )
-			print_log_file "Particiones de disco (cat /proc/partitions)"               "/dev/null"                "cat /proc/partitions";;
+		log_MAC )
+			print_log_file "Información MAC"                                           "/dev/null"                "verMAC";;
 		log_ps )
-			print_log_file "Procesos en ejecución (ps)"                                "/dev/null"                "./verProcesos";;
+			print_log_file "Procesos en ejecución (ps)"                                "/dev/null"                "verProcesos";;
+		log_partitions )
+			# Encabezado particiones de disco
+			echo "				<tr>
+					<td class=\"fila titTabla\" bgcolor=\"#ffb310\" align=\"center\">Particiones de disco</td>
+				</tr>
+				<tr>
+					<td class=\"fila\">
+						<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
+							<tr>
+								<th align=\"center\">&nbsp;</th>
+								<th align=\"center\">&nbsp;</th>
+								<th align=\"center\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Major</font></th>
+								<th align=\"center\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Minor</font></th>
+								<th align=\"right\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Nº bloques</font></th>
+								<th align=\"center\">&nbsp;</th>
+								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Dispositivo</font></th>
+								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">File System Type</font></th>
+							</tr>"
+
+			# Volcado particiones
+			STICK_PARTITION=(`df 2> /dev/null | grep SWAP`)
+			cat /proc/partitions | tail -n +3 > /tmp/partitions.tmp
+			declare -a devs
+			while read line; do
+				devs=(`echo $line`)
+				part="/dev/"${devs[3]}
+				tipo_part=""
+				FS_DOS=`fdisk -l 2>/dev/null | grep "^${part} " | grep "FAT32" | wc -l`
+				[ ${FS_DOS} -eq 1 ] && tipo_part="vfat"
+				FS_EXT=`fdisk -l 2>/dev/null | grep "^${part} " | grep "83  Linux" | wc -l`
+				[ ${FS_EXT} -eq 1 ] && tipo_part="ext2"
+				FS_SWAP=`fdisk -l 2>/dev/null | grep "^${part} " | grep "82  Linux swap" | wc -l`
+				[ ${FS_SWAP} -eq 1 ] && tipo_part="swap"
+
+				# Enlaces check/dump
+				link_fsck=""
+				link_dump=""
+
+				# Comprobar disco completo (minor=0)
+				if [ ${devs[1]} -ne 0 ]; then
+					# Enlace check: no swap, no tipo swap
+					if [ "${part}" != "$STICK_PARTITION" -a ${#tipo_part} -ne 0 -a "${tipo_part}" != "swap" ]; then
+						link_fsck="<a href=\"javascript:checkHD('${part}','${tipo_part}')\" title=\"check ${part}\" style=\"text-decoration:none;\"><img src=\"/img/checkHD.gif\" width=\"32\" height=\"32\" border=\"0\" alt=\"check ${part}\"></a>"
+					fi
+					# Enlace dump: solo tipo ext2
+					if [ "${tipo_part}" = "ext2" ]; then
+						link_dump="<a href=\"/cgi-bin/box/estado?id_log=log_partitions&${part}\" title=\"dumpe2fs ${part}\" style=\"text-decoration:none;\"><img src=\"/img/dumpHD.gif\" width=\"32\" height=\"32\" border=\"0\" alt=\"dumpe2fs ${part}\"></a>"
+					fi
+				fi
+
+				# Alternar colores
+				[ "$bgcolor" = "#FFECD9" ] && bgcolor="#FFFFE8" || bgcolor="#FFECD9"
+
+				# Datos particion
+				echo "				<tr bgcolor=\"$bgcolor\">
+					<td align=\"center\">${link_fsck}</td>
+					<td align=\"center\">${link_dump}</td>
+					<td align=\"center\"><font style=\"font-family:courier new; font-size:12px;\">${devs[0]}</font></td>
+					<td align=\"center\"><font style=\"font-family:courier new; font-size:12px;\">${devs[1]}</font></td>
+					<td align=\"right\"><font style=\"font-family:courier new; font-size:12px;\">${devs[2]}</font></td>
+					<td align=\"center\">&nbsp;</td>
+					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">${part}</font></td>
+					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">${tipo_part}</font></td>
+				</tr>"
+			done < /tmp/partitions.tmp
+
+			# Cerrar tabla
+			echo "						</table>
+					</td>
+				</tr>"
+
+			# Comprobar dump
+			dump=`fdisk -l 2>/dev/null | grep "^${id_part}" | wc -l`
+			if [ $dump -ne 0 ]; then
+				print_log_file "Volcado partición (dumpe2fs -h $id_part)"              "/dev/null"                "dumpe2fs -h $id_part"
+			fi
+			;;
 		log_mount )
 			# Encabezado puntos de montaje
 			echo "				<tr>
@@ -190,10 +268,10 @@ echo "				<br>
 				</tr>
 				<tr>
 					<td class=\"fila\">
-						<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\" class=\"borderTabla2\">
+						<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
 							<tr>
-								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">&nbsp;</font></th>
-								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">&nbsp;</font></th>
+								<th align=\"center\">&nbsp;</th>
+								<th align=\"center\">&nbsp;</th>
 								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Dispositivo</font></th>
 								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Punto de montaje</font></th>
 								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">File System Type</font></th>
@@ -201,28 +279,45 @@ echo "				<br>
 							</tr>"
 
 			# Volcado filesystems
-			declare -a devs
 			STICK_PARTITION=(`df 2> /dev/null | grep SWAP`)
-			cat /proc/mounts > /tmp/mounts.tmp
+			if [ "Z$MAQUINA" = "ZPC" ]; then
+				mount | sed -e 's/ on / /g;s/ type / /g;' > /tmp/mounts.tmp
+			else
+				cat /proc/mounts > /tmp/mounts.tmp
+			fi
+			declare -a devs
 			while read line; do
 				isdev=`echo $line | grep "/dev/sd" | wc -l`
 				devs=(`echo $line`)
-				if [ $isdev -gt 0 -a "$STICK_PARTITION" != "${devs[0]}" ]; then
-					link_fsck="<a href=\"javascript:checkHD('${devs[0]}','${devs[2]}')\"   title=\"check ${devs[0]}\"    style=\"text-decoration:none;\"><img src=\"/img/checkHD.gif\" width=\"32\" height=\"32\" border=\"0\" alt=\"check ${devs[0]}\"></a>"
-					link_dump="<a href=\"/cgi-bin/box/estado?id_log=log_mount&${devs[0]}\" title=\"dumpe2fs ${devs[0]}\" style=\"text-decoration:none;\"><img src=\"/img/dumpHD.gif\" width=\"32\" height=\"32\" border=\"0\" alt=\"dumpe2fs ${devs[0]}\"></a>"
-				elif [ "$STICK_PARTITION" = "${devs[0]}" ]; then
-					link_fsck=""
-					link_dump="<a href=\"/cgi-bin/box/estado?id_log=log_mount&${devs[0]}\" title=\"dumpe2fs ${devs[0]}\" style=\"text-decoration:none;\"><img src=\"/img/dumpHD.gif\" width=\"32\" height=\"32\" border=\"0\" alt=\"dumpe2fs ${devs[0]}\"></a>"
-				else
-					link_fsck=""
-					link_dump=""
+				part=${devs[0]}
+				tipo_part=${devs[2]}
+
+				# Enlaces check/dump
+				link_fsck=""
+				link_dump=""
+
+				# Comprobar tipo de dispositivo
+				if [ $isdev -gt 0 ]; then
+					# Enlace check: no swap, no tipo swap
+					if [ "${part}" != "$STICK_PARTITION" -a ${#tipo_part} -ne 0 -a "${tipo_part}" != "swap" ]; then
+						link_fsck="<a href=\"javascript:checkHD('${part}','${tipo_part}')\" title=\"check ${part}\" style=\"text-decoration:none;\"><img src=\"/img/checkHD.gif\" width=\"32\" height=\"32\" border=\"0\" alt=\"check ${part}\"></a>"
+					fi
+					# Enlace dump: solo tipo ext2/3
+					if [ "${tipo_part}" = "ext2" -o "${tipo_part}" = "ext3" ]; then
+						link_dump="<a href=\"/cgi-bin/box/estado?id_log=log_mount&${part}\" title=\"dumpe2fs ${part}\" style=\"text-decoration:none;\"><img src=\"/img/dumpHD.gif\" width=\"32\" height=\"32\" border=\"0\" alt=\"dumpe2fs ${part}\"></a>"
+					fi
 				fi
-				echo "	<tr>
+
+				# Alternar colores
+				[ "$bgcolor" = "#FFECD9" ] && bgcolor="#FFFFE8" || bgcolor="#FFECD9"
+
+				# Datos particion
+				echo "			<tr bgcolor=\"$bgcolor\">
 					<td align=\"center\">${link_fsck}</td>
 					<td align=\"center\">${link_dump}</td>
-					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">${devs[0]}</font></td>
+					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">${part}</font></td>
 					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\"><a href=\"/cgi-bin/box/show${devs[1]}\" title=\"Explorar ${devs[1]}\">${devs[1]}</a></font></td>
-					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">${devs[2]}</font></td>
+					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">${tipo_part}</font></td>
 					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">${devs[3]}</font></td>
 				</tr>"
 			done < /tmp/mounts.tmp
@@ -233,12 +328,12 @@ echo "				<br>
 				</tr>"
 
 			# Comprobar dump
-			dump=`grep $id_part /proc/mounts | wc -l`
+			dump=`fdisk -l 2>/dev/null | grep "^${id_part}" | wc -l`
 			if [ $dump -ne 0 ]; then
 				print_log_file "Volcado partición (dumpe2fs -h $id_part)"              "/dev/null"                "dumpe2fs -h $id_part"
 			fi
-			
-			echo "<tr>
+
+			echo "				<tr>
 						<td  align=\"center\">
 							<br>"
 			isUSB2mounted=`df 2> /dev/null | grep /var/media/SWAP | wc -l`
@@ -250,17 +345,14 @@ echo "				<br>
 			echo "			<br>&nbsp;<br>
 						</td>
 					</tr>"
-			if [ -f /tmp/mount_usb2.log ]; then
+			if [ -s /tmp/mount_usb2.log ]; then
 				print_log_file "Montaje / Desmontaje USB2"                             "/tmp/mount_usb2.log"
 			fi
 			;;
 
 		log_act_sincro )
-			declare -a status
-			status=(`grep LastEPG_Upload /var/etc/settings.txt`)
-			dateFormat=`awk "BEGIN {print strftime( \"%d/%m/%Y %H:%M %Z\", ${status[1]}) }"`
-
 			# Encabezado actualizacion sincroguia
+			dateFormat=`awk '/LastEPG_Upload/ {print strftime("%d/%m/%Y %H:%M %Z",$2)}' /var/etc/settings.txt`
 			echo "				<tr>
 					<td class=\"fila titTabla\" bgcolor=\"#ffb310\" align=\"center\">
 						Actualización de la Sincroguía ( <font style=\"text-decoration: underline; \">Última actualización: $dateFormat</font> )
@@ -281,20 +373,7 @@ echo "				<br>
 							<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
 
 			# Volcado horas actualizacion sincroguia
-			sort /data/EPG_Status.txt > /tmp/EPG_Status.txt
-			col=1
-			while read line; do
-				status=( `echo $line` )
-				dateFormat=`awk "BEGIN {print strftime( \"%d/%m/%Y %H:%M %Z\", ${status[0]}) }"`
-				[ $col -eq 1 ] && echo "<tr align=\"center\" style=\"font-family:courier new; font-size:12px;\">"
-				echo "	<td>${status[1]}</td>"
-				echo "	<td>$dateFormat</td>"
-				[ $col -eq 3 ] && echo "</tr>"
-				# Avanzar columna
-				col=$(($col+1))
-				[ $col -gt 3 ] && col=1
-			done < /tmp/EPG_Status.txt
-			rm -f /tmp/EPG_Status.txt
+			sort /data/EPG_Status.txt | format_act_sincro.awk
 
 			# Cerrar tabla
 			echo "						</table>
@@ -314,7 +393,8 @@ echo "					<tr><td class=\"titTabla\" bgcolor=\"#ffb310\" height=\"4\"></td></tr
 							Estado: Video $ModoVideo / ${STgrabacion[$ModoGrabacion]}
 							<br><br>
 							Versión Firmware: $FIRMWARE_VERSION<br>
-							Versión Firmware SIESTA: $SIESTA_FIRMWARE_VERSION
+							Versión Firmware SIESTA: $SIESTA_FIRMWARE_VERSION<br>
+							Versión Aplicación Web: $APP_WEB_VERSION
 							<br><br>
 							Carga del sistema (uptime)
 							<pre>`uptime`</pre>

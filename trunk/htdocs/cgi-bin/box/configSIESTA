@@ -90,11 +90,7 @@ while read line; do
 	if [ ${#line} -ne 0 ]; then
 		if [ ${line:0:1} != "#" ]; then
 			# Alternar colores
-			if [ "$bgcolor" = "#FFECD9" ]; then
-				bgcolor="#FFFFE8"
-			else
-				bgcolor="#FFECD9"
-			fi
+			[ "$bgcolor" = "#FFECD9" ] && bgcolor="#FFFFE8" || bgcolor="#FFECD9"
 
 			# Obtener datos y valor parametro
 			TMP=(`echo $line`)

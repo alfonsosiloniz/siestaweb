@@ -102,16 +102,16 @@ while read line; do
                         # Si la linea es del sintonizador 1 o 2
                         if [ $sint -lt 3 ]; then
                             record=( `echo $line` )
-                            dateFormatIni=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M %Z\" , ${record[0]}) }"`
-                            dateFormatFin=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M %Z\" , ${record[1]}) }"`
+                            dateFormatIni=`awk "BEGIN {print strftime(\"%d.%m.%y %H:%M %Z\",${record[0]})}"`
+                            dateFormatFin=`awk "BEGIN {print strftime(\"%d.%m.%y %H:%M %Z\",${record[1]})}"`
                             gIni=${record[2]}
                             gFin=${record[3]}
                             # Linea sintonizador 1/2
                             echo "<tr class=\"txtNormal\"><td>$dateFormatIni</td><td>$dateFormatFin</td><td align=\"center\">$((gIni/60))</td><td align=\"center\">$((gFin/60))</td><td align=\"center\">${record[4]}</td><td align=\"center\">${record[5]}</td></tr>"
                         else
                             record=( `echo $line` )
-                            dateFormatIni=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M %Z\" , ${record[5]}) }"`
-                            dateFormatFin=`awk "BEGIN {print strftime( \"%d.%m.%y %H:%M %Z\" , ${record[6]}) }"`
+                            dateFormatIni=`awk "BEGIN {print strftime(\"%d.%m.%y %H:%M %Z\",${record[5]})}"`
+                            dateFormatFin=`awk "BEGIN {print strftime(\"%d.%m.%y %H:%M %Z\",${record[6]})}"`
                             gIni=${record[7]}
                             gFin=${record[8]}
                             # Linea detalle
