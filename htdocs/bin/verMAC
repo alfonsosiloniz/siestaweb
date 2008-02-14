@@ -1,0 +1,19 @@
+#!/bin/bash
+# jotabe, (c) Grupo SIESTA, 13-02-2008
+#
+# Mostrar informacion de red
+
+# Obtener MAC de picctl
+echo "  picctl get-mac -> `picctl get-mac | awk '{print toupper($1)}'`"
+
+# Obtener MAC de flash_content
+echo ""
+echo "   flash_content -> `hexdump -v -n6 -e'5/1 \"%02X:\" 1/1 \"%02X\"' /var/etc/flash_content`"
+
+# Obtener MAC de ip_script
+echo ""
+echo "       ip_script -> `awk '/mac_override/ {print substr(toupper($3),15,17)}' /var/etc/ip_script`"
+
+# Obtener MAC de ifconfig
+echo ""
+echo "        ifconfig -> `ifconfig | awk '/HWaddr/ {print $5}'`"

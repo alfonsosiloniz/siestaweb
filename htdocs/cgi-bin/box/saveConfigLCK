@@ -38,6 +38,7 @@ done < $LCK_SETTINGS_FILE
 if [ ${#sed_script} -ne 0 ]; then
 	sed -e "$sed_script" $LCK_SETTINGS_FILE > $LCK_SETTINGS_FILE_TMP
 	mv -f $LCK_SETTINGS_FILE_TMP $LCK_SETTINGS_FILE
+	flash_archive write $LCK_SETTINGS_FILE >> /tmp/flash_archive.log 2>&1
 fi
 
 # Enviar redireccion html

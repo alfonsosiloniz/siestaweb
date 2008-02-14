@@ -39,9 +39,9 @@ function validate_login() {
 	esac
 
 	# Login incorrecto, pagina de error y final script
-	if [ "$LoginValido" = "No"  ]; then
+	if [ "$LoginValido" = "No" ]; then
 		# Tipo de respuesta
-		if [ "Z$1" = "Zxml"  ]; then
+		if [ "Z$1" = "Zxml" ]; then
 			# Resultado ERROR_LOGIN
 			enviar_xml_err_login
 		else
@@ -129,20 +129,20 @@ function html_doc_start() {
 #--------------------------------------------------
 function html_top() {
 	# Funcion body onload
-	if [ "Z$2" = "Z"  ]; then
+	if [ "Z$2" = "Z" ]; then
 		echo "<body bgcolor=\"#FFFFFF\">"
 	else
 		echo "<body bgcolor=\"#FFFFFF\" onload=\"${2}\">"
 	fi
 	# Funcion form action
-	if [ "Z$3" = "Z"  ]; then
-		if [ "Z$4" = "Zpost"  ]; then
+	if [ "Z$3" = "Z" ]; then
+		if [ "Z$4" = "Zpost" ]; then
 			echo "<form name=\"form_m750\" method=\"post\">"
 		else
 			echo "<form name=\"form_m750\" method=\"get\">"
 		fi
 	else
-		if [ "Z$4" = "Zpost"  ]; then
+		if [ "Z$4" = "Zpost" ]; then
 			echo "<form name=\"form_m750\" method=\"post\" action=\"${3}\">"
 		else
 			echo "<form name=\"form_m750\" method=\"get\" action=\"${3}\">"
@@ -296,11 +296,7 @@ function get_maquina() {
 	# Obtener arquitectura
 	ARQ=`uname -m`
 	if [ "Z${ARQ}" = "Zmips" ]; then
-		if [ -L /usb1 ]; then
-			MAQUINA="M740"
-		else
-			MAQUINA="M750"
-		fi
+		[ -L /usb1 ] && MAQUINA="M740" || MAQUINA="M750"
 	else
 		MAQUINA="PC"
 	fi
@@ -312,11 +308,7 @@ function get_maquina() {
 function get_modo_video() {
 	# Buscar nº de modulos que estan usando el modulo video
 	M_V=(`lsmod | grep ^video`)
-	if [ ${M_V[2]} = 0 ]; then
-		ModoVideo="Apagado"
-	else
-		ModoVideo="Encendido"
-	fi
+	[ ${M_V[2]} = 0 ] && ModoVideo="Apagado" || ModoVideo="Encendido"
 }
 function get_modo_grabacion() {
 	# Buscar nº de modulos que estan grabando 

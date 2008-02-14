@@ -45,7 +45,7 @@ done < $LST_IMG.tmp2
 rm -f $LST_IMG.tmp $LST_IMG.tmp2
 
 # Fin del proceso
-printf "       Imágenes actuales: %4i\n" "`ls -la $DIR_IMG/*.jpg | wc -l`"
+printf "       Imágenes actuales: %4i\n" "`ls -la $DIR_IMG/*.jpg 2>/dev/null | wc -l`"
 printf "  Imágenes en Sincroguía: %4i\n" "$num_img"
 printf "    Imágenes a descargar: %4i\n" "`cat $LST_IMG | wc -l`"
 echo "`date` Fin listado imágenes de Sincroguía"

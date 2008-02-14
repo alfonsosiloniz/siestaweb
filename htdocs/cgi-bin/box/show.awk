@@ -1,4 +1,4 @@
-#!/bin/awk -f
+#!/usr/bin/awk -f
 #
 # Lemmi @ m740.info/forum, 2005-08-22 -> GPL
 #
