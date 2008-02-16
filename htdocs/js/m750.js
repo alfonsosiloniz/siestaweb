@@ -37,7 +37,7 @@ function detalleProgramaInOut(id) {
 //-------------------------------------------------
 function detalleTimer(id, crid) {
 	// Añadimos la fecha a la peticion para evitar la caché de los navegadores
-	document.location.href="/cgi-bin/crid/detalle-timer?" + parseInt(id, 16) + "-" + crid + "-" + new Date().getTime();
+	document.location.href="/cgi-bin/crid/detalle-timer?" + parseInt(id, 16) + "-" + crid;
 }
 
 //-------------------------------------------------
@@ -45,7 +45,7 @@ function detalleTimer(id, crid) {
 //-------------------------------------------------
 function detalleCrid(crid) {
 	// Añadimos la fecha a la peticion para evitar la caché de los navegadores
-	document.location.href="/cgi-bin/crid/detalle-crid?" + crid + "-" + new Date().getTime();
+	document.location.href="/cgi-bin/crid/detalle-crid?" + crid;
 }
 
 
