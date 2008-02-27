@@ -33,7 +33,7 @@ if [ "$user" = "$FORM_uid" -a "$pwd" = "$FORM_pwd" ]; then
 </head>
 <body>
 	<script type=\"text/javascript\">
-		document.location.href=\"/cgi-bin/sincro/pgmactual\";
+		document.location.href=\"${PAGINA_INICIO_WEB}\";
 	</script>
 </body>
 </html>"

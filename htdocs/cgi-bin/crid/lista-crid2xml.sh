@@ -95,9 +95,8 @@ if [ $numCrids -ne 0 ]; then
 				du=(`du -ch ${files} | tail -1`)
 			fi
 
-			# Volcar datos a fichero cache
-			# Es muy importante que cada grabacion vaya en una sola linea, y ademas que el SERIE_ID sea el primer tag del XML
-			# para una posterior ordenacion de la lista por Serie
+			# Volcar datos a fichero cache. Cada grabacion va en una sola linea
+			# comenzando por SERIE_ID para su posterior ordenacion por serie
 			( echo -n "<SERIE_ID>$IDserie</SERIE_ID><UTC_TIME>$EPG_start_time</UTC_TIME><CRID_FILE>$Cridfile</CRID_FILE><TITLE>$Titulo</TITLE><REC_STATE>$Rec_State</REC_STATE><INIT_TIME>$FMT_start_time</INIT_TIME><END_TIME>$FMT_end_time</END_TIME><DURATION>$Duration</DURATION><UTC_END_TIME>$EPG_end_time</UTC_END_TIME><IMPORTANT>$Grabacion_protegida</IMPORTANT><PLAYBACK_TS>$playback_timestamp</PLAYBACK_TS><PIDCID>$CRID_ID</PIDCID><NUM_FMPG>$num_fmpg</NUM_FMPG><FMPG>$fmpg0</FMPG>"
 
 			# Recorrer fragmentos adicionales
@@ -110,7 +109,7 @@ if [ $numCrids -ne 0 ]; then
 				# Siguiente fragmento
 				i=$(($i+1))
 			done
-	
+
 			echo "<SPACE>$du</SPACE>" ) > $Cachefile
 		fi
 
@@ -119,29 +118,18 @@ if [ $numCrids -ne 0 ]; then
 	done
 fi
 
-# Por defecto, enviamos la lista de grabaciones ordenadas por serie, con un nuevo campo CAMBIO_SERIE que indica si del registro anterior
-# al actual, ha cambiado el identificador de Serie, para luego pintarlo correctamente en pantalla, diferenciando entre series.
-sort -r $CachefileTemp > ${CachefileTemp}.sort
-echo -n "" > $CachefileTemp
-serieAct="0"
-while read line; do
-	serie=`echo $line | cut -d ">" -f2 | cut -d "<" -f 1`
-	if [ "Z$serie" != "Z$serieAct" ]; then
-		cambio_serie=1
-	else
-		cambio_serie=0
-	fi
+# Comprobar orden del resultado serie/tiempo
+if [ ${3/*serie*/OK} == OK ]; then
+	# Orden serie: insertar campo <CAMBIO_SERIE> que indica si del registro anterior
+	# al actual, ha cambiado el identificador de Serie, para luego pintarlo correctamente en pantalla, diferenciando entre series.
+	sort -r $CachefileTemp | ins_info_serie.awk
+else
+	# Orden tiempo: añadir <RECORD>...</RECORD>
+	sed -e 's/^/		<RECORD>/g;s/$/<\/RECORD>/g' $CachefileTemp
+fi
 
-	# Volcar linea datos
-	echo "		<RECORD>
-			<CAMBIO_SERIE>$cambio_serie</CAMBIO_SERIE>
-			$line
-		</RECORD>" >> $CachefileTemp
-	serieAct=$serie
-done < ${CachefileTemp}.sort
-
-cat < $CachefileTemp
-rm -f ${CachefileTemp} ${CachefileTemp}.sort
+# Eliminar temporales
+rm -f ${CachefileTemp}
 
 # Final xml
 echo "	</${crid_class}>
