@@ -20,7 +20,7 @@ function poner_boton(sNombre, sImagen, sToolTip, sLink, sBotonFinal) {
 function barra_botones() {
 	document.write('<table width="98%" border="0" cellspacing="0" cellpadding="0" align="center"><tr height="64">');
 	poner_boton("Atrás",      "/img/back.gif",        "Atrás",                        "javascript:history.back()"          );
-	poner_boton("Inicio",     "/img/inicio.gif",      "Ir a la página de inicio",     "/cgi-bin/sincro/pgmactual"          );
+	poner_boton("Pr.Actual",  "/img/pgmactual.gif",   "Programa Actual",              "/cgi-bin/sincro/pgmactual"          );
 	poner_boton("Parrilla",   "/img/parrilla.gif",    "Parrilla de programas",        "/cgi-bin/sincro/parrilla"           );
 	poner_boton("Pendientes", "/img/pendientes.gif",  "Grabaciones Pendientes",       "/cgi-bin/crid/ver-lista-timer"      );
 	poner_boton("Grabaciones","/img/grabaciones.gif", "Grabaciones Realizadas",       "/cgi-bin/crid/ver-lista-grabaciones");

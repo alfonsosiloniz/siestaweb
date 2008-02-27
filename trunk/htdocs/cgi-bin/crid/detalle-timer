@@ -2,10 +2,11 @@
 # pepper, (c) Grupo SIESTA, 02-05-2007
 #
 # Mostrar informacion sobre grabacion pendiente.
+# detalle-timer?pid&crid&utc
 
 # Obtener parametros
-Recording=`echo $QUERY_STRING | cut -d"-" -f1`
-Cridfile=`echo $QUERY_STRING | cut -d"-" -f2`
+Recording=`echo $QUERY_STRING | cut -d"&" -f1`
+Cridfile=`echo $QUERY_STRING | cut -d"&" -f2`
 
 # Configurar entorno
 source ../www-setup.shi

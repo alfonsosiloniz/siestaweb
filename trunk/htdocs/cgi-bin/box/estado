@@ -393,7 +393,7 @@ echo "					<tr><td class=\"titTabla\" bgcolor=\"#ffb310\" height=\"4\"></td></tr
 							Estado: Video $ModoVideo / ${STgrabacion[$ModoGrabacion]}
 							<br><br>
 							Versión Firmware: $FIRMWARE_VERSION<br>
-							Versión Firmware SIESTA: $SIESTA_FIRMWARE_VERSION<br>
+							Versión SIESTA: $SIESTA_FIRMWARE_VERSION<br>
 							Versión Aplicación Web: $APP_WEB_VERSION
 							<br><br>
 							Carga del sistema (uptime)

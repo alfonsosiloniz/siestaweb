@@ -8,7 +8,7 @@
 				<a href="javascript:history.back()"           title="Atrás"                         style="text-decoration:none;"><img src="/img/back.gif"         width="32" height="32" border="0" alt="Atrás"/>                        <br/>Atrás</a>
 			</td>
 			<td class="borderBotones" align="center">
-				<a href="/cgi-bin/sincro/pgmactual"           title="Ir a la pagina de inicio"      style="text-decoration:none;"><img src="/img/inicio.gif"       width="32" height="32" border="0" alt="Ir a la pagina de inicio"/>     <br/>Inicio</a>
+				<a href="/cgi-bin/sincro/pgmactual"           title="Programa Actual"               style="text-decoration:none;"><img src="/img/pgmactual.gif"    width="32" height="32" border="0" alt="Programa Actual"/>              <br/>Pr.Actual</a>
 			</td>
 			<td class="borderBotones" align="center">
 				<a href="/cgi-bin/sincro/parrilla"            title="Parrilla de programas"         style="text-decoration:none;"><img src="/img/parrilla.gif"     width="32" height="32" border="0" alt="Parrilla de programas"/>        <br/>Parrilla</a>

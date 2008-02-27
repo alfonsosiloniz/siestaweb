@@ -17,12 +17,12 @@ case $LOGIN_HTTP in
 	htpasswd)
 		# Autentificacion por servidor web
 		echo "`date` Autentificación htpasswd" >> $LOG
-		destino="/cgi-bin/sincro/pgmactual"
+		destino="${PAGINA_INICIO_WEB}"
 		;;
 	nologin)
 		# Login directo
 		echo "`date` Login directo" >> $LOG
-		destino="/cgi-bin/sincro/pgmactual"
+		destino="${PAGINA_INICIO_WEB}"
 		;;
 esac
 

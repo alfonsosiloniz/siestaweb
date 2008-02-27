@@ -1,40 +1,54 @@
 #!/usr/bin/awk -f
-#
 # Lemmi @ m740.info/forum, 2005-08-22 -> GPL
+# jotabe, (c) Grupo SIESTA, 26-02-2008
 #
-# $9 == "."	{ next }
+# Formatear resultdo ls -la
+# nc_file	nº campo que contiene el nombre de fichero
+# col_file	nº columna comienzo nombre de fichero
+# path		ruta carpeta a mostrar
+# uri		url completa de cartepa a mostrar, incluye script y path
 
-		{ img="unknown"; idx=9 }
- $1 ~ /^l/	{ img="link" }
- $1 ~ /^d/	{ img="dir" }
- $1 ~ /^b/	{ img="block-dev"; idx=10 }
- $1 ~ /^c/	{ img="char-dev"; idx=10 }
- $9 == ".."	{ img="dirup"; }
+# Inicializar variables
+# {nc_file=8; col_file=57} para PC
+# {nc_file=9; col_file=57} para M750
+{img="unknown"; idx=nc_file}
 
-    {	name = substr($0,57);
-	pos  = index(name,$idx)+56;
-	info = substr($0,1,pos-1);
-	name = substr($0,pos);
-	if ( img == "link" )
-	{
-	    pos = index(name," -> ");
-	    if ( pos > 0 )
-	    {
-		n1 = substr(name,1,pos-1);
-		n2 = substr(name,pos+4);
-		# Die folgende Zeile ist identisch mit unten
-		printf("<img src=\"/img/%s.png\" alt=\"%s\"> ",img,img);
-		printf("%s<a href=\"%s/%s\">%s</a> -> <a href=\"%s/%s\">%s</a>\n",
-			info,uri,n1,n1,ENVIRON["SCRIPT_NAME"],n2,n2);
-		next;
-	    }
+# Comprobar tipo fichero
+$1 ~ /^l/	{img="link"}
+$1 ~ /^d/	{img="dir"}
+$1 ~ /^b/	{img="block-dev"; idx=nc_file+1}
+$1 ~ /^c/	{img="char-dev"; idx=nc_file+1}
+$9 == ".."	{img="dirup"}
+
+{
+	# Separar info y nombre fichero
+	name=substr($0,col_file)
+	pos=index(name,$idx)+col_file-1
+	info=substr($0,1,pos-1)
+	name=substr($0,pos)
+
+	# Comprobar icono enlace
+	if ( img == "link" ) {
+		pos=index(name," -> ")
+		if ( pos > 0 ) {
+			n1 = substr(name,1,pos-1)
+			n2 = substr(name,pos+4)
+			# Icono
+			printf("<img src=\"/img/%s.png\" alt=\"%s\"> ",img,img)
+		    # Info, enlace y fichero
+			printf("%s<a href=\"%s/%s\">%s</a> -> <a href=\"%s/%s\">%s</a>\n",info,uri,n1,n1,ENVIRON["SCRIPT_NAME"],n2,n2)
+		}
+	# Comprobar icono desconocido
+	} else if ( img == "unknown" ) {
+		# Icono, mostrar envio
+	    printf("<a href=\"%s/%s?send\" title=\"Abrir/Descargar %s\"><img src=\"/img/%s.png\" alt=\"%s\" border=0></a> ",uri,name,name,img,img)
+	    # Info y fichero
+		printf("%s<a href=\"%s/%s\">%s</a>\n",info,uri,name,name)
+	# Directorio o dispositivo
+	} else {
+		# Icono, no mostrar envio
+	    printf("<a href=\"%s/%s\" title=\"Abrir %s\"><img src=\"/img/%s.png\" alt=\"%s\" border=0></a> ",uri,name,name,img,img)
+	    # Info y fichero
+		printf("%s<a href=\"%s/%s\">%s</a>\n",info,uri,name,name)
 	}
-
-	#if ( $1~ /^-/ )
-	    printf("<a href=\"%s/%s?send\" title=\"Open/Download %s\"><img src=\"/img/%s.png\" alt=\"%s\" border=0></a> ",uri,name,name,img,img);
-	#else
-	#    printf("<img src=\"/img/%s.png\" alt=\"%s\"> ",img,img);
-
-	#printf("|%u|%s|%s|\n",pos,info,name);
-	printf("%s<a href=\"%s/%s\">%s</a>\n",info,uri,name,name);
-    }
+}

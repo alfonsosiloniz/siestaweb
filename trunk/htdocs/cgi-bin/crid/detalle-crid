@@ -2,9 +2,10 @@
 # pepper, (c) Grupo SIESTA, 25-04-2007
 #
 # Mostrar informacion sobre grabacion (fichero crid)
+# detalle-crid?crid&utc
 
 # Obtener parametro
-Cridfile=$QUERY_STRING
+Cridfile=`echo $QUERY_STRING | cut -d"&" -f1`
 
 # Configurar entorno
 source ../www-setup.shi
