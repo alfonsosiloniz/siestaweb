@@ -38,9 +38,13 @@ echo "				<br>
 							<input type=\"text\" name=\"command\" id=\"command\" size=\"40\" maxlength=\"100\" class=\"cajaPlana\" value=\"$cmd_print\">&nbsp;&nbsp;
 							<input type=\"Submit\" value=\"Ejecutar\">
 							<script type=\"text/javascript\">document.getElementById('command').focus();</script>
+							<br>&nbsp;
 						</td>
 					</tr>
-				</table>"
+				</table>
+				<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
+					<tr>
+						<td>"
 
 # Comprobar comando
 if [ "Z${cmd}" != "Z" ]; then
@@ -48,41 +52,27 @@ if [ "Z${cmd}" != "Z" ]; then
 	echo "`date` -> $line" >> $LOG
 
 	# Comprobar comando permitido
-	if echo "$cmd_permitidos" | grep -q "\b$cmd\b"
-	then
+	echo "$cmd_permitidos" | grep -q "\b$cmd\b" > /dev/null
+	if [ $? -eq 0 ]; then
 		# Devolver resultado comando
-		echo "				<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
-					<tr>
-						<td>
-							<br>
-							<h2>Resultado: <tt>$cmd_print</tt></h2>
+		echo "							<h2>Resultado: <tt>$cmd_print</tt></h2>
 							<p>
-							<pre style=\"background-color: #FFEEE6; padding: .3em\">`$line 2>&1 | sed 's/&/\&amp;/g;s/</\&lt;/g'`
-							</pre>
-						</td>	
-					</tr>
-				</table>"
+							<pre style=\"background-color: #FFEEE6; padding: .3em\">`$line 2>&1 | sed 's/&/\&amp;/g;s/</\&lt;/g'`</pre>"
 
 		# Poner botones en pie de pagina
 		pie_botones="si"
 	else
 		# Comando no permitido
-		echo "				<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
-					<tr>
-						<td>
-							<br>
-							Comando: <tt>$cmd_print</tt>
+		echo "							<h2>Comando: <tt>$cmd_print</tt></h2>
 							<p>
-							<span style=\"background-color: #FFEEE6; border-color: #a00000\">
-								El comando especificado no está permitido.
-							</span>
+							<span style=\"background-color: #FFEEE6; border-color: #a00000\">El comando especificado no está permitido.</span>
 							<p>
-							Comandos permitidos: <tt>$cmd_permitidos</tt>
-						</td>	
-					</tr>
-				</table>"
+							Comandos permitidos: <tt>$cmd_permitidos</tt>"
 	fi
 fi
 
 # Final html 
+echo "						</td>	
+					</tr>
+				</table>"
 html_doc_end $pie_botones

@@ -1,11 +1,11 @@
 #!/bin/bash
-# pepper, (c) Grupo SIESTA, 02-05-2007
+# pepper, jotabe, (c) Grupo SIESTA, 05-03-2008
 #
 # Mostrar informacion sobre grabacion pendiente.
 # detalle-timer?pid&crid&utc
 
 # Obtener parametros
-Recording=`echo $QUERY_STRING | cut -d"&" -f1`
+pid=`echo $QUERY_STRING | cut -d"&" -f1`
 Cridfile=`echo $QUERY_STRING | cut -d"&" -f2`
 
 # Configurar entorno
@@ -13,46 +13,12 @@ source ../www-setup.shi
 source fweb.shi
 validate_login
 RECS_FILE=/data/RA_FILE
-SERIES_FILE=/data/SM_FILE
 
-num=`grep $Recording $RECS_FILE | cut -d" " -f1`
-gIni=`grep $Recording $RECS_FILE | cut -d" " -f8`
-gIni=$((gIni/60))
-gFin=`grep $Recording $RECS_FILE | cut -d" " -f9`
-gFin=$((gFin/60))
-serieFlag=`grep $Recording $SERIES_FILE | wc -l`
-
-# Recorrer fichero RA_FILE si el identificador de grabacion esta dentro
-n=1
-sint=1
-found=0
-[ ${#num} -ne 0 ] && while read line; do
-	# Saltamos la primera linea
-	if [ $n -gt 1 ]; then
-		# La segunda linea contiene el numero de grabaciones del Sintonizador 1
-		if [ $n -eq 2 ]; then
-			numRecs=$line
-			numRecs=$((numRecs+4))
-		else
-			# Comprobamos si ya hemos leído todas las grabaciones del sintonizador
-			if [ $n -eq $numRecs ]; then
-				numRecsNew=$line
-				numRecs=$(($numRecs+$numRecsNew+1))
-				sint=2
-			else
-				nRec=`echo $line | cut -d" " -f6`
-				if [ ${#nRec} -ne 0 -a ${#num} -ne 0 ]; then
-					if [ $nRec -eq $num ]; then
-						found=1
-						break
-					fi
-				fi
-			fi
-		fi
-	fi
-	# Siguiente linea
-	n=$((n+1))
-done < $RECS_FILE
+# Obtener identificador grabacion, guardas y sintonizador
+id_rec=`grep $pid $RECS_FILE | awk '{print $1}'`
+gIni=`grep $pid $RECS_FILE | awk '{print $8/60}'`
+gFin=`grep $pid $RECS_FILE | awk '{print $9/60}'`
+sint=`grep $pid $RECS_FILE | awk '{print $18+1}'`
 
 # Enviar documento xml
 xml_doc "/xsl/timerdetail.xsl"
@@ -62,19 +28,18 @@ echo "<M750>
 	<TIMER_DETAIL>"
 
 # Procesar resultado
-if [ $found -eq 1 ]; then
+if [ ${#id_rec} -ne 0 ]; then
 	# Devolver datos timer
-	echo "		<NUM_REC>$num</NUM_REC>
+	echo "		<NUM_REC>$id_rec</NUM_REC>
 		<GUARDA_INI>$gIni</GUARDA_INI>
 		<GUARDA_FIN>$gFin</GUARDA_FIN>
-		<SINT>$sint</SINT>
-		<SERIE>$serieFlag</SERIE>"
+		<SINT>$sint</SINT>"
 
 	# Procesar fichero crid
 	./crid2xml.sh $Cridfile
 else
 	# Error identificador no encontrado
-	echo "		<ERROR>La grabación pendiente con identificador $Recording no se encuentra.</ERROR>"
+	echo "		<ERROR>La grabación pendiente con identificador $pid no se encuentra.</ERROR>"
 fi
 
 # Final xml

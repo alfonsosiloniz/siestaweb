@@ -77,7 +77,7 @@ function send() {
 }
 
 #--------------------------------------------------
-# Accion hexdump
+# Accion edit
 # $1 flags
 # $2 mime-type
 # $3 view-cmd
@@ -144,12 +144,6 @@ alert=""
 PATH_INFO=`echo $PATH_INFO | sed -e 's/\/*$//'`
 [ "Z$PATH_INFO" == "Z" ] && PATH_INFO="/"
 
-# echo "script=$SCRIPT_NAME" >> /tmp/show.log
-# echo "   pwd=$PWD" >> /tmp/show.log
-# echo "   dir=$DIR_NAME" >> /tmp/show.log
-# echo "  root=$SERVER_ROOT" >> /tmp/show.log
-# echo "path=$PATH_INFO, uri=$SCRIPT_NAME$PATH_INFO" >> /tmp/show.log
-
 # Comprobar existencia fichero
 if [ ! -e "$PATH_INFO" ]; then
 	print_top "No encontrado $PATH_INFO" "" ""
@@ -165,15 +159,13 @@ elif [ -d "$PATH_INFO" ]; then
 	echo "			<tr>"
 	echo "				<td class=\"fila\">"
 	echo -n "<pre style=\"background-color: #FFEEE6; padding: .2em; font-family: \'Lucida Console\'; color: black;\">"
-
-	# M740, M750, PC
+	# Comprobar maquina: M740, M750, PC
 	get_maquina
 	if [ "Z$MAQUINA" == "ZPC" ]; then
-		ls -la "$PATH_INFO/" | awk -f $0.awk -v "nc_file=8" -v "col_file=57" -v "path=$PATH_INFO" -v "uri=$SCRIPT_NAME$PATH_INFO"
+		ls -la "$PATH_INFO/" | tail -n +2 | awk -f $0.awk -v "nc_file=9" -v "col_file=42" -v "uri=$SCRIPT_NAME$PATH_INFO"
 	else
-		ls -la "$PATH_INFO/" | awk -f $0.awk -v "nc_file=9" -v "col_file=57" -v "path=$PATH_INFO" -v "uri=$SCRIPT_NAME$PATH_INFO"
+		ls -la "$PATH_INFO/" | awk -f $0.awk -v "nc_file=9" -v "col_file=57" -v "uri=$SCRIPT_NAME$PATH_INFO"
 	fi
-
 	echo "</pre>"
 	echo "				</td>"
 	echo "			</tr>"

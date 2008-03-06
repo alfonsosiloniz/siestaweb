@@ -25,8 +25,8 @@ echo "					<pre style=\"background-color:#FFEEE6; padding:.2em\">"
 
 # Procesar fichero
 cat ${FICHERO} \
-| sed -e 's/Series_ID/<hr width="100%" size="2"><font color="#0000FF" style="font-weight: bolder;">Series_ID<\/font>/g' \
-| sed -e 's/EPG_title/<font color="#0000FF" style="font-weight: bolder;">EPG_title<\/font>/g'
+| sed -e 's/Series_ID/<hr width="100%" size="2"><font color="#0000FF" style="font-weight: bolder;">&<\/font>/g' \
+| sed -e 's/EPG_title/<font color="#0000FF" style="font-weight: bolder;">&<\/font>/g'
 
 # Final html
 echo "					</pre>"

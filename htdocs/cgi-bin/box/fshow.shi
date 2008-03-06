@@ -17,7 +17,6 @@
 # $3 Funcion form action (post)
 #--------------------------------------------------
 function print_top() {
-    #html_begin "$1"
     flags="$2"
 
 	# Enviar documento html
@@ -40,40 +39,50 @@ function print_top() {
 			<tr>
 				<td class=\"fila titTabla\"  bgcolor=\"#ffb310\">"
 
-	# Obtener path de fichero con enlaces
-	line=`basename "$PATH_INFO"`
-	tmppath=`dirname "$PATH_INFO"`
-	[ "$PATH_PREFIX" == "///" ] && line=""
-	# Recorrer carpetas poniendo enlaces
-	while [ "$tmppath" != "/" ]; do
-		tmpfile=`basename "$tmppath"`
-		tmppath=`dirname "$tmppath"`
-		line="<font class=\"titChannel\"><a href=\"$SCRIPT_NAME$tmppath/$tmpfile\">$tmpfile</a> / $line</font>"
-	done
-	# Mostrar path
-	echo "					<a class=\"titChannel\" href=\"$SCRIPT_NAME/\">&nbsp;/</a> $line"
+	# Imprimir path fichero con enlaces
+	print_path "$PATH_INFO"
 
 	# Comprobar enlaces simbolicos
 	realpath=`realpath "$PATH_INFO"`
 	if [ $? -eq 0 -a "$PATH_INFO" != "$realpath" ]; then
-		echo "&nbsp; (enlace simbolico en la ruta)<br>"
-		#echo "[<a class=\"titChannel\" href=\"ftp://`hostname -f`$realpath\">FTP</a>] &nbsp;"
-
-		# Obtener path de ruta real con enlaces
-		tmpfile=`basename "$realpath"`
-		tmppath=`dirname "$realpath"`
-		line="<a class=\"titChannel\" href=\"$SCRIPT_NAME$tmppath/$tmpfile\">$tmpfile</a>"
-		# Recorrer carpetas poniendo enlaces
-		while [ "$tmppath" != "/" ]; do
-			tmpfile=`basename "$tmppath"`
-			tmppath=`dirname "$tmppath"`
-			line="<a class=\"titChannel\" href=\"$SCRIPT_NAME$tmppath/$tmpfile\">$tmpfile</a> / $line"
-		done
-		# Mostrar path real
-		echo "					<a class=\"titChannel\" href=\"$SCRIPT_NAME/\">&nbsp;/</a> $line"
+		# Añadir mensaje de enlace simbolico
+		echo "&nbsp;(enlace simbólico en la ruta)<br>"
+		# Imprimir path de ruta real con enlaces
+		print_path "$realpath" "si"
 	fi
+
+	# Cerrar fila/columna
 	echo "				</td>"
 	echo "			</tr>"
+}
+
+#--------------------------------------------------
+# Imprimir path de fichero con enlaces
+# $1 Path
+# $2 Resaltar parte fichero
+#--------------------------------------------------
+function print_path() {
+	# Inicializar variables
+	tmp_file=`basename "$1" 2>/dev/null`
+	tmp_path=`dirname "$1" 2>/dev/null`
+
+	# Comprobar resalte parte fichero
+	if [ "Z$2" != "Zsi" ]; then
+		tmp_line=$tmp_file
+	else
+		tmp_line="<a class=\"titChannel\" href=\"$SCRIPT_NAME$tmp_path/$tmp_file\">$tmp_file</a>"
+	fi
+
+	# Recorrer carpetas poniendo enlaces
+	while [ ${#tmp_path} -gt 1 ]; do
+		tmp_file=`basename "$tmp_path" 2>/dev/null`
+		tmp_path=`dirname "$tmp_path" 2>/dev/null`
+		[ "$tmp_path" == "/" ] && tmp_path=""
+		tmp_line="<a class=\"titChannel\" href=\"$SCRIPT_NAME$tmp_path/$tmp_file\">$tmp_file</a>&nbsp;/&nbsp;$tmp_line"
+	done
+
+	# Mostrar path
+	echo "					<a class=\"titChannel\" href=\"$SCRIPT_NAME/\">&nbsp;/</a>&nbsp;$tmp_line"
 }
 
 #--------------------------------------------------
@@ -88,8 +97,10 @@ function print_actions() {
 	[ $action != hexdump ] && echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?hexdump\">HEXDUMP</a>]"
 	# Accion edit si tamaño fichero es menor de 50000
 	if [ $action != edit -a ${flags/*e*/ok} == ok ]; then
-		info=(`ls -l "$PATH_INFO"`)
-		[ ${info[4]} -le 50000 ] && echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?edit\">EDIT</a>]"
+		if [ -f $PATH_INFO ]; then
+			info=`ls -l "$PATH_INFO" 2>/dev/null | awk '{print $5}'`
+			[ ${info} -le 50000 ] && echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?edit\">EDIT</a>]"
+		fi
 	fi
 	# Accion download
 	echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?send\">DOWNLOAD</a>]"

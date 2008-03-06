@@ -41,18 +41,23 @@ Puede estar desactivado, sincronizar solo al arrancar o
 periodicamente cada hora en el minuto 25.
 
 
-#PARAMETRO: SIESTA_SKIN key clasico todopvr usuario
-SIESTA_SKIN = clasico
+#PARAMETRO: SIESTA_SKIN str /usr/local/etc/TRlight.skin.bz2
+SIESTA_SKIN = /usr/local/etc/TRlight.skin.bz2
 
-Skin a utilizar. Por defecto se utiliza el skin clasico que tiene
-unos iconos mas conservadores.
+Skin a utilizar. A partir de la versión 3.3.11 se utiliza el
+skin 'Transparent Light' (TRlight.skin.bz2).
 
-El skin LCK-SIESTA tiene unos iconos extraidos de nuestra página
-web www.todopvr.com (iconos amarillos).
+Para cambiar el skin de nuestro gigaset debemos copiar el
+fichero de skin a /data, poner en este parámetro la ruta
+completa de ese fichero y reiniciar.
 
-El valor 'usuario' se utilizará cuando se introduzcan cambios
-personales en los iconos a utilizar y no deseamos que sean
-sobre-escritos por alguna de las otras opciones.
+Tras el reinicio se instalará el skin y se borrará el fichero de
+skin para que no se produzca la reinstalación en sucesivos
+arranques.
+
+Podemos poner hasta 4 ficheros de skin que serán instalados en
+el orden en el que aparezcan. Los nombres de ficheros de skin no
+pueden contener espacios.
 
 
 #PARAMETRO: SIESTA_SHOW_FIRM_ONBOOT key si no

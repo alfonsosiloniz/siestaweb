@@ -47,53 +47,10 @@ echo "	<M740>
 	<SINCROGUIA miniatures=\"$MOSTRAR_MINI_IMG\" getImgInet=\"$OBTENER_IMG_INET\" localSincroImgAcc=\"$DIR_IMG_SINCRO_ACCESIBLE\">"
 
 # Recorrer resultados
-fileAnt=""
-while read line; do
-	file=`echo $line | cut -d":" -f1`
-	chID=`echo $file | cut -d"." -f2`
-	dateIni=`echo $line | cut -d"_" -f1 | cut -d":" -f2`
-	pid=`echo $line | cut -d"_" -f2`
-	pidcid=`echo $line | cut -d"_" -f3`
-	dateFormatIni=`echo $line | cut -d"_" -f4`
-	longs=`echo $line | cut -d"_" -f5`
-	titulo=`echo $line | cut -d"_" -f6`
-	subtitulo=`echo $line | cut -d"_" -f7`
-	imagen=`echo $line | cut -d"_" -f8-`
-
-	# Comprobar cambio de canal
-	if [ "$fileAnt" != "$file" ]; then
-		# Completar canal anterior
-		[ "Z$fileAnt" != "Z" ] && echo "		</CHANNEL>"
-
-		# Obtener datos canal
-		mapping=`grep :${chID}: ${Cache}/info_channels.txt | head -1`
-		cid=`echo "$mapping" | cut -d":" -f2`
-		chName=`echo "$mapping" | cut -d":" -f4`
-		numChannel=`echo "$mapping" | cut -d":" -f1`
-
-		# Datos xml de canal
-		echo "		<CHANNEL cid=\"$cid\" id=\"${chID}\" name=\"$chName\" file=\"$1\" numChannel=\"$numChannel\">"
-	fi
-
-	# Datos xml de programa
-	echo "			<PROGRAM id=\"${pid}\" pid=\"${pidcid}\" chid=\"${chID}\">
-				<TITLE>$titulo</TITLE>
-				<SUBTITLE>$subtitulo</SUBTITLE>
-				<IMAGE>$imagen</IMAGE>
-				<LONG>$longs</LONG>
-				<DATE>$dateFormatIni</DATE>
-				<DATE_UTC>$dateIni</DATE_UTC>
-			</PROGRAM>"
-
-	# Guardar nombre canal
-	fileAnt=$file
-done < $SEARCH_RESULT
+buscarPrograma.awk -v "cache=${Cache}" $SEARCH_RESULT
 
 # Eliminar temporales
 rm -f $SEARCH_RESULT
-
-# Completar canal anterior
-[ "Z$fileAnt" != "Z" ] && echo "		</CHANNEL>"
 
 echo "	</SINCROGUIA>
 </M740>"

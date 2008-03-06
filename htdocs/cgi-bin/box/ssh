@@ -12,16 +12,17 @@ validate_login
 html_doc_start "M750T - Conexión SSH" "" "------b-" ""
 html_top "Conexión SSH" "" "" ""
 cat << --EOF--
-				<applet
-					code="com.mindbright.application.MindTerm.class"
-					archive="/util/mindterm_ns.jar"
-					width="0" height="0">
+				<applet archive="/util/mindterm_ns.jar" code="com.mindbright.application.MindTerm.class" width="0" height="0">
 					<param name="cabinets" value="mindterm_ie.cab">
 					<param name="sepframe" value="true">
-					<param name="autoprops" value="both">
+					<param name="scrollbar" value="right">
+					<param name="resize-gravity" value="top">
+					<param name="geometry" value="80x24">
+					<param name="fg-color" value="white">
+					<param name="bg-color" value="black">
+					<param name="cursor-color" value="i_blue">
 					<param name="debug" value="true">
-					<param name="appletbg" value="black">
-					<param name="appletfg" value="green">
+					<param name="autoprops" value="both">
 					<param name="exit-on-logout" value="true">
 				</applet>
 				<font class="txtInfo" align="left">
