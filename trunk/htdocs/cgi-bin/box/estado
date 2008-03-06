@@ -56,7 +56,7 @@ echo "				<br>
 								<option value=\"log_synctime\">Log de sincronización de hora</option>
 								<option value=\"log_run_httpd\">Ejecuciones de run-httpd.sh</option>
 								<option value=\"log_thttpd\">Log thttpd</option>
-								<option value=\"log_swap\">Log Swap</option>
+								<option value=\"log_swap\">Log swap</option>
 								<option value=\"log_record\">Grabaciones programadas/canceladas desde la aplicación</option>
 								<option value=\"log_login\">Login en la aplicación</option>
 								<option value=\"log_search\">Búsquedas realizadas</option>
@@ -71,6 +71,7 @@ echo "				<br>
 								<option value=\"log_RECORDER_LOG\">Log del grabador</option>
 								<option value=\"log_WDG\">Reinicios wavebox (watchdog)</option>
 								<option value=\"log_df\">Espacio en disco (df)</option>
+								<option value=\"log_estado_swap\">Estado swap (/proc/swaps)</option>
 								<option value=\"log_free\">Uso de memoria (free)</option>
 								<option value=\"log_crontab\">Procesos Planificados (crontab -l)</option>
 								<option value=\"log_ifconfig\">Configuración de Red (ifconfig)</option>
@@ -129,7 +130,7 @@ echo "				<br>
 		log_thttpd )
 			print_log_file "Log thttpd"                                                "/var/log/thttpd.log";;
 		log_swap )
-			print_log_file "Log Swap"                                                  "/var/log/swap.log";;
+			print_log_file "Log swap"                                                  "/var/log/swap.log";;
 		log_record )
 			print_log_file "Grabaciones programadas/canceladas desde la aplicación"    "/tmp/record.log";;
 		log_login )
@@ -174,6 +175,8 @@ echo "				<br>
 			print_log_file "Reinicios wavebox (watchdog)"                              "/data/WDG_LOG";;
 		log_df )
 			print_log_file "Espacio en disco (df)"                                     "/dev/null"                "df";;
+		log_estado_swap )
+			print_log_file "Estado swap (/proc/swaps)"                                 "/proc/swaps";;
 		log_free )
 			print_log_file "Uso de memoria (free)"                                     "/dev/null"                "free";;
 		log_crontab )

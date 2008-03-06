@@ -77,12 +77,12 @@ function mostrarMensajeProceso() {
 //-------------------------------------------------
 function eliminarMensajeProceso() {
 	// Eliminar elemento 'mensajeproceso'
-	if(document.getElementById("mensajeproceso")!=null){
+	if(document.getElementById("mensajeproceso")!=null) {
 		document.body.removeChild(document.getElementById("mensajeproceso"));
 	}
 
 	// Eliminar elemento 'divTapa'
-	if(document.getElementById("divTapa")!=null){
+	if(document.getElementById("divTapa")!=null) {
 		document.body.removeChild(document.getElementById("divTapa"));
 	}
 
@@ -142,22 +142,21 @@ function moveTapa() {
 // divLeft	Valor Left
 //-------------------------------------------------
 function moveDiv(divName, divTop, divLeft) {
-    if (document.all) {
-        if (document.all[divName]!= null){
-            if (document.all[divName].style!= null){
+	if (document.all) {
+        if (document.all[divName] != null) {
+            if (document.all[divName].style != null) {
                 document.all[divName].style.top=divTop+"px";
                 document.all[divName].style.left=divLeft+"px";
            }
         }
-    }
-    else {
-        if (document.getElementById(divName)!= null){
-            if (document.getElementById(divName).style!= null){
+	} else {
+        if (document.getElementById(divName) != null) {
+            if (document.getElementById(divName).style != null) {
                 document.getElementById(divName).style.top=divTop+"px";
                 document.getElementById(divName).style.left=divLeft+"px";
            }
         }
-    }
+	}
 }
 
 //-------------------------------------------------
@@ -166,10 +165,9 @@ function moveDiv(divName, divTop, divLeft) {
 function checkURL() {
 	vueltas ++;
 	url_2 = getURL();
-	if(url_1 == url_2 && vueltas < 20){
+	if(url_1 == url_2 && vueltas < 20) {
 		window.setTimeout("checkURL()",100);
-	}
-	else{
+	} else {
 		vueltas = 0;
 		msgprocesando=false;
 	}

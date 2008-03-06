@@ -118,15 +118,20 @@ if [ $numCrids -ne 0 ]; then
 	done
 fi
 
+# Insertar campo <CAMBIO_SERIE> que indica si del registro anterior al actual,
+# ha cambiado el identificador de Serie, para luego mostrarlo correctamente,
+# diferenciando entre series. Si el orden es por tiempo este campo no se utiliza.
+sort -r $CachefileTemp | ins_info_serie.awk -v "cache=${Cache}"
+
 # Comprobar orden del resultado serie/tiempo
-if [ ${3/*serie*/OK} == OK ]; then
+# if [ ${3/*serie*/OK} == OK ]; then
 	# Orden serie: insertar campo <CAMBIO_SERIE> que indica si del registro anterior
 	# al actual, ha cambiado el identificador de Serie, para luego pintarlo correctamente en pantalla, diferenciando entre series.
-	sort -r $CachefileTemp | ins_info_serie.awk
-else
-	# Orden tiempo: añadir <RECORD>...</RECORD>
-	sed -e 's/^/		<RECORD>/g;s/$/<\/RECORD>/g' $CachefileTemp
-fi
+# 	sort -r $CachefileTemp | ins_info_serie.awk -v "cache=${Cache}"
+# else
+# 	# Orden tiempo: añadir <RECORD>...</RECORD>
+# 	awk '{printf("\t\t<RECORD>\n\t\t\t%s\n\t\t</RECORD>\n",$0)}' $CachefileTemp
+# fi
 
 # Eliminar temporales
 rm -f ${CachefileTemp}

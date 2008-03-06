@@ -1,7 +1,7 @@
 #!/bin/bash
 # jotabe, (c) Grupo SIESTA, 13-02-2008
 #
-# Mostrar informacion de red
+# Mostrar informacion de MAC
 
 # Obtener MAC de picctl
 echo "  picctl get-mac -> `picctl get-mac | awk '{print toupper($1)}'`"

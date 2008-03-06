@@ -38,7 +38,7 @@ if [ -s ${CACHE_FILE}.xml ]; then
  	xml_doc "/xsl/sincro.xsl"
 	echo "<M740>
 	<SINCROGUIA actual=\"$pgmActual\" miniatures=\"$MOSTRAR_MINI_IMG\" getImgInet=\"$OBTENER_IMG_INET\" localSincroImgAcc=\"$DIR_IMG_SINCRO_ACCESIBLE\">
-`cat < ${CACHE_FILE}.xml`
+`cat ${CACHE_FILE}.xml`
 	</SINCROGUIA>
 </M740>"
 else

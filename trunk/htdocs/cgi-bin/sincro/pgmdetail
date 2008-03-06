@@ -42,16 +42,12 @@ EPG_LONG_FILE=$EPG_PATH/EPGLong_$chID.txt.bz2
 EPG_LONG_FILE_UNZIP=$Cache/EPGLong_$chID.txt
 [ $EPG_LONG_FILE -nt $EPG_LONG_FILE_UNZIP ] && bzcat $EPG_LONG_FILE > $EPG_LONG_FILE_UNZIP
 
-# Extrar texto
+# Extraer texto
 text=`www-tools get-epg-long $EPG_LONG_FILE_UNZIP $long`
 
 # Comprobar grabacion pendiente
 inRA=`grep $pid /data/RA_FILE | wc -l`
-if [ $inRA -gt 0 ]; then
-	pendiente=1
-else
-	pendiente=0
-fi
+[ $inRA -gt 0 ] && pendiente=1 || pendiente=0
 
 # Eliminar fichero descripciones largas
 [ "Z$CACHE_EPG_LONG" = "Zno" ] && rm -f $EPG_LONG_FILE_UNZIP

@@ -1,5 +1,5 @@
 #!/bin/bash
-# jotabe, (c) Grupo SIESTA, 24-08-2007
+# jotabe, (c) Grupo SIESTA, 03-03-2008
 #
 # Configuracion SIESTA
 
@@ -61,6 +61,13 @@ SIESTA_SETTINGS_FILE=/var/etc/siesta-settings.txt
 SIESTA_SETTINGS_DESC_PARAM=$SERVER_ROOT/docs/siesta-settings.desc
 SIESTA_SETTINGS_DESC_PARAM_IX=/tmp/siesta-settings.desc.ix
 
+# Calcular tamaños
+if [ $VER_DESCRIPCIONES -ne 0 ]; then
+	W1=22; W2=28; W3=1; W4=49
+else
+	W1=40; W2=58; W3=1; W4=1
+fi
+
 # Enviar documento html
 html_doc_start "M750T - Configuración SIESTA" "" "-an-e-b-"
 
@@ -97,17 +104,18 @@ while read line; do
 			NombreParametro=${TMP[0]}
 			IdParametro=PAR_${NombreParametro}
 			TipoParametro=${TMP[1]}
+			ValorPorDefecto=${TMP[2]}
 			TMP2=`grep ^${NombreParametro} $SIESTA_SETTINGS_FILE | cut -d"=" -f2-`
 			ValorParametro=${TMP2# }
 
 			# Nombre parametro
 			echo "					<tr bgcolor=\"$bgcolor\">
-						<td width=\"25%\" align=\"right\" class=\"txtParam\">
+						<td width=\"${W1}%\" align=\"right\" class=\"txtParam\">
 							${NombreParametro}:&nbsp;
 						</td>"
 
 			# Tipo de parametro
-			echo "						<td width=\"20%\" align=\"left\" class=\"txtParam\">"
+			echo "						<td width=\"${W2}%\" align=\"left\" class=\"txtParam\">"
 			case $TipoParametro in
 				key )
 					# Parametro key, desplegable
@@ -137,11 +145,15 @@ while read line; do
 					echo "							$TipoParametro"
 					;;
 			esac
-			echo "						</td>"
+
+# 								<font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Major</font></th>
+
+			echo "							&nbsp;<input type=\"button\" onclick=\"document.getElementById('${IdParametro}').value='${ValorPorDefecto}'\" value=\"..\" title=\"Valor por defecto: '${ValorPorDefecto}'\">
+						</td>"
 
 			# Descripcion parametro
-			echo "						<td width=\"1%\">&nbsp;</td>"
-			echo "						<td width=\"54%\" align=\"left\" class=\"txtDescParam\">"
+			echo "						<td width=\"${W3}%\">&nbsp;</td>"
+			echo "						<td width=\"${W4}%\" align=\"left\" class=\"txtDescParam\">"
 			[ $VER_DESCRIPCIONES -ne 0 ] && desc_parametro $NombreParametro
 			echo "						</td>
 					</tr>"
@@ -153,12 +165,13 @@ done < $SIESTA_SETTINGS_CONF_FILE
 echo "					<tr>
 						<td align=\"center\">
 							<br><input type=\"button\" onclick=\"window.open('/cgi-bin/box/verParamSIESTA','paramSIESTA','menubar=no,toolbar=NO,scrollbars=yes,resizable=YES,width=800,height=600');\" value=\"Ayuda parámetros\">
-						</td>
-						<td colspan=\"2\">&nbsp;</td>
-						<td align=\"center\">
+						</td>"
+[ $VER_DESCRIPCIONES -ne 0 ] && echo "						<td colspan=\"2\">&nbsp;</td>"
+echo "						<td align=\"center\">
 							<br><input type=\"button\" onclick=\"guardarDatosForm();\" value=\"Guardar\">
-						</td>
-					</tr>
+						</td>"
+[ $VER_DESCRIPCIONES -eq 0 ] && echo "						<td colspan=\"2\">&nbsp;</td>"
+echo "					</tr>
 				</table>"
 
 # Final html

@@ -68,8 +68,9 @@
 								<td class="txtNormal" align="center"><xsl:value-of select="/M750/TIMER_DETAIL/SINT" /></td>
 								<td class="txtNormal" align="center">
 									<xsl:choose>
-										<xsl:when test="/M750/TIMER_DETAIL/SERIE='      0'">1x</xsl:when>
-										<xsl:otherwise>Serie</xsl:otherwise>
+										<xsl:when test="/M750/TIMER_DETAIL/SERIE_ID &gt; '0'">Lo mejor de ...</xsl:when>
+										<xsl:when test="/M750/TIMER_DETAIL/SERIE_ID &lt; '0'">Serie</xsl:when>
+										<xsl:otherwise>1x</xsl:otherwise>
 									</xsl:choose>
 								</td>
 							</tr>
