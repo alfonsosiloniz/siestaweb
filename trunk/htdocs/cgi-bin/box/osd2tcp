@@ -9,9 +9,9 @@ source fweb.shi
 validate_login
 
 # Enviar documento html
-html_doc_start "M750T - OSD" "" "-an---bm" "
+html_doc_start "M750T - OSD" "" "an---bm" "
 function txt2osd() {
-	makeRequest(\"/cgi-bin/run/txt2osd?\" + document.forms[0].texto.value + \"-\" + document.forms[0].size.value + \"-\" + document.forms[0].secs.value, \"noReplyLogin\");
+	makeRequest(\"/cgi-bin/run/txt2osd?\" + document.forms[0].texto.value + \"&\" + document.forms[0].size.value + \"&\" + document.forms[0].secs.value, \"noReplyLogin\");
 }
 function timeshift_on() {
 	makeRequest(\"/cgi-bin/run/timeshift_on\", \"noReplyLogin\");
@@ -43,37 +43,37 @@ cat << --EOF--
 						</td>
 						<td>
 							<map name="mandoM750">
-								<area alt="POWER" shape="circle" coords="97,15,14" href="javascript:enviarTecla('POWER')">
-								<area alt="1" shape="CIRCLE" coords="19,58,16" href="javascript:enviarTecla('1')">
-								<area alt="2" shape="CIRCLE" coords="60,58,16" href="javascript:enviarTecla('2')">
-								<area alt="3" shape="CIRCLE" coords="100,58,15" href="javascript:enviarTecla('3')">
-								<area alt="4" shape="CIRCLE" coords="20,99,15" href="javascript:enviarTecla('4')">
-								<area alt="5" shape="circle" coords="60,98,15" href="javascript:enviarTecla('5')">
-								<area alt="6" shape="CIRCLE" coords="100,97,15" href="javascript:enviarTecla('6')">
-								<area alt="7" shape="CIRCLE" coords="20,138,16" href="javascript:enviarTecla('7')">
-								<area alt="8" shape="CIRCLE" coords="59,138,16" href="javascript:enviarTecla('8')">
-								<area alt="9" shape="CIRCLE" coords="99,139,16" href="javascript:enviarTecla('9')">
-								<area alt="0" shape="CIRCLE" coords="60,178,15" href="javascript:enviarTecla('0')">
-								<area alt="PIP" shape="CIRCLE" coords="16,214,12" href="javascript:enviarTecla('CHANNEL_UP')">
-								<area alt="HELP" shape="CIRCLE" coords="102,215,13" href="javascript:enviarTecla('HELP')">
-								<area alt="OK" shape="CIRCLE" coords="60,260,19" href="javascript:enviarTecla('OK')">
-								<area alt="ARRIBA" coords="38,217,82,236" href="javascript:enviarTecla('CURSOR_UP')">
-								<area alt="DERECHA" coords="85,234,100,281" href="javascript:enviarTecla('CURSOR_RIGHT')">
-								<area alt="IZQUIERDA" coords="17,234,34,281" href="javascript:enviarTecla('CURSOR_LEFT')">
-								<area alt="ABAJO" coords="38,281,82,302" href="javascript:enviarTecla('CURSOR_DOWN')">
-								<area alt="EXIT" shape="CIRCLE" coords="20,298,15" href="javascript:enviarTecla('TV')">
-								<area alt="MENU" shape="CIRCLE" coords="19,339,15" href="javascript:enviarTecla('MENU')">
-								<area alt="EPG/SINCROGUIA" shape="circle" coords="60,337,15" href="javascript:enviarTecla('CHANNEL_DOWN')">
-								<area alt="INFO" shape="CIRCLE" coords="100,338,15" href="javascript:enviarTecla('INFO')">
-								<area alt="<<" shape="CIRCLE" coords="16,382,12" href="javascript:enviarTecla('REWIND')">
-								<area alt="STOP/RECORD" shape="CIRCLE" coords="45,392,12" href="javascript:enviarTecla('STOP')">
-								<area alt="PLAY/PAUSE" shape="circle" coords="74,392,11" href="javascript:enviarTecla('PLAY')">
-								<area alt=">>" shape="CIRCLE" coords="105,381,12" href="javascript:enviarTecla('FASTFORWARD')">
-								<area alt="ROJO" shape="CIRCLE" coords="15,421,12" href="javascript:enviarTecla('RED')">
-								<area alt="VERDE" shape="CIRCLE" coords="45,420,12" href="javascript:enviarTecla('GREEN')">
-								<area alt="AMARILLO" shape="CIRCLE" coords="75,421,12" href="javascript:enviarTecla('YELLOW')">
-								<area alt="AZUL" shape="CIRCLE" coords="105,420,12" href="javascript:enviarTecla('BLUE')">
-								<area alt="MUTE" shape="CIRCLE" coords="100,299,13" href="javascript:enviarTecla('DELETE')">
+								<area title="POWER" shape="circle" coords="97,15,14" href="javascript:enviarTecla('POWER')">
+								<area title="1" shape="CIRCLE" coords="19,58,16" href="javascript:enviarTecla('1')">
+								<area title="2" shape="CIRCLE" coords="60,58,16" href="javascript:enviarTecla('2')">
+								<area title="3" shape="CIRCLE" coords="100,58,15" href="javascript:enviarTecla('3')">
+								<area title="4" shape="CIRCLE" coords="20,99,15" href="javascript:enviarTecla('4')">
+								<area title="5" shape="circle" coords="60,98,15" href="javascript:enviarTecla('5')">
+								<area title="6" shape="CIRCLE" coords="100,97,15" href="javascript:enviarTecla('6')">
+								<area title="7" shape="CIRCLE" coords="20,138,16" href="javascript:enviarTecla('7')">
+								<area title="8" shape="CIRCLE" coords="59,138,16" href="javascript:enviarTecla('8')">
+								<area title="9" shape="CIRCLE" coords="99,139,16" href="javascript:enviarTecla('9')">
+								<area title="0" shape="CIRCLE" coords="60,178,15" href="javascript:enviarTecla('0')">
+								<area title="PiP" shape="CIRCLE" coords="16,214,12" href="javascript:enviarTecla('CHANNEL_UP')">
+								<area title="HELP" shape="CIRCLE" coords="102,215,13" href="javascript:enviarTecla('HELP')">
+								<area title="OK" shape="CIRCLE" coords="60,260,19" href="javascript:enviarTecla('OK')">
+								<area title="ARRIBA" coords="38,217,82,236" href="javascript:enviarTecla('CURSOR_UP')">
+								<area title="DERECHA" coords="85,234,100,281" href="javascript:enviarTecla('CURSOR_RIGHT')">
+								<area title="IZQUIERDA" coords="17,234,34,281" href="javascript:enviarTecla('CURSOR_LEFT')">
+								<area title="ABAJO" coords="38,281,82,302" href="javascript:enviarTecla('CURSOR_DOWN')">
+								<area title="EXIT" shape="CIRCLE" coords="20,298,15" href="javascript:enviarTecla('TV')">
+								<area title="MENU" shape="CIRCLE" coords="19,339,15" href="javascript:enviarTecla('MENU')">
+								<area title="EPG/SINCROGUIA" shape="circle" coords="60,337,15" href="javascript:enviarTecla('CHANNEL_DOWN')">
+								<area title="INFO" shape="CIRCLE" coords="100,338,15" href="javascript:enviarTecla('INFO')">
+								<area title="<<" shape="CIRCLE" coords="16,382,12" href="javascript:enviarTecla('REWIND')">
+								<area title="STOP/RECORD" shape="CIRCLE" coords="45,392,12" href="javascript:enviarTecla('STOP')">
+								<area title="PLAY/PAUSE" shape="circle" coords="74,392,11" href="javascript:enviarTecla('PLAY')">
+								<area title=">>" shape="CIRCLE" coords="105,381,12" href="javascript:enviarTecla('FASTFORWARD')">
+								<area title="ROJO" shape="CIRCLE" coords="15,421,12" href="javascript:enviarTecla('RED')">
+								<area title="VERDE" shape="CIRCLE" coords="45,420,12" href="javascript:enviarTecla('GREEN')">
+								<area title="AMARILLO" shape="CIRCLE" coords="75,421,12" href="javascript:enviarTecla('YELLOW')">
+								<area title="AZUL" shape="CIRCLE" coords="105,420,12" href="javascript:enviarTecla('BLUE')">
+								<area title="MUTE" shape="CIRCLE" coords="100,299,13" href="javascript:enviarTecla('DELETE')">
 							</map>
 							<img src="/img/mando.jpg" width="120" height="447" border="1" usemap="#mandoM750">
 						</td>
@@ -84,7 +84,7 @@ cat << --EOF--
 					<tr>
 						<td class="txtNormal">
 							Enviar texto a TV: <input class="cajaPlana" name="texto" type="text" size="50" maxsize="100" value="">&nbsp;
-							Tamaño Letra: <select name="size" class="txtNormal">
+							Tamaño Letra: <select name="size" class="cajaPlana">
 								<option value="10">10</option>
 								<option value="15">15</option>
 								<option value="20">20</option>
@@ -95,7 +95,7 @@ cat << --EOF--
 								<option value="45">45</option>
 								<option value="50">50</option>
 							</select>
-							Segundos: <select name="secs" class="txtNormal">
+							Segundos: <select name="secs" class="cajaPlana">
 								<option value="1">1</option>
 								<option value="2">2</option>
 								<option value="3">3</option>
@@ -116,9 +116,9 @@ cat << --EOF--
 					</tr>
 				</table>
 				<br>
-				<table width="100%" align="center" border="1" cellspacing="0" cellpadding="2" class="borderTabla2">
+				<table width="100%" align="center" border="1" cellspacing="0" cellpadding="2" class="borderTabla_sup">
 					<tr>
-						<td bgcolor="#ffb310" class="titTabla" align="center">Tecla</td>
+						<td class="txtNegritaResalte" align="center">Tecla</td>
 						<td class="txtNormal" align="center">Supr.</td>
 						<td class="txtNormal" align="center">0-9</td>
 						<td class="txtNormal" align="center">Cursores</td>
@@ -140,7 +140,7 @@ cat << --EOF--
 						<td class="txtNormal" align="center">F4</td>
 					</tr>
 					<tr>
-						<td bgcolor="#ffb310" class="titTabla" width="100">Botón Mando</td>
+						<td class="txtNegritaResalte" align="center" width="100">Botón Mando</td>
 						<td class="txtNormal" align="center"><a href="javascript:enviarTecla('POWER')">POWER</a></td>
 						<td class="txtNormal" align="center">
 							<a href="javascript:enviarTecla('1')">1</a>
@@ -158,17 +158,17 @@ cat << --EOF--
 							<table width="100%" border="0" cellspacing="0" cellpadding="0" class="txtNormal">
 								<tr>
 									<td align="center">&nbsp;</td>
-									<td align="center"><a href="javascript:enviarTecla('CURSOR_UP')"><img src="/img/arriba.gif" alt="Arriba" border="0"></a></td>
+									<td align="center"><a title="Arriba" href="javascript:enviarTecla('CURSOR_UP')"><img src="/img/arriba.gif" border="0"></a></td>
 									<td align="center">&nbsp;</td>
 								</tr>
 								<tr>
-									<td align="center"><a href="javascript:enviarTecla('CURSOR_LEFT')"><img src="/img/izquierda.gif" alt="Izquierda" border="0"></a></td>
+									<td align="center"><a title="Izquierda" href="javascript:enviarTecla('CURSOR_LEFT')"><img src="/img/izquierda.gif" border="0"></a></td>
 									<td align="center"><a href="javascript:enviarTecla('OK')">OK</a></td>
-									<td align="center"><a href="javascript:enviarTecla('CURSOR_RIGHT')"><img src="/img/derecha.gif" alt="Derecha" border="0"></a></td>
+									<td align="center"><a title="Derecha" href="javascript:enviarTecla('CURSOR_RIGHT')"><img src="/img/derecha.gif" border="0"></a></td>
 								</tr>
 								<tr>
 									<td align="center">&nbsp;</td>
-									<td align="center"><a href="javascript:enviarTecla('CURSOR_DOWN')"><img src="/img/abajo.gif" alt="Abajo" border="0"></a></td>
+									<td align="center"><a title="Abajo" href="javascript:enviarTecla('CURSOR_DOWN')"><img src="/img/abajo.gif" border="0"></a></td>
 									<td align="center">&nbsp;</td>
 								</tr>
 							</table>
@@ -178,20 +178,20 @@ cat << --EOF--
 						<td class="txtNormal" align="center"><a href="javascript:enviarTecla('TV')">EXIT</a></td>
 						<td class="txtNormal" align="center"><a href="javascript:enviarTecla('CHANNEL_DOWN')">EPG</a></td>
 						<td class="txtNormal" align="center"><a href="javascript:enviarTecla('INFO')">INFO</a></td>
-						<td class="txtNormal" align="center"><a href="javascript:enviarTecla('CHANNEL_UP')">PIP</a></td>
+						<td class="txtNormal" align="center"><a href="javascript:enviarTecla('CHANNEL_UP')">PiP</a></td>
 						<td class="txtNormal" align="center"><a href="javascript:enviarTecla('HELP')">HELP</a></td>
-						<td class="txtNormal" align="center"><a href="javascript:enviarTecla('DELETE')"><img src="/img/mute.gif" alt="Silencio" border="0"></a></td>
-						<td class="txtNormal" align="center"><a href="javascript:enviarTecla('REWIND')"><img src="/img/rev_1.gif" alt="Rebobinado Rápido" border="0"></a></td>
+						<td class="txtNormal" align="center"><a title="Silencio" href="javascript:enviarTecla('DELETE')"><img src="/img/mute.png" border="0"></a></td>
+						<td class="txtNormal" align="center"><a title="Retroceso rápido" href="javascript:enviarTecla('REWIND')"><img src="/img/rev_1.png" border="0"></a></td>
 						<td class="txtNormal" align="center">
 							<table width="100%" border="0" cellspacing="0" cellpadding="0" class="txtNormal">
 								<tr>
-									<td align="center"><a href="javascript:enviarTecla('STOP')"><img src="/img/record.gif" alt="Record" border="0"></a></td>
+									<td align="center"><a title="Grabar" href="javascript:enviarTecla('STOP')"><img src="/img/record.png" border="0"></a></td>
 								</tr>
 								<tr>
 									<td align="center">&nbsp;</td>
 								</tr>
 								<tr>
-									<td align="center"><a href="javascript:enviarTecla('STOP')"><img src="/img/stop.gif" alt="Stop" border="0"></a></td>
+									<td align="center"><a title="Stop" href="javascript:enviarTecla('STOP')"><img src="/img/stop.png" border="0"></a></td>
 								</tr>
 							</table>
 						</td>
@@ -199,17 +199,17 @@ cat << --EOF--
 						<td class="txtNormal" align="center">
 							<table width="100%" border="0" cellspacing="0" cellpadding="0" class="txtNormal">
 								<tr>
-									<td align="center"><a href="javascript:enviarTecla('PLAY')"><img src="/img/pause.gif" alt="Pause" border="0"></a></td>
+									<td align="center"><a title="Pausa" href="javascript:enviarTecla('PLAY')"><img src="/img/pause.png" border="0"></a></td>
 								</tr>
 								<tr>
 									<td align="center">&nbsp;</td>
 								</tr>
 								<tr>
-									<td align="center"><a href="javascript:enviarTecla('PLAY')"><img src="/img/play.gif" alt="Play" border="0"></a></td>
+									<td align="center"><a title="Play" href="javascript:enviarTecla('PLAY')"><img src="/img/play.png" border="0"></a></td>
 								</tr>
 							</table>
 						</td>
-						<td class="txtNormal" align="center"><a href="javascript:enviarTecla('FASTFORWARD')"><img src="/img/ff_1.gif" alt="Avance Rápido" border="0"></a></td>
+						<td class="txtNormal" align="center"><a title="Avance rápido" href="javascript:enviarTecla('FASTFORWARD')"><img src="/img/ff_1.png" border="0"></a></td>
 						<td class="txtNormal" align="center"><a href="javascript:enviarTecla('RED')">Rojo</a></td>
 						<td class="txtNormal" align="center"><a href="javascript:enviarTecla('GREEN')">Verde</a></td>
 						<td class="txtNormal" align="center"><a href="javascript:enviarTecla('YELLOW')">Amarillo</a></td>

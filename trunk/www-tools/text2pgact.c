@@ -22,6 +22,7 @@ int text2pgact(char *ch_id, char *file_text, long horaUTC){
 	int found=0;			/* Marca de programa encontrado */
 	int primerPase=0;		/* Marca de primera pasada completada */
 	char bf_in[LBF_PGM+1];	/* Linea datos programa sin procesar */
+	BYTE tmp[LBF_TMP+1];	/* Buffer temporal pidcid */
 	pgm_sincro pgm0;		/* Datos programa anterior */
 	pgm_sincro pgm1;		/* Datos programa actual */
 
@@ -32,7 +33,7 @@ int text2pgact(char *ch_id, char *file_text, long horaUTC){
 //	printf("cache.ID.text: %s\n",file_text);
 //	printf("      horaUTC: %li\n",horaUTC);
 
-   	/* Abrir fichero */
+	/* Abrir fichero */
 	file=fopen(file_text,"rt");
 	if ( file == NULL ) {
 		fprintf (stderr, "No se puede abrir el fichero %s\n",file_text);
@@ -55,8 +56,8 @@ int text2pgact(char *ch_id, char *file_text, long horaUTC){
 					/* Comprobar comienzo programa mayor que horaUTC */
 					if ( pgm1.date_utc > horaUTC ) {
 						/* Generar xml resultado */
-						fprintf(stdout,"<PROGRAM id=\"%i\" pid=\"%08X%08X\" chid=\"%s\">\n", \
-							pgm0.pid,pgm0.pidcid1,pgm0.pidcid2,ch_id);
+						DLONG2txt(pgm0.pidcid,tmp);
+						fprintf(stdout,"<PROGRAM pid=\"%li\" pidcid=\"%s\" chID=\"%s\">\n",pgm0.pid,tmp,ch_id);
 						fprintf(stdout,"\t<TITLE>%s</TITLE>\n",pgm0.titulo);
 						fprintf(stdout,"\t<SUBTITLE>%s</SUBTITLE>\n",pgm0.subtitulo);
 						fprintf(stdout,"\t<LONG>%i</LONG>\n",pgm0.ix_long);

@@ -6,11 +6,11 @@
 //-------------------------------------------------
 function poner_boton(sNombre, sImagen, sToolTip, sLink, sBotonFinal) {
 	if ( sBotonFinal == "si" )
-		document.write('<td class="borderBotones2" align="center">');
+		document.write('<td class="borderBotonFinal" align="center">');
 	else
-		document.write('<td class="borderBotones" align="center">');
+		document.write('<td class="borderBoton" align="center">');
 	document.write('<a href="' + sLink + '" title="' + sToolTip + '" style="text-decoration:none;">');
-	document.write('<img src="' + sImagen + '" width="32" height="32" border="0" alt="' + sToolTip + '">');
+	document.write('<img src="' + sImagen + '" width="32" height="32" border="0">');
 	document.write('<br>' + sNombre + '</a></td>');
 }
 
@@ -29,7 +29,7 @@ function barra_botones() {
 	poner_boton("Explorador", "/img/explorador.gif",  "Editor/Explorador de Archivos","/cgi-bin/box/show/var/etc"          );
 	poner_boton("Comandos",   "/img/comandos.gif",    "Ejecución de comandos Linux",  "/cgi-bin/box/cmd"                   );
 	poner_boton("Ver TV",     "/img/ver_tv.gif",      "Ver LiveTV",                   "/cgi-bin/box/verTvLive"             );
-	poner_boton("Ver TV-TS",  "/img/ver_tv_ts.gif",   "Ver LiveTV-TimeShift",         "/cgi-bin/box/verTvTS"               );
+	poner_boton("Ver TV-TS",  "/img/ver_tv_ts.gif",   "Ver LiveTV-TimeShift",         "/cgi-bin/box/ctl-verTvTS"           );
 	poner_boton("SSH",        "/img/ssh.gif",         "Conexión SSH",                 "/cgi-bin/box/ssh"                   );
 	poner_boton("Autores",    "/img/autores.gif",     "Autores",                      "/cgi-bin/box/autores"               );
 	poner_boton("LCK",        "/img/configLCK.gif",   "Configuración LCK",            "/cgi-bin/box/configLCK"             );

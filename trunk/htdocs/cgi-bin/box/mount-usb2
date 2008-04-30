@@ -3,6 +3,7 @@
 #
 # Montaje/desmontaje del USB2
 
+# Obtener parametros
 if [ $# = 1 ]; then
    id_accion=`echo "$1" | cut -d"&" -f1 | cut -d"=" -f2`
 else
@@ -10,20 +11,21 @@ else
    id_accion=`echo "$QUERY_STRING" | cut -d"&" -f1 | cut -d"=" -f2`
 fi
 
-LOG=/tmp/mount_usb2.log
-STICK_MOUNT=/var/media/SWAP
-HDD_MOUNT=/var/media/USB-HDD
-echo "`date` Iniciando accion \"$id_accion\" para el dispositivo USB2" > $LOG
-
 # Configurar entorno
 source ../www-setup.shi
 source fweb.shi
 validate_login "xml"
 get_modo_video
+LOG=/var/log/mount_usb2.log
+STICK_MOUNT=/var/media/SWAP
+HDD_MOUNT=/var/media/USB-HDD
+
+# Log del proceso
+echo "`date` Iniciando accion \"$id_accion\" para el dispositivo USB2" > $LOG
 
 if [ "$id_accion" = "montar" ]; then
    if [ "$ModoVideo" = "Apagado" ]; then
-      echo "`date` El Gigaset está apagado. Encendiendo Gigaset..." >> $LOG
+      echo "`date` El Gigaset está apagado. Encendiendo Gigaset ..." >> $LOG
       /data/scripts/irsim.sh POWER
       sleep 15
    fi

@@ -91,12 +91,6 @@ podrían no bajarse. Si queréis imágenes, dejad un día a la
 semana el gigaset encendido por la noche y se cargarán.
 
 
-#PARAMETRO: UPNP bool
-UPNP 1
-
-Controla la activación del cliente UPNP.
-
-
 #PARAMETRO: RECORD_ON_SAME_TUNNER bool
 RECORD_ON_SAME_TUNNER 2
 
@@ -166,6 +160,25 @@ POWERON_ASK 2
 
 Controla la pregunta de pulsación ON/OFF al arrancar el gigaset
 despues de quitar corriente.
+
+
+#PARAMETRO: GROUP_SERIES bool
+GROUP_SERIES 2
+
+Controla que en la lista de grabaciones pendientes se muestren
+agrupadas en series, en caso contrario se muestran todas las
+grabaciones pendientes ordenadas por tiempo.
+
+
+#PARAMETRO: STANDBY_DOWNLOAD_PATH str
+STANDBY_DOWNLOAD_PATH /var/tmp/download
+
+Ruta de la carpeta utilizada para las descargas de contenidos
+por antena cuando el gigaset está en apagado rápido (standby).
+Si el primer caracter no es / se desactivan las descargas.
+
+Debemos hacer que esta carpeta esté en Pendrive si disponemos de
+uno.
 
 
 #PARAMETRO: TIME_CHANNELS str

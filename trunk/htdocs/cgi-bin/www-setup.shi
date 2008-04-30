@@ -18,7 +18,7 @@ fi
 # Configurar entorno
 PATH=$PATH:${SERVER_ROOT}/bin
 WWW_SETTINGS=/var/etc/www-settings.txt
-APP_WEB_VERSION="1.93"
+APP_WEB_VERSION="1.94"
 
 # Configurar hora local
 export TZ=`cat /etc/TZ_jra`
@@ -41,7 +41,7 @@ if [ -f $WWW_SETTINGS ]; then
 	source $WWW_SETTINGS
 else
 	# Generar configuracion por defecto
-	cat <<- EOT >$WWW_SETTINGS
+	cat <<- --EOF-- >$WWW_SETTINGS
 	Cache=$Cache
 	EPG_PATH=$EPG_PATH
 	LOGIN_HTTP=$LOGIN_HTTP
@@ -53,5 +53,5 @@ else
 	DESCARGA_IMG=$DESCARGA_IMG
 	CACHE_EPG_LONG=$CACHE_EPG_LONG
 	ARCHIVO_GRABACIONES=$ARCHIVO_GRABACIONES
-	EOT
+	--EOF--
 fi

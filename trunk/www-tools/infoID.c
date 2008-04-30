@@ -36,7 +36,7 @@ int infoID(char *ID, char *file_info){
 //	printf("           ID: %s (%s)\n",ID,search_ID);
 //	printf("info_channels: %s\n",file_info);
 
-   	/* Abrir fichero */
+	/* Abrir fichero */
 	file=fopen(file_info,"rt");
 	if ( file == NULL ) {
 		fprintf (stderr, "No se puede abrir el fichero %s\n",file_info);
@@ -56,14 +56,14 @@ int infoID(char *ID, char *file_info){
 				lon=lon_campo(posInfo,':');
 				strncpy(txt,posInfo,lon);
 				txt[lon]='\x00';
-				sscanf(txt,"%i",&ch_num);
+				ch_num=strtol(txt,NULL,10);
 
 				/* Obtener cid */
 				posInfo+=lon+1;
 				lon=lon_campo(posInfo,':');
 				strncpy(txt,posInfo,lon);
 				txt[lon]='\x00';
-				sscanf(txt,"%i",&ch_cid);
+				ch_cid=strtol(txt,NULL,10);
 
 				/* Obtener ch_ID */
 				posInfo+=lon+1;

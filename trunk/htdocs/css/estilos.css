@@ -1,155 +1,375 @@
-.borderBotones {
-	border-left: solid Black 1px;
-	border-top: solid Black 1px;
-	border-bottom: solid Black 1px;
-	font-family: Verdana;
-	font-size: 10px;
-	font-style: normal;
+/*---------------------------------------------*/
+/* General										/
+/*---------------------------------------------*/
+
+body {
+	behavior:			url("/css/csshover.htc");
 }
 
-.borderBotones2 {
-	border-right: solid Black 1px;
-	border-left: solid Black 1px;
-	border-top: solid Black 1px;
-	border-bottom: solid Black 1px;
-	font-family: Verdana;
-	font-size: 10px;
-	font-style: normal;
+/*---------------------------------------------*/
+/* Barra de botones								/
+/*---------------------------------------------*/
+.borderBoton {
+	font-family:		Verdana;
+	font-size:			10px;
+	font-style:			normal;
+	font-weight:		normal;
+	border-left:		solid Black 1px;
+	border-top:			solid Black 1px;
+	border-bottom:		solid Black 1px;
 }
 
-.borderTabla {
-	border-right: solid Black 1px;
-	border-left: solid Black 1px;
-	border-bottom: solid Black 1px;
+.borderBotonFinal {
+	font-family:		Verdana;
+	font-size:			10px;
+	font-style:			normal;
+	font-weight:		normal;
+	border-left:		solid Black 1px;
+	border-right:		solid Black 1px;
+	border-top:			solid Black 1px;
+	border-bottom:		solid Black 1px;
 }
 
-.borderTabla2 {
-	border-right: solid Black 1px;
-	border-left: solid Black 1px;
-	border-top: solid Black 1px;
-}
-
-.borderTabla3 {
-	border-bottom: solid #D3D3D3 1px;
-	border-bottom-width: thin;
-	border-right: solid #D3D3D3 1px;
-	border-right-width: thin;
-	border-left: solid #D3D3D3 1px;
-	border-left-width: thin;
-}
-
-.fila {
-	border-bottom: solid Black 1px;
-	font-family: Verdana;
-	font-size: 12px;
-	font-style: normal;
-}
-
-.borderFila {
-	border-top: solid Black 1px;
-}
+/*----------------------------------------------*/
+/* Encabezado pagina							*/
+/*----------------------------------------------*/
 
 .titPag{
-	font-family: verdana;
-	font-size: 30px;
-	font-weight: bold;
-	color: #ffb310;
-	padding-left: 15px;
+	font-family:		Verdana;
+	font-size:			30px;
+	font-style:			normal;
+	font-weight:		bold;
+	color:				#FFB310;
 }
 
 .subTitPag{
-	font-family: verdana;
-	font-size: 24px;
-	font-weight: bold;
-	color: Navy;
-	padding-left: 15px;
+	font-family:		Verdana;
+	font-size:			24px;
+	font-style:			normal;
+	font-weight:		bold;
+	color:				#000080;
 }
 
-.titTabla{
-	font-family: verdana;
-	font-size: 12px;
-	font-weight: bold;
-	color: Black;
+/*----------------------------------------------*/
+/*	Tablas										*/
+/*----------------------------------------------*/
+
+.borderTabla_sup {
+	border-left:		solid Black 1px;
+	border-right:		solid Black 1px;
+	border-top:			solid Black 1px;
 }
 
-.titChannel{
-	font-family: verdana;
-	font-size: 16px;
-	font-weight: bold;
-	color: Black;
+.borderTabla_inf {
+	border-left:		solid Black 1px;
+	border-right:		solid Black 1px;
+	border-bottom:		solid Black 1px;
 }
 
-.txtNormal {
-	font-family: Verdana;
-	font-size: 12px;
-	font-style: normal;
+.borderFila {
+	border-top:			solid Black 1px;
+}
+
+table tr.filaTitulo th,
+table tr td.filaTitulo,
+.filaTitulo {
+	font-family:		Verdana;
+	font-size:			12px;
+	font-style:			normal;
+	font-weight:		bold;
+	border-bottom:		solid Black 1px;
+	color:				Black;
+	background-color:	#FFB310;
+}
+
+table tr.filaNormal td,
+.filaNormal {
+	font-family:		Verdana;
+	font-size:			12px;
+	font-style:			normal;
+	font-weight:		normal;
+	border-bottom:		solid Black 1px;
+}
+
+table tr.filaResalte td,
+.filaResalte {
+	font-family:		Verdana;
+	font-size:			12px;
+	font-style:			normal;
+	font-weight:		normal;
+	border-bottom:		solid Black 1px;
+}
+
+table tr.filaResalte td table tr td,
+.filaSinMarco {
+	font-family:		Verdana;
+	font-size:			12px;
+	font-style:			normal;
+	font-weight:		normal;
+	border-bottom:		none;
+}
+
+.filaLogTitulo {
+	font-family:		Courier New;
+	font-size:			12px;
+	font-style:			normal;
+	font-weight:		bold;
+	text-decoration:	underline;
+}
+
+.filaLog {
+	font-family:		Courier New;
+	font-size:			12px;
+	font-style:			normal;
+	font-weight:		normal;
+}
+
+.filaPar {
+	color:				Black;
+	background-color:	#FFFFE8;
+}
+
+.filaImpar {
+	color:				Black;
+	background-color:	#FFECD9;
+}
+
+/*----------------------------------------------*/
+/* Textos										*/
+/*----------------------------------------------*/
+
+.txtMuyPeq {
+	font-family:		Verdana;
+	font-size:			8px;
+	font-style:			normal;
+	font-weight:		normal;
+	color:				Black;
 }
 
 .txtPeq {
-	font-family: Verdana;
-	font-size: 10px;
-	font-style: normal;
+	font-family:		Verdana;
+	font-size:			10px;
+	font-style:			normal;
+	font-weight:		normal;
+	color:				Black;
 }
 
-.txtMuyPeq {
-	font-family: Verdana;
-	font-size: 8px;
-	font-style: normal;
-}
-
-.txtNormalG {
-	font-family: Verdana;
-	font-size: 14px;
-	font-style: normal;
+.txtLogin {
+	font-family:		Verdana;
+	font-size:			11px;
+	font-style:			normal;
+	font-weight:		bold;
+	color:				Black;
 }
 
 .txtInfo {
-	font-family: verdana;
-	font-size: 11px;
-	font-weight: bold;
-	color: #c80000;
+	font-family:		Verdana;
+	font-size:			11px;
+	font-style:			normal;
+	font-weight:		bold;
+	color:				#C80000;
+}
+
+.txtNormal {
+	font-family:		Verdana;
+	font-size:			12px;
+	font-style:			normal;
+	font-weight:		normal;
+	color:				Black;
+}
+
+.txtNegrita {
+	font-family:		Verdana;
+	font-size:			12px;
+	font-style:			normal;
+	font-weight:		bold;
+	color:				Black;
+}
+
+.txtNegritaResalte {
+	font-family:		Verdana;
+	font-size:			12px;
+	font-style:			normal;
+	font-weight:		bold;
+	color:				Black;
+	background-color:	#FFB310;
+}
+
+.txtGrande{
+	font-family:		Verdana;
+	font-size:			16px;
+	font-style:			normal;
+	font-weight:		bold;
+	color:				Black;
+}
+
+.txtGrandeResalte{
+	font-family:		Verdana;
+	font-size:			16px;
+	font-style:			normal;
+	font-weight:		bold;
+	color:				Black;
+	background-color:	#FFB310;
 }
 
 .txtAvisos {
-	font-family: Verdana;
-	font-size: 18px;
-	font-style: normal;
-	color: #FF0000;
+	font-family:		Verdana;
+	font-size:			18px;
+	font-style:			normal;
+	font-weight:		bold;
+	color:				#FF0000;
 }
+
+.txtMP0 {
+	font-family:		Verdana;
+	font-size:			12px;
+	font-style:			normal;
+	font-weight:		normal;
+	color:				Black;
+	padding-top:		1em;
+	padding-left:		2em;
+	padding-right:		2em;
+}
+
+.txtMP1 {
+	font-family:		Verdana;
+	font-size:			14px;
+	font-style:			normal;
+	font-weight:		bold;
+	color:				Black;
+	padding-top:		1em;
+	padding-left:		1em;
+}
+
+.txtMP2 {
+	font-family:		Verdana;
+	font-size:			12px;
+	font-style:			normal;
+	font-weight:		normal;
+	color:				Black;
+	padding-left:		4em;
+}
+
+.txtMP3 {
+	font-family:		Verdana;
+	font-size:			12px;
+	font-style:			normal;
+	font-weight:		normal;
+	color:				Black;
+	padding-left:		6em;
+}
+
+.txtMP4 {
+	font-family:		Verdana;
+	font-size:			12px;
+	font-style:			normal;
+	font-weight:		normal;
+	color:				Black;
+	padding-top:		1em;
+	padding-left:		2em;
+	padding-right:		2em;
+}
+
+/*----------------------------------------------*/
+/* Sincroguia									*/
+/*----------------------------------------------*/
+
+.cajaEPG{
+	font-family:		Verdana,Arial;
+	font-size:			11px;
+	font-style:			normal;
+	font-weight:		normal;
+	color:				Black;
+	background-color:	#FFEEE6;
+	padding:			.2em;
+	border-style:		groove;
+}
+
+/*----------------------------------------------*/
+/* Campos de edicion							*/
+/*----------------------------------------------*/
 
 .txtParam {
-	font-family: Verdana;
-	font-size: 12px;
-	font-weight: bold;
-	font-style: normal;
-}
-
-.cajaParam {
-	font-family: Verdana,Arial;
-	font-size: 12px;
-	font-style: normal;
-	background-color: #FFFF80;
-	color: #000000;
-	border-style: groove;
+	font-family:		Verdana;
+	font-size:			12px;
+	font-style:			normal;
+	font-weight:		bold;
+	color:				Black;
 }
 
 .txtDescParam {
-	font-family: Verdana;
-	font-size: 12px;
-	font-style: normal;
+	font-family:		Verdana;
+	font-size:			12px;
+	font-style:			normal;
+	font-weight:		bold;
+	color:				Black;
 }
 
-.Grid{font-family:verdana,Arial;font-size:11px;color:#000000;}
-.NPastilla{font-family:verdana,Arial;font-size:12px;color:#000000;}
-.TitColGrid{font-family:verdana,Arial;font-size:11px;color:#000000;font-weight:bold;}
-.cajaPlana{border-style:groove;color:#000000;font-size:11px;font-family:Verdana,Arial;}
-.TitGridND{font-family:verdana,Arial;font-size:11px;color:#666666;text-decoration:none;font-weight:bold;}
-
-.cajaEPG{
-	border-style: groove;
-	background-color: #FFEEE6;
-	color: #000000;
-	font-family: Verdana,Arial;
-	font-size: 11px;
-	padding: .2em;
+.cajaLogin {
+	font-family:		Verdana,Arial;
+	font-size:			11px;
+	font-style:			normal;
+	font-weight:		bold;
+	color:				Black;
+	border-style:		groove;
 }
+
+.cajaPlana {
+	font-family:		Verdana,Arial;
+	font-size:			11px;
+	font-style:			normal;
+	font-weight:		normal;
+	color:				Black;
+	background-color:	#FFFF80;
+	border-style:		groove;
+}
+
+.cajaPlanaLock {
+	font-family:		Verdana,Arial;
+	font-size:			11px;
+	font-style:			normal;
+	font-weight:		normal;
+	color:				Black;
+	background-color:	#FFECD9;
+	border-style:		groove;
+}
+
+.cajaParam {
+	font-family:		Verdana,Arial;
+	font-size:			12px;
+	font-style:			normal;
+	font-weight:		normal;
+	color:				Black;
+	background-color:	#FFFF80;
+	border-style:		groove;
+}
+
+.cajaParamLock {
+	font-family:		Verdana,Arial;
+	font-size:			12px;
+	font-style:			normal;
+	font-weight:		normal;
+	color:				Black;
+	background-color:	#FFECD9;
+	border-style:		groove;
+}
+
+/*----------------------------------------------*/
+/* Resaltes de raton							*/
+/*----------------------------------------------*/
+
+table tr td.borderBoton:hover,
+.borderBoton:hover,
+table tr td.borderBotonFinal:hover,
+.borderBotonFinal:hover,
+table tr td.borderFila:hover,
+.borderFila:hover,
+.filaResalte:hover,
+.hover {
+	color:				Black;
+	background-color:	#CCFFCC;
+}
+
+/*----------------------------------------------*/
+/* 												*/
+/*----------------------------------------------*/

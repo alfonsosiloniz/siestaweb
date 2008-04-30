@@ -1,0 +1,153 @@
+#!/bin/bash
+# jotabe, (c) Grupo SIESTA, 27-03-2008
+#
+# Guardar datos grabacion (fichero crid)
+# save-crid?crid&[save|fix]&TS=timestamp
+
+# Obtener parametro
+Cridfile=`echo $QUERY_STRING | cut -d"&" -f1`
+modo_save=`echo $QUERY_STRING | cut -d"&" -f2`
+
+# Configurar entorno
+source ../www-setup.shi
+source fweb.shi
+validate_login
+LOG=/var/log/edit-crid.log
+
+# Comprobar fichero crid
+info=""
+if [ ! -f ${Cridfile} ]; then
+	info="El fichero de grabación ${Cridfile} no se encuentra."
+else
+	# Seleccion modo
+	save_crid=0
+	case ${modo_save} in
+		save)
+			# Procesar parametros get/post (elimina CR,0x0D)
+			eval "`proccgi $*`"
+
+			# Procesar fichero crid
+			eval "`www-tools crid2var ${Cridfile} 'export'`"
+
+			# Nuevos valores parametros
+			Titulo=\"${FORM_Titulo}\"
+			EPG_short=\"${FORM_EPG_short}\"
+			EPG_long=\"${FORM_EPG_long}\"
+			[ ${#FORM_playback_timestamp} -ne 0 ] && playback_timestamp=${FORM_playback_timestamp}
+			CRID_cid=${FORM_CRID_cid}
+			Rec_Type=${FORM_Rec_Type}
+			Rec_State=${FORM_Rec_State}
+			Grabacion_protegida=${FORM_Grabacion_protegida}
+
+			# Gestion nueva serie: generar IDserie y añadir a info_series.txt/xml
+			if [ ${FORM_IDserie} -eq -1 ]; then
+				IDserie=$((-${EPG_start_time}))
+				echo "${IDserie}_1_${FORM_Titulo}" >> ${Cache}/info_series.txt
+				echo "<SERIE><ID_SERIE>${IDserie}</ID_SERIE><NUM_GRABACIONES>1</NUM_GRABACIONES><NOMBRE_SERIE>${FORM_Titulo}</NOMBRE_SERIE></SERIE>" >> ${Cache}/info_series.xml
+			else
+				IDserie=${FORM_IDserie}
+			fi
+
+			# Comprobar IDserie/Rec_Type
+			if [ ${IDserie} -lt 0 ]; then
+				# IDserie < 0 -> Rec_Type=4,8 (Sincroguia en serie,Timer en serie)
+				[ ${Rec_Type} -ne 4 -a ${Rec_Type} -ne 8 ] && Rec_Type=4
+			elif [ ${IDserie} -eq 0 ]; then
+				# IDserie = 0 -> Rec_Type=1,2,32 (Sincroguia,Timer,Manual)
+				[ ${Rec_Type} -ne 1 -a ${Rec_Type} -ne 2 -a ${Rec_Type} -ne 32 ] && Rec_Type=1
+			else
+				# IDserie > 0 -> Rec_Type=1 (Sincroguia)
+				Rec_Type=1
+			fi
+
+			# Marca de guardar fichero .crid
+			save_crid=1
+			;;
+		fix)
+			# Procesar fichero crid
+			eval "`www-tools crid2var ${Cridfile} 'export'`"
+
+			# Recorrer fragmentos
+			i=0
+			while [ $i -lt $num_fmpg ]; do
+				# end_timestamp fragmento
+				TMP='$fmpg'${i}_end_timestamp
+				eval "end_timestamp=$TMP"
+
+				# error end_timestamp
+				if [ $end_timestamp -eq 0 ]; then
+					# Fichero de fragmento
+					TMP='$fmpg'${i}
+					eval "fileFMPG=`dirname ${Cridfile}`/$TMP"
+
+					# Comprobar fichero
+					if [ -f ${fileFMPG} ]; then
+						# Calcular nuevo end_timestamp en segundos
+
+						# Metodo aproximado
+						# Nº bloques fichero .fmpg * 601 segundos
+						numBloques=`ls -l ${fileFMPG} 2>/dev/null | awk '{print $5/256}'`
+						end_timestamp=$((${numBloques}*601))
+						eval "fmpg${i}_end_timestamp=\"${end_timestamp}\""
+
+						# Metodo exacto
+						# Buscar ficheros .fmpg.NNN.mpg referenciados en .fmpg y obtener tiempo de cada fichero
+					fi
+				fi
+
+				# Siguiente fragmento
+				i=$(($i+1))
+			done
+
+			# Estado grabacion OK
+			Rec_State=3
+
+			# Marca de guardar fichero .crid
+			save_crid=1
+			;;
+		*)
+			info="Modo de grabación (${modo_save}) desconocido."
+			;;
+	esac
+
+	# Guardar fichero .crid
+	if [ ${save_crid} -eq 1 ]; then
+		# Modificar CRID_pid para refrescar en lista de grabaciones
+		get_pid
+		CRID_pid=${new_pid}
+
+		# Guardar fichero
+		www-tools var2crid ${Cridfile}.tmp
+		if [ $? -ne 0 ]; then
+			rm -f ${Cridfile}.tmp
+			info="Se ha producido un error al guardar el fichero de grabación ${Cridfile}"
+		else
+			mv -f ${Cridfile}.tmp ${Cridfile}
+		fi
+	fi
+fi
+
+# Log del proceso
+echo "<b>`date` Petición de modificación (${modo_save}) de fichero crid: ${Cridfile}</b>" >> $LOG
+
+# Mostrar error o redireccion
+if [ ${#info} -ne 0 ]; then
+	echo "ERROR: ${info}" >> $LOG
+
+	# Enviar documento html
+	html_doc_start "M750T - Edición datos de Grabación" "" "-----b-"
+	html_top "Edición datos de Grabación" "" "" ""
+	print_aviso_info "${info}"
+else
+	echo "Fichero de grabación ${Cridfile} guardado correctamente" >> $LOG
+
+	# Enviar redireccion html
+	http_header
+	echo "<html>
+<head>
+	<script type=\"text/javascript\">
+		document.location.href=\"/cgi-bin/crid/edit-crid?${Cridfile}&edit_ok&TS=`date +%s`\"
+	</script>
+</head>
+</html>"
+fi

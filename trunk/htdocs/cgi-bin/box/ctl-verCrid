@@ -1,0 +1,151 @@
+#!/bin/bash
+# (c) Grupo SIESTA, 03-04-2008
+#
+# Ver grabacion (fichero .crid)
+# ctl-verCrid?CRIDFILE=crid&RECORDING=[SI|NO]
+
+# Configurar entorno
+source ../www-setup.shi
+source fweb.shi
+validate_login
+path_mplayer='C:\Archivos de programa\mplayer\mplayer.exe'
+[ -f ${SERVER_ROOT}/cfg/.path_mplayer.txt ] && path_mplayer=`cat ${SERVER_ROOT}/cfg/.path_mplayer.txt`
+path_temp='C:\Temp'
+[ -f ${SERVER_ROOT}/cfg/.path_temp.txt ] && path_temp=`cat ${SERVER_ROOT}/cfg/.path_temp.txt`
+
+# Procesar parametros get/post
+eval "`proccgi $*`"
+Cridfile=$FORM_CRIDFILE
+[ "Z$FORM_RECORDING" = "ZSI" ] && RECORDING=SI || RECORDING=NO
+
+# Obtener path para javascript (sustituir \ por \\)
+path_mplayer_js=`echo "${path_mplayer}" | sed 's/\\\\/\\\\\\\\/g'`
+path_temp_js=`echo "${path_temp}" | sed 's/\\\\/\\\\\\\\/g'`
+
+# Enviar documento html
+html_doc_start "M750T - Visualizar Grabación" "" "-----b-" "
+function init() {
+	index=document.location.href.indexOf(\"://\");
+	host=document.location.href.substring(index+3);
+	index=host.indexOf(\"/\");
+	host=host.substring(0, index);
+	document.forms['form_m750'].host.value=host;
+	document.forms['form_m750'].encurso.value=\"${RECORDING}\";
+}
+function cambioSO() {
+	if (document.forms['form_m750'].so.value==0) {
+		document.forms['form_m750'].mplayer.value=\"\/usr\/bin\/mplayer\";
+		document.forms['form_m750'].temp.value=\"\/tmp\";
+	}
+	else {
+		document.forms['form_m750'].mplayer.value=\"${path_mplayer_js}\";
+		document.forms['form_m750'].temp.value=\"${path_temp_js}\";
+	}
+}"
+
+# Respuesta html
+html_top "Visualizar Grabación" "init();" "/cgi-bin/run/verCrid" "post"
+cat << --EOF--
+				<br>
+				<table width="100%" border="0" cellspacing="2" cellpadding="0" align="center">
+					<tr>
+						<td align="right" class="txtParam" width="150">Host:&nbsp;</td>
+						<td><input type="text" name="host" size="32" maxlength="64" class="cajaPlana"></td>
+						<td width="96">&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">FTP port:&nbsp;</td>
+						<td><input type="text" name="port" value="21" size="8" maxlength="32" class="cajaPlana"></td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">Cridfile:&nbsp;</td>
+						<td><input type="text" name="cridfile" value="${Cridfile}" size="64" maxlength="128" class="cajaPlanaLock" readonly></td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">FTP User:&nbsp;</td>
+						<td><input type="text" name="user" value="root" size="16" maxlength="32" class="cajaPlana"></td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">FTP Password:&nbsp;</td>
+						<td><input type="text" name="pwd" value="root" size="16" maxlength="32" class="cajaPlana"></td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">Path de MPlayer:&nbsp;</td>
+						<td><input type="text" name="mplayer" value="${path_mplayer}" size="64" maxlength="128" class="cajaPlana"></td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">Directorio Temporal:&nbsp;</td>
+						<td><input type="text" name="temp" value="${path_temp}" size="64" maxlength="128" class="cajaPlana"></td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">Relación de Aspecto:&nbsp;</td>
+						<td>
+							<select name="aspect" class="cajaPlana">
+								<option value="1.33" selected>4:3</option>
+								<option value="1.7777">16:9</option>
+								<option value="1.25">1.25</option>
+							</select>
+						</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">Sistema operativo:&nbsp;</td>
+						<td>
+							<select name="so" class="cajaPlana" onchange="javascript:cambioSO();">
+								<option value="1" selected>Windows</option>
+								<option value="0">Linux/Unix</option>
+							</select>
+						</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam" valign="top">Grabación en curso:&nbsp;</td>
+						<td>
+							<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+								<tr valign="top">
+									<td>
+										<select name="encurso" class="cajaPlana">
+											<option value="NO">No</option>
+											<option value="SI">Sí</option>
+										</select>
+									</td>
+									<td class="txtInfo" style="padding-left: 16px">
+										Si la grabación está en curso, seleccione Sí. Podrá comenzar a verla una vez transcurridos los primeros 10 minutos de grabación (si todavía no han transcurrido los primeros 10 minutos, la reproducción puede sufrir cortes inesperados y deberá reiniciar la reproducción).
+									</td>
+								</tr>
+							</table>
+						</td>
+						<td align="center"><a title="Visualizar Grabación" href="javascript:document.forms['form_m750'].submit();"><img src="/img/aceptar.gif" width="28" height="25" border="0"></a></td>
+					</tr>
+					<tr><td height="16" colspan="3"></td></tr>
+					<tr>
+						<td colspan="3">
+							<table width="100%" border="0" cellspacing="0" cellpadding="08" align="center">
+								<tr>
+									<td colspan="2" class="txtAvisos" align="center">Atención</td>
+								</tr>
+								<tr class="txtNormal" valign="top">
+									<td>
+										Al hacer click sobre el botón <img src="/img/aceptar.gif" width="28" height="25" border="0"> verá una ventana como ésta:<br><br>
+										<img src="/img/visualizar_cmd.jpg" width="455" height="266" border="0">
+									</td>
+									<td>
+										<br><br><br>
+										Haciendo click sobre el botón [Ejecutar] se descargará el fichero "visualizar_grabacion.cmd" en un directorio temporal y éste generará una lista de reproducción llamando a continuación al reproductor MPlayer.
+										<br><br><br>
+										Para el funcionamiento de esta opción es necesario tener instalado el reproductor <a href="http://www.mplayerhq.hu/" target="_blank"><b>MPlayer</b></a>.
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+--EOF--
+cat ../../html/mplayer.inc
+html_doc_end

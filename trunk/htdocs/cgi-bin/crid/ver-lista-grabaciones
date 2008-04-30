@@ -2,6 +2,7 @@
 # (c) Grupo SIESTA, 12-11-2007
 #
 # Devolver lista de grabaciones realizadas
+# ver-lista-grabaciones?[serie&dir|time&dir]
 
 # Configurar entorno
 source ../www-setup.shi
@@ -11,65 +12,40 @@ USB_DISK=/pvr/media/USB-HDD
 USB_DISK_REALPATH=/var/media/USB-HDD
 
 # Obtener parametros
-if [ "$QUERY_STRING" != "" ] ; then
-	serieTime=`echo ${QUERY_STRING} | cut -d"&" -f1`
-	isDir=`echo ${QUERY_STRING} | grep "\&" | wc -l`
-	if [ $isDir -gt 0 ]; then
-		Recordings=`echo ${QUERY_STRING} | cut -d"&" -f2`
-	else
-		Recordings=""
-	fi
-	if [ "$serieTime" = "serie" ]; then
+case ${QUERY_STRING} in
+	serie*)
 		rm -f ${SERVER_ROOT}/cfg/.time_sort
 		touch ${SERVER_ROOT}/cfg/.serie_sort
-		xsl=record_serie_sort.xsl
-	elif [ "$serieTime" = "time" ]; then
+		;;
+	time*)
 		touch ${SERVER_ROOT}/cfg/.time_sort
 		rm -f ${SERVER_ROOT}/cfg/.serie_sort
-		xsl=record_time_sort.xsl
-	fi
-else
-	if [ -f ${SERVER_ROOT}/cfg/.serie_sort ]; then
-		xsl=record_serie_sort.xsl
-	else
-		xsl=record_time_sort.xsl
-	fi
-fi
+		;;
+esac
+Recordings=`echo ${QUERY_STRING} | cut -d"&" -f2`
 
-# Obtenemos carpeta de grabaciones
-RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
-[ "$Recordings" = "" ] && Recordings=$RecordingFolder
+# Obtener orden
+[ -f ${SERVER_ROOT}/cfg/.serie_sort ] && orden=serie || orden=time
+
+# Obtener carpeta de grabaciones
+RecordingFolder=`awk '/DeviceRecordingFolder/ {print $2}' /var/etc/settings.txt`
+[ ${#Recordings} -eq 0 ] && Recordings=$RecordingFolder
 
 # Comprobacion USB-HDD/PCx montado
 info=""
 error_folder=""
 case ${Recordings} in
-	${USB_DISK}* )
+	OFF )
+		info="No está definida la carpeta de grabaciones."
+		;;
+	${USB_DISK}/* | ${USB_DISK_REALPATH}/* )
 		USB_MOUNTED=`grep ${USB_DISK_REALPATH} /proc/mounts | wc -l`
 		[ ${USB_MOUNTED} -eq 0 ] && error_folder="al disco duro."
 		;;
-	/pvr/media/PC1/* | /var/media/PC1/* )
-		PC_MOUNTED=`grep /var/media/PC1 /proc/mounts | wc -l`
-		[ ${PC_MOUNTED} -eq 0 ] && error_folder="a la carpeta compartida /pvr/media/PC1"
-		;;
-	/pvr/media/PC2/* | /var/media/PC2/* )
-		PC_MOUNTED=`grep /var/media/PC2 /proc/mounts | wc -l`
-		[ ${PC_MOUNTED} -eq 0 ] && error_folder="a la carpeta compartida /pvr/media/PC2"
-		;;
-	/pvr/media/PC3/* | /var/media/PC3/* )
-		PC_MOUNTED=`grep /var/media/PC3 /proc/mounts | wc -l`
-		[ ${PC_MOUNTED} -eq 0 ] && error_folder="a la carpeta compartida /pvr/media/PC3"
-		;;
-	/pvr/media/PC4/* | /var/media/PC4/* )
-		PC_MOUNTED=`grep /var/media/PC4 /proc/mounts | wc -l`
-		[ ${PC_MOUNTED} -eq 0 ] && error_folder="a la carpeta compartida /pvr/media/PC4"
-		;;
-	/pvr/media/PC5/* | /var/media/PC5/* )
-		PC_MOUNTED=`grep /var/media/PC5 /proc/mounts | wc -l`
-		[ ${PC_MOUNTED} -eq 0 ] && error_folder="a la carpeta compartida /pvr/media/PC5"
-		;;
-	* ) 
-		[ $isDir -le 0 ] && info="No esta definida la carpeta de grabaciones."
+	/pvr/media/PC[1-5]/* | /var/media/PC[1-5]/* )
+		PCx=${Recordings:13:1}
+		PC_MOUNTED=`grep /var/media/PC${PCx} /proc/mounts | wc -l`
+		[ ${PC_MOUNTED} -eq 0 ] && error_folder="a la carpeta compartida /pvr/media/PC${PCx}"
 		;;
 esac
 [ ${#error_folder} -ne 0 ] && info="No se puede acceder a la carpeta de grabaciones realizadas porque no hay acceso ${error_folder}"
@@ -84,26 +60,16 @@ if [ ${#info} -eq 0 ]; then
 	# Contar nº de grabaciones
 	else
 		numCrids=`ls -la $Recordings/*.crid 2>/dev/null | wc -l`
-		if [ $numCrids -eq 0 ]; then
-			info="No existe ninguna grabación en la carpeta $Recordings"
-		fi
+		[ $numCrids -eq 0 ] && info="No existe ninguna grabación en la carpeta $Recordings"
 	fi
 fi
 
 # Mostrar error o procesar carpeta
 if [ ${#info} -ne 0 ]; then
 	# Enviar documento html
-	html_doc_start "M750T - Grabaciones Realizadas" "" "------b-"
+	html_doc_start "M750T - Grabaciones Realizadas" "" "-----b-"
 	html_top "Grabaciones Realizadas" "" "" ""
-	echo "			<br>
-			<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">
-				<tr>
-					<td class=\"titChannel\" align=\"center\">
-						<font class=\"txtAvisos\">$info</font>
-					</td>
-				</tr>
-			</table>"
-	html_doc_end no
+	print_aviso_info "${info}"
 else
 	# Proxima carpeta a usar para lista de grabaciones
 	carpeta_ver=/var/media/PC1/Video
@@ -114,5 +80,5 @@ else
 	echo "$carpeta_ver" > ${SERVER_ROOT}/cfg/.carpeta_ver.txt
 
 	# Procesar carpeta de grabaciones
-	./lista-crid2xml.sh $Recordings RECORDINGS $xsl $carpeta_ver
+	./lista-crid2xml.sh $Recordings record $orden $carpeta_ver
 fi

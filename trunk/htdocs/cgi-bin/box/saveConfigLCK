@@ -1,5 +1,5 @@
 #!/bin/bash
-# jotabe, (c) Grupo SIESTA, 03-12-2007
+# jotabe, (c) Grupo SIESTA, 20-03-2008
 #
 # Guarda la configuración de LCK
 
@@ -9,13 +9,14 @@ source fweb.shi
 validate_login
 LCK_SETTINGS_FILE=/var/etc/LCK.cfg
 LCK_SETTINGS_FILE_TMP=${LCK_SETTINGS_FILE}.temp
+FLAG_CAMBIOS=${LCK_SETTINGS_FILE}-$$.flag
 
 # Procesar parametros get/post
 eval "`proccgi $*`"
 
 # Recorrer fichero
-sed_script=""
-while read line; do
+rm -f ${FLAG_CAMBIOS}
+awk '{print $0}' $LCK_SETTINGS_FILE | while read line; do
 	if [ ${#line} -ne 0 ]; then
 		if [ ${line:0:1} != "#" ]; then
 			# Obtener nombre y valor parametro actual
@@ -25,20 +26,24 @@ while read line; do
 			# Obtener nuevo valor de parametro
 			TMP='$'FORM_PAR_${NombreParametro}
 			eval "ValorParametro=$TMP"
+			# Comprobar cambio de valor
 			if [ "Z$ValorParametro" != "Z$ValorParametro0" ]; then
-				# Generar script de sustitucion
-				[ ${#sed_script} -ne 0 ] && sed_script="${sed_script};"
-				sed_script="${sed_script}s/$line/$NombreParametro $ValorParametro/g"
+				# Sustituir valor
+				line="$NombreParametro	$ValorParametro"
+				# Marca cambios
+				touch ${FLAG_CAMBIOS}
 			fi
 		fi
 	fi
-done < $LCK_SETTINGS_FILE
+	# Linea modificada
+	echo "$line"
+done > $LCK_SETTINGS_FILE_TMP
 
-# Sustituir valores parametros y actualizar configuracion
-if [ ${#sed_script} -ne 0 ]; then
-	sed -e "$sed_script" $LCK_SETTINGS_FILE > $LCK_SETTINGS_FILE_TMP
+# Sustituir fichero configuracion
+if [ -f ${FLAG_CAMBIOS} ]; then
+	rm -f ${FLAG_CAMBIOS}
 	mv -f $LCK_SETTINGS_FILE_TMP $LCK_SETTINGS_FILE
-	flash_archive write $LCK_SETTINGS_FILE >> /tmp/flash_archive.log 2>&1
+	flash_archive write $LCK_SETTINGS_FILE >> /var/log/flash_archive.log 2>&1
 fi
 
 # Enviar redireccion html

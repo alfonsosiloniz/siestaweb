@@ -16,6 +16,7 @@ typedef unsigned long long int	DLONG;
 
 /* Definiciones generales */
 #define LBF_PGM			512
+#define LBF_TMP			32
 #define LBF_TXT			192
 #define LBF_TEXTO_LONG	4096
 #define LBF_CRID		4096
@@ -23,9 +24,8 @@ typedef unsigned long long int	DLONG;
 
 /* Estructura datos programa sincroguia */
 typedef struct {
-	int pid;					/* Identificador de programa */
-	int pidcid1;				/* Identificador de programa y canal */
-	int pidcid2;				/* Identificador de programa y canal */
+	LONG pid;					/* Identificador de programa */
+	DLONG pidcid;				/* Identificador de programa y canal */
 	int date_utc;				/* Fecha/hora programa (UTC) */
 	char date_str[LBF_TXT+1];	/* Fecha/hora programa (formato imprimible) */
 	int ix_long;				/* Indice datos descripcion larga */
@@ -42,17 +42,18 @@ typedef struct {
 	long bytesNombre;			/* Longitud nombre fichero de fragmento */
 	BYTE Nombre[LBF_TXT+1];		/* Nombre fichero de fragmento */
 	long absolute_start_time;	/* Posible comienzo del timeshift */
-	long start_timestamp1;		/* 90 kHz. Nomalmente 0, otro valor para grabaciones */
-	long start_timestamp2;		/* con timeshift o grabacion previa del mismo canal */
-	long end_timestamp1;		/* 90 kHz. 0 con grabacion en curso o apagado */
-	long end_timestamp2;		/* imprevisto, otro valor con grabacion terminada */
+	DLONG start_timestamp;		/* 90 kHz. Nomalmente 0, otro valor para grabaciones */
+								/* con timeshift o grabacion previa del mismo canal */
+	DLONG end_timestamp;		/* 90 kHz. 0 con grabacion en curso o apagado */
+								/* imprevisto, otro valor con grabacion terminada */
 } fmpg_info;
 
 /* Estructura datos grabacion (crid) */
 typedef struct {
 	long CRID_Version;					/* Siempre 2 */
-	long CRID_ID1;						/* Identificador unico de crid */
-	long CRID_ID2;						/* Identificador unico de crid */
+	DLONG CRID_ID;						/* Identificador unico de crid */
+	DLONG CRID_pid;						/* Identificador de programa */
+	LONG CRID_cid;						/* Identificador de canal */
 	long Rec_State;						/* Estado de la grabacion
 											1	Pendiente
 											2	Grabando
@@ -77,11 +78,11 @@ typedef struct {
 											32	Manual (en directo)*/
 	long IDserie;						/* Identificador de serie, valor negativo del timestamp
 											del momento de la creacion de la serie */
-	long Grabacion_protegida;			/* 0 sin proteger / 1 protegido */
+	short Grabacion_protegida;			/* 0 sin proteger / 1 protegido */
 	long bytesTitulo;					/* Longitud titulo */
 	BYTE Titulo[LBF_TXT+1];				/* Titulo */
 	long num_fmpg;						/* Nº de fragmentos de grabacion (normalmente 1) */
-    fmpg_info fmpg[NUM_FMPG];			/* Fragmentos de grabacion (fmpg) */
+	fmpg_info fmpg[NUM_FMPG];			/* Fragmentos de grabacion (fmpg) */
 	long bytesEPG_short;				/* Longitud descripcion corta */
 	BYTE EPG_short[LBF_TXT+1];			/* Descripcion corta */
 	long bytesEPG_long;					/* Longitud descripcion larga */
@@ -102,9 +103,14 @@ void	print_uso			();
 LONG	read_LONG			(FILE *file);
 //WORD	read_WORD			(FILE *file);
 //BYTE	read_BYTE			(FILE *file);
+size_t	write_LONG			(FILE *file, LONG valor);
+size_t	write_WORD			(FILE *file, WORD valor);
+DLONG	x8					(void *p);
 LONG	x4					(void *p);
 WORD	x2					(void *p);
 BYTE	x1					(void *p);
+void	DLONG2hex			(DLONG x, BYTE *out);
+void	DLONG2txt			(DLONG x, BYTE *out);
 void	utc2str				(const long utc_time, char *out);
 void	sanear_txt			(const BYTE *in, BYTE *out, long max_lon, long flags);
 int		eliminarLF			(BYTE *line);

@@ -41,25 +41,6 @@ Puede estar desactivado, sincronizar solo al arrancar o
 periodicamente cada hora en el minuto 25.
 
 
-#PARAMETRO: SIESTA_SKIN str /usr/local/etc/TRlight.skin.bz2
-SIESTA_SKIN = /usr/local/etc/TRlight.skin.bz2
-
-Skin a utilizar. A partir de la versión 3.3.11 se utiliza el
-skin 'Transparent Light' (TRlight.skin.bz2).
-
-Para cambiar el skin de nuestro gigaset debemos copiar el
-fichero de skin a /data, poner en este parámetro la ruta
-completa de ese fichero y reiniciar.
-
-Tras el reinicio se instalará el skin y se borrará el fichero de
-skin para que no se produzca la reinstalación en sucesivos
-arranques.
-
-Podemos poner hasta 4 ficheros de skin que serán instalados en
-el orden en el que aparezcan. Los nombres de ficheros de skin no
-pueden contener espacios.
-
-
 #PARAMETRO: SIESTA_SHOW_FIRM_ONBOOT key si no
 SIESTA_SHOW_FIRM_ONBOOT = si
 
@@ -151,8 +132,8 @@ ejecución de siesta-key-control.
 Muestra un mensaje de ayuda.
 
 
-#PARAMETRO: SIESTA_ACTIVAR_OSD2TCP key si no
-SIESTA_ACTIVAR_OSD2TCP = si
+#PARAMETRO: SIESTA_ACTIVAR_OSD2TCP key no si
+SIESTA_ACTIVAR_OSD2TCP = no
 
 Controla la activación de osd2tcp. Con esta utilidad podemos ver
 los menús del gigaset desde nuestro PC.
@@ -211,7 +192,7 @@ Controla la ejecución del servicio TELNET. Puede activarse como
 servicio de inetd o dejarlo desactivado.
 
 
-#PARAMETRO: SIESTA_ACTIVAR_SSH key inetd daemon off
+#PARAMETRO: SIESTA_ACTIVAR_SSH key off inetd daemon
 SIESTA_ACTIVAR_SSH = inetd
 
 Controla la ejecución del servicio SSH. Puede activarse como

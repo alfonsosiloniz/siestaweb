@@ -19,7 +19,7 @@ flags="-ev-"
 # Enviar documento html
 print_top ${FICHERO} ${flags} ""
 echo "			<tr>"
-echo "				<td class=\"fila\">"
+echo "				<td class=\"filaNormal\">"
 print_actions
 echo "					<pre style=\"background-color:#FFEEE6; padding:.2em\">"
 

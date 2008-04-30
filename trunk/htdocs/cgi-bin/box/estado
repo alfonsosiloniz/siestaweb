@@ -23,7 +23,7 @@ else
 fi
 
 # Enviar documento html
-html_doc_start "M750T - Estado del box" "300" "-an-e-bm"
+html_doc_start "M750T - Estado del box" "300" "an-e-bm"
 
 # Respuesta html
 html_top "Estado del box" "" "" ""
@@ -61,8 +61,10 @@ echo "				<br>
 								<option value=\"log_login\">Login en la aplicación</option>
 								<option value=\"log_search\">Búsquedas realizadas</option>
 								<option value=\"log_archivo\">Archivo de grabaciones</option>
+								<option value=\"log_agrupar\">Agrupado de grabaciones</option>
 								<option value=\"log_cpmv_record\">Copiar/Mover Grabación</option>
 								<option value=\"log_download\">Descargas de grabaciones realizadas a local</option>
+								<option value=\"log_edit_crid\">Edición de grabaciones</option>
 								<option value=\"log_view_video\">Visualizaciones de grabaciones en PC local</option>
 								<option value=\"log_delete\">Borrado de grabaciones</option>
 								<option value=\"log_fmpg_huerfanos\">Borrado de ficheros de grabación huerfanos</option>
@@ -80,15 +82,15 @@ echo "				<br>
 								<option value=\"log_partitions\">Particiones de disco (cat /proc/partitions)</option>
 								<option value=\"log_mount\">Puntos de montaje (cat /proc/mounts)</option>
 								<option value=\"log_act_sincro\">Actualización de la Sincroguía</option>
-							</select>
-							<script type=\"text/javascript\">document.getElementById('id_log').value=\"$id_accion\";</script>
-							&nbsp;&nbsp;
+							</select>"
+[ ${#id_accion} -ne 0 ] && echo "							<script type=\"text/javascript\">document.getElementById('id_log').value=\"$id_accion\";</script>"
+echo "							&nbsp;&nbsp;
 							<input class=\"txtNormal\" type=\"submit\" value=\"Ver\">
 						</td>
 					</tr>
 				</table>
 				<br>
-				<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\" class=\"borderTabla2\">"
+				<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\" class=\"borderTabla_sup\">"
 
 # Procesar peticion
 	case $id_accion in
@@ -99,18 +101,18 @@ echo "				<br>
 			fi
 			;;
 		log_getsincroimg )
-			print_log_file "Descargas de imágenes de Sincroguía"                       "/tmp/getsincroimg.log"
+			print_log_file "Descargas de imágenes de Sincroguía"                       "/var/log/getsincroimg.log"
 			# Boton descarga images.txt
 			[ -s /tmp/images.txt ] && echo "					<tr>
-						<td  align=\"center\">
+						<td class=\"filaNormal\" align=\"center\">
 							<br>
 							<input type=\"button\" value=\"Descargar images.txt\" class=\"txtInfo\" onclick=\"descargarImages()\">
 							<br>&nbsp;<br>
 						</td>
 					</tr>"
 			# Mostrar errores
-			if [ -s /tmp/getsincroimg.err ]; then
-				print_log_file "Errores en descarga de imágenes de Sincroguía"         "/tmp/getsincroimg.err"
+			if [ -s /var/log/getsincroimg.err ]; then
+				print_log_file "Errores en descarga de imágenes de Sincroguía"         "/var/log/getsincroimg.err"
 			fi
 			;;
 		log_pgmactual )
@@ -132,19 +134,24 @@ echo "				<br>
 		log_swap )
 			print_log_file "Log swap"                                                  "/var/log/swap.log";;
 		log_record )
-			print_log_file "Grabaciones programadas/canceladas desde la aplicación"    "/tmp/record.log";;
+			print_log_file "Grabaciones programadas/canceladas desde la aplicación"    "/var/log/record.log";;
 		log_login )
-			print_log_file "Login en la aplicación"                                    "/tmp/login.log";;
+			print_log_file "Login en la aplicación"                                    "/var/log/login.log";;
 		log_search )
-			print_log_file "Búsquedas realizadas"                                      "/tmp/search.log";;
+			print_log_file "Búsquedas realizadas"                                      "/var/log/search.log";;
 		log_archivo )
-			print_log_file "Archivo de grabaciones"                                    "/tmp/archivo_crid.log";;
+			print_log_file "Archivo de grabaciones"                                    "/var/log/archivo-crid.log";;
+		log_agrupar )
+			print_log_file "Agrupado de grabaciones"                                   "/var/log/agrupar-crid.log";;
 		log_cpmv_record )
-			print_log_file "Copiar/Mover Grabación"                                    "/tmp/copiar-crid-proc.log"
-			isRunning=`ps axfw | grep cpmvCrid | grep -v grep | wc -l`
+			print_log_file "Peticiones Copiar/Mover Grabación"                         "/var/log/cpmv-crid.log"
+			if [ -s /var/log/cpmv-crid-proc.log ]; then
+				print_log_file "Procesos Copiar/Mover Grabación"                       "/var/log/cpmv-crid-proc.log"
+			fi
+			isRunning=`ps axw | grep "cpmv-crid.sh" | grep -v grep | wc -l`
 			if [ $isRunning -gt 0 ]; then
 				echo "<tr>
-						<td  align=\"center\">
+						<td class=\"filaNormal\" align=\"center\">
 							<br>
 							<input type=\"button\" value=\"Actualizar Estado\" class=\"txtInfo\" onclick=\"document.location.reload()\">&nbsp;
 							<input type=\"button\" value=\"Detener Copia/Traspaso\" class=\"txtInfo\" onclick=\"stopCpmv()\">
@@ -154,21 +161,23 @@ echo "				<br>
 			fi
 			;;
 		log_download )
-			print_log_file "Descargas de grabaciones realizadas a local"               "/tmp/download.log";;
+			print_log_file "Descargas de grabaciones realizadas a local"               "/var/log/download.log";;
+		log_edit_crid )
+			print_log_file "Edición de grabaciones"                                    "/var/log/edit-crid.log";;
 		log_view_video )
-			print_log_file "Visualizaciones de grabaciones en PC local"                "/tmp/view_video.log";;
+			print_log_file "Visualizaciones de grabaciones en PC local"                "/var/log/ver-crid.log";;
 		log_delete )
-			print_log_file "Borrado de grabaciones"                                    "/tmp/delete_recording.log";;
+			print_log_file "Borrado de grabaciones"                                    "/var/log/delete-crid.log";;
 		log_fmpg_huerfanos )
-			print_log_file "Borrado de ficheros de grabación huerfanos"                "/tmp/fmpg_huerfanos.log";;
+			print_log_file "Borrado de ficheros de grabación huerfanos"                "/var/log/fmpg-huerfanos.log";;
 		log_checkdisk )
-			print_log_file "Chequeo de particiones del disco"                          "/tmp/checkdisk.log"
-			if [ -s /tmp/checkdisk.err ]; then
-				print_log_file "Errores en chequeo de particiones del disco"           "/tmp/checkdisk.err"
+			print_log_file "Chequeo de particiones del disco"                          "/var/log/checkdisk.log"
+			if [ -s /var/log/checkdisk.err ]; then
+				print_log_file "Errores en chequeo de particiones del disco"           "/var/log/checkdisk.err"
 			fi
 			;;
 		log_cmd )
-			print_log_file "Comandos ejecutados"                                      "/tmp/cmd.log";;
+			print_log_file "Comandos ejecutados"                                       "/var/log/cmd.log";;
 		log_RECORDER_LOG )
 			print_log_file "Log del grabador"                                          "/data/START_RECORDER_LOG" "./viewRecorderLog";;
 		log_WDG )
@@ -190,20 +199,20 @@ echo "				<br>
 		log_partitions )
 			# Encabezado particiones de disco
 			echo "				<tr>
-					<td class=\"fila titTabla\" bgcolor=\"#ffb310\" align=\"center\">Particiones de disco</td>
+					<td class=\"filaTitulo\" align=\"center\">Particiones de disco</td>
 				</tr>
 				<tr>
-					<td class=\"fila\">
+					<td class=\"filaNormal\">
 						<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
 							<tr>
+								<th width=\"32\" align=\"center\">&nbsp;</th>
+								<th width=\"32\" align=\"center\">&nbsp;</th>
+								<th class=\"filaLogTitulo\" align=\"center\">Major</th>
+								<th class=\"filaLogTitulo\" align=\"center\">Minor</th>
+								<th class=\"filaLogTitulo\" align=\"right\">Nº bloques</th>
 								<th align=\"center\">&nbsp;</th>
-								<th align=\"center\">&nbsp;</th>
-								<th align=\"center\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Major</font></th>
-								<th align=\"center\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Minor</font></th>
-								<th align=\"right\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Nº bloques</font></th>
-								<th align=\"center\">&nbsp;</th>
-								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Dispositivo</font></th>
-								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">File System Type</font></th>
+								<th class=\"filaLogTitulo\" align=\"left\">Dispositivo</th>
+								<th class=\"filaLogTitulo\" align=\"left\">File System Type</th>
 							</tr>"
 
 			# Volcado particiones
@@ -229,27 +238,27 @@ echo "				<br>
 				if [ ${devs[1]} -ne 0 ]; then
 					# Enlace check: no swap, no tipo swap
 					if [ "${part}" != "$STICK_PARTITION" -a ${#tipo_part} -ne 0 -a "${tipo_part}" != "swap" ]; then
-						link_fsck="<a href=\"javascript:checkHD('${part}','${tipo_part}')\" title=\"check ${part}\" style=\"text-decoration:none;\"><img src=\"/img/checkHD.gif\" width=\"32\" height=\"32\" border=\"0\" alt=\"check ${part}\"></a>"
+						link_fsck="<a title=\"check ${part}\" href=\"javascript:checkHD('${part}','${tipo_part}')\" style=\"text-decoration:none;\"><img src=\"/img/checkHD.png\" width=\"16\" height=\"16\" border=\"0\"></a>"
 					fi
 					# Enlace dump: solo tipo ext2
 					if [ "${tipo_part}" = "ext2" ]; then
-						link_dump="<a href=\"/cgi-bin/box/estado?id_log=log_partitions&${part}\" title=\"dumpe2fs ${part}\" style=\"text-decoration:none;\"><img src=\"/img/dumpHD.gif\" width=\"32\" height=\"32\" border=\"0\" alt=\"dumpe2fs ${part}\"></a>"
+						link_dump="<a title=\"dumpe2fs ${part}\" href=\"/cgi-bin/box/estado?id_log=log_partitions&${part}\" style=\"text-decoration:none;\"><img src=\"/img/dumpHD.png\" width=\"16\" height=\"16\" border=\"0\"></a>"
 					fi
 				fi
 
-				# Alternar colores
-				[ "$bgcolor" = "#FFECD9" ] && bgcolor="#FFFFE8" || bgcolor="#FFECD9"
+				# Alternar tipo fila
+				[ "$fila" = "filaImpar" ] && fila="filaPar" || fila="filaImpar"
 
 				# Datos particion
-				echo "				<tr bgcolor=\"$bgcolor\">
+				echo "				<tr class=\"$fila\">
 					<td align=\"center\">${link_fsck}</td>
 					<td align=\"center\">${link_dump}</td>
-					<td align=\"center\"><font style=\"font-family:courier new; font-size:12px;\">${devs[0]}</font></td>
-					<td align=\"center\"><font style=\"font-family:courier new; font-size:12px;\">${devs[1]}</font></td>
-					<td align=\"right\"><font style=\"font-family:courier new; font-size:12px;\">${devs[2]}</font></td>
+					<td class=\"filaLog\" align=\"center\">${devs[0]}</td>
+					<td class=\"filaLog\" align=\"center\">${devs[1]}</td>
+					<td class=\"filaLog\" align=\"right\">${devs[2]}</td>
 					<td align=\"center\">&nbsp;</td>
-					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">${part}</font></td>
-					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">${tipo_part}</font></td>
+					<td class=\"filaLog\" align=\"left\">${part}</td>
+					<td class=\"filaLog\" align=\"left\">${tipo_part}</td>
 				</tr>"
 			done < /tmp/partitions.tmp
 
@@ -267,18 +276,19 @@ echo "				<br>
 		log_mount )
 			# Encabezado puntos de montaje
 			echo "				<tr>
-					<td class=\"fila titTabla\" bgcolor=\"#ffb310\" align=\"center\">Puntos de montaje</td>
+					<td class=\"filaTitulo\" align=\"center\">Puntos de montaje</td>
 				</tr>
 				<tr>
-					<td class=\"fila\">
+					<td class=\"filaNormal\">
 						<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
 							<tr>
+								<th width=\"32\" align=\"center\">&nbsp;</th>
+								<th width=\"32\" align=\"center\">&nbsp;</th>
 								<th align=\"center\">&nbsp;</th>
-								<th align=\"center\">&nbsp;</th>
-								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Dispositivo</font></th>
-								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Punto de montaje</font></th>
-								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">File System Type</font></th>
-								<th align=\"left\"><font style=\"font-family:courier new; font-size:12px; text-decoration: underline;\">Opciones Montaje</font></th>
+								<th class=\"filaLogTitulo\" align=\"left\">Dispositivo</th>
+								<th class=\"filaLogTitulo\" align=\"left\">Punto de montaje</th>
+								<th class=\"filaLogTitulo\" align=\"left\">File System Type</th>
+								<th class=\"filaLogTitulo\" align=\"left\">Opciones Montaje</th>
 							</tr>"
 
 			# Volcado filesystems
@@ -303,25 +313,26 @@ echo "				<br>
 				if [ $isdev -gt 0 ]; then
 					# Enlace check: no swap, no tipo swap
 					if [ "${part}" != "$STICK_PARTITION" -a ${#tipo_part} -ne 0 -a "${tipo_part}" != "swap" ]; then
-						link_fsck="<a href=\"javascript:checkHD('${part}','${tipo_part}')\" title=\"check ${part}\" style=\"text-decoration:none;\"><img src=\"/img/checkHD.gif\" width=\"32\" height=\"32\" border=\"0\" alt=\"check ${part}\"></a>"
+						link_fsck="<a title=\"check ${part}\" href=\"javascript:checkHD('${part}','${tipo_part}')\" style=\"text-decoration:none;\"><img src=\"/img/checkHD.png\" width=\"16\" height=\"16\" border=\"0\"></a>"
 					fi
 					# Enlace dump: solo tipo ext2/3
 					if [ "${tipo_part}" = "ext2" -o "${tipo_part}" = "ext3" ]; then
-						link_dump="<a href=\"/cgi-bin/box/estado?id_log=log_mount&${part}\" title=\"dumpe2fs ${part}\" style=\"text-decoration:none;\"><img src=\"/img/dumpHD.gif\" width=\"32\" height=\"32\" border=\"0\" alt=\"dumpe2fs ${part}\"></a>"
+						link_dump="<a title=\"dumpe2fs ${part}\" href=\"/cgi-bin/box/estado?id_log=log_mount&${part}\" style=\"text-decoration:none;\"><img src=\"/img/dumpHD.png\" width=\"16\" height=\"16\" border=\"0\"></a>"
 					fi
 				fi
 
-				# Alternar colores
-				[ "$bgcolor" = "#FFECD9" ] && bgcolor="#FFFFE8" || bgcolor="#FFECD9"
+				# Alternar tipo fila
+				[ "$fila" = "filaImpar" ] && fila="filaPar" || fila="filaImpar"
 
 				# Datos particion
-				echo "			<tr bgcolor=\"$bgcolor\">
+				echo "			<tr class=\"$fila\">
 					<td align=\"center\">${link_fsck}</td>
 					<td align=\"center\">${link_dump}</td>
-					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">${part}</font></td>
-					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\"><a href=\"/cgi-bin/box/show${devs[1]}\" title=\"Explorar ${devs[1]}\">${devs[1]}</a></font></td>
-					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">${tipo_part}</font></td>
-					<td align=\"left\"><font style=\"font-family:courier new; font-size:12px;\">${devs[3]}</font></td>
+					<td align=\"center\">&nbsp;</td>
+					<td class=\"filaLog\" align=\"left\">${part}</td>
+					<td class=\"filaLog\" align=\"left\"><a href=\"/cgi-bin/box/show${devs[1]}\" title=\"Explorar ${devs[1]}\">${devs[1]}</a></td>
+					<td class=\"filaLog\" align=\"left\">${tipo_part}</td>
+					<td class=\"filaLog\" align=\"left\">${devs[3]}</td>
 				</tr>"
 			done < /tmp/mounts.tmp
 
@@ -337,7 +348,7 @@ echo "				<br>
 			fi
 
 			echo "				<tr>
-						<td  align=\"center\">
+						<td class=\"filaNormal\" align=\"center\">
 							<br>"
 			isUSB2mounted=`df 2> /dev/null | grep /var/media/SWAP | wc -l`
 			if [ $isUSB2mounted -gt 0 ]; then
@@ -348,8 +359,8 @@ echo "				<br>
 			echo "			<br>&nbsp;<br>
 						</td>
 					</tr>"
-			if [ -s /tmp/mount_usb2.log ]; then
-				print_log_file "Montaje / Desmontaje USB2"                             "/tmp/mount_usb2.log"
+			if [ -s /var/log/mount_usb2.log ]; then
+				print_log_file "Montaje / Desmontaje USB2"                             "/var/log/mount_usb2.log"
 			fi
 			;;
 
@@ -357,14 +368,14 @@ echo "				<br>
 			# Encabezado actualizacion sincroguia
 			dateFormat=`awk '/LastEPG_Upload/ {print strftime("%d/%m/%Y %H:%M %Z",$2)}' /var/etc/settings.txt`
 			echo "				<tr>
-					<td class=\"fila titTabla\" bgcolor=\"#ffb310\" align=\"center\">
+					<td class=\"filaTitulo\" align=\"center\">
 						Actualización de la Sincroguía ( <font style=\"text-decoration: underline; \">Última actualización: $dateFormat</font> )
 					</td>
 				</tr>
 				<tr>
-					<td class=\"fila\" align=\"left\">
+					<td class=\"filaNormal\" align=\"left\">
 						<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
-							<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>
+							<tr><td colspan=\"6\" class=\"txtNegrita\" height=\"4\"></td></tr>
 							<tr align=\"center\" style=\"font-family:courier new; font-size:12px; text-decoration: underline; font-weight: bold;\">
 								<td width=\"10%\">ID Canal</td>
 								<td width=\"23%\">Fecha/Hora</td>
@@ -373,26 +384,26 @@ echo "				<br>
 								<td width=\"10%\">ID Canal</td>
 								<td width=\"24%\">Fecha/Hora</td>
 							</tr>
-							<tr><td colspan=\"6\" class=\"titTabla\" height=\"4\"></td></tr>"
+							<tr><td colspan=\"6\" class=\"txtNegrita\" height=\"4\"></td></tr>"
 
 			# Volcado horas actualizacion sincroguia
-			sort /data/EPG_Status.txt | format_act_sincro.awk
+			[ -f /data/EPG_Status.txt ] && sort /data/EPG_Status.txt | format-act-sincro.awk
 
 			# Cerrar tabla
 			echo "						</table>
 					</td>
 				</tr>"
 			;;
-	
+
 		* ) ;;
 	esac
 
 # Estado y uptime
 source /usr/local/bin/siesta-version.sh
 STgrabacion=([0]="Desconocido" [1]="Sin grabaciones" [2]="Una grabación " [3]="Dos grabaciones" [4]="Sin grabaciones" [5]="Una grabación" [6]="Dos grabaciones")
-echo "					<tr><td class=\"titTabla\" bgcolor=\"#ffb310\" height=\"4\"></td></tr>
+echo "					<tr><td class=\"filaTitulo\" height=\"4\"></td></tr>
 					<tr>
-						<td class=\"fila titTabla\" bgcolor=\"#ffb310\" align=\"center\">
+						<td class=\"filaTitulo\" align=\"center\">
 							Estado: Video $ModoVideo / ${STgrabacion[$ModoGrabacion]}
 							<br><br>
 							Versión Firmware: $FIRMWARE_VERSION<br>

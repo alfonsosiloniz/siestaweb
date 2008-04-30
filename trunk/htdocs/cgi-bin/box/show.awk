@@ -18,6 +18,7 @@ $1 ~ /^d/		{img="dir"}
 $1 ~ /^b/		{img="block-dev"; idx=nc_file+1}
 $1 ~ /^c/		{img="char-dev"; idx=nc_file+1}
 $idx ~ /.txt$/	{img="text"}
+$idx ~ /.ini$/	{img="text"}
 $idx == ".."	{img="dirup"}
 
 {
@@ -33,22 +34,28 @@ $idx == ".."	{img="dirup"}
 		if ( pos > 0 ) {
 			n1 = substr(name,1,pos-1)
 			n2 = substr(name,pos+4)
+			# Icono borrar enlace
+			printf("<a title=\"Eliminar enlace %s\" href=\"javascript:ConfirmarBorradoURL('el enlace \\'%s\\'', '%s/%s?delete')\"><img src=\"/img/icon-borrar.png\" border=0></a> ",name,name,uri,n1)
 			# Icono
-			printf("<img src=\"/img/%s.png\" alt=\"%s\"> ",img,img)
-		    # Info, enlace y fichero
+			printf("<img src=\"/img/%s.png\" title=\"enlace\"> ",img)
+			# Info, enlace y fichero
 			printf("%s<a href=\"%s/%s\">%s</a> -> <a href=\"%s/%s\">%s</a>\n",info,uri,n1,n1,ENVIRON["SCRIPT_NAME"],n2,n2)
 		}
 	# Comprobar icono texto/desconocido
 	} else if ( img == "text" || img == "unknown" ) {
+		# Icono borrar
+		printf("<a title=\"Eliminar %s\" href=\"javascript:ConfirmarBorradoURL('\\'%s\\'', '%s/%s?delete')\"><img src=\"/img/icon-borrar.png\" border=0></a> ",name,name,uri,name)
 		# Icono, mostrar envio
-	    printf("<a href=\"%s/%s?send\" title=\"Abrir/Descargar %s\"><img src=\"/img/%s.png\" alt=\"%s\" border=0></a> ",uri,name,name,img,img)
-	    # Info y fichero
+		printf("<a title=\"Abrir/Descargar %s\" href=\"%s/%s?send\"><img src=\"/img/%s.png\" border=0></a> ",name,uri,name,img)
+		# Info y fichero
 		printf("%s<a href=\"%s/%s\">%s</a>\n",info,uri,name,name)
 	# Directorio o dispositivo
 	} else {
+		# Icono borrar
+		printf("<a title=\"Eliminar %s\" href=\"javascript:ConfirmarBorradoURL('\\'%s\\'', '%s/%s?delete')\"><img src=\"/img/icon-borrar.png\" border=0></a> ",name,name,uri,name)
 		# Icono, no mostrar envio
-	    printf("<a href=\"%s/%s\" title=\"Abrir %s\"><img src=\"/img/%s.png\" alt=\"%s\" border=0></a> ",uri,name,name,img,img)
-	    # Info y fichero
+		printf("<a title=\"Abrir %s\" href=\"%s/%s\"><img src=\"/img/%s.png\" border=0></a> ",name,uri,name,img)
+		# Info y fichero
 		printf("%s<a href=\"%s/%s\">%s</a>\n",info,uri,name,name)
 	}
 }

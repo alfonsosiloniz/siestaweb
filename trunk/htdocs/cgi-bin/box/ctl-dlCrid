@@ -1,0 +1,140 @@
+#!/bin/bash
+# (c) Grupo SIESTA, 03-04-2008
+#
+# Descargar grabacion (fichero .crid)
+# ctl-dlCrid?num_CRIDFILE=X&CRIDFILE1=crid...&CRIDFILEX=crid
+
+# Configurar entorno
+source ../www-setup.shi
+source fweb.shi
+validate_login
+path_dl='C:\'
+[ -f ${SERVER_ROOT}/cfg/.path_dl.txt ] && path_dl=`cat ${SERVER_ROOT}/cfg/.path_dl.txt`
+
+# Procesar parametros get/post
+eval "`proccgi $*`"
+
+# Generar lista ficheros crid
+lista_CRIDS=""
+for F_crid in ${!FORM_CRIDFILE*}; do
+	# Obtener nombre de fichero
+	TMP='$'${F_crid}
+	eval "fileCRID=$TMP"
+	# Agregar a lista de ficheros
+	[ ${#lista_CRIDS} -eq 0 ] && lista_CRIDS="${fileCRID}" || lista_CRIDS="${lista_CRIDS} ${fileCRID}"
+done
+
+# Enviar documento html
+html_doc_start "M750T - Descargar Grabación" "" "-----b-" "
+function init() {
+	index=document.location.href.indexOf(\"://\");
+	host=document.location.href.substring(index+3);
+	index=host.indexOf(\"/\");
+	host=host.substring(0, index);
+	document.forms['form_m750'].host.value=host;
+}
+function cambioSO() {
+	if (document.forms['form_m750'].so.value==0) {
+		document.forms['form_m750'].mplayer.value=\"\/usr\/bin\/mplayer\";
+		document.forms['form_m750'].temp.value=\"\/tmp\";
+	}
+	else {
+		document.forms['form_m750'].mplayer.value=\"${path_mplayer_js}\";
+		document.forms['form_m750'].temp.value=\"${path_temp_js}\";
+	}
+}"
+
+# Respuesta html
+html_top "Descargar Grabación" "init();" "/cgi-bin/run/dlCrid" "post"
+cat << --EOF--
+				<br>
+				<table width="100%" border="0" cellspacing="2" cellpadding="0" align="center">
+					<tr>
+						<td align="right" class="txtParam">Host:&nbsp;</td>
+						<td><input type="text" name="host" size="32" maxlength="64" class="cajaPlana"></td>
+						<td width="96">&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">FTP port:&nbsp;</td>
+						<td><input type="text" name="port" value="21" size="8" maxlength="32" class="cajaPlana"></td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+--EOF--
+
+# Lista de ficheros
+if [ ${FORM_num_CRIDFILE} -eq 1 ]; then
+	echo "						<td align=\"right\" class=\"txtParam\">Fichero crid:&nbsp;</td>
+						<td><input type=\"text\" name=\"cridfile\" value=\"${lista_CRIDS}\" size=\"64\" maxlength=\"128\" class=\"cajaPlanaLock\" readonly></td>"
+else
+	echo "						<td align=\"right\" valign=\"top\" class=\"txtParam\">Ficheros crid:&nbsp;</td>
+						<td><textarea name=\"cridfile\" id=\"cridfile\" class=\"cajaParamLock\" readonly cols=\"80\" rows=\"8\" maxlength=\"4096\">${lista_CRIDS}</textarea></td>"
+fi
+
+# REsto de parametros
+cat << --EOF--
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">FTP User:&nbsp;</td>
+						<td><input type="text" name="user" value="root" size="16" maxlength="32" class="cajaPlana"></td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">FTP Password:&nbsp;</td>
+						<td><input type="text" name="pwd" value="root" size="16" maxlength="32" class="cajaPlana"></td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">Directorio descarga:&nbsp;</td>
+						<td><input type="text" name="dir" value="${path_dl}" size="64" maxlength="128" class="cajaPlana"></td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">Apagar PC al finalizar la descarga:&nbsp;</td>
+						<td>
+							<select name="offpc" class="cajaPlana">
+								<option value="NO" selected>No</option>
+								<option value="SI">Sí</option>
+							</select>
+						</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">Apagar Gigaset al finalizar la descarga:&nbsp;</td>
+						<td>
+							<select name="offgiga" class="cajaPlana">
+								<option value="NO" selected>No</option>
+								<option value="rapido">Apagado rápido</option>
+								<option value="completo">Apagado completo</option>
+							</select>
+						</td>
+						<td align="center"><a title="Descargar Grabación" href="javascript:document.forms['form_m750'].submit();"><img src="/img/aceptar.gif" width="28" height="25" border="0"></a></td>
+					</tr>
+					<tr><td height="16" colspan="3"></td></tr>
+					<tr>
+						<td colspan="3">
+							<table width="100%" border="0" cellspacing="0" cellpadding="08" align="center">
+								<tr>
+									<td colspan="2" class="txtAvisos" align="center">Atención</td>
+								</tr>
+								<tr class="txtNormal" valign="top">
+									<td>
+										Al hacer click sobre el botón <img src="/img/aceptar.gif" width="28" height="25" border="0"> verá una ventana como ésta:<br><br>
+										<img src="/img/descarga_cmd.jpg" width="455" height="266" border="0">
+									</td>
+									<td>
+										<br><br><br>
+										Haciendo click sobre el botón [Ejecutar] se descargará el fichero "descargar_grabacion.cmd" en un directorio temporal y comenzará la descarga de todos los ficheros correspondientes a la grabación seleccionada.
+										<br><br><br>
+										Para el funcionamiento de esta opción es necesario tener instalada la utilidad <a href="http://www.gnu.org/software/wget/" target="_blank"><b>wget</b></a> (<a href="http://isidorocr.googlepages.com/wget.zip">versión wget para Windows</a>).
+										<br><br>
+										La utilidad wget debe estar instalada en un directorio incluido en el PATH de ejecución (por ejemplo C:\Windows).
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+--EOF--
+html_doc_end no

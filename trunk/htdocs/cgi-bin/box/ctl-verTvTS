@@ -1,0 +1,154 @@
+#!/bin/bash
+# (c) Grupo SIESTA, 03-04-2008
+#
+# Ver TV en directo mediante ficheros de timeshift
+
+# Configurar entorno
+source ../www-setup.shi
+source fweb.shi
+validate_login
+path_mplayer='C:\Archivos de programa\mplayer\mplayer.exe'
+[ -f ${SERVER_ROOT}/cfg/.path_mplayer.txt ] && path_mplayer=`cat ${SERVER_ROOT}/cfg/.path_mplayer.txt`
+path_temp='C:\Temp'
+[ -f ${SERVER_ROOT}/cfg/.path_temp.txt ] && path_temp=`cat ${SERVER_ROOT}/cfg/.path_temp.txt`
+
+# Obtener path para javascript (sustituir \ por \\)
+path_mplayer_js=`echo "${path_mplayer}" | sed 's/\\\\/\\\\\\\\/g'`
+path_temp_js=`echo "${path_temp}" | sed 's/\\\\/\\\\\\\\/g'`
+
+# Enviar documento html
+http_header
+cat << --EOF--
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+	<link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+	<link rel="stylesheet" href="/css/estilos.css" type="text/css"/>
+	<script type="text/javascript" src="/js/botones.js" charset="ISO-8859-1"></script>
+	<script type="text/javascript">
+		function init() {
+			index=document.location.href.indexOf("://");
+			host=document.location.href.substring(index+3);
+			index=host.indexOf("/");
+			host=host.substring(0, index);
+			document.forms[0].host.value=host;
+		}
+		function cambioSO() {
+			if (document.forms[0].so.value==0) {
+				document.forms[0].mplayer.value="\/usr\/bin\/mplayer";
+				document.forms[0].temp.value="\/tmp";
+			}
+			else {
+				document.forms[0].mplayer.value="${path_mplayer_js}";
+				document.forms[0].temp.value="${path_temp_js}";
+			}
+		}
+	</script>
+	<title>M750T - Ver LiveTV-TimeShift</title>
+</head>
+<body bgcolor="#FFFFFF" onload="init();">
+	<form name="form_m750" method="post" action="/cgi-bin/run/verTS">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+		<tr>
+			<td align="center">
+				<font class="titPag">M750T EPG</font>
+				<br>
+				<font class="subTitPag">Ver LiveTV-TimeShift</font>
+			</td>
+		</tr>
+		<tr>
+			<td><br><script type="text/javascript">barra_botones();</script></td>
+		</tr>
+	</table>
+	<table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
+		<tr>
+			<td>
+				<br>
+				<table width="100%" border="0" cellspacing="2" cellpadding="0" align="center">
+					<tr>
+						<td colspan="3" class="txtInfo" align="center" style="padding-left: 32px; padding-right: 32px">
+							Mediante esta opción podrá ver la TV en directo, utilizando la grabación TimeShift que realiza el gigaset (debe estar activado).<br>
+							La ventaja de este método es que no necesita terminar los procesos del gigaset y por lo tanto no se necesita reiniar después de terminar la reproducción.<br><br>
+							Consejo: no intente ir al último minuto del vídeo para ver la TV lo más en directo posible, ya que puede que se alcance el final del buffer y se corte la reproducción. Cuando avance tenga cuidado para que la barra de progreso de mplayer no llegue al final.<br><br><br>
+						</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam" width="150">Host:&nbsp;</td>
+						<td><input type="text" name="host" size="32" maxlength="64" class="cajaPlana"></td>
+						<td width="96">&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">FTP port:&nbsp;</td>
+						<td><input type="text" name="port" value="21" size="8" maxlength="32" class="cajaPlana"></td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">FTP User:&nbsp;</td>
+						<td><input type="text" name="user" value="root" size="16" maxlength="32" class="cajaPlana"></td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">FTP Password:&nbsp;</td>
+						<td><input type="text" name="pwd" value="root" size="16" maxlength="32" class="cajaPlana"></td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">Path de MPlayer:&nbsp;</td>
+						<td><input type="text" name="mplayer" value="${path_mplayer}" size="64" maxlength="128" class="cajaPlana"></td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">Directorio Temporal:&nbsp;</td>
+						<td><input type="text" name="temp" value="${path_temp}" size="64" maxlength="128" class="cajaPlana"></td>
+					</tr>
+					<tr>
+						<td align="right" class="txtParam">Relación de Aspecto:&nbsp;</td>
+						<td>
+							<select name="aspect" class="cajaPlana">
+								<option value="1.33" selected>4:3</option>
+								<option value="1.7777">16:9</option>
+								<option value="1.25">1.25</option>
+							</select>
+						</td>
+						<td align="center"><a title="Visualizar LiveTV-TimeShift" href="javascript:document.forms['form_m750'].submit();"><img src="/img/aceptar.gif" width="28" height="25" border="0"></a></td>
+					</tr>
+					<!-- <tr>
+						<td align="right" class="txtParam">Sistema operativo:&nbsp;</td>
+						<td>
+							<select name="so" class="cajaPlana" onchange="javascript:cambioSO();">
+								<option value="1" selected>Windows</option>
+								<option value="0">Linux/Unix</option>
+							</select>
+							<b><font color="#ff0000">Seleccione esto lo primero</font></b>
+						</td>
+					</tr> -->
+					<tr><td height="16" colspan="3"></td></tr>
+					<tr>
+						<td colspan="3">
+							<table width="100%" border="0" cellspacing="0" cellpadding="08" align="center">
+								<tr>
+									<td colspan="2" class="txtAvisos" align="center">Atención</td>
+								</tr>
+								<tr class="txtNormal" valign="top">
+									<td>
+										Al hacer click sobre el botón <img src="/img/aceptar.gif" width="28" height="25" border="0"> verá una ventana como ésta:<br><br>
+										<img src="/img/visualizar_cmd.jpg" width="455" height="266" border="0">
+									</td>
+									<td>
+										<br><br><br>
+										Haciendo click sobre el botón [Ejecutar] se descargará el fichero "verts.cmd" en un directorio temporal y éste generará una lista de reproducción llamando a continuación al reproductor MPlayer.
+										<br><br><br>
+										Para el funcionamiento de esta opción es necesario tener instalado el reproductor <a href="http://www.mplayerhq.hu/" target="_blank"><b>MPlayer</b></a>, la aplicación <a href="http://www.gnu.org/software/wget/" target="_blank"><b>wget</b></a> (<a href="http://isidorocr.googlepages.com/wget.zip">versión wget para Windows</a>) y este <a href="http://isidorocr.googlepages.com/utilities.zip"><b>pack de utilidades</b></a>.
+										<br><br>
+										El pack de utilidades está compuesto por varios ejecutables, que al igual que wget, deben estar en un directorio incluido en el PATH de ejecución (por ejemplo C:\Windows).
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+--EOF--
+cat ../../html/mplayer.inc
+html_doc_end

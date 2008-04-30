@@ -8,9 +8,9 @@
 source ../www-setup.shi
 source fweb.shi
 validate_login
-LOG=/tmp/cmd.log
+LOG=/var/log/cmd.log
 pie_botones="no"
-cmd_permitidos="cat df fdisk halt ls ps reboot grep wc touch echo cp crontab tar ln dos2unix kill pkill bunzip2 netstat traceroute unzip wget"
+cmd_permitidos=":estado.sh:picctl:cat:df:fdisk:halt:ls:ps:reboot.sh:grep:wc:touch:echo:cp:crontab:tar:ln:dos2unix:kill:pkill:bunzip2:netstat:traceroute:unzip:wget"
 
 # Procesar parametros get/post
 eval "`proccgi $*`"
@@ -18,24 +18,24 @@ eval "`proccgi $*`"
 # Obtener comando para ejecutar
 line=$FORM_command
 cmd_print=`echo "$line" | sed 's/&/\&amp;/g;s/</\&lt;/g'`
-cmd=${line// *}
+cmd=`basename ${line// *} 2>/dev/null`
 
 # Enviar documento html
-html_doc_start "M750T - Ejecución de comandos" "" "------b-"
+html_doc_start "M750T - Ejecución de comandos" "" "-----b-"
 
 # Respuesta html
 html_top "Ejecución de comandos" "" "" ""
 echo "				<br>
 				<table width=\"90%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
 					<tr>
-						<td colspan=\"2\" class=\"titTabla\">Comando a ejecutar:</td>
+						<td colspan=\"2\" class=\"txtNegrita\">Comando a ejecutar:</td>
 					</tr>
 					<tr>
-						<td colspan=\"2\" class=\"titTabla\" height=\"10\"></td>
+						<td colspan=\"2\" class=\"txtNegrita\" height=\"10\"></td>
 					</tr>
 					<tr>
 						<td class=\"txtNormal\">
-							<input type=\"text\" name=\"command\" id=\"command\" size=\"40\" maxlength=\"100\" class=\"cajaPlana\" value=\"$cmd_print\">&nbsp;&nbsp;
+							<input type=\"text\" name=\"command\" id=\"command\" size=\"64\" maxlength=\"128\" class=\"cajaPlana\" value=\"$cmd_print\">&nbsp;&nbsp;
 							<input type=\"Submit\" value=\"Ejecutar\">
 							<script type=\"text/javascript\">document.getElementById('command').focus();</script>
 							<br>&nbsp;
@@ -52,12 +52,12 @@ if [ "Z${cmd}" != "Z" ]; then
 	echo "`date` -> $line" >> $LOG
 
 	# Comprobar comando permitido
-	echo "$cmd_permitidos" | grep -q "\b$cmd\b" > /dev/null
+	echo "${cmd_permitidos}" | grep -q ":${cmd}:"
 	if [ $? -eq 0 ]; then
 		# Devolver resultado comando
 		echo "							<h2>Resultado: <tt>$cmd_print</tt></h2>
 							<p>
-							<pre style=\"background-color: #FFEEE6; padding: .3em\">`$line 2>&1 | sed 's/&/\&amp;/g;s/</\&lt;/g'`</pre>"
+							<pre style=\"background-color: #FFEEE6; padding: .3em\">`eval $line 2>&1 | sed 's/&/\&amp;/g;s/</\&lt;/g'`</pre>"
 
 		# Poner botones en pie de pagina
 		pie_botones="si"
@@ -67,7 +67,7 @@ if [ "Z${cmd}" != "Z" ]; then
 							<p>
 							<span style=\"background-color: #FFEEE6; border-color: #a00000\">El comando especificado no está permitido.</span>
 							<p>
-							Comandos permitidos: <tt>$cmd_permitidos</tt>"
+							Comandos permitidos: <tt>`echo ${cmd_permitidos} | sed 's/:/ /g'`</tt>"
 	fi
 fi
 

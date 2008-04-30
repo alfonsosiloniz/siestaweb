@@ -4,31 +4,31 @@
 # Script que cancela una grabacion y retorna el resultado en XML
 
 # Obtener parametros
-pid=`echo $QUERY_STRING | cut -d"-" -f1`
+pidcid=`echo $QUERY_STRING | cut -d"&" -f1`
 
 # Configurar entorno
 source ../www-setup.shi
 source fweb.shi
 validate_login "xml"
+LOG=/var/log/record.log
 
 # Log del proceso
-echo "`date` Petición de cancelación de grabación: $QUERY_STRING" >> /tmp/record.log
+echo "`date` Petición de cancelación de grabación: pidcid=$pidcid" >> $LOG
 
 # Enviar peticion a wavebox
-wcpre=`cat /data/RA_FILE | wc -l`
-echo "CANCEL $pid" > /dev/tcp/localhost/2010
+echo "CANCEL ${pidcid}" > /dev/tcp/localhost/2010
 sleep 4
-wcpost=`cat /data/RA_FILE | wc -l`
 
-# Comprobar resultado
-if [ $wcpre -gt $wcpost ]; then
+# Comprobar resultado, buscar pid en RA_FILE -> no debe estar
+grep -qs ${pidcid} /data/RA_FILE
+if [ $? -ne 0 ]; then
 	# Resultado OK
 	enviar_xml_ok
-	echo "`date` Resultado: OK" >> /tmp/record.log
+	echo "`date` Resultado: OK" >> $LOG
 	# Borrar fichero cache de grabacion
 	rm -f ${Cache}/*${pid}.refXML 2> /dev/null
 else
 	# Resultado NO OK
 	enviar_xml_err
-	echo "`date` Resultado: NOK" >> /tmp/record.log
+	echo "`date` Resultado: NOK" >> $LOG
 fi

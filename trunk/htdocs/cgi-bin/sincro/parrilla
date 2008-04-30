@@ -35,7 +35,7 @@ fi
 utcAhora=`date +%s`
 
 # Enviar documento html
-html_doc_start "M750T - Sincroguía" 600 "-an-efbm" "
+html_doc_start "M750T - Sincroguía" 600 "an-efbm" "
 utcParrilla=${utcParrilla};
 utcAhora=${utcAhora};
 porcentHeight=4;
@@ -78,11 +78,11 @@ if [ -f $SORT_CHIDS ]; then
 					</tr>
 					<tr>
 						<td class="txtNormal" align="right">
-							Buscar Programa: <input class=\"cajaplana\" name=\"querystr\" type=\"text\" size=\"20\" maxsize=\"50\" value=\"\"/>
+							Buscar Programa: <input class=\"cajaPlana\" name=\"querystr\" type=\"text\" size=\"20\" maxsize=\"50\" value=\"\"/>
 							<input class=\"txtNormal\" type=\"button\" value=\"Buscar\" onclick=\"buscarPrograma()\"/><br/>
 							Búsqueda Horaria:
-							Fecha: <select size=\"1\" name=\"fecha\"><option value=\"\">Procesando...</option></select>
-							Hora: <select size=\"1\" name=\"hora\">
+							Fecha: <select class=\"cajaPlana\" size=\"1\" name=\"fecha\"><option value=\"\">Procesando...</option></select>
+							Hora: <select class=\"cajaPlana\" size=\"1\" name=\"hora\">
 								<option value=\"00:\">0</option>
 								<option value=\"01:\">1</option>
 								<option value=\"02:\">2</option>
@@ -132,16 +132,16 @@ if [ -f $SORT_CHIDS ]; then
 			CACHE_HTML=${Cache}/cache.$chID.html
 			eval `www-tools infoID ${chID} ${INFO_CHANNELS}`
 
-			# Alternar colores
-			[ "$bgcolor" = "#FFECD9" ] && bgcolor="#FFFFE8" || bgcolor="#FFECD9"
+			# Alternar tipo fila
+			[ "$fila" = "filaImpar" ] && fila="filaPar" || fila="filaImpar"
 
 			# Generar columna de parrilla
-			echo "						<td valign=\"top\" align=\"center\" width=\"140\" class=\"titChannel\" class=\"borderFila\" nowrap><a href=\"/cgi-bin/sincro/ver-sincro?$chID-0\">$chName</a>
+			echo "						<td valign=\"top\" align=\"center\" width=\"140\" class=\"txtGrande\" nowrap><a href=\"/cgi-bin/sincro/ver-sincro?$chID&0\">$chName</a>
 							<br>
 							<font class="txtPeq"><a href=\"javascript:cambioCanal($numChannel)\">Ver Canal</a> </font>
 							<br>
 							<br>
-							<table border=\"0\" bgcolor=\"$bgcolor\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\" class=\"borderTabla\">"
+							<table border=\"0\" bgcolor=\"$bgcolor\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\" class=\"$fila borderTabla_inf\">"
 
 			# Incluir fichero cache o mensaje de advertencia
 			if [ -f ${LCK_CACHE} ]; then
@@ -155,7 +155,7 @@ if [ -f $SORT_CHIDS ]; then
 			else
 				echo "								<tr>
 									<td align=\"center\" class=\"borderFila txtNormal\">La caché de este canal no está generada.
-									Espere a que se genere la caché o fuerce la actualización desde la pantalla de
+									Espere a que se genere la caché o fuerce la actualización desde la página de
 									<a href=\"/cgi-bin/box/estado\">Estado</a>.
 									</td>
 								</tr>"
@@ -185,11 +185,10 @@ else
 						</td>
 					</tr>
 				</table>
+				<br>
 				<table border=\"0\" cellspacing=\"1\" cellpadding=\"0\" align=\"center\">
 					<tr>
-						<td class=\"titChannel\" align=\"center\">
-							<font class=\"txtAvisos\"><br>Datos de canales no encontrados</font>
-						</td>
+						<td class=\"txtAvisos\" align=\"center\">Datos de canales no encontrados</td>
 					</tr>
 				</table>"
 	html_doc_end no

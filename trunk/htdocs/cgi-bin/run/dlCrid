@@ -1,0 +1,89 @@
+#!/bin/bash
+# pepper, jotabe, (c) Grupo SIESTA, 30-04-2008
+#
+# Script que genera un fichero de comandos con las instrucciones necesarias para
+# descargar a la máquina local una grabación completa, utilizando wget.
+
+# Configurar entorno
+source ../www-setup.shi
+source fweb.shi
+validate_login
+LOG=/var/log/download.log
+TICKET_FILE=${SERVER_ROOT}/cfg/.ticket_apagar.txt
+
+# Procesar parametros get/post
+eval "`proccgi $*`"
+
+# Obtener parametros
+host=$FORM_host
+port=$FORM_port
+lista_CRIDS=$FORM_cridfile
+user=$FORM_user
+pwd=$FORM_pwd
+dir=`echo $FORM_dir | sed 's/\/$//;s/\\\\$//'`
+offPC=$FORM_offpc
+offGiga=$FORM_offgiga
+
+# Por si el host viene con puerto, lo quitamos para el ftp y lo dejamos para el http
+ftphost=`echo $host | cut -d":" -f1`
+
+# Log del proceso
+echo "<b>`date` Peticion descarga grabación: crid=$lista_CRIDS</b>" >> $LOG
+echo "Parámetros FTP: $ftphost:$port, $user, $pwd" >> $LOG
+
+# Comprobar lista ficheros
+if [ ${#lista_CRIDS} -ne 0 ]; then
+	# Guardar configuracion
+	echo "${dir}" > ${SERVER_ROOT}/cfg/.path_dl.txt
+
+	# Descargar script de descarga
+	echo "Content-type: application/octet-stream"
+	echo "Content-Disposition: attachment; filename=descargar_grabacion.cmd"
+	echo ""
+
+	# Recorrer lista de ficheros
+	for Cridfile in ${lista_CRIDS}; do
+		# Comprobar fichero
+		if [ ! -f $Cridfile ]; then
+			echo "ERROR: No existe fichero ${Cridfile}" >> $LOG
+		else
+			# Procesar fichero crid
+			eval `www-tools crid2var ${Cridfile}`
+
+			# Obtener carpeta de almacenamiento
+			recordingDir=`dirname $Cridfile`
+
+			# Log del proceso
+			echo "Fichero: `basename ${Cridfile}` -> $Titulo (fmpg=$num_fmpg, $fmpg0)" >> $LOG
+
+			# Descargar crid
+			echo "wget --passive-ftp -P \"$dir\" ftp://${user}:${pwd}@${ftphost}:${port}${Cridfile}"
+
+			# Procesar ficheros fmpg
+			if [ "Z${fmpg0}" != "Z" ]; then
+				i=0
+				while [ $i -lt $num_fmpg ]; do
+					# Nombre fragmento
+					TMP='$fmpg'${i}
+					eval "fileFMPG=$TMP"
+
+					# Descargar fragmento
+					echo "wget --passive-ftp -P \"$dir\" ftp://${user}:${pwd}@${ftphost}:${port}${recordingDir}/${fileFMPG}*"
+
+					# Siguiente fragmento
+					i=$(($i+1))
+				done
+			fi
+		fi
+	done
+
+	# Comprobar apagado gigaset
+	if [ ${offGiga} != "NO" ]; then
+		# Generar ticket autorizacion
+		cat /dev/urandom | tr -dc 0-9 | head -c8 > ${TICKET_FILE}
+		echo "wget -P \"$dir\" \"http://${host}/cgi-bin/run/remoteOFF?TIPO=${offGiga}&TICKET=`cat ${TICKET_FILE}`\""
+	fi
+
+	# Comprobar apagado pc
+	[ $offPC = "SI" ] && echo "shutdown -s"
+fi

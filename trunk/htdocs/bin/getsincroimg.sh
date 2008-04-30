@@ -10,8 +10,8 @@ renice 20 $$ > /dev/null
 source ../cgi-bin/www-setup.shi
 source fweb.shi
 LST=/tmp/images.txt
-LOG=/tmp/getsincroimg.log
-ERR=/tmp/getsincroimg.err
+LOG=/var/log/getsincroimg.log
+ERR=/var/log/getsincroimg.err
 
 # Log del proceso
 utc_inicio=`date +%s`
@@ -30,7 +30,7 @@ if [ "$ModoVideo" = "Apagado" ]; then
 fi
 
 # Obtenemos carpeta de imágenes
-RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
+RecordingFolder=`awk '/DeviceRecordingFolder/ {print $2}' /var/etc/settings.txt`
 if [ -d $RecordingFolder/EPG ]; then
 	# Generar lista de imágenes
 	gen-lista-img.sh $LST $RecordingFolder/EPG $Cache >> $LOG 2>>$ERR

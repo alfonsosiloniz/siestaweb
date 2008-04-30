@@ -1,38 +1,44 @@
 #!/bin/bash
-# pepper, jotabe, (c) Grupo SIESTA, 06-11-2007
+# pepper, jotabe, (c) Grupo SIESTA, 26-04-2008
 #
+# Detener traspaso grabaciones
 
 # Configurar entorno
 source ../www-setup.shi
 source fweb.shi
 validate_login "xml"
-LOGPROC=/tmp/copiar-crid-proc.log
+SCRIPT=/tmp/cpmv-crid.sh
+LOGPROC=/var/log/cpmv-crid-proc.log
 
-proc=`ps axfw | grep cpmvCrid | grep -v grep | tail -1`
-pid=(`echo $proc`)
-if [ "$pid" != "" ]; then
-   echo "Finalizando proceso ($proc) ..." >> $LOGPROC
-   echo "kill -9 $pid" >> $LOGPROC
-   kill -9 $pid >> $LOGPROC 2>> $LOGPROC
-   if [ $? -eq 0 ]; then
-      proc=`ps axfw | grep cp | grep fmpg | grep -v grep | tail -1`
-      pid=(`echo $proc`)
-      if [ "$pid" != "" ]; then
-         echo "Finalizando proceso ($proc) ..." >> $LOGPROC
-         echo "kill -9 $pid" >> $LOGPROC
-         kill -9 $pid >> $LOGPROC 2>> $LOGPROC
-      fi
-      
-      echo "`date` Proceso abortado por el usuario" >> $LOGPROC
-      
-      # Resultado OK
-      enviar_xml_ok   
-   else
-      # Resultado NO OK
-	   enviar_xml_err
-   fi 
+# Buscar proceso de traspaso
+proc=`ps axw | grep "cpmv-crid.sh" | grep -v grep | tail -1`
+pid=`echo $proc | awk '{print $1}'`
+if [ "Z$pid" != "Z" ]; then
+	echo "Finalizando proceso ($proc) ..." >> $LOGPROC
+	echo "kill -9 $pid" >> $LOGPROC
+	kill -9 $pid >> $LOGPROC 2>> $LOGPROC
+	if [ $? -eq 0 ]; then
+		proc=`ps axw | grep cp | grep fmpg | grep -v grep | tail -1`
+		pid=`echo $proc | awk '{print $1}'`
+		if [ "Z$pid" != "Z" ]; then
+			echo "Finalizando proceso ($proc) ..." >> $LOGPROC
+			echo "kill -9 $pid" >> $LOGPROC
+			kill -9 $pid >> $LOGPROC 2>> $LOGPROC
+		fi
+
+		# Eliminar script
+		rm -f $SCRIPT
+
+		# Resultado OK
+		enviar_xml_ok   
+		echo "`date` Proceso de traspaso abortado por el usuario" >> $LOGPROC
+	else
+		# Resultado NO OK
+		enviar_xml_err
+		echo "`date` No se ha podido abortar el proceso de traspaso" >> $LOGPROC
+	fi 
 else
-   echo "Proceso de copia/traspaso no encontrado." >> $LOGPROC
-   # Resultado OK
-   enviar_xml_ok
+	# Resultado OK
+	enviar_xml_ok
+	echo "Proceso de traspaso no encontrado" >> $LOGPROC
 fi

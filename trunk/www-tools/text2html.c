@@ -34,6 +34,7 @@ int text2html(char *ch_id, char *file_text, long horaUTCparrilla, long mostrar_i
 	char url_img[LBF_TXT+1];		/* Buffer url imagen */
 	char tmp[LBF_TEXTO_LONG+1];		/* Buffer temporal html */
 	char html[LBF_TEXTO_LONG+1];	/* Buffer html */
+	BYTE tmp_pidcid[LBF_TMP+1];		/* Buffer temporal pidcid */
 
 	/* Inicializar variables */
 	resultado=-3;
@@ -43,7 +44,7 @@ int text2html(char *ch_id, char *file_text, long horaUTCparrilla, long mostrar_i
 //	printf("horaUTCparrilla: %li\n",horaUTCparrilla);
 //	printf("    mostrar_img: %li\n",mostrar_img);
 
-   	/* Abrir fichero */
+	/* Abrir fichero */
 	file=fopen(file_text,"rt");
 	if ( file == NULL ) {
 		fprintf (stderr, "No se puede abrir el fichero %s\n",file_text);
@@ -72,7 +73,7 @@ int text2html(char *ch_id, char *file_text, long horaUTCparrilla, long mostrar_i
 								fprintf(stdout,"<tr height=\"%i\">\n\t<td background=\"/img/capa6.gif\" class=\"borderFila txtMuyPeq\"></td>\n</tr>\n",height);
 							}
 							/* Marca de parrilla sincronizada */
-                            sync_top=-1;
+							sync_top=-1;
 						}
 
 						/* Calcular duracion del programa + ajuste */
@@ -103,13 +104,14 @@ int text2html(char *ch_id, char *file_text, long horaUTCparrilla, long mostrar_i
 							}
 
 							/* Obtenemos contenido celda */
-                            *html='\x00';
+							*html='\x00';
+							DLONG2txt(pgm0.pidcid,tmp_pidcid);
 
 							/* Botones de grabacion */
 							if ( duration > 2200 ) {
-								sprintf(tmp,"\t\t<a href='javascript:programarGrabacion(\"%08X%08X\", 0, \"%s\")' title=\"Grabar\"><img src=\"/img/red_ball.gif\" alt=\"Grabar\" width=\"18\" height=\"18\" border=\"0\"></a>&nbsp;\n",pgm0.pidcid1,pgm0.pidcid2,pgm0.titulo);
+								sprintf(tmp,"\t\t<a href='javascript:programarGrabacion(%s, 0, \"%s\")' title=\"Grabar\"><img src=\"/img/red_ball.png\" width=\"18\" height=\"18\" border=\"0\"></a>&nbsp;\n",tmp_pidcid,pgm0.titulo);
 								strcat(html,tmp);
-								sprintf(tmp,"\t\t<a href='javascript:programarGrabacion(\"%08X%08X\", 1, \"%s\")' title=\"Grabar en Serie\"><img src=\"/img/blue_ball.gif\" alt=\"Grabar en Serie\" width=\"18\" height=\"18\" border=\"0\"></a><br>\n",pgm0.pidcid1,pgm0.pidcid2,pgm0.titulo);
+								sprintf(tmp,"\t\t<a href='javascript:programarGrabacion(%s, 1, \"%s\")' title=\"Grabar en Serie\"><img src=\"/img/blue_ball.png\" width=\"18\" height=\"18\" border=\"0\"></a><br>\n",tmp_pidcid,pgm0.titulo);
 								strcat(html,tmp);
 							}
 
@@ -131,12 +133,12 @@ int text2html(char *ch_id, char *file_text, long horaUTCparrilla, long mostrar_i
 								} else {
 									sprintf(url_img,"/img/epg_long_img.png");
 								}
-								sprintf(tmp,"\t\t<a href=\"javascript:detallePrograma('%08X%08X', '%s', '%i', '%s', '%i');\" title=\"%s - %s - %s\"><img src=\"%s\" width=77 height=52 border=2 alt=\"%s - %s - %s\"></a><br>\n",pgm0.pidcid1,pgm0.pidcid2,pgm0.imagen,pgm0.ix_long,ch_id,pgm0.date_utc,ch_id,pgm0.date_str,pgm0.titulo,url_img,ch_id,pgm0.date_str,pgm0.titulo);
+								sprintf(tmp,"\t\t<a href=\"javascript:detallePrograma(%s, '%s', %i, '%s', %i);\" title=\"%s - %s - %s\"><img src=\"%s\" width=77 height=52 border=2 alt=\"%s - %s - %s\"></a><br>\n",tmp_pidcid,pgm0.imagen,pgm0.ix_long,ch_id,pgm0.date_utc,ch_id,pgm0.date_str,pgm0.titulo,url_img,ch_id,pgm0.date_str,pgm0.titulo);
 								strcat(html,tmp);
 							}
 
 							/* Nombre programa */
-							sprintf(tmp,"\t\t<a href=\"javascript:detallePrograma('%08X%08X', '%s', '%i', '%s', '%i');\" title=\"%s - %s - %s\">%s</a>",pgm0.pidcid1,pgm0.pidcid2,pgm0.imagen,pgm0.ix_long,ch_id,pgm0.date_utc,ch_id,pgm0.date_str,pgm0.titulo,pgm0.titulo);
+							sprintf(tmp,"\t\t<a href=\"javascript:detallePrograma(%s, '%s', %i, '%s', %i);\" title=\"%s - %s - %s\">%s</a>",tmp_pidcid,pgm0.imagen,pgm0.ix_long,ch_id,pgm0.date_utc,ch_id,pgm0.date_str,pgm0.titulo,pgm0.titulo);
 							strcat(html,tmp);
 
 							/* Volcar celda */

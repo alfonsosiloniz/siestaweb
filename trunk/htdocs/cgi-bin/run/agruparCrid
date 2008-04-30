@@ -1,0 +1,72 @@
+#!/bin/bash
+# jotabe, (c) Grupo SIESTA, 17-04-2008
+#
+# Archivar grabacion (ficheros .crid, .fmpg, .mpg, .idx, .midx)
+# agruparCrid?id_serie=id&num_CRIDFILE=X&CRIDFILE1=crid...&CRIDFILEX=crid&TS=timestamp
+
+# Configurar entorno
+source ../www-setup.shi
+source fweb.shi
+validate_login "xml"
+LOG=/var/log/agrupar-crid.log
+SCRIPT=/tmp/agrupar-crid.sh
+
+# Procesar parametros get/post
+eval "`proccgi $*`"
+IDserie=${FORM_id_serie}
+
+# Generar lista ficheros crid
+lista_CRIDS=""
+for F_crid in ${!FORM_CRIDFILE*}; do
+	# Obtener nombre de fichero
+	TMP='$'${F_crid}
+	eval "fileCRID=$TMP"
+	# Agregar a lista de ficheros
+	[ ${#lista_CRIDS} -eq 0 ] && lista_CRIDS="${fileCRID}" || lista_CRIDS="${lista_CRIDS} ${fileCRID}"
+done
+
+# Log del proceso
+echo "<b>`date` Agrupar grabación: crid=$lista_CRIDS, id_serie=${IDserie}</b>" >> $LOG
+# echo "`date` $QUERY_STRING" >> $LOG
+echo -n "" > $SCRIPT
+
+# Recorrer lista de ficheros
+resultado=1
+for Cridfile in ${lista_CRIDS}; do
+	# Comprobar fichero
+	if [ -f $Cridfile ]; then
+		# Mover crid y borrar fichero .refXML
+		echo "${SERVER_ROOT}/bin/set-serie.sh $Cridfile $IDserie" >> $SCRIPT
+		echo "rm -f ${Cache}/`basename $Cridfile .crid`.refXML" >> $SCRIPT
+
+		# Resultado OK
+		resultado=0
+	else
+		# Resultado ERROR
+		resultado=1
+	fi
+
+	# Comprobar errores
+	[ $resultado -ne 0 ] && break
+done
+
+# Ejecutar acciones
+if [ $resultado -eq 0 ]; then
+	# Insertar IDserie en ficheros
+	cat <<- --EOF-- >> $LOG
+	Script a ejecutar:
+	---- Inicio ----
+	`cat $SCRIPT`
+	---- Fin ----
+	--EOF--
+	eval "(`cat $SCRIPT`) >> $LOG 2>> $LOG"
+
+	# Resultado OK
+	enviar_xml_ok
+else
+	# Resultado ERROR
+	enviar_xml_err
+fi
+
+# Eliminar ficheros temporales
+rm -f $SCRIPT

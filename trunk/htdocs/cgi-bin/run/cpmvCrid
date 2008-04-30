@@ -1,140 +1,229 @@
 #!/bin/bash
-# jotabe, pepper, (c) Grupo SIESTA, 02-11-2007
+# jotabe, pepper, (c) Grupo SIESTA, 27-04-2008
 #
-# Copiar grabacion (ficheros crid, fmpg, mpg, idx, midx)
-
-# Ejecutamos el script con baja prioridad
-renice 20 $$ > /dev/null
-
-# Por defecto, copiamos la grabación, no la movemos
-mover=0
-force=0
-
-# Obtener parametros
-if [ $# -ge 2 ]; then
-	Cridfile=$1
-	DIR_DESTINO=$2
-	[ $# -gt 2 ] && mover=$3
-	[ $# -gt 3 ] && force=$4
-else
-	Cridfile=`echo ${QUERY_STRING} | cut -d"&" -f1`
-	DIR_DESTINO=`echo ${QUERY_STRING} | cut -d"&" -f2`
-	mover=`echo ${QUERY_STRING} | cut -d"&" -f3`
-	force=`echo ${QUERY_STRING} | cut -d"&" -f4`
-fi
+# Copiar/Mover grabacion (ficheros .crid, .fmpg, .mpg, .idx, .midx)
+# cpmvCrid?num_CRIDFILE=X&CRIDFILE1=crid...&CRIDFILEX=crid&DIR=dir&MODO=[copiar|mover][&force]&TS=timestamp
 
 # Configurar entorno
 source ../www-setup.shi
 source fweb.shi
 validate_login "xml"
-LOG=/tmp/copiar_crid.log
-LOGPROC=/tmp/copiar-crid-proc.log
-SCRIPT=/tmp/copiar_crid.sh
-CRIDS_FMPG=/tmp/crids_fmpg.txt
-Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
-DIR_ORIGEN=`dirname $Cridfile`
+LOG=/var/log/cpmv-crid.log
+SCRIPT=/tmp/cpmv-crid.sh
+LOGPROC=/var/log/cpmv-crid-proc.log
+LST_FMPG=/tmp/lista-fmpg.txt
+CRIDS_FMPG=/tmp/crids-fmpg.txt
+
+# Procesar parametros get/post
+eval "`proccgi $*`"
+DIR_DESTINO=${FORM_DIR}
+MODO=`awk "BEGIN {print toupper(\"${FORM_MODO}\")}"`
+[ ${QUERY_STRING/*&force*/OK} = OK ] && force=1 || force=0
+
+# Generar lista ficheros crid
+lista_CRIDS=""
+for F_crid in ${!FORM_CRIDFILE*}; do
+	# Obtener nombre de fichero
+	TMP='$'${F_crid}
+	eval "fileCRID=$TMP"
+	# Agregar a lista de ficheros
+	[ ${#lista_CRIDS} -eq 0 ] && lista_CRIDS="${fileCRID}" || lista_CRIDS="${lista_CRIDS} ${fileCRID}"
+done
 
 # Log del proceso
-echo "`date` Copiar/Mover crid: $Cridfile" >> $LOG
-echo "`date` Iniciando el proceso de Copia/Traspaso de grabación..." > $LOGPROC
-echo -n "" > $SCRIPT
-echo -n "" > $CRIDS_FMPG
+echo "<b>`date` ${MODO} grabación: crid=$lista_CRIDS, force=$force</b>" >> $LOG
 
-# Comprobar carpetas y fichero
-if [ -d $DIR_ORIGEN -a -d $DIR_DESTINO -a -f $Cridfile ]; then
+# Comprobar proceso en ejecucion
+isRunning=`ps axw | grep "cpmv-crid.sh" | grep -v grep | wc -l`
+if [ $isRunning -gt 0 ]; then
+	# ERROR: proceso en ejecucion
+	resultado=1
+# Comprobar destino
+elif [ ! -d $DIR_DESTINO ]; then
+	# ERROR: carpeta de destino no existe
+	resultado=2
+else
+	# Generación script a ejecutar
+	echo "#!/bin/bash" > $SCRIPT
+	echo "renice 20 \$\$ > /dev/null" >> $SCRIPT
+	echo "echo \"<b>\`date\` Iniciando el proceso de traspaso de grabación ...</b>\" > $LOGPROC" >> $SCRIPT
+	echo "" >> $SCRIPT
+	rm -f $LOGPROC
+	echo -n "" > $LST_FMPG
+	echo -n "" > $CRIDS_FMPG
+
+	# Recorrer lista de ficheros
+	for Cridfile in ${lista_CRIDS}; do
+		# Comprobar fichero
+		if [ ! -f $Cridfile ]; then
+			# ERROR: fichero no existe
+			resultado=3
+		else
+			# Comprobar origen
+			DIR_ORIGEN=`dirname ${Cridfile}`
+			if [ "`realpath $DIR_ORIGEN`" = "`realpath $DIR_DESTINO`" ]; then
+				# ERROR: origen = destino
+				resultado=4
+			else
+				# Procesar fichero crid
+				eval `www-tools crid2var ${Cridfile}`
+				echo "Fichero: `basename ${Cridfile}` -> $Titulo (fmpg=$num_fmpg, $fmpg0)" >> $LOG
+				echo "echo \"\`date\` Fichero: `basename ${Cridfile}` -> $Titulo (fmpg=$num_fmpg, $fmpg0), force: $force\" >> $LOGPROC" >> $SCRIPT
+
+				# Nuevo fichero crid para que el fichero de caché no sea el mismo que el original
+				new_Cridfile=`basename ${Cridfile}`
+				if [ "${new_Cridfile:0:2}" = "CP" ]; then
+					new_Cridfile="CP`cat /dev/urandom | tr -dc 0-9 | head -c6`_${new_Cridfile:9}"
+				else
+					new_Cridfile="CP`cat /dev/urandom | tr -dc 0-9 | head -c6`_`basename ${Cridfile}`"
+				fi
+
+				# Copiar crid
+				echo "echo \"Copiando ${Cridfile} a $DIR_DESTINO\" >> $LOGPROC" >> $SCRIPT
+				echo "cp -f ${Cridfile} $DIR_DESTINO/${new_Cridfile} >> $LOGPROC 2>&1" >> $SCRIPT
+				echo "echo \"\" >> $LOGPROC" >> $SCRIPT
+				echo "" >> $SCRIPT
+
+				# Procesar ficheros fmpg
+				if [ "Z${fmpg0}" != "Z" ]; then
+					i=0
+					while [ $i -lt $num_fmpg ]; do
+						# Nombre fragmento
+						TMP='$fmpg'${i}
+						eval "fileFMPG=$TMP"
+
+						# Incluir fragmento en lista
+						echo ${DIR_ORIGEN}/${fileFMPG} >> $LST_FMPG
+
+						# Comprobar fragmento compartido
+						# Obtener lista de ficheros crid que contienen los .fmpg del crid actual
+						cridsConFMPG.sh ${DIR_ORIGEN} ${fileFMPG} 2>/dev/null >> $CRIDS_FMPG
+
+						# Siguiente fragmento
+						i=$(($i+1))
+					done
+				fi
+
+				# Resultado OK
+				resultado=0
+			fi
+		fi
+
+		# Comprobar errores
+		[ $resultado -ne 0 ] && break
+	done
+
+	# Copiar fragmentos eliminando repetidos
+	[ $resultado -eq 0 -a -s $LST_FMPG ] && sort -u $LST_FMPG | while read line; do
+		if [ ${#line} -ne 0 ]; then
+			DIR_ORIGEN=`dirname ${line}`
+			fileFMPG=`basename ${line}`
+
+			# Copiar fragmento. Se hace fichero a fichero para poder mostrar log de copia
+			for recordFile in ${DIR_ORIGEN}/${fileFMPG}* ; do
+				echo "${SERVER_ROOT}/bin/cp-timer.sh $recordFile $DIR_DESTINO >> $LOGPROC 2>&1" >> $SCRIPT
+				echo "echo \"\" >> $LOGPROC" >> $SCRIPT
+				echo "" >> $SCRIPT
+			done
+		fi
+	done
+
+	# Comprobar fragmentos compartidos en operacion mover
+	if [ $resultado -eq 0 -a "Z${MODO}" = "ZMOVER" ]; then
+		# Quitar ficheros crid de lista de crids que contienen fmpg
+		for Cridfile in ${lista_CRIDS}; do
+			# Quitar crid
+			grep -v $Cridfile $CRIDS_FMPG > $CRIDS_FMPG.tmp
+			mv -f $CRIDS_FMPG.tmp $CRIDS_FMPG
+		done
+
+		# Numero de crid debe ser 0
+		if [ `cat $CRIDS_FMPG | wc -l` -eq 0 ]; then
+			borrar_origen=1
+		else
+			# Error: varios ficheros crid comparten fichero fmpg
+			echo "Ficheros .fmpg compartidos por varios .crid" >> $LOG
+			cat $CRIDS_FMPG >> $LOG
+
+			# Comprobar modo forzado
+			if [ $force -eq 1 ]; then
+				# Borrar ficheros
+				echo "Modo force, eliminar ficheros de la grabación origen" >> $LOG
+				borrar_origen=1
+			else
+				# Conservar ficheros
+				echo "Los ficheros de la grabación origen no se han borrado porque comparten archivos con otras grabaciones" >> $LOG
+				echo "Borre la grabación desde la pantalla de Grabaciones Realizadas o desde el propio Menú del Gigaset" >> $LOG
+				borrar_origen=0
+			fi
+		fi
+
+		# Borrar ficheros origen
+		if [ $borrar_origen -eq 1 ]; then
+			# Recorrer lista de ficheros
+			for Cridfile in ${lista_CRIDS}; do
+				# Procesar fichero crid
+				DIR_ORIGEN=`dirname ${Cridfile}`
+				eval `www-tools crid2var ${Cridfile}`
+
+				# Borrar crid y fichero .refXML
+				echo "echo \"Borrado de ${Cridfile}\" >> $LOGPROC" >> $SCRIPT
+				echo "rm -f ${Cridfile} >> $LOGPROC" >> $SCRIPT
+				echo "rm -f ${Cache}/`basename ${Cridfile} .crid`.refXML >> $LOGPROC" >> $SCRIPT
+				echo "echo \"\" >> $LOGPROC" >> $SCRIPT
+				echo "" >> $SCRIPT
+
+				# Procesar ficheros fmpg
+				if [ "Z${fmpg0}" != "Z" ]; then
+					i=0
+					while [ $i -lt $num_fmpg ]; do
+						# Nombre fragmento
+						TMP='$fmpg'${i}
+						eval "fileFMPG=$TMP"
+
+						# Borrar ficheros fragmento
+						echo "echo \"Borrado de ${DIR_ORIGEN}/${fileFMPG}*\" >> $LOGPROC" >> $SCRIPT
+						echo "rm -f ${DIR_ORIGEN}/${fileFMPG}* >> $LOGPROC" >> $SCRIPT
+						echo "echo \"\" >> $LOGPROC" >> $SCRIPT
+						echo "" >> $SCRIPT
+
+						# Siguiente fragmento
+						i=$(($i+1))
+					done
+				fi
+			done
+		fi
+	fi
+fi
+
+# Ejecutar acciones
+if [ $resultado -eq 0 ]; then
+	# Final de proceso
+	echo "echo \"\`date\` Finalizado el proceso de ${MODO} grabación\" >> $LOGPROC" >> $SCRIPT
+
 	# Guardar carpeta destino
 	echo "$DIR_DESTINO" > ${SERVER_ROOT}/cfg/.carpeta_cpmv.txt
 
-	# Procesar fichero crid
-	eval `www-tools crid2var ${Cridfile}`
-	echo "Fichero: `basename ${Cridfile}` -> $Titulo ($num_fmpg, $fmpg0)" >> $LOG
-	echo "`date` Fichero: `basename ${Cridfile}` -> $Titulo ($num_fmpg, $fmpg0), Force: $force" >> $LOGPROC
-
-	# Copiar crid: Lo duplico con otro nombre para que el fichero de caché no sea el mismo que el original
-	CridfileCopy=`dirname ${Cridfile}`/`hostname`_`basename ${Cridfile}`
-	echo "echo Copiando ${CridfileCopy} a $DIR_DESTINO >> $LOGPROC" >> $SCRIPT
-	echo "cp ${Cridfile} ${CridfileCopy} 2>> $LOGPROC" >> $SCRIPT
-	echo "mv ${CridfileCopy} $DIR_DESTINO 2>> $LOGPROC" >> $SCRIPT
-	echo "" >> $SCRIPT
-
-	# Nombres fragmentos
-	i=0
-	while [ $i -lt $num_fmpg ]; do
-		# Nombre fragmento
-		TMP='$fmpg'${i}
-		eval "TMP2=$TMP"
-
-		# Comprobar fragmento compartido
-		cridsConFMPG.sh ${DIR_ORIGEN} ${TMP2} 2>/dev/null >> $CRIDS_FMPG
-
-		# Copiar fragmento. Lo pongo fichero a fichero para poder sacarlo por el log e ir informando al usuario del proceso de copia
-		for recordFile in ${DIR_ORIGEN}/${TMP2}* ; do
-			echo "echo Copiando $recordFile a $DIR_DESTINO >> $LOGPROC" >> $SCRIPT
-			echo "inicio=\`date +%s\`" >> $SCRIPT
-			echo "cp $recordFile $DIR_DESTINO 2>> $LOGPROC" >> $SCRIPT
-			echo "final=\`date +%s\`" >> $SCRIPT
-			echo "du=(\`du -ch ${recordFile} | tail -1\`)" >> $SCRIPT
-			echo "dunum=(\`du -k ${recordFile} | tail -1\`)" >> $SCRIPT
-			echo "secs=\$((final-inicio))" >> $SCRIPT
-			echo "echo -n \"  <i>Fichero \`basename $recordFile\` copiado: \$du en \$secs segundos\" >> $LOGPROC" >> $SCRIPT
-			echo "[ \$secs -gt 0 ] && echo -n \" --> \$((dunum/secs)) KBytes/sec\" >> $LOGPROC" >> $SCRIPT
-			echo "echo \".</i>\" >> $LOGPROC" >> $SCRIPT
-			echo "" >> $SCRIPT
-		done
-
-		# Siguiente fragmento
-		i=$(($i+1))
-	done
-
-	# Eliminar ficheros origen si la operacion es mover
-	if [ $mover -eq 1 ]; then
-		if [ `cat $CRIDS_FMPG | wc -l` -eq 1 -o $force -eq 1 ]; then
-			i=0
-			while [ $i -lt $num_fmpg ]; do
-				# Nombre fragmento
-				TMP='$fmpg'${i}
-				eval "TMP2=$TMP"
-
-				# Borrar ficheros fragmento
-				echo "echo Borrado de ${DIR_ORIGEN}/${TMP2}* >> $LOGPROC" >> $SCRIPT
-				echo "rm -f ${DIR_ORIGEN}/${TMP2}*" >> $SCRIPT
-				echo "" >> $SCRIPT
-
-				# Siguiente fragmento
-				i=$(($i+1))
-			done
-
-			# Borrar crid
-			echo "echo Borrado de ${Cridfile} >> $LOGPROC" >> $SCRIPT
-			echo "rm -f ${Cridfile}" >> $SCRIPT
-			echo "" >> $SCRIPT
-
-			# Borrar fichero .refXML si la operacion es mover
-			echo "rm -f $Cachefile" >> $SCRIPT
-			echo "" >> $SCRIPT
-		else
-			echo "echo \"Los ficheros de la grabacion origen no se han borrado porque comparten archivos con otras grabaciones.\" >> $LOGPROC" >> $SCRIPT
-			echo "echo \"Borre la grabacion desde la pantalla de Grabaciones Realizadas o desde el propio Menú del Gigaset.\" >> $LOGPROC" >> $SCRIPT
-		fi
-	fi
-
-	# Final de proceso
-	echo "echo \"\`date\` Copia/Traspaso de Grabacion Finalizada\" >> $LOGPROC" >> $SCRIPT
-
 	# Copiar/Mover ficheros
-	cat $SCRIPT >> $LOG
-	eval "(`cat $SCRIPT`) >> $LOG 2>> $LOG"
-
-	# Eliminar ficheros temporales
-	rm -f $SCRIPT
-	rm -f $CRIDS_FMPG
-
-	# Resultado OK
-	enviar_xml_ok
-else
-	# Log
-	echo "ERROR: El directorio origen/destino no existen o no son accesibles." >> $LOGPROC
-
-	# Resultado ERROR
-	enviar_xml_err
+	cat <<- --EOF-- >> $LOG
+	Script a ejecutar:
+	---- Inicio ----
+	`cat $SCRIPT`
+	---- Fin ----
+	--EOF--
+	chmod 755 $SCRIPT
+	( /bin/bash $SCRIPT ; rm -f $SCRIPT ) &
+elif [ $resultado -eq 1 ]; then
+	echo "ERROR: Existe otro proceso de traspaso en ejecución" >> $LOG
+elif [ $resultado -eq 2 ]; then
+	echo "ERROR: No existe carpeta de destino ${DIR_DESTINO}" >> $LOG
+elif [ $resultado -eq 3 ]; then
+	echo "ERROR: No existe fichero ${Cridfile}" >> $LOG
+elif [ $resultado -eq 4 ]; then
+	echo "ERROR: Las carpetas de origen y destino son la misma" >> $LOG
 fi
+
+# Eliminar ficheros temporales
+[ $resultado -ne 0 ] && rm -f $SCRIPT
+rm -f $LST_FMPG
+rm -f $CRIDS_FMPG

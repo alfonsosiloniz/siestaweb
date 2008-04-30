@@ -11,6 +11,7 @@
 #include "text2pgact.h"
 #include "infoID.h"
 #include "crid2var.h"
+#include "var2crid.h"
 
 /* Definiciones globales */
 char *DiaSemana[]={"Dom","Lun","Mar","Mie","Jue","Vie","Sab"};
@@ -69,7 +70,7 @@ int main(int argc, char *argv[]){
 			resultado=-2;
 			if ( num_par == 2 ) {
 				/* Ejecutar funcion */
-				resultado=get_epg_long(par1,strtol(par2,NULL,0));
+				resultado=get_epg_long(par1,strtol(par2,NULL,10));
 			} else {
 				/* Error parametros funcion */
 				print_version();
@@ -105,7 +106,7 @@ int main(int argc, char *argv[]){
 			resultado=-2;
 			if ( num_par == 4 ) {
 				/* Ejecutar funcion */
-				resultado=text2html(par1,par2,strtol(par3,NULL,0),strtol(par4,NULL,0));
+				resultado=text2html(par1,par2,strtol(par3,NULL,10),strtol(par4,NULL,10));
 			} else {
 				/* Error parametros funcion */
 				print_version();
@@ -117,7 +118,7 @@ int main(int argc, char *argv[]){
 			resultado=-2;
 			if ( num_par == 3 ) {
 				/* Ejecutar funcion */
-				resultado=text2pgact(par1,par2,strtol(par3,NULL,0));
+				resultado=text2pgact(par1,par2,strtol(par3,NULL,10));
 			} else {
 				/* Error parametros funcion */
 				print_version();
@@ -139,14 +140,29 @@ int main(int argc, char *argv[]){
 		} else if ( ! strcasecmp(func,"crid2var") ) {
 			/* Funcion crid2var */
 			resultado=-2;
-			if ( num_par == 1 ) {
+			if ( num_par == 2 ) {
 				/* Ejecutar funcion */
-				resultado=crid2var(par1);
+				resultado=crid2var(par1,par2);
+			} else if ( num_par == 1 ) {
+				/* Ejecutar funcion */
+				resultado=crid2var(par1,"");
 			} else {
 				/* Error parametros funcion */
 				print_version();
 				fprintf(stderr,"Uso: ");
 				crid2var_uso();
+			}
+		} else if ( ! strcasecmp(func,"var2crid") ) {
+			/* Funcion var2crid */
+			resultado=-2;
+			if ( num_par == 1 ) {
+				/* Ejecutar funcion */
+				resultado=var2crid(par1);
+			} else {
+				/* Error parametros funcion */
+				print_version();
+				fprintf(stderr,"Uso: ");
+				var2crid_uso();
 			}
 		} else {
 			print_version();
@@ -174,6 +190,8 @@ int main(int argc, char *argv[]){
 		fprintf(stderr,"\n");
 		crid2var_uso();
 		fprintf(stderr,"\n");
+		var2crid_uso();
+		fprintf(stderr,"\n");
 	}
 
 	/* Final y resultado */
@@ -186,7 +204,7 @@ int main(int argc, char *argv[]){
 
 /* Imprimir version aplicacion */
 void print_version(){
-	fprintf(stderr,"www-tools v1.14b (2007-11-18)\n\n");
+	fprintf(stderr,"www-tools v1.21 (2007-04-25)\n\n");
 }
 
 /* Imprimir uso de aplicacion */
@@ -207,23 +225,81 @@ LONG read_LONG(FILE *file){
 	/* Leer int */
 	fread(&tmp,1,4,file);
 
-	#ifdef BINi386
-	/* Convertir de mips a intel */
-	int b1,b2,b3,b4;
-
-	b1=(tmp&0xFF000000)>>24;
-	b2=(tmp&0x00FF0000)>>16;
-	b3=(tmp&0x0000FF00)>>8;
-	b4=(tmp&0x000000FF);
-	tmp=(((b4*256+b3)*256+b2)*256)+b1;
-	#endif
-
-	return tmp;
+	/* Devolver resultado */
+	return x4(&tmp);
 }
 
 /* Funcion read_WORD */
 
 /* Funcion read_BYTE */
+
+/* Funcion write_LONG */
+size_t write_LONG(FILE *file, LONG valor){
+	LONG tmp;
+
+	/* Obtenr valor */
+	tmp=valor;
+
+	#ifdef BINi386
+	/* Convertir de intel a mips */
+	int b1,b2,b3,b4;
+
+	b1=(valor&0xFF000000)>>24;
+	b2=(valor&0x00FF0000)>>16;
+	b3=(valor&0x0000FF00)>>8;
+	b4=(valor&0x000000FF);
+	tmp=(((b4*256+b3)*256+b2)*256)+b1;
+	#endif
+
+	/* Guardar int */
+	return fwrite(&tmp,1,4,file);
+}
+
+/* Funcion write_WORD */
+size_t write_WORD(FILE *file, WORD valor){
+	WORD tmp;
+
+	/* Obtenr valor */
+	tmp=valor;
+
+	#ifdef BINi386
+	/* Convertir de intel a mips */
+	int b1,b2;
+
+	b1=(valor&0xFF00)>>8;
+	b2=(valor&0x00FF);
+	tmp=(b2*256)+b1;
+	#endif
+
+	/* Guardar short */
+	return fwrite(&tmp,1,2,file);
+}
+
+/* Funcion x8 */
+DLONG x8(void *p){
+	DLONG tmp;
+
+	/* Leer int */
+	tmp=*(DLONG *)p;
+
+	#ifdef BINi386
+	/* Convertir de mips a intel */
+	long long int b1,b2,b3,b4,b5,b6,b7,b8;
+
+	b1=(tmp&0xFF00000000000000LL)>>56;
+	b2=(tmp&0x00FF000000000000LL)>>48;
+	b3=(tmp&0x0000FF0000000000LL)>>40;
+	b4=(tmp&0x000000FF00000000LL)>>32;
+	b5=(tmp&0x00000000FF000000LL)>>24;
+	b6=(tmp&0x0000000000FF0000LL)>>16;
+	b7=(tmp&0x000000000000FF00LL)>>8;
+	b8=(tmp&0x00000000000000FFLL);
+
+	tmp=(((((((b8*256+b7)*256+b6)*256+b5)*256+b4)*256+b3)*256+b2)*256)+b1;
+	#endif
+
+	return tmp;
+}
 
 /* Funcion x4 */
 LONG x4(void *p){
@@ -275,13 +351,36 @@ BYTE x1(void *p){
 	return tmp;
 }
 
+/* Funcion DLONG2hex */
+void DLONG2hex(DLONG x, BYTE *out){
+	DLONG b1,b2;
+	char tmp[LBF_TMP+1];
+
+	b1=x>>32;
+	b2=x&0xFFFFFFFF;
+
+	sprintf(tmp,"%08llX",b1);
+	sprintf(out,"%s%08llX",tmp,b2);
+}
+
+/* Funcion DLONG2txt */
+void DLONG2txt(DLONG x, BYTE *out){
+	LONG b1,b2;
+
+	b1=x/100000000LL;
+	b2=x%100000000LL;
+
+	if (b1 == 0) sprintf(out,"%li",b2);
+	else sprintf(out,"%li%08li",b1,b2);
+}
+
 /* Funcion utc2str */
 void utc2str(const long utc_time, char *out){
 	struct tm *local_time;
 	char tmp[LBF_TXT+1];
 
 	/* Convertir tiempo utc a local */
-    local_time=localtime((time_t*)&utc_time);
+	local_time=localtime((time_t*)&utc_time);
 
 	/* Obtener fecha en formato deseado*/
 	strftime(tmp,LBF_TXT,"%d.%m.%y %H:%M, ",local_time);
@@ -296,12 +395,13 @@ void utc2str(const long utc_time, char *out){
 /* Funcion sanear_txt.
 Elimina codigo de tabla de caracteres (primer byte).
 Sustituciones:
-	'&'    -> '&amp'
+	'&'    -> '&amp;'
 	'_'    -> '-'
 
 flags:
 	0x0001 -> Eliminar CR/LF
 	0x0002 -> Sustituir 0x8A por 0x0A
+	0x0004 -> Sustituir " por \"
 */
 void sanear_txt(const BYTE *in, BYTE *out, long max_lon, long flags){
 	int lon=0;
@@ -399,6 +499,8 @@ int lon_campo(const BYTE *in, BYTE sep){
 int get_pgm(const BYTE *line, pgm_sincro *pgm){
 	const BYTE *posPgm;		/* Posicion de lectura en linea de programa */
 	int lon;				/* Tamaño campo a extraer */
+	DLONG pid;				/* Lectura pidcid */
+	LONG cid;				/* Lectura pidcid */
 	BYTE txt[LBF_TXT+1];	/* Buffer texto */
 
 	/* Comprobar contenido linea */
@@ -408,21 +510,33 @@ int get_pgm(const BYTE *line, pgm_sincro *pgm){
 		lon=lon_campo(posPgm,'_');
 		strncpy(txt,posPgm,lon);
 		txt[lon]='\x00';
-		sscanf(txt,"%i",&pgm->date_utc);
+		pgm->date_utc=strtol(txt,NULL,10);
 
 		/* Obtener pid */
 		posPgm+=lon+1;
 		lon=lon_campo(posPgm,'_');
 		strncpy(txt,posPgm,lon);
 		txt[lon]='\x00';
-		sscanf(txt,"%i",&pgm->pid);
+		pgm->pid=strtol(txt,NULL,10);
 
 		/* Obtener pidcid */
 		posPgm+=lon+1;
 		lon=lon_campo(posPgm,'_');
-		strncpy(txt,posPgm,lon);
-		txt[lon]='\x00';
-		sscanf(txt,"%08X%08X",&pgm->pidcid1,&pgm->pidcid2);
+		if (lon <= 5 ) {
+			pid=0LL;
+			strncpy(txt,posPgm,lon);
+			txt[lon]='\x00';
+			cid=strtol(txt,NULL,10);
+		} else {
+			strncpy(txt,posPgm,lon-5);
+			txt[lon-5]='\x00';
+			pid=strtoll(txt,NULL,10);
+
+			strncpy(txt,posPgm+lon-5,5);
+			txt[5]='\x00';
+			cid=strtol(txt,NULL,10);
+		}
+		pgm->pidcid=(DLONG)pid*100000LL+(DLONG)cid;
 
 		/* Obtener date_str */
 		posPgm+=lon+1;
@@ -435,7 +549,7 @@ int get_pgm(const BYTE *line, pgm_sincro *pgm){
 		lon=lon_campo(posPgm,'_');
 		strncpy(txt,posPgm,lon);
 		txt[lon]='\x00';
-		sscanf(txt,"%i",&pgm->ix_long);
+		pgm->ix_long=strtol(txt,NULL,10);
 
 		/* Obtener titulo */
 		posPgm+=lon+1;
@@ -460,8 +574,9 @@ int get_pgm(const BYTE *line, pgm_sincro *pgm){
 
 		/* Volcar datos */
 //		printf("lin: %i,%s\n",strlen(line),line);
-//		printf("pid: %i\n",pgm->pid);
-//		printf("pidcid: %08X%08X\n",pgm->pidcid1,pgm->pidcid2);
+//		printf("pid: %li\n",pgm->pid);
+//		DLONG2txt(pgm->pidcid,txt);
+//		printf("pidcid: %s\n",txt);
 //		printf("date_utc: %i\n",pgm->date_utc);
 //		printf("date_str: %s\n",pgm->date_str);
 //		printf("ix_long: %i\n",pgm->ix_long);

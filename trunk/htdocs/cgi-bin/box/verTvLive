@@ -7,7 +7,7 @@
 source ../www-setup.shi
 source fweb.shi
 validate_login
-path_mplayer="C:\\Archivos de programa\\mplayer\\mplayer.exe"
+path_mplayer='C:\Archivos de programa\mplayer\mplayer.exe'
 [ -f ${SERVER_ROOT}/cfg/.path_mplayer.txt ] && path_mplayer=`cat ${SERVER_ROOT}/cfg/.path_mplayer.txt`
 CACHE_FILE=${Cache}/verTvLive.cache
 
@@ -26,19 +26,19 @@ if [ ! -f $CACHE_FILE ]; then
 fi
 
 # Enviar documento html
-html_doc_start "M750T - Ver LiveTV" "" "-an-e-b-" "
+html_doc_start "M750T - Ver LiveTV" "" "an-e-b-" "
 function init() {
 	index=document.location.href.indexOf(\"://\");
 	host=document.location.href.substring(index+3);
 	index=host.indexOf(\"/\");
 	host=host.substring(0, index);
-	document.forms[0].host.value=host;
+	document.forms['form_m750'].host.value=host;
 }
 function startStream() {
-	eval(\"verCanal(\"+document.forms[0].canal.value+\")\");
+	eval(\"verCanal(\"+document.forms['form_m750'].canal.value+\")\");
 }
 function verCanal(frq, p1, p2, p3) {
-	f=document.forms[0];
+	f=document.forms['form_m750'];
 	if (f.ip.value.length == 0) {
 		alert(\"Debes indicar la IP de tu PC local\");
 		f.ip.focus();
@@ -60,9 +60,9 @@ function verCanal(frq, p1, p2, p3) {
 	makeRequest(url + \"&date=\", \"mostrarXMLRespuesta\");
 }
 function download() {
-	f=document.forms[0];
+	f=document.forms['form_m750'];
 	f.action=\"/cgi-bin/box/dl-tvLive\";
-	document.forms[0].submit();
+	document.forms['form_m750'].submit();
 }
 function reboot() {
 	if (confirm(\"¿Confirma el reboot del Gigaset?\")) {
@@ -78,7 +78,7 @@ function stopServer() {
 }
 function mostrarXMLRespuesta(xmldoc) {
 	result = xmldoc.getElementsByTagName(\"RESULT\");
-	switch(result[0].firstChild.data) {
+	switch(result['form_m750'].firstChild.data) {
 	case \"OK\":
 		alert(\"Servidor DVBStream arrancado correctamente\");
 		break
@@ -100,29 +100,29 @@ html_top "Ver LiveTV" "init();" "/cgi-bin/box/verTvLive" ""
 echo "		<br>
 		<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
 		<tr>
-			<td class=\"txtNormal\">Host: </td>
-			<td class=\"txtNormal\"><input type=\"text\" name=\"host\" size=\"50\" maxlength=\"100\" class=\"cajaplana\"></td>
+			<td align="right" class=\"txtParam\">Host:&nbsp;</td>
+			<td><input type=\"text\" name=\"host\" size=\"50\" maxlength=\"100\" class=\"cajaPlana\"></td>
 		</tr>
 		<tr>
-			<td class=\"txtNormal\">Puerto:</td>
-			<td class=\"txtNormal\"><input type=\"text\" name=\"port\" value=\"1234\" size=\"5\" maxlength=\"5\" class=\"cajaplana\"></td>
+			<td align="right" class=\"txtParam\">Puerto:&nbsp;</td>
+			<td><input type=\"text\" name=\"port\" value=\"1234\" size=\"5\" maxlength=\"5\" class=\"cajaplana\"></td>
 		</tr>
 		<tr>
-			<td class=\"txtNormal\">IP del PC donde verás la TV: </td>
-			<td class=\"txtNormal\"><input type=\"text\" name=\"ip\" size=\"17\" maxlength=\"16\" class=\"cajaplana\"></td>
+			<td align="right" class=\"txtParam\">IP del PC donde verás la TV:&nbsp;</td>
+			<td><input type=\"text\" name=\"ip\" size=\"17\" maxlength=\"16\" class=\"cajaplana\"></td>
 		</tr>
 		<tr>
-			<td class=\"txtNormal\">Path de dvbstream en el Gigaset:</td>
-			<td class=\"txtNormal\"><input type=\"text\" name=\"dvbstream\" value=\"/var/media/USB-HDD/bin/dvbstream\" size=\"70\" maxlength=\"200\" class=\"cajaplana\"></td>
+			<td align="right" class=\"txtParam\">Path de dvbstream en el Gigaset:&nbsp;</td>
+			<td><input type=\"text\" name=\"dvbstream\" value=\"/var/media/USB-HDD/bin/dvbstream\" size=\"70\" maxlength=\"200\" class=\"cajaplana\"></td>
 		</tr>
 		<tr>
-			<td class=\"txtNormal\">Path de MPlayer en el PC local:</td>
-			<td class=\"txtNormal\"><input type=\"text\" name=\"mplayer\" value=\"${path_mplayer}\" size=\"70\" maxlength=\"200\" class=\"cajaplana\"></td>
+			<td align="right" class=\"txtParam\">Path de MPlayer en el PC local:&nbsp;</td>
+			<td><input type=\"text\" name=\"mplayer\" value=\"${path_mplayer}\" size=\"70\" maxlength=\"200\" class=\"cajaplana\"></td>
 		</tr>
 		<tr>
-			<td class=\"txtNormal\">Relación de Aspecto:</td>
-			<td class=\"txtNormal\">
-				<select size=\"1\" name=\"aspect\">
+			<td align="right" class=\"txtParam\">Relación de Aspecto:&nbsp;</td>
+			<td>
+				<select size=\"1\" name=\"aspect\" class=\"cajaPlana\">
 					<option value=\"1.3333\" selected>4:3</option>
 					<option value=\"1.7777\">16:9</option>
 					<option value=\"1.25\">1.25</option>
@@ -136,12 +136,12 @@ echo "		<br>
 			<td class=\"txtNormal\" height=\"20\" colspan=\"2\">
 				<table width=\"100%\" border=\"0\" cellspacing=\"10\" cellpadding=\"0\" align=\"center\">
 					<tr>
-						<td class=\"txtNormal\" valign=\"top\"><font class="titChannel">Paso 1</font> : <br><br>Descarga el fichero de ejecución de Mplayer y guardalo en tu PC local:<br><br><input type=\"button\" value=\"Descargar M750_TVLive.cmd\" onclick=\"download();\" class=\"cajaPlana\"></td>
-						<td class=\"txtNormal\" valign=\"top\"><font class="titChannel">Paso 2</font> : <br><br>Selección del Canal:<br/>
+						<td class=\"txtNormal\" valign=\"top\"><font class="txtGrande">Paso 1</font> : <br><br>Descarga el fichero de ejecución de Mplayer y guardalo en tu PC local:<br><br><input type=\"button\" value=\"Descargar M750_TVLive.cmd\" onclick=\"download();\" class=\"cajaPlana\"></td>
+						<td class=\"txtNormal\" valign=\"top\"><font class="txtGrande">Paso 2</font> : <br><br>Selección del Canal:<br/>
 							<select class=\"cajaPlana\" name=\"canal\" size=1>`cat < $CACHE_FILE`</select>
 						</td>
-						<td class=\"txtNormal\" valign=\"top\"><font class="titChannel">Paso 3</font>: <br><br>Matar wavebox y ejecución del <b>dvbstream</b>:<br><br><input type=\"button\" value=\"1. Stop dvbstream\" onclick=\"stopServer();\" class=\"cajaPlana\"><br><input type=\"button\" value=\"2. Start dvbstream\" onclick=\"startStream();\" class=\"cajaPlana\">
-						<td class=\"txtNormal\" valign=\"top\"><font class="titChannel">Paso 4</font>: <br><br>Ejecuta en el PC el fichero <b>M750_TVLive.cmd</b>.
+						<td class=\"txtNormal\" valign=\"top\"><font class="txtGrande">Paso 3</font>: <br><br>Matar wavebox y ejecución del <b>dvbstream</b>:<br><br><input type=\"button\" value=\"1. Stop dvbstream\" onclick=\"stopServer();\" class=\"cajaPlana\"><br><input type=\"button\" value=\"2. Start dvbstream\" onclick=\"startStream();\" class=\"cajaPlana\">
+						<td class=\"txtNormal\" valign=\"top\"><font class="txtGrande">Paso 4</font>: <br><br>Ejecuta en el PC el fichero <b>M750_TVLive.cmd</b>.
 					</tr>
 				</table>
 			</td>

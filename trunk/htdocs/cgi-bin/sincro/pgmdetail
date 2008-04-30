@@ -2,17 +2,17 @@
 # (c) Grupo SIESTA, 27-07-2007
 #
 # Retorna el XML con el detalle de un programa
-# pgmdetail?pid-img-long-chID-utc
+# pgmdetail?pidcid&img&long&chID&utc
 
 # Ejecutamos el script con baja prioridad
-renice 20 $$ > /dev/null
+# renice 20 $$ > /dev/null
 
 # Obtener parametros
-pid=`echo $QUERY_STRING | cut -d"-" -f1`
-img=`echo $QUERY_STRING | cut -d"-" -f2`
-long=`echo $QUERY_STRING | cut -d"-" -f3`
-chID=`echo $QUERY_STRING | cut -d"-" -f4`
-utc=`echo $QUERY_STRING | cut -d"-" -f5`
+pidcid=`echo $QUERY_STRING | cut -d"&" -f1`
+img=`echo $QUERY_STRING | cut -d"&" -f2`
+long=`echo $QUERY_STRING | cut -d"&" -f3`
+chID=`echo $QUERY_STRING | cut -d"&" -f4`
+utc=`echo $QUERY_STRING | cut -d"&" -f5`
 
 # Configurar entorno
 source ../www-setup.shi
@@ -30,11 +30,11 @@ if [ "Z$img" != "Z" ]; then
 		if [ "Z$OBTENER_IMG_INET" = "Zsi" ]; then
 			urlimg="http://www.inout.tv/fotos/$img"
 		else
-			urlimg="/img/epg_long_img.png"
+			urlimg="/img/skin/epg_long_img.png"
 		fi
 	fi
 else
-	urlimg="/img/epg_long_img.png"
+	urlimg="/img/skin/epg_long_img.png"
 fi
 
 # Extraer fichero descripciones largas
@@ -46,7 +46,7 @@ EPG_LONG_FILE_UNZIP=$Cache/EPGLong_$chID.txt
 text=`www-tools get-epg-long $EPG_LONG_FILE_UNZIP $long`
 
 # Comprobar grabacion pendiente
-inRA=`grep $pid /data/RA_FILE | wc -l`
+inRA=`grep $pidcid /data/RA_FILE | wc -l`
 [ $inRA -gt 0 ] && pendiente=1 || pendiente=0
 
 # Eliminar fichero descripciones largas
@@ -66,7 +66,7 @@ echo "<M750>
 		<TEXT>$text</TEXT>
 		<IMG>$urlimg</IMG>
 		<LONG>$long</LONG>
-		<PIDCID>$pid</PIDCID>
+		<PIDCID>$pidcid</PIDCID>
 		<CHANNEL_ID>$chID</CHANNEL_ID>
 		<DATE>$dateFormat</DATE>
 		<PROGRAMMED>$pendiente</PROGRAMMED>

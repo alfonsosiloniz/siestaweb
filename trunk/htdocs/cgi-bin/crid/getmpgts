@@ -4,7 +4,7 @@
 # Script que devuelve el ultimo fichero correspondiente al timeshift
 
 # Configurar entorno
-DIR_MPG=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
+DIR_MPG=`awk '/DeviceRecordingFolder/ {print $2}' /var/etc/settings.txt`
 
 # Devolver resultado
 echo ""
