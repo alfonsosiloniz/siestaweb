@@ -43,52 +43,55 @@
 		<tr>
 			<td class="txtNormal" align="center">
 				<br/>
-				Espacio en disco: <xsl:value-of select="M750/SPACE"/>
+				Espacio en disco: <xsl:value-of select="/M750/SPACE"/>
 				<br/>
 				<br/>
 				<a href="/cgi-bin/crid/viewRAFile">Ver RA_FILE (grabaciones pendientes)</a> | <a href="/cgi-bin/crid/viewSMFile">Ver SM_FILE (programaciones de series)</a>
 				<br/>
 				<br/>
-				<table width="100%" border="0" cellspacing="0" cellpadding="2" align="center" class="borderTabla2">
-					<tr bgcolor="#ffb310">
-						<th class="fila" align="center" width="20">C</th>
-						<th class="fila" align="left">Título</th>
-						<th class="fila" align="left">Inicio</th>
-						<th class="fila" align="left">Final</th>
-						<th class="fila" align="left">Duración (min)</th>
-						<th class="fila" align="left">&#160;</th>
+				<table width="100%" border="0" cellspacing="0" cellpadding="2" align="center" class="borderTabla_sup">
+					<tr class="filaTitulo">
+						<th width="18" align="center">C</th>
+						<th align="center">TV</th>
+						<th align="left">Título</th>
+						<th align="left">Inicio</th>
+						<th align="left">Final</th>
+						<th align="center">Duración (min)</th>
+						<th width="22" align="center">&#160;</th>
 					</tr>
-					<xsl:for-each select="M750/TIMER/RECORD">
-						<xsl:sort select="UTC_TIME"/>
-						<tr>
-							<td class="fila">
-								<xsl:element name="a">
-									<xsl:attribute name="href">javascript:cancelarGrabacion("<xsl:value-of select="PIDCID"/>")</xsl:attribute>
-									<img src="/img/red_ball.jpg" alt="Cancelar Grabación Pendiente" width="18" height="18" border="0" />
-								</xsl:element>
-							</td>
-							<td class="fila">
-								<xsl:element name="a">
-									<xsl:attribute name="href">javascript:detalleTimer("<xsl:value-of select="PIDCID"/>","<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
-									<xsl:value-of select="TITLE"/>
-								</xsl:element>
-							</td>
-							<td class="fila"><xsl:value-of select="INIT_TIME"/></td>
-							<td class="fila"><xsl:value-of select="END_TIME"/></td>
-							<td class="fila"><xsl:value-of select="DURATION"/></td>
-							<td class="fila">
-								<xsl:choose>
-									<xsl:when test="SERIE_ID &lt; '0'">
-										<img src="/img/skin/Icon_serie.png" alt="Grabación en Serie" width="20" height="20" border="0" />
-									</xsl:when>
-									<xsl:when test="SERIE_ID &gt; '0'">
-										<img src="/img/star_record.gif" alt="Grabación de Lo mejor de la TV" width="20" height="20" border="0" />
-									</xsl:when>
-									<xsl:otherwise>&#160;</xsl:otherwise>
-								</xsl:choose>
-							</td>
-						</tr>
-					</xsl:for-each>
+				<xsl:for-each select="/M750/TIMER/CRID">
+				<xsl:sort select="UTC_TIME"/>
+					<tr class="filaResalte">
+						<td>
+							<xsl:element name="a">
+								<xsl:attribute name="title">Cancelar Grabación Pendiente</xsl:attribute>
+								<xsl:attribute name="href">javascript:cancelarGrabacion(<xsl:value-of select="PIDCID"/>, "<xsl:value-of select="TITLE"/>")</xsl:attribute>
+								<img src="/img/icon-borrar.png" width="16" height="16" border="0" />
+							</xsl:element>
+						</td>
+						<td align="center"><xsl:value-of select="CH_ID"/></td>
+						<td>
+							<xsl:element name="a">
+								<xsl:attribute name="href">javascript:detalleTimer(<xsl:value-of select="PIDCID"/>, "<xsl:value-of select="CRID_FILE"/>")</xsl:attribute>
+								<xsl:value-of select="TITLE"/>
+							</xsl:element>
+						</td>
+						<td><xsl:value-of select="INIT_TIME"/></td>
+						<td><xsl:value-of select="END_TIME"/></td>
+						<td align="center"><xsl:value-of select="DURATION"/></td>
+						<td align="center">
+							<xsl:choose>
+								<xsl:when test="SERIE_ID &lt; '0'">
+									<img src="/img/skin/Icon_serie.png" title="Grabación en Serie" width="20" height="20" border="0" />
+								</xsl:when>
+								<xsl:when test="SERIE_ID &gt; '0'">
+									<img src="/img/star_record.png" title="Grabación de Lo mejor de la TV" width="20" height="20" border="0" />
+								</xsl:when>
+								<xsl:otherwise>&#160;</xsl:otherwise>
+							</xsl:choose>
+						</td>
+					</tr>
+				</xsl:for-each>
 				</table>
 				<br/>
 				<a href="/cgi-bin/crid/viewRAFile">Ver RA_FILE (grabaciones pendientes)</a> | <a href="/cgi-bin/crid/viewSMFile">Ver SM_FILE (programaciones de series)</a>

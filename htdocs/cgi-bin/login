@@ -6,7 +6,7 @@
 # Configurar entorno
 source www-setup.shi
 source fweb.shi
-LOG=/tmp/login.log
+LOG=/var/log/login.log
 
 # Comprobar tipo de login
 case $LOGIN_HTTP in

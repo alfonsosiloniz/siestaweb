@@ -9,7 +9,7 @@ source fweb.shi
 validate_login "xml"
 
 # Obtener y enviar codigo tecla
-tecla=`echo $QUERY_STRING | cut -d"-" -f1`
+tecla=`echo $QUERY_STRING | cut -d"&" -f1`
 echo "sim 0 00 $tecla web_server" > /dev/tcp/localhost/8765
 
 # Resultado OK

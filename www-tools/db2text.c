@@ -30,7 +30,7 @@ int db2text(char *file_db){
 
 //	printf("     IO_ID.db: %s\n",file_db);
 
-   	/* Abrir fichero */
+	/* Abrir fichero */
 	file=fopen(file_db,"rb");
 	if ( file == NULL ) {
 		fprintf (stderr, "No se puede abrir el fichero %s\n",file_db);
@@ -53,8 +53,7 @@ int db2text(char *file_db){
 
 			/* Extraer info programa */
 			pgm.pid=x4(bf_in);
-			pgm.pidcid1=x4(bf_in+4);
-			pgm.pidcid2=x4(bf_in+8);
+			pgm.pidcid=x8(bf_in+4);
 			pgm.date_utc=x4(bf_in+12);
 			utc2str(pgm.date_utc,pgm.date_str);
 			pgm.ix_long=x4(bf_in+16);
@@ -66,7 +65,7 @@ int db2text(char *file_db){
 			strncpy(txt,bf_in+posPgm+1,pgm.bytesTitulo);
 			txt[pgm.bytesTitulo]='\x00';
 			sanear_txt(txt,pgm.titulo,LBF_TXT,FILTRO_CRLF);
-            posPgm+=1+pgm.bytesTitulo;
+			posPgm+=1+pgm.bytesTitulo;
 
 			pgm.bytesSubtitulo=x2(bf_in+posPgm);
 			/* Comprobar si subtitulo cabe en el buffer */
@@ -74,19 +73,20 @@ int db2text(char *file_db){
 			strncpy(txt,bf_in+posPgm+2,pgm.bytesSubtitulo);
 			txt[pgm.bytesSubtitulo]='\x00';
 			sanear_txt(txt,pgm.subtitulo,LBF_TXT,FILTRO_CRLF);
-            posPgm+=2+pgm.bytesSubtitulo;
+			posPgm+=2+pgm.bytesSubtitulo;
 
 			pgm.bytesImagen=x1(bf_in+posPgm);
 			/* Comprobar si imagen cabe en el buffer */
 			if ( pgm.bytesImagen > LBF_TXT ) break;
 			strncpy(pgm.imagen,bf_in+posPgm+1,pgm.bytesImagen);
 			pgm.imagen[pgm.bytesImagen]='\x00';
-            posPgm+=1+pgm.bytesImagen+1;
+			posPgm+=1+pgm.bytesImagen+1;
 
 			/* Volcar datos */
 //			printf("pos,bytes: %i=0x%04X,%i\n",pos,pos,bytesPgm);
-//			printf("pid: %i\n",pgm.pid);
-//			printf("pidcid: %08X%08X\n",pgm.pidcid1,pgm.pidcid2);
+//			printf("pid: %li\n",pgm.pid);
+//			DLONG2txt(pgm.pidcid,txt);
+//			printf("pidcid: %s\n",txt);
 //			printf("date_utc: %i\n",pgm.date_utc);
 //			printf("date_str: %s\n",pgm.date_str);
 //			printf("ix_long: %i\n",pgm.ix_long);
@@ -96,8 +96,9 @@ int db2text(char *file_db){
 //			printf("posPgm: %i\n",posPgm);
 
 			/* Generar texto resultado */
-			fprintf(stdout,"%i_%i_%08X%08X_%s_%i_%s_%s_%s\n", \
-				pgm.date_utc,pgm.pid,pgm.pidcid1,pgm.pidcid2,pgm.date_str, \
+			DLONG2txt(pgm.pidcid,txt);
+			fprintf(stdout,"%i_%li_%s_%s_%i_%s_%s_%s\n", \
+				pgm.date_utc,pgm.pid,txt,pgm.date_str, \
 				pgm.ix_long,pgm.titulo,pgm.subtitulo,pgm.imagen);
 
 /* En teoria posPgm debe ser igual a bytesPgm, en la practica siempre es      */

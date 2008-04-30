@@ -1,22 +1,23 @@
 #!/bin/bash
 # jotabe, (c) Grupo SIESTA, 08-11-2007
 #
-# Borrar fragmentos de grabacion huerfanos (ficheros fmpg, mpg, idx, midx)
+# Borrar fragmentos de grabacion huerfanos (ficheros .fmpg, .mpg, .idx, .midx)
 # Tambien se borra el timeshift actual, al cambiar de canal se activa de nuevo.
+# borrarHuerfanos?dir
 
 # Obtener parametros
-CridFolder=${QUERY_STRING%-*}
+CridFolder=`echo $QUERY_STRING | cut -d"&" -f1`
 
 # Configurar entorno
 source ../www-setup.shi
 source fweb.shi
 validate_login "xml"
-LOG=/tmp/fmpg_huerfanos.log
-SCRIPT=/tmp/fmpg_huerfanos.sh
-FMPG_HUERFANOS=/tmp/fmpg_huerfanos.txt
+LOG=/var/log/fmpg-huerfanos.log
+SCRIPT=/tmp/fmpg-huerfanos.sh
+FMPG_HUERFANOS=/tmp/fmpg-huerfanos.txt
 
 # Log del proceso
-echo "`date` Borrado .fmpg huerfanos: $CridFolder" >> $LOG
+echo "<b>`date` Borrado .fmpg huerfanos: carpeta=$CridFolder</b>" >> $LOG
 echo -n "" > $SCRIPT
 
 # Comprobar carpeta
@@ -26,11 +27,11 @@ if [ -d $CridFolder ]; then
 
 	# Recorrer lista ficheros
 	files=""
-	for FMPGfile in `cat $FMPG_HUERFANOS`; do
+	for fileFMPG in `cat $FMPG_HUERFANOS`; do
 		# Borrar fichero .fmpg
-		echo "rm -f ${FMPGfile}*" >> $SCRIPT
+		echo "rm -f ${fileFMPG}*" >> $SCRIPT
 		# Lista de ficheros para calcular espacio usado
-		files="${files} ${FMPGfile}*"
+		files="${files} ${fileFMPG}*"
 	done
 
 	# Comprobar ficheros a borrar
@@ -39,7 +40,12 @@ if [ -d $CridFolder ]; then
 		du=(`du -ch ${files} | tail -1`)
 
 		# Borrar ficheros
-		cat $SCRIPT >> $LOG
+		cat <<- --EOF-- >> $LOG
+		Script a ejecutar:
+		---- Inicio ----
+		`cat $SCRIPT`
+		---- Fin ----
+		--EOF--
 		eval "(`cat $SCRIPT`) >> $LOG 2>> $LOG"
 	else
 		du="0 bytes"
@@ -48,13 +54,13 @@ if [ -d $CridFolder ]; then
 	# Log
 	echo "`date` Fin borrado .fmpg huerfanos (`cat $FMPG_HUERFANOS | wc -l` ficheros, $du)" >> $LOG
 
-	# Eliminar ficheros temporales
-	rm -f $SCRIPT
-	rm -f $FMPG_HUERFANOS
-
 	# Resultado OK
 	enviar_xml_ok
 else
 	# Resultado ERROR
 	enviar_xml_err
 fi
+
+# Eliminar ficheros temporales
+rm -f $SCRIPT
+rm -f $FMPG_HUERFANOS

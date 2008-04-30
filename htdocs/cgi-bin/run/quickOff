@@ -5,13 +5,13 @@
 QUICKOFF_FILE=/tmp/.quickOff
 
 function get_modo_video () {
-    # Buscar nº de modulos que estan usando el modulo video
-    M_V=(`lsmod | grep ^video`)
-    if [ ${M_V[2]} = 0 ] ; then
-        ModoVideo="Apagado"
-    else
-        ModoVideo="Encendido"
-    fi
+	# Buscar nº de modulos que estan usando el modulo video
+	M_V=(`lsmod | grep ^video`)
+	if [ ${M_V[2]} = 0 ] ; then
+		ModoVideo="Apagado"
+	else
+		ModoVideo="Encendido"
+	fi
 }
 
 /usr/bin/txt2osd -x -1 -y -1 -d 4000 -b 0x7F000000 -s 25 "Apagado Rapido en `cat ${QUICKOFF_FILE} | cut -d"&" -f 2` h. y `cat ${QUICKOFF_FILE} | cut -d"&" -f 3` min."
@@ -23,9 +23,9 @@ get_modo_video
 /usr/bin/txt2osd -x -1 -y -1 -d 4000 -b 0x7F000000 -s 30 "Apagando..."
 rm -f ${QUICKOFF_FILE}
 if [ "$ModoVideo" = "Encendido" ]; then
-    # Salimos de una posible visualización de grabacion para que quede la marca de "desde donde lo dejé"
-    /data/scripts/irsim.sh TV
-    sleep 4
-    # Apagado rápido
-    /data/scripts/irsim.sh POWER
+	# Salimos de una posible visualización de grabacion para que quede la marca de "desde donde lo dejé"
+	/data/scripts/irsim.sh TV
+	sleep 4
+	# Apagado rápido
+	/data/scripts/irsim.sh POWER
 fi

@@ -28,7 +28,7 @@ int get_epg_long(char *fichero, long inicio){
 //	printf("EPGLong_ID.txt: %s\n",fichero);
 //	printf("Desplazamiento: %i\n",inicio);
 
-   	/* Abrir fichero */
+	/* Abrir fichero */
 	file=fopen(fichero,"rb");
 	if ( file == NULL ) {
 		fprintf (stderr, "No se puede abrir el fichero %s\n",fichero);

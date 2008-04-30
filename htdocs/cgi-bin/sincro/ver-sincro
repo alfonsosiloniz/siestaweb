@@ -7,12 +7,14 @@
 # Ejecutamos el script con baja prioridad
 renice 20 $$ > /dev/null
 
+# Obtener parametros
+chID=`echo $QUERY_STRING | cut -d"&" -f1`
+pgmActual=`echo $QUERY_STRING | cut -d"&" -f2`
+
 # Configurar entorno
 source ../www-setup.shi
 source fweb.shi
 validate_login
-chID=`echo $QUERY_STRING | cut -d"-" -f1`
-pgmActual=`echo $QUERY_STRING | cut -d"-" -f2`
 CACHE_FILE=${Cache}/cache.$chID
 
 # Comprobar directorio de imagenes de sincroguia en carpeta de grabaciones
@@ -36,34 +38,32 @@ if [ -s ${CACHE_FILE}.xml ]; then
 	
  	# Enviar documento xml con sincroguia de canal
  	xml_doc "/xsl/sincro.xsl"
-	echo "<M740>
-	<SINCROGUIA actual=\"$pgmActual\" miniatures=\"$MOSTRAR_MINI_IMG\" getImgInet=\"$OBTENER_IMG_INET\" localSincroImgAcc=\"$DIR_IMG_SINCRO_ACCESIBLE\">
+	echo "<M750>
+	<SINCROGUIA actual=\"$pgmActual\" titulo=\"Sincroguía\" subtitulo=\"proporcionada por InOut TV\" miniatures=\"$MOSTRAR_MINI_IMG\" getImgInet=\"$OBTENER_IMG_INET\" localSincroImgAcc=\"$DIR_IMG_SINCRO_ACCESIBLE\">
 `cat ${CACHE_FILE}.xml`
 	</SINCROGUIA>
-</M740>"
+</M750>"
 else
 	# Enviar documento html
-	html_doc_start "M750T - Sincroguía" "" "------b-"
+	html_doc_start "M750T - Sincroguía" "" "-----b-"
 	
 	# Respuesta html
 	html_top "<a href=\"http://www.inout.tv/SincroGuia\" target=\"_blank\"><img src=\"/img/sincro.gif\" border=\"0\"/></a>proporcionada por InOut TV" "" "" ""
 	echo "			<br>
 			<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">
 				<tr>
-					<td class=\"titChannel\" align=\"center\">
-						<font class=\"txtAvisos\">"
+					<td class=\"txtAvisos\" align=\"center\">${info}"
 
 	# Comprobar si estamos en proceso de generacion de XML
 	if [ -f ${CACHE_FILE}.generating ]; then
 		echo "La caché de este canal se está generando. Espere a que termine la generación."
 	else
-		echo "No se puede mostrar la Sincroguia del canal porque no se ha generado todavia el caché.<br><br>"
-		echo "Puede ir a la pagina de <a href=\"/cgi-bin/box/estado\">estado</a> para generarlo ahora"
+		echo "No se puede mostrar la Sincroguía del canal porque no se ha generado todavía el caché.<br><br>"
+		echo "Puede ir a la página de <a href=\"/cgi-bin/box/estado\">estado</a> para generarlo ahora"
 	fi
 
 	# Final html
-	echo "						</font>
-					</td>
+	echo "					</td>
 				</tr>
 			</table>"
 	html_doc_end no

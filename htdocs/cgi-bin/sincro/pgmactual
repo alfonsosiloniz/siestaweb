@@ -28,9 +28,9 @@ fi
 # Comprobar generacion cache XML
 info=""
 if [ ! -f ${LOG_SINCRO} ]; then
-	info="No se puede mostrar la información sobre el programa actual porque no se ha generado todavia el caché.
+	info="No se puede mostrar la información sobre el programa actual porque no se ha generado todavía el caché.
 	<br><br>
-	Puede ir a la pagina de <a href=\"/cgi-bin/box/estado\">estado</a> para generarlo ahora"
+	Puede ir a la página de <a href=\"/cgi-bin/box/estado\">estado</a> para generarlo ahora"
 # Comprobar marca de generacion de cache XML
 elif [ -f ${LCK_SINCRO} ]; then
 	info="No se puede mostrar la información sobre el programa actual porque en este momento se está generando el caché.
@@ -41,17 +41,9 @@ fi
 # Mostrar error o procesar carpeta
 if [ ${#info} -ne 0 ]; then
 	# Enviar documento html
-	html_doc_start "M750T - Sincroguía" "" "------b-"
+	html_doc_start "M750T - Sincroguía" "" "-----b-"
 	html_top "<a href=\"http://www.inout.tv/SincroGuia\" target=\"_blank\"><img src=\"/img/sincro.gif\" border=\"0\"/></a>proporcionada por InOut TV" "" "" ""
-	echo "			<br>
-			<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">
-				<tr>
-					<td class=\"titChannel\" align=\"center\">
-						<font class=\"txtAvisos\">$info</font>
-					</td>
-				</tr>
-			</table>"
-	html_doc_end no
+	print_aviso_info "${info}"
 else
 	# Log del proceso
 	utc_inicio=`date +%s`
@@ -60,8 +52,8 @@ else
 
 	# Enviar documento xml con programa actual
 	xml_doc "/xsl/sincro.xsl"
-	echo "<M740>
-	<SINCROGUIA actual=\"0\" miniatures=\"$MOSTRAR_MINI_IMG\" getImgInet=\"$OBTENER_IMG_INET\" localSincroImgAcc=\"$DIR_IMG_SINCRO_ACCESIBLE\">"
+	echo "<M750>
+	<SINCROGUIA actual=\"0\" titulo=\"Sincroguía\" subtitulo=\"proporcionada por InOut TV\" miniatures=\"$MOSTRAR_MINI_IMG\" getImgInet=\"$OBTENER_IMG_INET\" localSincroImgAcc=\"$DIR_IMG_SINCRO_ACCESIBLE\">"
 
 	# Recorrer lista de canales
 	if [ -f $SORT_CHIDS ]; then
@@ -80,7 +72,7 @@ else
 					printf "`date` Canal [%3s]: text->programa_actual" "$chID" >> $LOG
 
 					# Obtener programa actual de fichero .text
-					echo "<CHANNEL cid=\"$cid\" id=\"${chID}\" name=\"$chName\" file=\"${CHANNEL_CACHE}.text\" numChannel=\"$numChannel\">"
+					echo "<CHANNEL numChannel=\"$numChannel\" cid=\"$cid\" chID=\"${chID}\" chName=\"$chName\" file=\"${CHANNEL_CACHE}.text\" >"
 					www-tools text2pgact ${chID} ${CHANNEL_CACHE}.text ${now} 2>> $ERR
 					ST_text2pgact=$?
 					echo "</CHANNEL>"
@@ -99,7 +91,7 @@ else
 
 	# Final xml
 	echo "	</SINCROGUIA>
-</M740>"
+</M750>"
 
 	# Log del proceso
 	utc_final=`date +%s`

@@ -1,46 +1,67 @@
 #!/bin/bash
-# pepper, (c) Grupo SIESTA, 26-04-2007
+# pepper, jotabe, (c) Grupo SIESTA, 16-04-2008
 #
 # Borrar grabacion (fichero .crid, el resto se elimina en proceso de limpieza)
-
-# Obtener parametros
-if [ $# = 1 ]; then
-	Cridfile=${1%-*}
-else
-	# Eliminar fecha/hora del parametro
-	Cridfile=${QUERY_STRING%-*}
-fi
+# borrarGrabacion?num_CRIDFILE=X&CRIDFILE1=crid...&CRIDFILEX=crid&TS=timestamp
 
 # Configurar entorno
 source ../www-setup.shi
 source fweb.shi
 validate_login "xml"
-LOG=/tmp/delete_recording.log
-SCRIPT=/tmp/delete_recording.sh
-Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
+LOG=/var/log/delete-crid.log
+SCRIPT=/tmp/delete-crid.sh
+
+# Procesar parametros get/post
+eval "`proccgi $*`"
+
+# Generar lista ficheros crid
+lista_CRIDS=""
+for F_crid in ${!FORM_CRIDFILE*}; do
+	# Obtener nombre de fichero
+	TMP='$'${F_crid}
+	eval "fileCRID=$TMP"
+	# Agregar a lista de ficheros
+	[ ${#lista_CRIDS} -eq 0 ] && lista_CRIDS="${fileCRID}" || lista_CRIDS="${lista_CRIDS} ${fileCRID}"
+done
 
 # Log del proceso
-echo "`date` Borrar grabación, fichero crid: $Cridfile" >> $LOG
+echo "<b>`date` Borrar grabación: crid=$lista_CRIDS</b>" >> $LOG
 echo -n "" > $SCRIPT
 
-# Comprobar y fichero
-if [ -f $Cridfile ]; then
-	# Procesar fichero crid
-	eval `www-tools crid2var ${Cridfile}`
-	echo "Fichero: `basename ${Cridfile}` -> $Titulo ($num_fmpg)" >> $LOG
+# Recorrer lista de ficheros
+resultado=1
+for Cridfile in ${lista_CRIDS}; do
+	# Comprobar fichero
+	if [ -f $Cridfile ]; then
+		# Procesar fichero crid
+		eval `www-tools crid2var ${Cridfile}`
+		echo "Fichero: `basename ${Cridfile}` -> $Titulo (fmpg=$num_fmpg)" >> $LOG
 
-	# Borrar crid
-	echo "rm -f $Cridfile" >> $SCRIPT
+		# Borrar crid y fichero .refXML
+		echo "rm -f $Cridfile" >> $SCRIPT
+		echo "rm -f ${Cache}/`basename $Cridfile .crid`.refXML" >> $SCRIPT
 
-	# Borrar fichero .refXML
-	echo "rm -f $Cachefile" >> $SCRIPT
+		# Resultado OK
+		resultado=0
+	else
+		# Resultado ERROR
+		resultado=1
+	fi
 
+	# Comprobar errores
+	[ $resultado -ne 0 ] && break
+done
+
+# Ejecutar acciones
+if [ $resultado -eq 0 ]; then
 	# Borrar ficheros
-	cat $SCRIPT >> $LOG
+	cat <<- --EOF-- >> $LOG
+	Script a ejecutar:
+	---- Inicio ----
+	`cat $SCRIPT`
+	---- Fin ----
+	--EOF--
 	eval "(`cat $SCRIPT`) >> $LOG 2>> $LOG"
-
-	# Eliminar ficheros temporales
-	rm -f $SCRIPT
 
 	# Resultado OK
 	enviar_xml_ok
@@ -48,3 +69,6 @@ else
 	# Resultado ERROR
 	enviar_xml_err
 fi
+
+# Eliminar ficheros temporales
+rm -f $SCRIPT

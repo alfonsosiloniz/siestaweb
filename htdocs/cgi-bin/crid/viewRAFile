@@ -19,10 +19,10 @@ flags="-ev-"
 # Enviar documento html
 print_top ${FICHERO} ${flags} ""
 echo "			<tr>"
-echo "				<td class=\"fila\">"
+echo "				<td class=\"filaNormal\">"
 print_actions
 echo "					<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" bgcolor=\"#FFEEE6\">
-						<tr class=\"titChannel\">
+						<tr class=\"txtGrande\">
 							<td width=\"20%\">Fecha/Hora Inicio</td>
 							<td width=\"20%\">Fecha/Hora Fin</td>
 							<td width=\"20%\" align=\"center\">Guarda Inicial (min)</td>
@@ -32,7 +32,7 @@ echo "					<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\
 						</tr>"
 
 # Recorrer fichero RA_FILE
-[ -f ${FICHERO} ] && format_RAFile.awk ${FICHERO}
+[ -f ${FICHERO} ] && format-RAFile.awk ${FICHERO}
 
 # Final html
 echo "					</table>"

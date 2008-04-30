@@ -14,14 +14,14 @@ CFG_PARRILLA=""
 [ -f $PARRILLA_CHANNELS ] && CFG_PARRILLA=`cat $PARRILLA_CHANNELS`
 
 # Enviar documento html
-html_doc_start "M750T - Configuración de Parrilla de Sincroguía" "" "-an-e-b-"
+html_doc_start "M750T - Configuración de Parrilla de Sincroguía" "" "an-e-b-"
 
 # Respuesta html
 html_top "Configuración de Parrilla de Sincroguía" "" "/cgi-bin/sincro/saveConfigParrilla" "post"
 echo "			<br>
 			<table width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"0\" align=\"center\">
 				<tr>
-					<td colspan=\"4\" class=\"titTabla\" align=\"center\">
+					<td colspan=\"4\" class=\"txtNegrita\" align=\"center\">
 					Seleccione los canales que desea que aparezcan en la Parrilla de la Sincroguía<br><br>
 					</td>
 				</tr>"
@@ -40,14 +40,14 @@ if [ -f $SORT_CHIDS ]; then
 			[ ${CFG_PARRILLA/*:${chID}:*/OK} != OK ] && checked=""
 		fi
 
-		# Alternar colores
-		[ "$bgcolor" = "#FFECD9" ] && bgcolor="#FFFFE8" || bgcolor="#FFECD9"
+		# Alternar tipo fila
+		[ "$fila" = "filaImpar" ] && fila="filaPar" || fila="filaImpar"
 
 		# Volcar datos canal
 		echo "				<tr>
 					<td width=\"35%\">&nbsp;</td>
-					<td width=\"5%\" bgcolor=\"$bgcolor\" class=\"txtNormal\" align=\"center\">[ $numChannel ]</td>
-					<td bgcolor=\"$bgcolor\" class=\"txtNormal\" align=\"left\">
+					<td width=\"5%\" class=\"$fila txtNormal\" align=\"center\">[ $numChannel ]</td>
+					<td class=\"$fila txtNormal\" align=\"left\">
 						<input type=\"checkbox\" name=\"CH_$chID\" value=\"$chID\" $checked>$chName
 					</td>
 					<td width=\"35%\">&nbsp;</td>

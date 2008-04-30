@@ -47,20 +47,20 @@
 						<br/>
 						<table width="350" border="0" cellspacing="0" cellpadding="1" align="center">
 							<tr>
-								<td width="100%" align="center" bgcolor="#ffb310" class="titTabla" height="20">Evento programado en Grabaciones Pendientes</td>
+								<td width="100%" class="txtNegritaResalte" align="center" height="20">Evento programado en Grabaciones Pendientes</td>
 							</tr>
 						</table>
 					</xsl:when>
 				</xsl:choose>
 				<br/>
-				<table width="100%" border="0" cellspacing="0" cellpadding="1" align="center">
+				<table width="100%" border="0" cellspacing="0" cellpadding="2" align="center">
 					<tr>
-						<td colspan="2" class="titChannel">
+						<td colspan="2" class="txtGrande">
 							<xsl:value-of select="/M750/PGMDETAIL/CHANNEL_ID" /> - <xsl:value-of select="/M750/PGMDETAIL/DATE" />
 						</td>
 					</tr>
 					<tr>
-						<td colspan="2" class="titChannel" height="6"></td>
+						<td colspan="2" class="txtGrande" height="6"></td>
 					</tr>
 					<tr>
 						<td width="230" class="txtNormal" align="center" valign="top">
@@ -76,32 +76,59 @@
 						</td>
 					</tr>
 					<tr>
-						<td>&#160;</td>
-						<td class="txtNormal" align="center">
-							<xsl:choose>
-								<xsl:when test="/M750/PGMDETAIL/PROGRAMMED='0'">
-									<xsl:element name="a">
-										<xsl:attribute name="href">javascript:programarGrabacionPID("<xsl:value-of select="/M750/PGMDETAIL/PIDCID" />", 0)</xsl:attribute>
-										<img src="/img/red_ball.jpg" alt="Grabar" width="18" height="18" border="0" />Grabar
-									</xsl:element>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:element name="a">
-										<xsl:attribute name="href">javascript:cancelarGrabacionPID("<xsl:value-of select="/M750/PGMDETAIL/PIDCID" />")</xsl:attribute>
-										<img src="/img/red_ball.jpg" alt="Cancelar" width="18" height="18" border="0" />Cancelar Grabación
-									</xsl:element>
-								</xsl:otherwise>
-							</xsl:choose>
-							&#160;|&#160;
-							<xsl:element name="a">
-								<xsl:attribute name="href">javascript:programarGrabacionPID("<xsl:value-of select="/M750/PGMDETAIL/PIDCID" />", 1)</xsl:attribute>
-								<img src="/img/blue_ball.jpg" alt="Grabar en Serie" width="18" height="18" border="0" />Grabar en Serie
-							</xsl:element>
-							&#160;|&#160;
-							<xsl:element name="a">
-								<xsl:attribute name="href">javascript:detalleProgramaInOut("<xsl:value-of select="/M750/PGMDETAIL/PIDCID" />")</xsl:attribute>
-								<img src="/img/sincro_small.gif" alt="Sincroguía InOut" width="18" height="18" border="0" />Ficha Sincroguía InOut
-							</xsl:element>
+						<td colspan="2" class="txtNormal" align="center">
+							<table border="0" cellspacing="0" cellpadding="0" align="center">
+								<tr>
+									<xsl:choose>
+										<xsl:when test="/M750/PGMDETAIL/PROGRAMMED='0'">
+											<td align="center" valign="center">
+												<img src="/img/red_ball.png" width="18" height="18" border="0" />
+											</td>
+											<td align="center" valign="center">
+												<xsl:element name="a">
+													<xsl:attribute name="title">Grabar</xsl:attribute>
+													<xsl:attribute name="href">javascript:programarGrabacion(<xsl:value-of select="/M750/PGMDETAIL/PIDCID"/>, 0, null, true)</xsl:attribute>
+													Grabar
+												</xsl:element>
+											</td>
+										</xsl:when>
+										<xsl:otherwise>
+											<td align="center" valign="center">
+												<img src="/img/icon-borrar.png" width="16" height="16" border="0" />
+											</td>
+											<td align="center" valign="center">
+												<xsl:element name="a">
+													<xsl:attribute name="title">Cancelar</xsl:attribute>
+													<xsl:attribute name="href">javascript:cancelarGrabacion(<xsl:value-of select="/M750/PGMDETAIL/PIDCID"/>)</xsl:attribute>
+													Cancelar Grabación
+												</xsl:element>
+											</td>
+										</xsl:otherwise>
+									</xsl:choose>
+									<td align="center" valign="center">&#160;|&#160;</td>
+									<td align="center" valign="center">
+										<img src="/img/blue_ball.png" width="18" height="18" border="0" />
+									</td>
+									<td align="center" valign="center">
+										<xsl:element name="a">
+											<xsl:attribute name="title">Grabar en Serie</xsl:attribute>
+											<xsl:attribute name="href">javascript:programarGrabacion(<xsl:value-of select="/M750/PGMDETAIL/PIDCID"/>, 1, null, true)</xsl:attribute>
+											Grabar en Serie
+										</xsl:element>
+									</td>
+									<td align="center" valign="center">&#160;|&#160;</td>
+									<td align="center" valign="bottom">
+										<img src="/img/sincro_small.gif" width="26" height="26" border="0" />
+									</td>
+									<td align="center" valign="center">
+										<xsl:element name="a">
+											<xsl:attribute name="title">Sincroguía InOut</xsl:attribute>
+											<xsl:attribute name="href">javascript:detalleProgramaInOut(<xsl:value-of select="/M750/PGMDETAIL/PIDCID"/>)</xsl:attribute>
+											Ficha Sincroguía InOut
+										</xsl:element>
+									</td>
+								</tr>
+							</table>
 						</td>
 					</tr>
 				</table>

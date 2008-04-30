@@ -5,10 +5,10 @@
 //-------------------------------------------------
 // Variables de entorno
 //-------------------------------------------------
-var textoProceso = "";		// Mensaje a mostrar
-var msgprocesando = false;	// Marca de proceso en ejecucion
-var url_1 = "";				// URL inicial
-var vueltas = 0;			// Contador
+var textoProceso	= "";		// Mensaje a mostrar
+var msgprocesando	= false;	// Marca de proceso en ejecucion
+var url_1			= "";		// URL inicial
+var vueltas			= 0;		// Contador
 
 //-------------------------------------------------
 // Mostrar mensaje proceso

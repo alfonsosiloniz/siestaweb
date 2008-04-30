@@ -1,101 +1,128 @@
 #!/bin/bash
-# pepper, (c) Grupo SIESTA, 26-04-2007
+# pepper, jotabe, (c) Grupo SIESTA, 16-04-2008
 #
-# Borrar grabacion
-
-# Obtener parametros
-Cridfile=${QUERY_STRING%-*}
-if [ ${Cridfile/*-force/OK} == OK ]; then
-	Cridfile=${Cridfile%-*}
-	force=1
-else
-	force=0
-fi
+# Borrar grabacion (ficheros .crid, .fmpg, .mpg, .idx, .midx)
+# borrarGrabacionCompleta?num_CRIDFILE=X&CRIDFILE1=crid...&CRIDFILEX=crid[&force]&TS=timestamp
 
 # Configurar entorno
 source ../www-setup.shi
 source fweb.shi
 validate_login "xml"
-LOG=/tmp/delete_recording.log
-SCRIPT=/tmp/delete_recording.sh
-CRIDS_FMPG=/tmp/crids_fmpg.txt
-Cachefile=${Cache}/`basename $Cridfile .crid`.refXML
+LOG=/var/log/delete-crid.log
+SCRIPT=/tmp/delete-crid.sh
+CRIDS_FMPG=/tmp/crids-fmpg.txt
 
-# Obtenemos carpeta de grabaciones
-RecordingFolder=`sed -n -e "/DeviceRecordingFolder/ s/D.* *\(.pvr.*\)/\1/p" /var/etc/settings.txt`
-CridFolder=`dirname $Cridfile`
+# Procesar parametros get/post
+eval "`proccgi $*`"
+[ ${QUERY_STRING/*&force*/OK} = OK ] && force=1 || force=0
 
-if [ "$CridFolder" = "$RecordingFolder" ]; then
-	# Si la carpeta del Crid es la carpeta de grabaciones, no borramos la grabacion completa, sino solo el Crid
-	./borrarGrabacion $Cridfile
-else
-	# Log del proceso
-	echo "`date` Borrar grabación, fichero crid: $Cridfile, Force: $force" >> $LOG
-	echo -n "" > $SCRIPT
-	echo -n "" > $CRIDS_FMPG
+# Generar lista ficheros crid
+lista_CRIDS=""
+for F_crid in ${!FORM_CRIDFILE*}; do
+	# Obtener nombre de fichero
+	TMP='$'${F_crid}
+	eval "fileCRID=$TMP"
+	# Agregar a lista de ficheros
+	[ ${#lista_CRIDS} -eq 0 ] && lista_CRIDS="${fileCRID}" || lista_CRIDS="${lista_CRIDS} ${fileCRID}"
+done
 
-	# Comprobar y fichero
+# Log del proceso
+echo "<b>`date` Borrar grabación completa: crid=$lista_CRIDS, force=$force</b>" >> $LOG
+echo -n "" > $SCRIPT
+echo -n "" > $CRIDS_FMPG
+
+# Recorrer lista de ficheros
+resultado=1
+for Cridfile in ${lista_CRIDS}; do
+	# Comprobar fichero
 	if [ -f $Cridfile ]; then
 		# Procesar fichero crid
+		CridFolder=`dirname $Cridfile`
 		eval `www-tools crid2var ${Cridfile}`
-		echo "Fichero: `basename ${Cridfile}` -> $Titulo ($num_fmpg)" >> $LOG
+		echo "Fichero: `basename ${Cridfile}` -> $Titulo (fmpg=$num_fmpg)" >> $LOG
 
-		# Borrar crid
+		# Borrar crid y fichero .refXML
 		echo "rm -f $Cridfile" >> $SCRIPT
+		echo "rm -f ${Cache}/`basename $Cridfile .crid`.refXML" >> $SCRIPT
 
-		if [ "${fmpg0}" != "" ]; then
+		# Procesar ficheros fmpg
+		if [ "Z${fmpg0}" != "Z" ]; then
 			i=0
 			while [ $i -lt $num_fmpg ]; do
 				# Nombre fragmento
 				TMP='$fmpg'${i}
-				eval "TMP2=$TMP"
+				eval "fileFMPG=$TMP"
 
-				# Mover fragmento
-				echo "rm -f `dirname $Cridfile`/${TMP2}*" >> $SCRIPT
+				# Borrar fragmento
+				echo "rm -f ${CridFolder}/${fileFMPG}*" >> $SCRIPT
 
 				# Comprobar fragmento compartido
-				cridsConFMPG.sh ${CridFolder} ${TMP2} 2>/dev/null >> $CRIDS_FMPG
+				# Obtener lista de ficheros crid que contienen los .fmpg del crid actual
+				cridsConFMPG.sh ${CridFolder} ${fileFMPG} 2>/dev/null >> $CRIDS_FMPG
 
 				# Siguiente fragmento
 				i=$(($i+1))
 			done
 		fi
 
-		# Borrar fichero .refXML
-		echo "rm -f $Cachefile" >> $SCRIPT
-
-		# Comprobar fragmentos compartidos
-		if [ `cat $CRIDS_FMPG | wc -l` -eq 1 ]; then
-			# Borrar ficheros
-			cat $SCRIPT >> $LOG
-			eval "(`cat $SCRIPT`) >> $LOG 2>> $LOG"
-
-			# Resultado OK
-			enviar_xml_ok
-		else
-			# Error: varios ficheros crid comparten fichero fmpg
-			echo "Ficheros .fmpg compartidos por varios .crid" >> $LOG
-			cat $CRIDS_FMPG >> $LOG
-
-			# Comprobar modo forzado
-			if [ $force -eq 1 ]; then
-				# Mover ficheros
-				echo "Modo force, borrar ficheros" >> $LOG
-				cat $SCRIPT >> $LOG
-				eval "(`cat $SCRIPT`) >> $LOG 2>> $LOG"
-
-				# Resultado OK
-				enviar_xml_ok
-			else
-				# Resultado FALLO
-				enviar_xml_fallo
-			fi
-		fi
-
-		# Eliminar ficheros temporales
-		rm -f $SCRIPT
+		# Resultado OK
+		resultado=0
 	else
 		# Resultado ERROR
-		enviar_xml_err
+		resultado=1
+	fi
+
+	# Comprobar errores
+	[ $resultado -ne 0 ] && break
+done
+
+# Comprobar fragmentos compartidos
+if [ $resultado -eq 0 ]; then
+	# Quitar ficheros crid de lista de crids que contienen fmpg
+	for Cridfile in ${lista_CRIDS}; do
+		# Quitar crid
+		grep -v $Cridfile $CRIDS_FMPG > $CRIDS_FMPG.tmp
+		mv -f $CRIDS_FMPG.tmp $CRIDS_FMPG
+	done
+
+	# Numero de crid debe ser 0
+	if [ `cat $CRIDS_FMPG | wc -l` -ne 0 ]; then
+		# Error: varios ficheros crid comparten fichero fmpg
+		echo "Ficheros .fmpg compartidos por varios .crid" >> $LOG
+		cat $CRIDS_FMPG >> $LOG
+
+		# Comprobar modo forzado
+		if [ $force -eq 1 ]; then
+			# Borrar ficheros
+			echo "Modo force, borrar ficheros" >> $LOG
+		else
+			# Resultado FALLO
+			resultado=2
+		fi
 	fi
 fi
+
+# Ejecutar acciones
+if [ $resultado -eq 0 ]; then
+	# Borrar ficheros
+	cat <<- --EOF-- >> $LOG
+	Script a ejecutar:
+	---- Inicio ----
+	`cat $SCRIPT`
+	---- Fin ----
+	--EOF--
+	eval "(`cat $SCRIPT`) >> $LOG 2>> $LOG"
+
+	# Resultado OK
+	enviar_xml_ok
+elif [ $resultado -eq 1 ]; then
+	# Resultado ERROR
+	enviar_xml_err
+else
+	# Resultado FALLO
+	enviar_xml_fallo
+fi
+
+# Eliminar ficheros temporales
+rm -f $SCRIPT
+rm -f $CRIDS_FMPG

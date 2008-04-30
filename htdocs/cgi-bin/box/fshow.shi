@@ -20,7 +20,7 @@ function print_top() {
     flags="$2"
 
 	# Enviar documento html
-	html_doc_start "M750T - Explorador $1" 600 "-an-efb-"
+	html_doc_start "M750T - Explorador $1" "" "an-efbm"
 
 	# Respuesta html
 	onload=""
@@ -35,15 +35,15 @@ function print_top() {
 
 	# Comienzo tabla
 	echo "		<br>
-		<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\" class=\"borderTabla2\">
+		<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\" class=\"borderTabla_sup\">
 			<tr>
-				<td class=\"fila titTabla\"  bgcolor=\"#ffb310\">"
+				<td class=\"filaTitulo\">"
 
 	# Imprimir path fichero con enlaces
 	print_path "$PATH_INFO"
 
 	# Comprobar enlaces simbolicos
-	realpath=`realpath "$PATH_INFO"`
+	realpath=`realpath "$PATH_INFO" 2>/dev/null`
 	if [ $? -eq 0 -a "$PATH_INFO" != "$realpath" ]; then
 		# Añadir mensaje de enlace simbolico
 		echo "&nbsp;(enlace simbólico en la ruta)<br>"
@@ -70,19 +70,19 @@ function print_path() {
 	if [ "Z$2" != "Zsi" ]; then
 		tmp_line=$tmp_file
 	else
-		tmp_line="<a class=\"titChannel\" href=\"$SCRIPT_NAME$tmp_path/$tmp_file\">$tmp_file</a>"
+		tmp_line="<a class=\"txtGrande\" href=\"$SCRIPT_NAME$tmp_path/$tmp_file\">$tmp_file</a>"
 	fi
 
 	# Recorrer carpetas poniendo enlaces
 	while [ ${#tmp_path} -gt 1 ]; do
 		tmp_file=`basename "$tmp_path" 2>/dev/null`
 		tmp_path=`dirname "$tmp_path" 2>/dev/null`
-		[ "$tmp_path" == "/" ] && tmp_path=""
-		tmp_line="<a class=\"titChannel\" href=\"$SCRIPT_NAME$tmp_path/$tmp_file\">$tmp_file</a>&nbsp;/&nbsp;$tmp_line"
+		[ "$tmp_path" = "/" ] && tmp_path=""
+		tmp_line="<a class=\"txtGrande\" href=\"$SCRIPT_NAME$tmp_path/$tmp_file\">$tmp_file</a>&nbsp;/&nbsp;$tmp_line"
 	done
 
 	# Mostrar path
-	echo "					<a class=\"titChannel\" href=\"$SCRIPT_NAME/\">&nbsp;/</a>&nbsp;$tmp_line"
+	echo "					<a class=\"txtGrande\" href=\"$SCRIPT_NAME/\">&nbsp;/</a>&nbsp;$tmp_line"
 }
 
 #--------------------------------------------------
@@ -92,11 +92,11 @@ function print_actions() {
 	# Separador
 	echo "<p>"
 	# Accion view
-	[ $action != view -a ${flags/*v*/ok} == ok ] && echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?view\">VIEW</a>]"
+	[ $action != view -a ${flags/*v*/OK} = OK ] && echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?view\">VIEW</a>]"
 	# Accion hexdump
 	[ $action != hexdump ] && echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?hexdump\">HEXDUMP</a>]"
 	# Accion edit si tamaño fichero es menor de 50000
-	if [ $action != edit -a ${flags/*e*/ok} == ok ]; then
+	if [ $action != edit -a ${flags/*e*/OK} = OK ]; then
 		if [ -f $PATH_INFO ]; then
 			info=`ls -l "$PATH_INFO" 2>/dev/null | awk '{print $5}'`
 			[ ${info} -le 50000 ] && echo "[<a class=\"txtNormal\" href=\"$SCRIPT_NAME$PATH_INFO?edit\">EDIT</a>]"

@@ -8,8 +8,8 @@ source ../cgi-bin/www-setup.shi
 source fweb.shi
 partition=$1
 fstype=$2
-LOG=/tmp/checkdisk.log
-ERR=/tmp/checkdisk.err
+LOG=/var/log/checkdisk.log
+ERR=/var/log/checkdisk.err
 
 # Log del proceso
 echo "`date` Iniciando el script de chequeo de la particion $partition con tipo $fstype" > $LOG

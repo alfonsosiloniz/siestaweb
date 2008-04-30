@@ -75,14 +75,13 @@ function http_header() {
 # $1 Titulo
 # $2 Tiempo directiva Refresh
 # $3 Flags ficheros JavaScript
-#	h------- : html_params.js
-#	-a------ : ajax.js
-#	--n----- : navigator.js
-#	---c---- : cookies.js
-#	----e--- : controlenviar.js
-#	-----f-- : fechasOp.js
-#	------b- : botones.js
-#	-------m : m750.js
+#	a------ : ajax.js
+#	-n----- : navigator.js
+#	--c---- : cookies.js
+#	---e--- : controlenviar.js
+#	----f-- : fechasOp.js
+#	-----b- : botones.js
+#	------m : m750.js
 # $4 Contenido JavaScript de la pagina
 #--------------------------------------------------
 function html_doc_start() {
@@ -95,20 +94,19 @@ function html_doc_start() {
 	<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/>
 	<link rel=\"icon\" href=\"/favicon.ico\" type=\"image/x-icon\"/>
 	<link rel=\"shortcut icon\" href=\"/favicon.ico\" type=\"image/x-icon\"/>
-	<link rel=\"stylesheet\" href=\"/css/estilos.css\" type=\"text/css\"/>"
+	<link rel=\"stylesheet\" href=\"/css/estilos.css\" type=\"text/css\" media=\"screen\"/>"
 
 	# Enviar directiva Refresh
 	[ "Z$2" != "Z" ] && echo "	<meta http-equiv=\"Refresh\" content=\"${2}\"/>"
 
 	# Enviar ficheros JavaScript
-	[ ${3/*h*/OK} == OK ] && echo "	<script type=\"text/javascript\" src=\"/js/html_params.js\" charset=\"ISO-8859-1\"></script>"
-	[ ${3/*a*/OK} == OK ] && echo "	<script type=\"text/javascript\" src=\"/js/ajax.js\" charset=\"ISO-8859-1\"></script>"
-	[ ${3/*n*/OK} == OK ] && echo "	<script type=\"text/javascript\" src=\"/js/navigator.js\" charset=\"ISO-8859-1\"></script>"
-	[ ${3/*c*/OK} == OK ] && echo "	<script type=\"text/javascript\" src=\"/js/cookies.js\" charset=\"ISO-8859-1\"></script>"
-	[ ${3/*e*/OK} == OK ] && echo "	<script type=\"text/javascript\" src=\"/js/controlenviar.js\" charset=\"ISO-8859-1\"></script>"
-	[ ${3/*f*/OK} == OK ] && echo "	<script type=\"text/javascript\" src=\"/js/fechasOp.js\" charset=\"ISO-8859-1\"></script>"
-	[ ${3/*b*/OK} == OK ] && echo "	<script type=\"text/javascript\" src=\"/js/botones.js\" charset=\"ISO-8859-1\"></script>"
-	[ ${3/*m*/OK} == OK ] && echo "	<script type=\"text/javascript\" src=\"/js/m750.js\" charset=\"ISO-8859-1\"></script>"
+	[ ${3/*a*/OK} = OK ] && echo "	<script type=\"text/javascript\" src=\"/js/ajax.js\" charset=\"ISO-8859-1\"></script>"
+	[ ${3/*n*/OK} = OK ] && echo "	<script type=\"text/javascript\" src=\"/js/navigator.js\" charset=\"ISO-8859-1\"></script>"
+	[ ${3/*c*/OK} = OK ] && echo "	<script type=\"text/javascript\" src=\"/js/cookies.js\" charset=\"ISO-8859-1\"></script>"
+	[ ${3/*e*/OK} = OK ] && echo "	<script type=\"text/javascript\" src=\"/js/controlenviar.js\" charset=\"ISO-8859-1\"></script>"
+	[ ${3/*f*/OK} = OK ] && echo "	<script type=\"text/javascript\" src=\"/js/fechasOp.js\" charset=\"ISO-8859-1\"></script>"
+	[ ${3/*b*/OK} = OK ] && echo "	<script type=\"text/javascript\" src=\"/js/botones.js\" charset=\"ISO-8859-1\"></script>"
+	[ ${3/*m*/OK} = OK ] && echo "	<script type=\"text/javascript\" src=\"/js/m750.js\" charset=\"ISO-8859-1\"></script>"
 
 	# Enviar JavaScript de la pagina
 	[ "Z$4" != "Z" ] && echo "	<script type=\"text/javascript\" charset=\"ISO-8859-1\">${4}
@@ -116,7 +114,7 @@ function html_doc_start() {
 
 	# Enviar titulo y final cabecera
 	echo "	<title>${1}</title>
-<head>"
+</head>"
 }
 
 #--------------------------------------------------
@@ -175,13 +173,13 @@ function html_top() {
 function print_log_file() {
 	# Encabezado fila
 	echo "<tr>"
-	echo "	<td class=\"fila titTabla\" bgcolor=\"#ffb310\" align=\"center\">$1</td>"
+	echo "	<td class=\"filaTitulo\" align=\"center\">$1</td>"
 	echo "</tr>"
 	echo "<tr>"
 
 	# Comprobar fichero log
 	if [ -e $2 ]; then
-		echo -n "	<td class=\"fila\" align=\"left\"><pre>"
+		echo -n "	<td class=\"filaNormal\" align=\"left\"><pre>"
 		if [ "Z$3" = "Z" ] ; then
 			echo -n "`cat $2`"
 		else
@@ -189,13 +187,30 @@ function print_log_file() {
 		fi
 		echo "</pre>"
 	else
-		echo "	<td class=\"fila\" align=\"center\">"
+		echo "	<td class=\"filaNormal\" align=\"center\">"
 		echo "	<br>Fichero $2 no encontrado<br>&nbsp;"
 	fi
 
 	# Final fila
 	echo "	</td>"
 	echo "</tr>"
+}
+
+#--------------------------------------------------
+# Imprimir aviso
+# $1 aviso
+#--------------------------------------------------
+function print_aviso_info() {
+	# Aviso
+	echo "			<br>
+			<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">
+				<tr>
+					<td class=\"txtAvisos\" align=\"center\">${1}</td>
+				</tr>
+			</table>"
+
+	# Final pagina
+	html_doc_end no
 }
 
 #--------------------------------------------------
@@ -322,6 +337,15 @@ function get_modo_grabacion() {
 		16|17|18|19)		ModoGrabacion=6;;	# Encendido-Dos grabaciones
 		*)					ModoGrabacion=0;;	# Desconocido
 	esac
+}
+
+#--------------------------------------------------
+# Obtener pid aleatoio
+#--------------------------------------------------
+function get_pid() {
+	# Reservados 8 dígitos para pid Sincroguía (usados 7 dígitos)
+	# new_pid 10 dígitos = '1' + 9 dígitos aleatorios
+	new_pid="1`cat /dev/urandom | tr -dc 0-9 | head -c9`"
 }
 
 #--------------------------------------------------

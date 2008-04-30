@@ -43,11 +43,11 @@ BEGIN {FS="_"; fileAnt=""}
 		}
 
 		# Datos xml de canal
-		printf("\t\t<CHANNEL cid=\"%s\" id=\"%s\" name=\"%s\" file=\"%s\" numChannel=\"%i\">\n",cid,chID,chName,file,numChannel)
+		printf("\t\t<CHANNEL numChannel=\"%i\" cid=\"%s\" chID=\"%s\" chName=\"%s\" file=\"%s\">\n",numChannel,cid,chID,chName,file)
 	}
 
 	# Volcar datos xml programa
-	printf("\t\t\t<PROGRAM id=\"%i\" pid=\"%s\" chid=\"%s\">\n",pid,pidcid,chID)
+	printf("\t\t\t<PROGRAM pid=\"%i\" pidcid=\"%s\" chID=\"%s\">\n",pid,pidcid,chID)
 	printf("\t\t\t\t<TITLE>%s</TITLE>\n",titulo)
 	printf("\t\t\t\t<SUBTITLE>%s</SUBTITLE>\n",subtitulo)
 	printf("\t\t\t\t<IMAGE>%s</IMAGE>\n",imagen)

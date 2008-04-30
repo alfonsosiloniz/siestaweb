@@ -7,13 +7,13 @@
 # Ejecutamos el script con baja prioridad
 # renice 20 $$ > /dev/null
 
-# Obtener parametros
+# Comprobar parametros
 if [ $# -eq 1 ]; then
 	DIR=`echo $1 | sed 's/\/$//'`
-	LST=/tmp/fmpg_huerfanos-$$.txt
+	LST=/tmp/fmpg-huerfanos-$$.txt
 
 	# Obtener lista de todos los ficheros fmpg
-	ls $DIR/*.fmpg > $LST
+	ls $DIR/*.fmpg  2>/dev/null > $LST
 
 	# Comprobar nº ficheros .crid
 	numCrids=`ls -la $DIR/*.crid 2>/dev/null | wc -l`
@@ -28,10 +28,10 @@ if [ $# -eq 1 ]; then
 			while [ $i -lt $num_fmpg ]; do
 				# Nombre fragmento
 				TMP='$fmpg'${i}
-				eval "TMP2=$TMP"
+				eval "fileFMPG=$TMP"
 
 				# Quitar fmpg
-				grep -v $TMP2 $LST > $LST.tmp
+				grep -v $fileFMPG $LST > $LST.tmp
 				mv -f $LST.tmp $LST
 
 				# Siguiente fragmento

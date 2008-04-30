@@ -1,0 +1,344 @@
+#!/bin/bash
+# jotabe, (c) Grupo SIESTA, 27-03-2008
+#
+# Mostrar/editar datos grabacion/timer (fichero crid)
+# edit-crid?crid&[show|edit|edit_ok|timer&pidcid]&TS=timestamp
+
+# Obtener parametros
+Cridfile=`echo $QUERY_STRING | cut -d"&" -f1`
+modo_edit=`echo $QUERY_STRING | cut -d"&" -f2`
+[ "Z${modo_edit}" = "Ztimer" ] && pidcid=`echo $QUERY_STRING | cut -d"&" -f3`
+
+# Configurar entorno
+source ../www-setup.shi
+source fweb.shi
+validate_login
+RECS_FILE=/data/RA_FILE
+
+# Comprobar modo edicion OK
+edit_ok=""
+if [ "Z${modo_edit}" = "Zedit_ok" ]; then
+	modo_edit="edit"
+	edit_ok="Datos guardados correctamente"
+fi
+
+# Seleccion modo
+case ${modo_edit} in
+	edit)
+		input_text_mode=""
+		input_select_mode=""
+		html_doc_start "M750T - Edición datos de Grabación" "" "-----b-"
+		html_top "Edición datos de Grabación" "" "/cgi-bin/crid/save-crid?${Cridfile}&save&TS=`date +%s`" "post"
+		;;
+	timer)
+		# Obtener identificador grabacion, guardas y sintonizador
+		id_rec=`grep -e "${pidcid}" ${RECS_FILE} | awk '{print $1}'`
+		gIni=`grep -e "${pidcid}" ${RECS_FILE} | awk '{print $8/60}'`
+		gFin=`grep -e "${pidcid}" ${RECS_FILE} | awk '{print $9/60}'`
+		sint=`grep -e "${pidcid}" ${RECS_FILE} | awk '{print $18+1}'`
+
+		input_text_mode="readonly"
+		input_select_mode="disabled"
+		html_doc_start "M750T - Datos de Grabación Pendiente" "" "-----b-"
+		html_top "Datos de Grabación Pendiente" "" "" ""
+		;;
+	*)
+		input_text_mode="readonly"
+		input_select_mode="disabled"
+		html_doc_start "M750T - Datos de Grabación" "" "-n-e-b-"
+		html_top "Datos de Grabación" "" "" ""
+		;;
+esac
+
+# Comprobar fichero crid
+info=""
+if [ ! -f ${Cridfile} ]; then
+	# Error fichero crid no encontrado
+	info="El fichero de grabación ${Cridfile} no se encuentra."
+elif [ "Z${modo_edit}" = "Ztimer" -a ${#id_rec} -eq 0 ]; then
+	# Error pidcid no encontrado
+	info="La grabación pendiente con identificador ${pidcid} no se encuentra."
+fi
+
+# Mostrar error o procesar fichero
+if [ ${#info} -ne 0 ]; then
+	print_aviso_info "${info}"
+else
+	# Procesar fichero crid
+	eval "`www-tools crid2var ${Cridfile} 'export'`"
+
+	# Comprobar error_end_timestamp
+	error_end_timestamp=0
+	if [ "Z${modo_edit}" = "Zedit" -a ${Rec_State} -ne 2 ]; then
+		# Recorrer fragmentos
+		i=0
+		while [ $i -lt $num_fmpg ]; do
+			# end_timestamp fragmento
+			TMP='$fmpg'${i}_end_timestamp
+			eval "end_timestamp=$TMP"
+			[ $end_timestamp -eq 0 ] && error_end_timestamp=1
+			# Siguiente fragmento
+			i=$(($i+1))
+		done
+	fi
+
+	# Valores para iconos
+	case ${Rec_State} in
+		2)	icon_estado="<img src=\"/img/skin/Record_rot.png\" title=\"En grabación\" width=\"24\" height=\"24\" border=\"0\">";;
+		3|5)
+			if [ ${playback_timestamp} -eq 0 ]; then
+				icon_estado="<img src=\"/img/skin/Icon_record_OK.png\" title=\"Grabación correcta\" width=\"24\" height=\"24\" border=\"0\">"
+			else
+				icon_estado="<img src=\"/img/skin/Icon_record_OK_played.png\" title=\"Grabación correcta con visionado\" width=\"24\" height=\"24\" border=\"0\">"
+			fi
+			;;
+		4)	if [ ${playback_timestamp} -eq 0 ]; then
+				icon_estado="<img src=\"/img/skin/failed_icon.png\" title=\"Grabación erronea\" width=\"24\" height=\"24\" border=\"0\">"
+			else
+				icon_estado="<img src=\"/img/skin/failed_icon_played.png\" title=\"Grabación erronea con visionado\" width=\"24\" height=\"24\" border=\"0\">"
+			fi
+			;;
+		*)	icon_estado="&nbsp;";;
+	esac
+	[ ${Grabacion_protegida} -ne 1 ] && icon_protegida="&nbsp;" || icon_protegida="<img src=\"/img/skin/important_icon.png\" title=\"Grabación protegida\" width=\"24\" height=\"24\" border=\"0\">"
+	icon_serie="&nbsp;"
+	[ ${IDserie} -gt 0 ] && icon_serie="<img src=\"/img/star_record.png\" title=\"Grabación de Lo mejor de la TV\" width=\"24\" height=\"24\" border=\"0\">"
+	[ ${IDserie} -lt 0 ] && icon_serie="<img src=\"/img/skin/Icon_serie.png\" title=\"Grabación en Serie\" width=\"24\" height=\"24\" border=\"0\">"
+
+	# Edicion OK
+	if [ ${#edit_ok} -ne 0 ]; then
+		echo "						<br/>
+						<table width=\"500\" border=\"0\" cellspacing=\"0\" cellpadding=\"1\" align=\"center\">
+							<tr>
+								<td class=\"txtGrandeResalte\" align=\"center\">${edit_ok}</td>
+							</tr>
+						</table>"
+	fi
+
+	# Datos timer
+	if [ "Z${modo_edit}" = "Ztimer" ]; then
+		freq="1x"
+		[ ${IDserie} -gt 0 ] && freq="Lo mejor de ..."
+		[ ${IDserie} -lt 0 ] && freq="Serie"
+
+		# Zona superior datos timer
+		echo "						<br/>
+						<table width=\"500\" border=\"0\" cellspacing=\"0\" cellpadding=\"1\" align=\"center\">
+							<tr>
+								<td class=\"txtNegritaResalte\" height=\"18\">#</td>
+								<td class=\"txtNegritaResalte\" align=\"center\">Guarda inicial</td>
+								<td class=\"txtNegritaResalte\" align=\"center\">Guarda final</td>
+								<td class=\"txtNegritaResalte\" align=\"center\">Sintonizador</td>
+								<td class=\"txtNegritaResalte\" align=\"center\">Frecuencia</td>
+							</tr>
+							<tr>
+								<td class=\"txtNormal\" align=\"center\">${id_rec}</td>
+								<td class=\"txtNormal\" align=\"center\">${gIni}</td>
+								<td class=\"txtNormal\" align=\"center\">${gFin}</td>
+								<td class=\"txtNormal\" align=\"center\">${sint}</td>
+								<td class=\"txtNormal\" align=\"center\">${freq}</td>
+							</tr>
+						</table>"
+	fi
+
+	# Datos de fichero crid
+	echo "			<br>
+			<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">
+				<tr>
+					<td width=\"68%\" valign=\"top\">
+						<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">
+							<tr>
+								<td width=\"25%\" align=\"right\" class=\"txtParam\">Título:&nbsp;</td>
+								<td width=\"75%\" align=\"left\">
+									<input type=\"text\" name=\"Titulo\" id=\"Titulo\" value=\"${Titulo}\" size=\"64\" maxlength=\"64\" class=\"cajaParam\" ${input_text_mode}>
+								</td>
+							</tr>
+							<tr>
+								<td width=\"25%\" align=\"right\" class=\"txtParam\">Subtítulo:&nbsp;</td>
+								<td width=\"75%\" align=\"left\">
+									<input type=\"text\" name=\"EPG_short\" id=\"EPG_short\" value=\"${EPG_short}\" size=\"96\" maxlength=\"128\" class=\"cajaParam\" ${input_text_mode}>
+								</td>
+							</tr>
+							<tr>
+								<td width=\"25%\" align=\"right\" valign=\"top\" class=\"txtParam\">Descripción:&nbsp;</td>
+								<td width=\"75%\" align=\"left\">
+									<textarea name=\"EPG_long\" id=\"EPG_long\" class=\"cajaParam\" ${input_text_mode} cols=\"112\" rows=\"24\" maxlength=\"4096\">$EPG_long</textarea>
+								</td>
+							</tr>"
+
+	# Mostrar punto de visionado si no es timer
+	[ "Z${modo_edit}" != "Ztimer" ] && echo "							<tr>
+								<td width=\"25%\" align=\"right\" class=\"txtParam\">Pto. visionado:&nbsp;</td>
+								<td width=\"75%\" align=\"left\">
+									<input type=\"num\" name=\"playback_timestamp\" id=\"playback_timestamp\" value=\"${playback_timestamp}\" size=\"8\" maxlength=\"32\" class=\"cajaParam\" ${input_text_mode}>
+								</td>
+							</tr>"
+
+
+
+	# Terminar tabla izquierda y comienzo tabla derecha
+	echo "						</table>
+					</td>
+					<td width=\"32%\" valign=\"top\">
+						<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">
+							<tr>
+								<td width=\"25%\" align=\"right\" class=\"txtParam\">Canal:&nbsp;</td>
+								<td width=\"75%\" align=\"left\">"
+
+	# Nombre de canal (desplegable o campo)
+	grep -qs ${CRID_cid} ${Cache}/info_channels.txt
+	if [ $? -eq 0 ]; then
+		echo "									<select name=\"CRID_cid\" id=\"CRID_cid\" class=\"cajaParam\" ${input_select_mode}>"
+		awk 'BEGIN {FS=":"}{printf("<option value=\"%i\">%s</option>",$2,$4)}' ${Cache}/info_channels.txt
+		echo "									</select>
+									<script type=\"text/javascript\">document.getElementById('CRID_cid').value=\"${CRID_cid}\";</script>"
+	else
+		echo "									<input type=\"text\" name=\"CRID_cid\" id=\"CRID_cid\" value=\"${CRID_cid}\" size=\"32\" maxlength=\"128\" class=\"cajaParam\" ${input_text_mode}>"
+	fi
+
+	# Horario
+	echo "								</td>
+							</tr>
+							<tr>
+								<td width=\"15%\" align=\"right\" class=\"txtParam\">Duracion:&nbsp;</td>
+								<td width=\"85%\" align=\"left\">
+									<input type=\"text\" name=\"FMT_start_time\" id=\"FMT_start_time\" value=\"${FMT_start_time}\" size=\"20\" maxlength=\"20\" class=\"cajaParamLock\" readonly>
+									-
+									<input type=\"text\" name=\"FMT_end_time\" id=\"FMT_end_time\" value=\"${FMT_end_time}\" size=\"20\" maxlength=\"20\" class=\"cajaParamLock\" readonly>
+								</td>
+							</tr>
+							<tr>
+								<td width=\"25%\" align=\"right\" class=\"txtParam\">Tipo:&nbsp;</td>
+								<td width=\"75%\" align=\"left\">
+									<select name=\"Rec_Type\" id=\"Rec_Type\" class=\"cajaParam\" ${input_select_mode}>
+										<option value=\"1\">Sincroguía</option>
+										<option value=\"2\">Timer</option>
+										<option value=\"4\">Sincroguía en serie</option>
+										<option value=\"8\">Timer en serie</option>
+										<option value=\"32\">Manual (en directo)</option>
+									</select>
+									<script type=\"text/javascript\">document.getElementById('Rec_Type').value=\"${Rec_Type}\";</script>
+								</td>
+							</tr>
+							<tr>
+								<td width=\"25%\" align=\"right\" class=\"txtParam\">Estado:&nbsp;</td>
+								<td width=\"75%\" align=\"left\">
+									<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">
+										<tr>
+											<td width=\"80%\" align=\"left\">
+												<select name=\"Rec_State\" id=\"Rec_State\" class=\"cajaParam\" ${input_select_mode}>
+													<option value=\"1\">Pendiente</option>
+													<option value=\"2\">Grabando</option>
+													<option value=\"3\">Grabación correcta</option>
+													<option value=\"4\">Error de grabación</option>
+													<option value=\"5\">Grabación cancelada</option>
+													<option value=\"8\">Conflicto de grabación</option>
+													<option value=\"9\">Episodio borrado de serie</option>
+												</select>
+												<script type=\"text/javascript\">document.getElementById('Rec_State').value=\"${Rec_State}\";</script>
+											</td>
+											<td width=\"20%\" align=\"center\">${icon_estado}</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td width=\"25%\" align=\"right\" class=\"txtParam\">Importante:&nbsp;</td>
+								<td width=\"75%\" align=\"left\">
+									<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">
+										<tr>
+											<td width=\"80%\" align=\"left\">
+												<select name=\"Grabacion_protegida\" id=\"Grabacion_protegida\" class=\"cajaParam\" ${input_select_mode}>
+													<option value=\"0\">Sin proteger</option>
+													<option value=\"1\">Grabación protegida</option>
+												</select>
+												<script type=\"text/javascript\">document.getElementById('Grabacion_protegida').value=\"${Grabacion_protegida}\";</script>
+											</td>
+											<td width=\"20%\" align=\"center\">${icon_protegida}</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td width=\"25%\" align=\"right\" class=\"txtParam\">Serie:&nbsp;</td>
+								<td width=\"75%\" align=\"left\">
+									<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">
+										<tr>
+											<td width=\"80%\" align=\"left\">
+												<select name=\"IDserie\" id=\"IDserie\" class=\"cajaParam\" ${input_select_mode}>
+													<option value=\"0\">Sin agrupar</option>
+													<option value=\"-1\">Nueva serie</option>"
+
+	# Recorrer identificadores serie
+	while read line; do
+		if [ ${#line} -ne 0 ]; then
+			id=`echo $line | cut -d"_" -f1`
+			[ ${id} -gt 0 ] && serie="Lo mejor de ..." || serie=`echo $line | cut -d"_" -f3-`
+			[ ${id} -ne 0 ] && echo "													<option value=\"${id}\">${serie}</option>"
+		fi
+	done < ${Cache}/info_series.txt
+
+	# Terminar tabla derecha
+	echo "												</select>
+												<script type=\"text/javascript\">document.getElementById('IDserie').value=\"${IDserie}\";</script>
+											</td>
+											<td width=\"20%\" align=\"center\">${icon_serie}</td>
+										</tr>
+									</table>
+								</td>
+							</tr>"
+
+	# Aviso error_end_timestamp
+	if [ ${error_end_timestamp} -eq 1 ]; then
+		echo "
+							<tr>
+								<td colspan=\"2\" align=\"center\">
+									<br>
+									<br>
+									<table width=\"100%\" border=\"0\" cellspacing=\"2\" cellpadding=\"2\" align=\"center\">
+										<tr align=\"center\">
+											<td width=\"24\">
+												<img src=\"/img/error_end_timestamp.png\" title=\"Detectado error end_timestamp\" width=\"16\" height=\"16\" border=\"0\">
+											</td>
+											<td>&nbsp;</td>
+											<td width=\"24\">
+												<img src=\"/img/error_end_timestamp.png\" title=\"Detectado error end_timestamp\" width=\"16\" height=\"16\" border=\"0\">
+											</td>
+										</tr>
+										<tr align=\"center\">
+											<td>&nbsp;</td>
+											<td class=\"txtAvisos\">Detectado error en grabación<br>Pulse botón para corregir</td>
+											<td>&nbsp;</td>
+										</tr>
+										<tr align=\"center\">
+											<td>
+												<img src=\"/img/error_end_timestamp.png\" title=\"Detectado error end_timestamp\" width=\"16\" height=\"16\" border=\"0\">
+											</td>
+											<td>
+												<input class=\"txtNormal\" type=\"button\" value=\"Corregir\" onclick=\"document.location.href='/cgi-bin/crid/save-crid?${Cridfile}&fix&TS=`date +%s`' \">
+											</td>
+											<td>
+												<img src=\"/img/error_end_timestamp.png\" title=\"Detectado error end_timestamp\" width=\"16\" height=\"16\" border=\"0\">
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>"
+	fi
+							
+	# Terminar tablas
+	echo "						</table>
+					</td>
+				</tr>"
+
+	# Boton guardar
+	[ "Z${modo_edit}" = "Zedit" ] && echo "				<tr>
+					<td colspan=\"2\" align=\"center\">
+						<input class=\"txtNormal\" type=\"button\" value=\"Guardar\" onclick=\"submit();\">
+					</td>
+				</tr>"
+
+	# Final html
+	echo "			</table>"
+	html_doc_end no
+fi

@@ -10,6 +10,6 @@
 
 /* Declaracion funciones */
 void	crid2var_uso		(void);
-int		crid2var			(char *file_crid);
+int		crid2var			(char *file_crid, const char *prefijo);
 
 #endif

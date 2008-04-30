@@ -17,7 +17,7 @@ fi
 source ../www-setup.shi
 source fweb.shi
 validate_login
-LOG=/tmp/search.log
+LOG=/var/log/search.log
 SORT_CHIDS=${Cache}/sort_chIDs.txt
 SEARCH_RESULT=${Cache}/search_result.txt
 
@@ -42,9 +42,9 @@ else
 fi
 
 # Enviar documento xml con resultado busqueda
-xml_doc "/xsl/search.xsl"
-echo "	<M740>
-	<SINCROGUIA miniatures=\"$MOSTRAR_MINI_IMG\" getImgInet=\"$OBTENER_IMG_INET\" localSincroImgAcc=\"$DIR_IMG_SINCRO_ACCESIBLE\">"
+xml_doc "/xsl/sincro.xsl"
+echo "	<M750>
+	<SINCROGUIA actual=\"0\" titulo=\"Resultado de búsqueda\" subtitulo=\"Resultado de búsqueda\" miniatures=\"$MOSTRAR_MINI_IMG\" getImgInet=\"$OBTENER_IMG_INET\" localSincroImgAcc=\"$DIR_IMG_SINCRO_ACCESIBLE\">"
 
 # Recorrer resultados
 buscarPrograma.awk -v "cache=${Cache}" $SEARCH_RESULT
@@ -53,4 +53,4 @@ buscarPrograma.awk -v "cache=${Cache}" $SEARCH_RESULT
 rm -f $SEARCH_RESULT
 
 echo "	</SINCROGUIA>
-</M740>"
+</M750>"

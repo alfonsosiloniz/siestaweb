@@ -19,6 +19,7 @@ int text2xml(char *ch_id, char *file_text){
 	int resultado;
 	FILE *file;
 	BYTE bf_in[LBF_PGM+1];	/* Linea datos programa sin procesar */
+	BYTE tmp[LBF_TMP+1];	/* Buffer temporal pidcid */
 	pgm_sincro pgm;			/* Datos programa */
 
 	/* Inicializar variables */
@@ -27,7 +28,7 @@ int text2xml(char *ch_id, char *file_text){
 //	printf("   channel_id: %s\n",ch_id);
 //	printf("cache.ID.text: %s\n",file_text);
 
-   	/* Abrir fichero */
+	/* Abrir fichero */
 	file=fopen(file_text,"rt");
 	if ( file == NULL ) {
 		fprintf (stderr, "No se puede abrir el fichero %s\n",file_text);
@@ -41,8 +42,8 @@ int text2xml(char *ch_id, char *file_text){
 			/* Obtener programa contenido en linea */
 			if ( get_pgm(bf_in,&pgm) ) {
 				/* Generar xml resultado */
-				fprintf(stdout,"<PROGRAM id=\"%i\" pid=\"%08X%08X\" chid=\"%s\">\n", \
-					pgm.pid,pgm.pidcid1,pgm.pidcid2,ch_id);
+				DLONG2txt(pgm.pidcid,tmp);
+				fprintf(stdout,"<PROGRAM pid=\"%li\" pidcid=\"%s\" chID=\"%s\">\n",pgm.pid,tmp,ch_id);
 				fprintf(stdout,"\t<TITLE>%s</TITLE>\n",pgm.titulo);
 				fprintf(stdout,"\t<SUBTITLE>%s</SUBTITLE>\n",pgm.subtitulo);
 				fprintf(stdout,"\t<LONG>%i</LONG>\n",pgm.ix_long);

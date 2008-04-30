@@ -9,7 +9,7 @@ source fweb.shi
 validate_login
 
 # Enviar documento html
-html_doc_start "M750T - Conexión SSH" "" "------b-" ""
+html_doc_start "M750T - Conexión SSH" "" "-----b-" ""
 html_top "Conexión SSH" "" "" ""
 cat << --EOF--
 				<applet archive="/util/mindterm_ns.jar" code="com.mindbright.application.MindTerm.class" width="0" height="0">

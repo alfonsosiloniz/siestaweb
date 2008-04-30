@@ -2,6 +2,7 @@
 # (c) Grupo SIESTA, 03-11-2007
 #
 # Devolver lista de grabaciones archivadas
+# ver-lista-archivo?[serie|time]
 
 # Configurar entorno
 source ../www-setup.shi
@@ -10,23 +11,19 @@ validate_login
 USB_DISK=/var/media/USB-HDD
 
 # Obtener parametros
-if [ "$QUERY_STRING" != "" ] ; then
-	if [ "$QUERY_STRING" = "serie" ]; then
+case ${QUERY_STRING} in
+	serie)
 		rm -f ${SERVER_ROOT}/cfg/.time_sort
 		touch ${SERVER_ROOT}/cfg/.serie_sort
-		xsl=record_serie_sort.xsl
-	else
+		;;
+	time)
 		touch ${SERVER_ROOT}/cfg/.time_sort
 		rm -f ${SERVER_ROOT}/cfg/.serie_sort
-		xsl=record_time_sort.xsl
-	fi
-else
-	if [ -f ${SERVER_ROOT}/cfg/.serie_sort ]; then
-		xsl=record_serie_sort.xsl
-	else
-		xsl=record_time_sort.xsl
-	fi
-fi
+		;;
+esac
+
+# Obtener orden
+[ -f ${SERVER_ROOT}/cfg/.serie_sort ] && orden=serie || orden=time
 
 # Comprobacion USB-HDD montado
 info=""
@@ -41,30 +38,20 @@ elif [ ! -d ${ARCHIVO_GRABACIONES} ]; then
 # Contar nº de grabaciones
 else
 	numCrids=`ls -la $ARCHIVO_GRABACIONES/*.crid 2>/dev/null | wc -l`
-	if [ $numCrids -eq 0 ]; then
-		info="No existe ninguna grabación archivada en la carpeta $ARCHIVO_GRABACIONES"
-	fi
+	[ $numCrids -eq 0 ] && info="No existe ninguna grabación archivada en la carpeta $ARCHIVO_GRABACIONES"
 fi
 
 # Mostrar error o procesar carpeta
 if [ ${#info} -ne 0 ]; then
 	# Enviar documento html
-	html_doc_start "M750T - Archivo de Grabaciones" "" "------b-"
+	html_doc_start "M750T - Archivo de Grabaciones" "" "-----b-"
 	html_top "Archivo de Grabaciones" "" "" ""
-	echo "			<br>
-			<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\">
-				<tr>
-					<td class=\"titChannel\" align=\"center\">
-						<font class=\"txtAvisos\">$info</font>
-					</td>
-				</tr>
-			</table>"
-	html_doc_end no
+	print_aviso_info "${info}"
 else
 	# Proxima carpeta a usar para lista de grabaciones
 	carpeta_ver=/var/media/PC1/Video
 	[ -f ${SERVER_ROOT}/cfg/.carpeta_ver.txt ] && carpeta_ver=`cat ${SERVER_ROOT}/cfg/.carpeta_ver.txt`
 
 	# Procesar carpeta de archivo grabaciones
-	./lista-crid2xml.sh $ARCHIVO_GRABACIONES RECORDINGS $xsl $carpeta_ver
+	./lista-crid2xml.sh $ARCHIVO_GRABACIONES record $orden $carpeta_ver
 fi

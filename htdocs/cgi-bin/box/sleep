@@ -7,7 +7,7 @@
 source ../www-setup.shi
 source fweb.shi
 validate_login
-LOG=/tmp/sleep.log
+LOG=/var/log/sleep.log
 QUICKOFF_FILE=/tmp/.quickOff
 TOTALOFF_FILE=/tmp/.totalOff
 
@@ -55,15 +55,16 @@ if [ "${QUERY_STRING}" != "" ]; then
 		fi
 	fi
 fi
+
 # Enviar documento html
-html_doc_start "M750T - Programación de Apagado del box" "" "h-n-e-bm"
+html_doc_start "M750T - Programación de Apagado del box" "" "-n-e-bm"
 
 # Respuesta html
 html_top "Programar Apagado del Box" "" "" ""
 echo "            <br>
             <table width=\"90%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
                <tr>
-                  <td class=\"titTabla\" width=\"30%\">Estado actual de programación:</td>
+                  <td class=\"txtNegrita\" width=\"30%\">Estado actual de programación:</td>
                   <td class=\"txtNormal\">"
 
 if [ -f ${QUICKOFF_FILE} ]; then
@@ -83,46 +84,46 @@ fi
                   </tr>"
 if [ ! -f ${QUICKOFF_FILE} -a ! -f ${TOTALOFF_FILE} ]; then
    echo "            <tr>
-                     <td colspan=\"2\" class=\"titTabla\" height=\"30\"></td>
+                     <td colspan=\"2\" class=\"txtNegrita\" height=\"30\"></td>
                   </tr>
                   <tr>
-                     <td class=\"titChannel\" colspan=\"2\" width=\"30%\">Programar apagado:</td>
+                     <td class=\"txtGrande\" colspan=\"2\" width=\"30%\">Programar apagado:</td>
                   </tr>
                   <tr>
-                     <td colspan=\"2\" class=\"titTabla\" height=\"10\"></td>
+                     <td colspan=\"2\" class=\"txtNegrita\" height=\"10\"></td>
                   </tr>
                   <tr>
-                     <td class=\"titTabla\">Tipo de apagado:</td>
+                     <td class=\"txtNegrita\">Tipo de apagado:</td>
                      <td class=\"txtNormal\">
-                         <select name=\"tipo_apagado\" class=\"txtNormal\">
-                             <option value=\"rapido\">Apagado Rápido
-                             <option value=\"total\">Apagado Total
+                         <select name=\"tipo_apagado\" class=\"cajaParam\">
+                             <option value=\"rapido\">Apagado rápido</option>
+                             <option value=\"total\">Apagado completo</option>
                          </select
                      </td>
                   </tr>
                   <tr>
-                     <td colspan=\"2\" class=\"titTabla\" height=\"10\"></td>
+                     <td colspan=\"2\" class=\"txtNegrita\" height=\"10\"></td>
                   </tr>
                   <tr>
-                     <td class=\"titTabla\">Tiempo hasta el Apagado:</td>
+                     <td class=\"txtNegrita\">Tiempo hasta el Apagado:</td>
                      <td class=\"txtNormal\">
-                         Horas: <input class=\"txtNormal\" name=\"horas\" type=\"text\" value=\"00\" size=\"2\" maxsize=\"2\">&nbsp;&nbsp;
-                         Minutos: <input class=\"txtNormal\" name=\"minutos\" type=\"text\" value=\"00\" size=\"2\" maxsize=\"2\">
+                         Horas: <input class=\"cajaParam\" name=\"horas\" type=\"text\" value=\"00\" size=\"2\" maxsize=\"2\">&nbsp;&nbsp;
+                         Minutos: <input class=\"cajaParam\" name=\"minutos\" type=\"text\" value=\"00\" size=\"2\" maxsize=\"2\">
                      </td>
                   </tr>
                   <tr>
-                     <td colspan=\"2\" class=\"titTabla\" height=\"30\"></td>
+                     <td colspan=\"2\" class=\"txtNegrita\" height=\"30\"></td>
                   </tr>
                   <tr>
-                     <td colspan=\"2\" class=\"titTabla\"><center><input class=\"txtNormal\" type=\"button\" value=\"Programar Apagado\" onclick=\"sleep()\"></center></td>
+                     <td colspan=\"2\" class=\"txtNegrita\"><center><input class=\"txtNormal\" type=\"button\" value=\"Programar Apagado\" onclick=\"sleep()\"></center></td>
                   </tr>
                </table>"
 else
     echo "           <tr>
-                     <td colspan=\"2\" class=\"titTabla\" height=\"30\"></td>
+                     <td colspan=\"2\" class=\"txtNegrita\" height=\"30\"></td>
                   </tr>
                   <tr>
-                     <td colspan=\"2\" class=\"titTabla\"><center><input class=\"txtNormal\" type=\"button\" value=\"Cancelar Apagado\" onclick=\"cancelarApagado()\"></center></td>
+                     <td colspan=\"2\" class=\"txtNegrita\"><center><input class=\"txtNormal\" type=\"button\" value=\"Cancelar Apagado\" onclick=\"cancelarApagado()\"></center></td>
                   </tr>"
 fi
 

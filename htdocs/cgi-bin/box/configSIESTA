@@ -69,7 +69,7 @@ else
 fi
 
 # Enviar documento html
-html_doc_start "M750T - Configuración SIESTA" "" "-an-e-b-"
+html_doc_start "M750T - Configuración SIESTA" "" "an-e-b-"
 
 # Respuesta html
 html_top "Configuración SIESTA" "" "/cgi-bin/box/saveConfigSIESTA" "post"
@@ -79,7 +79,7 @@ FECHA_CFG=`grep "Fecha configuracion:" $SIESTA_SETTINGS_FILE`
 [ ${#FECHA_CFG} -ne 0  ] && echo "				<br>
 				<table width=\"50%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">
 					<tr>
-						<td align=\"center\" bgcolor=\"#ffb310\" class=\"titTabla\" height=\"20\">
+						<td align=\"center\" class=\"txtNegritaResalte\" height=\"20\">
 							${FECHA_CFG}
 						</td>
 					</tr>
@@ -96,8 +96,8 @@ echo "				<br>
 while read line; do
 	if [ ${#line} -ne 0 ]; then
 		if [ ${line:0:1} != "#" ]; then
-			# Alternar colores
-			[ "$bgcolor" = "#FFECD9" ] && bgcolor="#FFFFE8" || bgcolor="#FFECD9"
+			# Alternar tipo fila
+			[ "$fila" = "filaImpar" ] && fila="filaPar" || fila="filaImpar"
 
 			# Obtener datos y valor parametro
 			TMP=(`echo $line`)
@@ -109,7 +109,7 @@ while read line; do
 			ValorParametro=${TMP2# }
 
 			# Nombre parametro
-			echo "					<tr bgcolor=\"$bgcolor\">
+			echo "					<tr class=\"$fila\">
 						<td width=\"${W1}%\" align=\"right\" class=\"txtParam\">
 							${NombreParametro}:&nbsp;
 						</td>"

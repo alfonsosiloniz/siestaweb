@@ -15,20 +15,20 @@ function view() {
 	action=view
 
 	# Comprobar flags, 1º view
-	if [ ${1/*v*/ok} == ok ]; then
+	if [ ${1/*v*/OK} = OK ]; then
 		print_top "$PATH_INFO" "$1" ""
-		echo "			<tr>"
-		echo "				<td class=\"fila\">"
+		echo "			<tr class=\"filaNormal\">"
+		echo "				<td>"
 		print_actions
 		echo -n "<pre style=\"background-color:#FFEEE6; padding:.2em\" >"
-		$3 "$PATH_INFO" | head -c 1000000 | sed 's/&/\&amp;/g;s/</\&lt;/g'
+		$3 "$PATH_INFO" | head -c 1000000 | sed 's/&/\&amp;/g;s/</\&lt;/g;s/>/\&gt;/g'
 		echo "</pre>"
 		print_actions
 		echo "				</td>"
 		echo "			</tr>"
 		print_bottom
 	# Comprobar download
-	elif [ ${1/*s*/ok} == ok ]; then
+	elif [ ${1/*s*/OK} = OK ]; then
 		send $*
 	# En ultimo lugar hexdump
 	else
@@ -48,11 +48,11 @@ function hexdump() {
 
 	# Enviar contenido html
 	print_top "$PATH_INFO" "$1" ""
-	echo "			<tr>"
-	echo "				<td class=\"fila\">"
+	echo "			<tr class=\"filaNormal\">"
+	echo "				<td>"
 	print_actions
 	echo -n "<pre>"
-	head -c 1000000 "$PATH_INFO" | hexdump16 | sed 's/&/\&amp;/g;s/</\&lt;/g'
+	head -c 1000000 "$PATH_INFO" | hexdump16 | sed 's/&/\&amp;/g;s/</\&lt;/g;s/>/\&gt;/g'
 	echo "</pre>"
 	print_actions
 	echo "				</td>"
@@ -84,13 +84,13 @@ function send() {
 #--------------------------------------------------
 function edit() {
 	info=(`ls -l "$PATH_INFO"`)
-	if [[ ${1/*e*/ok} == "ok" && ${info[4]} -le 50000 ]]; then
+	if [ ${1/*e*/OK} = OK -a ${info[4]} -le 50000 ]; then
 		print_top "$PATH_INFO" "$1" "$SCRIPT_NAME$PATH_INFO?write"
-		echo "			<tr>"
-		echo "				<td class=\"fila\">"
+		echo "			<tr class=\"filaNormal\">"
+		echo "				<td>"
 		print_actions
 		echo "<textarea wrap=\"virtual\" name=\"text\" rows=28 cols=82 maxlength=60000>"
-		sed 's/&/\&amp;/g;s/</\&lt;/g' "$PATH_INFO"
+		sed 's/&/\&amp;/g;s/</\&lt;/g;s/>/\&gt;/g' "${PATH_INFO}"
 		echo "</textarea>"
 		echo "					<br>"
 		echo "					<input type=\"Submit\" value=\"Grabar\">"
@@ -108,25 +108,50 @@ function edit() {
 # Accion write, datos fichero en POST
 #--------------------------------------------------
 function write() {
-	sed -e 's/text=//;s/%0D//g' | post2iso > "${PATH_INFO}"
+	# Guardar datos fichero
+	# Con sed respeta formato pero a veces no encuentra final y se bloquea, fichero a 0
+# 	sed 's/text=//;s/%0D//g' | post2iso > "${PATH_INFO}"
+	# Con proccgi añade 0x0A en ultima linea (si no existe)
+	eval "`proccgi $*`"
+	echo "$FORM_text" > "${PATH_INFO}"
+
 	# Si el fichero está bajo /var/etc, llamamos tambien a flash_archive, para grabar los cambios en la flash
 	isFlash=`echo "${PATH_INFO}" | grep "/var/etc" | wc -l`
 	if [ $isFlash -gt 0 ]; then
-		echo "flash_archive write ${PATH_INFO}" >> /tmp/flash_archive.log
-		flash_archive write ${PATH_INFO} >> /tmp/flash_archive.log 2>&1
+		echo "flash_archive write ${PATH_INFO}" >> /var/log/flash_archive.log
+		flash_archive write ${PATH_INFO} >> /var/log/flash_archive.log 2>&1
 		alert="Los cambios del fichero ${PATH_INFO} se han grabado de forma persistente en FlashRAM"
 	fi
 
-	# Enviar redireccion html para accion view
+	# Accion view
+	view $*
+}
+
+#--------------------------------------------------
+# Accion delete
+#--------------------------------------------------
+function delete() {
+	# Borrado fichero/carpeta
+	if [ -d "$PATH_INFO" -a ! -L  "$PATH_INFO" ]; then
+		rmdir "$PATH_INFO" > /dev/null 2>&1
+	else
+		rm -f "$PATH_INFO" > /dev/null 2>&1
+	fi
+
+	# Obtener carpeta contenedora del fichero
+	PATH_INFO=`dirname $PATH_INFO 2>/dev/null`
+
+	# Enviar redireccion html para mostrar carpeta
 	http_header
 	echo "<html>
 	<head>
 		<script type=\"text/javascript\">
-			document.location.href=\"$SCRIPT_NAME$PATH_INFO?view\"
+			document.location.href=\"$SCRIPT_NAME$PATH_INFO\"
 		</script>
 	</head>
-	</html>"
+</html>"
 }
+
 
 #--------------------------------------------------
 # Un bug en thttpd hace que si la url termina en / se ejecuta correctamente este script
@@ -142,26 +167,32 @@ alert=""
 
 # Sanear PATH_INFO 
 PATH_INFO=`echo $PATH_INFO | sed -e 's/\/*$//'`
-[ "Z$PATH_INFO" == "Z" ] && PATH_INFO="/"
+[ "Z$PATH_INFO" = "Z" ] && PATH_INFO="/"
+
+# Modo de llamada
+mode="${QUERY_STRING%%=*}"
 
 # Comprobar existencia fichero
 if [ ! -e "$PATH_INFO" ]; then
 	print_top "No encontrado $PATH_INFO" "" ""
-	echo "			<tr>"
-	echo "				<td class=\"fila\">"
+	echo "			<tr class=\"filaNormal\">"
+	echo "				<td>"
 	echo "					<p>Fichero no encontrado."
 	echo "				</td>"
 	echo "			</tr>"
 	print_bottom
+# Comprobar modo borrado
+elif [ "Z$mode" = "Zdelete" ]; then
+	delete
 # Comprobar carpeta
 elif [ -d "$PATH_INFO" ]; then
 	print_top "$PATH_INFO" "" ""
-	echo "			<tr>"
-	echo "				<td class=\"fila\">"
+	echo "			<tr class=\"filaNormal\">"
+	echo "				<td>"
 	echo -n "<pre style=\"background-color: #FFEEE6; padding: .2em; font-family: \'Lucida Console\'; color: black;\">"
 	# Comprobar maquina: M740, M750, PC
 	get_maquina
-	if [ "Z$MAQUINA" == "ZPC" ]; then
+	if [ "Z$MAQUINA" = "ZPC" ]; then
 		ls -la "$PATH_INFO/" | tail -n +2 | awk -f $0.awk -v "nc_file=9" -v "col_file=42" -v "uri=$SCRIPT_NAME$PATH_INFO"
 	else
 		ls -la "$PATH_INFO/" | awk -f $0.awk -v "nc_file=9" -v "col_file=57" -v "uri=$SCRIPT_NAME$PATH_INFO"
@@ -173,8 +204,8 @@ elif [ -d "$PATH_INFO" ]; then
 # Comprobar fichero bloque
 elif [ -b "$PATH_INFO" ]; then
 	print_top "Fichero-Especial-Bloque $PATH_INFO" "" ""
-	echo "			<tr>"
-	echo "				<td class=\"fila\">"
+	echo "			<tr class=\"filaNormal\">"
+	echo "				<td>"
 	echo "					<p>Fichero especial de bloque con ID "`ls -l "$PATH_INFO" | awk '{printf("%s%s\n",$5,$6)}'`
 	echo "				</td>"
 	echo "			</tr>"
@@ -182,8 +213,8 @@ elif [ -b "$PATH_INFO" ]; then
 # Comprobar fichero caracter
 elif [ -c "$PATH_INFO" ]; then
 	print_top "Fichero-Especial-Caracter $PATH_INFO" "" ""
-	echo "			<tr>"
-	echo "				<td class=\"fila\">"
+	echo "			<tr class=\"filaNormal\">"
+	echo "				<td>"
 	echo "					<p>Fichero especial de caracter con ID "`ls -l "$PATH_INFO" | awk '{printf("%s%s\n",$5,$6)}'`
 	echo "				</td>"
 	echo "			</tr>"
@@ -191,19 +222,18 @@ elif [ -c "$PATH_INFO" ]; then
 # Comprobar fichero normal
 elif [ ! -f "$PATH_INFO" ]; then
 	print_top "Tipo desconocido $PATH_INFO" "" ""
-	echo "			<tr>"
-	echo "				<td class=\"fila\">"
+	echo "			<tr class=\"filaNormal\">"
+	echo "				<td>"
 	echo "					<p>Tipo de fichero desconocido."
 	echo "				</td>"
 	echo "			</tr>"
 	print_bottom
 else
 	# Obtener acccion, por defecto view
-	mode="${QUERY_STRING%%=*}"
-	[[ "$mode" == "send" \
-	|| "$mode" == "hexdump" \
-	|| "$mode" == "edit" \
-	|| "$mode" == "write" \
+	[[ "$mode" = "send" \
+	|| "$mode" = "hexdump" \
+	|| "$mode" = "edit" \
+	|| "$mode" = "write" \
 	]] && action="$mode" || action=view
 
 	# flags
@@ -235,7 +265,7 @@ else
 	*.png)			$action ---s	image/png							;;
 	*.tar)			$action t---	application/x-tar		"tar tcf"	;;
 	*.tiff|*.tif)	$action ---s	image/tiff							;;
-	*.txt)			$action -ev-	text/plain				cat			;;
+	*.txt|*.ini)	$action -ev-	text/plain				cat			;;
 	*.awk)			$action -ev-	text/plain				cat			;;
 	*.crontab)		$action -ev-	text/plain				cat			;;
 	*.sh)			$action -ev-	text/plain				cat			;;

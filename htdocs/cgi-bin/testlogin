@@ -9,7 +9,7 @@ source www-setup.shi
 source fweb.shi
 user=`echo ${USUARIO} | cut -d":" -f1`
 pwd=`echo ${USUARIO} | cut -d":" -f2`
-LOG=/tmp/login.log
+LOG=/var/log/login.log
 
 # Procesar parametros get/post
 eval "`proccgi $*`"

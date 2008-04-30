@@ -1,12 +1,12 @@
 #!/bin/bash
-# (c) Grupo SIESTA, 03-03-2008
+# (c) Grupo SIESTA, 23-04-2008
 #
 # Generar ficheros de datos de canales.
-# $Cache			-> Carpeta cache
-# $EPG_PATH			-> Carpeta datos EPG
-# $SORT_CHIDS		-> Fichero de ordenacion de identificadores de canales
-# $SORT_CHANNELS	-> Fichero de ordenacion de canales
-# $INFO_CHANNELS	-> Fichero de informacion de canales
+# $Cache				-> Carpeta cache
+# $EPG_PATH				-> Carpeta datos EPG
+# $SORT_CHIDS			-> Fichero de ordenacion de identificadores de canales
+# $SORT_CHANNELS		-> Fichero de ordenacion de canales
+# $INFO_CHANNELS		-> Fichero de informacion de canales
 #
 # Este script es incluido desde otros, no debe invocarse directamente
 
@@ -27,14 +27,14 @@ echo -n "" > ${INFO_CHANNELS}
 
 # Recorrer user_services.txt
 i=1
-cat ${CFG_DIR}/user_services.txt | cut -d":" -f2 | while read id; do
-	if [ ${#id} -ne 0 ]; then
-		info_ch=`grep ${id}$ ${CFG_DIR}/services.txt`
+cat ${CFG_DIR}/user_services.txt | cut -d":" -f2 | while read cid; do
+	if [ ${#cid} -ne 0 ]; then
+		info_ch=`grep ${cid}$ ${CFG_DIR}/services.txt`
 		if [ $? -eq 0 ]; then
 			chName=`echo "${info_ch:0:20}" | awk 'gsub(/[ \t]+$/, "", $0)'`
 			chID=`grep -i "${chName}" ${CFG_DIR}/eps_mapping.txt | grep -i "^${chName}:" | head -1 | cut -d"," -f2`
 			# Añadir a lista de programas y canales
-			echo "${i}:${id}:${chID}:${chName}:" >> ${INFO_CHANNELS}
+			echo "${i}:${cid}:${chID}:${chName}:" >> ${INFO_CHANNELS}
 			# Si existe chID se añade a listas ordenadas de chIDs y canales
 			if [ ${#chID} -ne 0 ]; then
 				echo "${chID}" >> ${SORT_CHIDS}

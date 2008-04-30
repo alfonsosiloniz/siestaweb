@@ -1,0 +1,50 @@
+#!/bin/bash
+# jotabe, (c) Grupo SIESTA, 30-04-2008
+#
+# Apagado remoto del gigaset
+# remoteOFF?TIPO=[rapido|completo]&TICKET=autorizacion
+
+# Configurar entorno
+source ../www-setup.shi
+source fweb.shi
+TICKET_FILE=${SERVER_ROOT}/cfg/.ticket_apagar.txt
+
+# Procesar parametros get/post
+eval "`proccgi $*`"
+
+# Respuesta
+echo "Content-type: application/octet-stream"
+echo "Content-Disposition: attachment; filename=apagar.txt"
+echo ""
+echo "Petición apagado remoto:"
+echo "  TIPO=${FORM_TIPO}"
+echo "TICKET=${FORM_TICKET}"
+echo ""
+
+# Comprobar autorizacion
+if [ ! -s ${TICKET_FILE} ]; then
+	# No existe ticket de autorizacion
+	echo "Resultado: No existe TICKET de autorización (${TICKET_FILE})"
+elif [ "Z${FORM_TICKET}" != "Z`cat ${TICKET_FILE}`" ]; then
+	# Autorización incorrecta, resultado ERROR_LOGIN
+	echo "Resultado: Error TICKET autorización"
+else
+	# Autorización correcta, resultado OK
+	echo "Resultado: En proceso de apagado ${FORM_TIPO}"
+
+	# Obtener estado
+	get_modo_video
+	if [ "$ModoVideo" = "Encendido" ] ; then
+		# Apagado rápido
+		/data/scripts/irsim.sh POWER
+
+		# Apagado completo
+		if [ "Z${FORM_TIPO}" = "Zcompleto" ]; then
+			sleep 15
+			/data/scripts/irsim.sh STOP
+		fi
+	fi
+fi
+
+# Borrar ticket
+rm -f ${TICKET_FILE}

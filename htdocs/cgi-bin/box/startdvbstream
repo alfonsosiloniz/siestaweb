@@ -32,13 +32,13 @@ sleep 1
 # Iniciamos el servidor de streaming
 if [ -f $dvbstream ]; then
 	# Ejecutar dvbstream
-	echo "$dvbstream -c 0 -f $freq -net $localPC:$port 0 $p1 $p2 $p3 &" >> /tmp/tvlive.log
+	echo "$dvbstream -c 0 -f $freq -net $localPC:$port 0 $p1 $p2 $p3 &" >> /var/log/tvlive.log
 	$dvbstream -c 0 -f $freq -net $localPC:$port 0 $p1 $p2 $p3 &
 
 	# Resultado OK
 	enviar_xml_ok
 else
-	echo "ERROR: dvbstream no se encuentra en el path" >> /tmp/tvlive.log
+	echo "ERROR: dvbstream no se encuentra en el path" >> /var/log/tvlive.log
 
 	# Resultado NO OK
 	enviar_xml_err

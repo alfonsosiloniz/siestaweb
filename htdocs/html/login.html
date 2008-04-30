@@ -35,74 +35,60 @@
 </head>
 <body bgcolor="white" onload="init()">
 	<form name="form_m750" method="post" action="/cgi-bin/testlogin">
-	<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" class="Grid">
-	<tr><td colspan="3"><img src="/img/pixel.gif" width="1" height="50" border="0"></td></tr>
-	<tr><td colspan="3" align="center"><H1><FONT class="titPag"><b>M750T EPG<br><br></font></H1></td></tr>
-	<tr>
-		<td width="20%" class="Grid"><img src="/img/pixel.gif" width="1" height="1" border="0"></td>
-		<td width="60%" align="center">
-	      <table width="300" border="0" cellspacing="0" cellpadding="0" align="center" bgcolor="#ffb310" class="Grid">
-	      <tr><td colspan="3"><img src="/img/pixel.gif" width="1" height="2" border="0"></td></tr>
-	      <tr>
-	      	<td><img src="/img/pixel.gif" width="6" height="20" border="0"></td>
-	      	<td valign="bottom" class="NPastilla">
-	            <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" class="Grid">
-	            <tr>
-	            	<td width="80%" align="left" valign="bottom" class="NPastilla">Introduzca sus datos de acceso</td>
-	            	<td width="20%" align="right"><img src="/img/pixel.gif" width="24" height="24" border="0"></td>
-	            </tr>
-	            </table>
-	         </td>
-	      	<td><img src="/img/pixel.gif" width="6" height="1" border="0"></td>
-	      </tr>
-	      <tr>
-	      	<td colspan="3"><img src="/img/pixel.gif" width="1" height="3" border="0"></td>
-	      </tr>
-	      <tr>
-	      	<td><img src="/img/pixel.gif" width="6" height="1" border="0"></td>
-	      	<td class="Grid">
-	            <table width="100%" border="2" cellspacing="0" cellpadding="0" align="center" bordercolor="#000000" bgcolor="#F7B610" class="Grid" style="border-color: black; border-style: groove;">
-	            <tr>
-	            	<td width="100%">
-	                  <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" bgcolor="#F7EF9C" class="Grid">
-	                  <tr>
-	                  	<td colspan="2"><img src="/img/pixel.gif" width="1" height="3" border="0"></td>
-	                  </tr>
-	                  <tr>
-	                  	<td class="TitColGrid">&nbsp;Usuario</td>
-	                  	<td class="TitColGrid"><input type="text" class="cajaPlana" height="13" size="20" name="uid" value="" maxlength="20"></td>
-	                  </tr>
-	                  <tr>
-	                  	<td colspan="2"><img src="/img/pixel.gif" width="1" height="3" border="0"></td>
-	                  </tr>
-	                  <tr>
-	                  	<td class="TitColGrid">&nbsp;Contrase&ntilde;a</td>
-	                  	<td class="TitColGrid"><input type="Password" class="cajaPlana" height="13" size="20" name="pwd" value="" maxlength="20" onblur="javascript:boto.focus()"></td>
-	                  </tr>
-	                  <tr>
-	                  	<td colspan="2" class="Grid"><img src="/img/pixel.gif" width="1" height="8" border="0"></td>
-	                  </tr>
-	                  <tr>
-	                  	<td colspan="2" class="Grid"><img src="/img/pixel.gif" width="1" height="8" border="0"></td>
-	                  </tr>
-	                  <tr bgcolor="#ffe19f">
-	                  	<td height="30" colspan="2" align="center" valign="middle" class="Grid"><input name="boto" type="button" onclick="enviar()" value="Entrar"></td>
-	                  </tr>
-	                  </table>
-	               </td>
-	            </tr>
-	            </table>
-	         </td>
-	      	<td><img src="/img/pixel.gif" width="6" height="1" border="0"></td>
-	      </tr>
-	      <tr>
-	      	<td colspan="3"><img src="/img/pixel.gif" width="1" height="6" border="0"></td>
-	      </tr>
-	      </table>
-		</td>
-		<td width="20%" class="Grid"><img src="/img/pixel.gif" width="1" height="1" border="0"></td>
-	</tr>
-	<tr><td colspan="3"><img src="/img/pixel.gif" width="1" height="1" border="0"></td></tr>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+		<tr>
+			<td colspan="3" align="center">
+				<font class="titPag"><br><br>M750T EPG<br><br><br></font>
+			</td>
+		</tr>
+		<tr>
+			<td width="20%" align="center">&nbsp;</td>
+			<td width="60%" align="center">
+				<table width="300" border="0" cellspacing="0" cellpadding="0" align="center" bgcolor="#FFB310">
+					<tr>
+						<td colspan="3" align="center" class="txtNormal" height="24">Introduzca sus datos de acceso</td>
+					</tr>
+					<tr>
+						<td width="8" align="center" class="txtMuyPeq">&nbsp;</td>
+						<td>
+							<table width="100%" border="2" cellspacing="0" cellpadding="0" align="center" bordercolor="#000000" style="border-color: black; border-style: groove;">
+								<tr>
+									<td>
+										<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" bgcolor="#F7EF9C">
+											<tr>
+												<td colspan="2" height="8" align="center" class="txtMuyPeq">&nbsp;</td>
+											</tr>
+											<tr>
+												<td class="txtLogin">&nbsp;Usuario</td>
+												<td><input type="text" class="cajaLogin" height="13" size="20" name="uid" value="" maxlength="20"></td>
+											</tr>
+											<tr>
+												<td colspan="2" height="8" align="center" class="txtMuyPeq">&nbsp;</td>
+											</tr>
+											<tr>
+												<td class="txtLogin">&nbsp;Contraseña</td>
+												<td><input type="Password" class="cajaLogin" height="13" size="20" name="pwd" value="" maxlength="20" onblur="javascript:boto.focus()"></td>
+											</tr>
+											<tr>
+												<td colspan="2" height="8" align="center" class="txtMuyPeq">&nbsp;</td>
+											</tr>
+											<tr bgcolor="#FFE19F">
+												<td colspan="2" height="30" align="center" valign="middle"><input name="boton_enviar" type="button" onclick="enviar()" value="Entrar"></td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</td>
+						<td width="8" align="center" class="txtMuyPeq">&nbsp;</td>
+					</tr>
+					<tr>
+						<td colspan="3" height="8" align="center" class="txtMuyPeq">&nbsp;</td>
+					</tr>
+				</table>
+			</td>
+			<td width="20%" align="center">&nbsp;</td>
+		</tr>
 	</table>
 	</form>
 </body>

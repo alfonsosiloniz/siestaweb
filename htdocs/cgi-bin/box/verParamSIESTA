@@ -8,7 +8,7 @@ source ../www-setup.shi
 source fweb.shi
 
 # Enviar documento html
-html_doc_start "M750T - Parámetros SIESTA" "" "--n---b-"
+html_doc_start "M750T - Parámetros SIESTA" "" "-n---b-"
 
 # Respuesta html
 echo "<body bgcolor=\"#FFFFFF\">

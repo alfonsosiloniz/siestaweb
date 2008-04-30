@@ -4,30 +4,30 @@
 # Script que programa una grabacion y retorna el resultado en XML
 
 # Obtener parametros
-pid=`echo $QUERY_STRING | cut -d"-" -f1`
-serie=`echo $QUERY_STRING | cut -d"-" -f2`
+pidcid=`echo $QUERY_STRING | cut -d"&" -f1`
+serie=`echo $QUERY_STRING | cut -d"&" -f2`
 
 # Configurar entorno
 source ../www-setup.shi
 source fweb.shi
 validate_login "xml"
+LOG=/var/log/record.log
 
 # Log del proceso
-echo "`date` Petición de grabación: $QUERY_STRING" >> /tmp/record.log
+echo "`date` Petición de grabación: pidcid=$pidcid, serie=$serie" >> $LOG
 
 # Enviar peticion a wavebox
-wcpre=`cat /data/RA_FILE | wc -l`
-echo "RECORD $pid $serie" > /dev/tcp/localhost/2010
+echo "RECORD ${pidcid} ${serie}" > /dev/tcp/localhost/2010
 sleep 4
-wcpost=`cat /data/RA_FILE | wc -l`
 
-# Comprobar resultado
-if [ $wcpre -lt $wcpost ]; then
+# Comprobar resultado, buscar pidcid en RA_FILE -> debe estar
+grep -qs ${pidcid} /data/RA_FILE
+if [ $? -eq 0 ]; then
 	# Resultado OK
 	enviar_xml_ok
-	echo "`date` Resultado: OK" >> /tmp/record.log
+	echo "`date` Resultado: OK" >> $LOG
 else
 	# Resultado NO OK
 	enviar_xml_err
-	echo "`date` Resultado: NOK" >> /tmp/record.log
+	echo "`date` Resultado: NOK" >> $LOG
 fi

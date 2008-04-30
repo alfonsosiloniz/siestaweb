@@ -5,9 +5,9 @@
 //-------------------------------------------------
 // Variables de entorno
 //-------------------------------------------------
-var http_request = false;	// Objeto XMLHttpRequest
-var f_respuestaXML = "";	// Funcion de respuesta
-var f_procesoXML = "";		// Funcion de procesado
+var http_request	= false;	// Objeto XMLHttpRequest
+var f_respuestaXML	= "";		// Funcion de respuesta
+var f_procesoXML	= "";		// Funcion de procesado
 
 //-------------------------------------------------
 // Peticion GET ajax-xml
@@ -18,9 +18,9 @@ var f_procesoXML = "";		// Funcion de procesado
 //-------------------------------------------------
 function makeRequest(p_url, p_f_respuestaXML, p_f_procesoXML) {
 	// Inicializar variables
-	http_request = false;
-	f_respuestaXML = p_f_respuestaXML;
-	f_procesoXML = p_f_procesoXML;
+	http_request	= false;
+	f_respuestaXML	= p_f_respuestaXML;
+	f_procesoXML	= p_f_procesoXML;
 
 	// Crear objeto XMLHttpRequest
 	if (window.XMLHttpRequest) { // Mozilla, Safari,...
@@ -55,9 +55,9 @@ function makeRequest(p_url, p_f_respuestaXML, p_f_procesoXML) {
 	if (p_url.length > 0) {
 		index = p_url.indexOf("?");
 		if (index >= 0) {
-			url_peticion = p_url + "-" + new Date().getTime();
+			url_peticion = p_url + "&TS=" + new Date().getTime();
 		} else {
-			url_peticion = p_url + "?" + new Date().getTime();
+			url_peticion = p_url + "?TS=" + new Date().getTime();
 		}
 	}
 // 	alert(p_url + "\n" + url_peticion);
@@ -77,9 +77,9 @@ function makeRequest(p_url, p_f_respuestaXML, p_f_procesoXML) {
 //-------------------------------------------------
 function makePostRequest(p_url, parameters, p_f_respuestaXML, p_f_procesoXML) {
 	// Inicializar variables
-	http_request = false;
-	f_respuestaXML = p_f_respuestaXML;
-	f_procesoXML = p_f_procesoXML;
+	http_request	= false;
+	f_respuestaXML	= p_f_respuestaXML;
+	f_procesoXML	= p_f_procesoXML;
 
 	// Crear objeto XMLHttpRequest
 	if (window.XMLHttpRequest) { // Mozilla, Safari,...

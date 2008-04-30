@@ -77,7 +77,7 @@ if [ -f $1 ]; then
 
 				# Generar fichero xml
 				echo -n ",text->xml" >> $LOG
-				echo "<CHANNEL cid=\"$cid\" id=\"${chID}\" name=\"$chName\" file=\"$1\" numChannel=\"$numChannel\">" >> ${CACHE_FILE}.xml
+				echo "<CHANNEL numChannel=\"$numChannel\" cid=\"$cid\" chID=\"${chID}\" chName=\"$chName\" file=\"$1\" >" >> ${CACHE_FILE}.xml
 				www-tools text2xml ${chID} ${CACHE_FILE}.text >> ${CACHE_FILE}.xml
 				ST_text2xml=$?
 				echo "</CHANNEL>" >> ${CACHE_FILE}.xml

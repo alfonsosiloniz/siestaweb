@@ -9,9 +9,9 @@ source fweb.shi
 validate_login "xml"
 
 # Obtener y enviar texto
-texto=`echo $QUERY_STRING | cut -d"-" -f1`
-size=`echo $QUERY_STRING | cut -d"-" -f2`
-secs=`echo $QUERY_STRING | cut -d"-" -f3`
+texto=`echo $QUERY_STRING | cut -d"&" -f1`
+size=`echo $QUERY_STRING | cut -d"&" -f2`
+secs=`echo $QUERY_STRING | cut -d"&" -f3`
 /usr/bin/txt2osd -x -1 -y -1 -s $size -b 0x9F000000 -f 0xFFFFFFFF -d ${secs}000 "`echo $texto | sed -e 's/%20/ /g'`"
 
 # Resultado OK
