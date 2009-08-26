@@ -1,2 +1,3 @@
 @echo off
-start "Agente Gigaset" java -jar AgenteGigaset.jar
+set JAVA_HOME="C:\Archivos de programa\Java\jre6"
+start "Agente Gigaset" %JAVA_HOME%\bin\java -jar AgenteGigaset.jar
